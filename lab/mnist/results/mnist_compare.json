@@ -1,0 +1,25 @@
+{
+  "config": {
+    "epochs": 8,
+    "T": 10,
+    "seed": 0,
+    "device": "cpu"
+  },
+  "results": {
+    "MLP": {
+      "test_acc": 0.9795,
+      "params": 218058,
+      "time_s": 15.253501176834106
+    },
+    "CNN": {
+      "test_acc": 0.9899,
+      "params": 56714,
+      "time_s": 82.55383086204529
+    },
+    "VPSC": {
+      "test_acc": 0.9695,
+      "params": 234122,
+      "time_s": 36.75347304344177
+    }
+  }
+}

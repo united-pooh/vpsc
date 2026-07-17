@@ -1,0 +1,539 @@
+{
+  "experiment": "C2 positive-memory / negative-gating separability",
+  "formalization_version": "C-v0.1",
+  "parameters": {
+    "n": 8,
+    "g_ee": 7.75,
+    "g_ei": 6.7,
+    "g_ie": 10.0,
+    "g_ii": 6.3,
+    "theta_e": 2.5,
+    "theta_i": 5.75,
+    "tau_e": 1.0,
+    "tau_i": 5.8,
+    "rho_e": 0.15,
+    "rho_i": 0.15,
+    "cue_amplitude": 5.0,
+    "kappa": 6.0,
+    "lambda_i": 1.0,
+    "single_ring_gain": 2.0
+  },
+  "protocol": {
+    "dt": 0.04,
+    "cue": "target node 0, amplitude 5, t in [0,2)",
+    "memory_readout": "mean target attention, t in [10,12)",
+    "distractor": "node N/2, amplitude 5, t in [6,8)",
+    "gating_readout": "mean target minus distractor attention, t in [8,10)",
+    "oscillation_thresholds": {
+      "late_std": 0.02,
+      "spectral_purity": 0.5
+    },
+    "c2_thresholds": {
+      "primary_effect": 0.1,
+      "diagonal_dominance_ratio": 2.0
+    }
+  },
+  "base": {
+    "seed": 0,
+    "oscillation": {
+      "full": {
+        "late_std": 0.3206387947560351,
+        "spectral_purity": 0.9595535636822967,
+        "dominant_frequency": 0.06666666666666667,
+        "state_min": 0.013604276432593092,
+        "state_max": 0.9152224667708022,
+        "bounded": true,
+        "pass": true
+      },
+      "no_positive": {
+        "late_std": 2.1460842753267455e-05,
+        "spectral_purity": 0.9946137984143147,
+        "dominant_frequency": 0.03333333333333333,
+        "state_min": 0.006303956321846213,
+        "state_max": 0.7711769661068367,
+        "bounded": true,
+        "pass": false
+      },
+      "no_negative": {
+        "late_std": 1.449457008162985e-12,
+        "spectral_purity": 6.591705722076618e-05,
+        "dominant_frequency": 0.03333333333333333,
+        "state_min": 0.01590257033136112,
+        "state_max": 0.9945561507708809,
+        "bounded": true,
+        "pass": false
+      },
+      "single_ring": {
+        "late_std": 2.679835078575601e-11,
+        "spectral_purity": 0.031458758494889744,
+        "dominant_frequency": 0.03333333333333333,
+        "state_min": 0.0,
+        "state_max": 0.9787520120386336,
+        "bounded": true,
+        "pass": false
+      }
+    },
+    "c1_pass": true,
+    "functional_scores": {
+      "full": {
+        "memory_target_attention": 0.020332367627916195,
+        "gate_target_attention": 0.007103140159263868,
+        "gate_distractor_attention": 0.18309920234093358,
+        "gate_advantage": -0.17599606218166972
+      },
+      "no_positive": {
+        "memory_target_attention": 0.10439104869319073,
+        "gate_target_attention": 0.07416378174693695,
+        "gate_distractor_attention": 0.34404074144180996,
+        "gate_advantage": -0.269876959694873
+      },
+      "no_negative": {
+        "memory_target_attention": 0.1000495914227162,
+        "gate_target_attention": 0.07849511406236438,
+        "gate_distractor_attention": 0.1431864297287256,
+        "gate_advantage": -0.06469131566636123
+      },
+      "single_ring": {
+        "memory_target_attention": 0.1260385856815576,
+        "gate_target_attention": 0.12939474781148996,
+        "gate_distractor_attention": 0.13127311899572683,
+        "gate_advantage": -0.0018783711842368656
+      }
+    },
+    "c2": {
+      "delta_positive_memory": -0.08405868106527453,
+      "delta_negative_memory_cross": -0.07971722379480001,
+      "delta_negative_gating": -0.11130474651530849,
+      "delta_positive_gating_cross": 0.0938808975132033,
+      "primary_memory_threshold_pass": false,
+      "primary_gating_threshold_pass": false,
+      "memory_diagonal_dominance_pass": false,
+      "gating_diagonal_dominance_pass": false,
+      "pass": false
+    }
+  },
+  "robustness": {
+    "factors": [
+      0.9,
+      1.0,
+      1.1
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "num_runs": 27,
+    "c1_pass_count": 21,
+    "c1_pass_rate": 0.7777777777777778,
+    "c2_pass_count": 0,
+    "c2_pass_rate": 0.0,
+    "runs": [
+      {
+        "seed": 0,
+        "positive_factor": 0.9,
+        "negative_factor": 0.9,
+        "full_late_std": 0.26313734716479,
+        "full_spectral_purity": 0.8500271142322181,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09701881712599288,
+          "delta_negative_memory_cross": -0.07538340215399723,
+          "delta_negative_gating": -0.19037914439611098,
+          "delta_positive_gating_cross": -0.004489418717912641
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 0.9,
+        "negative_factor": 1.0,
+        "full_late_std": 0.24407310493603976,
+        "full_spectral_purity": 0.8359305526488017,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09583423415580267,
+          "delta_negative_memory_cross": -0.07450047013183173,
+          "delta_negative_gating": -0.20444115901778853,
+          "delta_positive_gating_cross": -0.019784063420736298
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 0.9,
+        "negative_factor": 1.1,
+        "full_late_std": 0.22624556018138936,
+        "full_spectral_purity": 0.8358309246568834,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.0944576475279055,
+          "delta_negative_memory_cross": -0.07340373485510288,
+          "delta_negative_gating": -0.21434361209175928,
+          "delta_positive_gating_cross": -0.030878452342906093
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 1.0,
+        "negative_factor": 0.9,
+        "full_late_std": 0.3352342809276339,
+        "full_spectral_purity": 0.9006371449146923,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.03288597393136149,
+          "delta_negative_memory_cross": 0.03752908214986071,
+          "delta_negative_gating": -0.04845453909668486,
+          "delta_positive_gating_cross": 0.15796373501297303
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 1.0,
+        "negative_factor": 1.0,
+        "full_late_std": 0.3206387947560351,
+        "full_spectral_purity": 0.9595535636822967,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.08405868106527453,
+          "delta_negative_memory_cross": -0.07971722379480001,
+          "delta_negative_gating": -0.11130474651530849,
+          "delta_positive_gating_cross": 0.0938808975132033
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 1.0,
+        "negative_factor": 1.1,
+        "full_late_std": 0.3047242398840956,
+        "full_spectral_purity": 0.9446574390691191,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.08661947368431333,
+          "delta_negative_memory_cross": -0.08255786776500713,
+          "delta_negative_gating": -0.12560951933708675,
+          "delta_positive_gating_cross": 0.07838418884322601
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 1.1,
+        "negative_factor": 0.9,
+        "full_late_std": 2.6431834327180794e-05,
+        "full_spectral_purity": 0.6829306178915963,
+        "c1_pass": false,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.0016706239847631282,
+          "delta_negative_memory_cross": -0.0051388848594895176,
+          "delta_negative_gating": -0.014910262900718604,
+          "delta_positive_gating_cross": 0.20927725778913656
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 1.1,
+        "negative_factor": 1.0,
+        "full_late_std": 0.0016125540340442268,
+        "full_spectral_purity": 0.9368716474549829,
+        "c1_pass": false,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.0009237128388635413,
+          "delta_negative_memory_cross": -0.002846198983887549,
+          "delta_negative_gating": -0.017806540768801143,
+          "delta_positive_gating_cross": 0.20514834983990793
+        }
+      },
+      {
+        "seed": 0,
+        "positive_factor": 1.1,
+        "negative_factor": 1.1,
+        "full_late_std": 0.3535943100258746,
+        "full_spectral_purity": 0.9492593897941303,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.022996949288667606,
+          "delta_negative_memory_cross": 0.018947186114748188,
+          "delta_negative_gating": -0.02074229298424983,
+          "delta_positive_gating_cross": 0.20102066177626018
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 0.9,
+        "negative_factor": 0.9,
+        "full_late_std": 0.26311089191997517,
+        "full_spectral_purity": 0.8498740573779522,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09680440175586119,
+          "delta_negative_memory_cross": -0.07547059378131202,
+          "delta_negative_gating": -0.19760814944591765,
+          "delta_positive_gating_cross": -0.0099177771983463
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 0.9,
+        "negative_factor": 1.0,
+        "full_late_std": 0.24404397319735957,
+        "full_spectral_purity": 0.8356894806981329,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09557097582906722,
+          "delta_negative_memory_cross": -0.07454017366502867,
+          "delta_negative_gating": -0.21310794056979093,
+          "delta_positive_gating_cross": -0.02664207663368312
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 0.9,
+        "negative_factor": 1.1,
+        "full_late_std": 0.2262191224385705,
+        "full_spectral_purity": 0.8353348845076083,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09413522250777953,
+          "delta_negative_memory_cross": -0.07338596350447615,
+          "delta_negative_gating": -0.22447061058796303,
+          "delta_positive_gating_cross": -0.03918837376121376
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 1.0,
+        "negative_factor": 0.9,
+        "full_late_std": 0.3352564391174704,
+        "full_spectral_purity": 0.9008195378500141,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.034984573244645656,
+          "delta_negative_memory_cross": 0.039408427868223364,
+          "delta_negative_gating": -0.048794730001535516,
+          "delta_positive_gating_cross": 0.15991472646597973
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 1.0,
+        "negative_factor": 1.0,
+        "full_late_std": 0.32055430930235884,
+        "full_spectral_purity": 0.9594768178166606,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.08430593097396147,
+          "delta_negative_memory_cross": -0.08018508216089437,
+          "delta_negative_gating": -0.11077344122926076,
+          "delta_positive_gating_cross": 0.09671150692679095
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 1.0,
+        "negative_factor": 1.1,
+        "full_late_std": 0.3047002815242866,
+        "full_spectral_purity": 0.9445380675301589,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.08658458961161443,
+          "delta_negative_memory_cross": -0.08274528395928249,
+          "delta_negative_gating": -0.12495870847329195,
+          "delta_positive_gating_cross": 0.08134261257340122
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 1.1,
+        "negative_factor": 0.9,
+        "full_late_std": 2.6408910335138033e-05,
+        "full_spectral_purity": 0.6871107711036594,
+        "c1_pass": false,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.001164540756336499,
+          "delta_negative_memory_cross": -0.004814947504664102,
+          "delta_negative_gating": -0.011890237552612398,
+          "delta_positive_gating_cross": 0.214223339504773
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 1.1,
+        "negative_factor": 1.0,
+        "full_late_std": 0.0016168164648722554,
+        "full_spectral_purity": 0.9381930320131762,
+        "c1_pass": false,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.0018457970962617865,
+          "delta_negative_memory_cross": -0.0021076154625764287,
+          "delta_negative_gating": -0.014096445176475847,
+          "delta_positive_gating_cross": 0.21079262356944603
+        }
+      },
+      {
+        "seed": 1,
+        "positive_factor": 1.1,
+        "negative_factor": 1.1,
+        "full_late_std": 0.35543446417988256,
+        "full_spectral_purity": 0.9640779235219964,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.02564282175739327,
+          "delta_negative_memory_cross": 0.021407866037819898,
+          "delta_negative_gating": -0.01611498319197803,
+          "delta_positive_gating_cross": 0.2075904584445853
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 0.9,
+        "negative_factor": 0.9,
+        "full_late_std": 0.2631368620297104,
+        "full_spectral_purity": 0.8499148320435924,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09709335895204114,
+          "delta_negative_memory_cross": -0.0754231065817687,
+          "delta_negative_gating": -0.19550974555104828,
+          "delta_positive_gating_cross": -0.00835145519051922
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 0.9,
+        "negative_factor": 1.0,
+        "full_late_std": 0.24407523825859043,
+        "full_spectral_purity": 0.8357257808943794,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.0958510169949689,
+          "delta_negative_memory_cross": -0.07448377926159536,
+          "delta_negative_gating": -0.21042864922214416,
+          "delta_positive_gating_cross": -0.02449648677781785
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 0.9,
+        "negative_factor": 1.1,
+        "full_late_std": 0.22625129743539538,
+        "full_spectral_purity": 0.835208136137673,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.09441129695397238,
+          "delta_negative_memory_cross": -0.0733259633933219,
+          "delta_negative_gating": -0.22101990924098186,
+          "delta_positive_gating_cross": -0.036272448547791325
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 1.0,
+        "negative_factor": 0.9,
+        "full_late_std": 0.33524582597111796,
+        "full_spectral_purity": 0.900719588386002,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.03407392768131681,
+          "delta_negative_memory_cross": 0.038826934047781855,
+          "delta_negative_gating": -0.05074593780218892,
+          "delta_positive_gating_cross": 0.15729551056778074
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 1.0,
+        "negative_factor": 1.0,
+        "full_late_std": 0.3205514816280539,
+        "full_spectral_purity": 0.9594735375344512,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.08541823395464734,
+          "delta_negative_memory_cross": -0.0809682422250812,
+          "delta_negative_gating": -0.11100072416445371,
+          "delta_positive_gating_cross": 0.09581459628931321
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 1.0,
+        "negative_factor": 1.1,
+        "full_late_std": 0.30471258992779476,
+        "full_spectral_purity": 0.9445735686432837,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.08731837810742915,
+          "delta_negative_memory_cross": -0.08315029055058606,
+          "delta_negative_gating": -0.1251864410281297,
+          "delta_positive_gating_cross": 0.08044417767450143
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 1.1,
+        "negative_factor": 0.9,
+        "full_late_std": 2.661408704902973e-05,
+        "full_spectral_purity": 0.6885172547235843,
+        "c1_pass": false,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": -0.001195961413060706,
+          "delta_negative_memory_cross": -0.004533606463043141,
+          "delta_negative_gating": -0.010254253238706407,
+          "delta_positive_gating_cross": 0.21521832289487275
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 1.1,
+        "negative_factor": 1.0,
+        "full_late_std": 0.0016204009449510214,
+        "full_spectral_purity": 0.9381159116882339,
+        "c1_pass": false,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.0021404000664615314,
+          "delta_negative_memory_cross": -0.0015002596204198027,
+          "delta_negative_gating": -0.012095609586738804,
+          "delta_positive_gating_cross": 0.2121508386306376
+        }
+      },
+      {
+        "seed": 2,
+        "positive_factor": 1.1,
+        "negative_factor": 1.1,
+        "full_late_std": 0.35546640982677513,
+        "full_spectral_purity": 0.9640531577931425,
+        "c1_pass": true,
+        "c2_pass": false,
+        "c2_deltas": {
+          "delta_positive_memory": 0.026428253347525035,
+          "delta_negative_memory_cross": 0.022505689487920644,
+          "delta_negative_gating": -0.013895383530692973,
+          "delta_positive_gating_cross": 0.20916636293554763
+        }
+      }
+    ]
+  }
+}

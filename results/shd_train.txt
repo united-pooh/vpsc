@@ -1,0 +1,24 @@
+# synthetic  classes=10
+epoch=0 F=223.070069 beta=1.0000
+epoch=1 F=133.247559 beta=1.0000
+epoch=2 F=104.728612 beta=1.0000
+epoch=3 F=86.667690 beta=1.0000
+epoch=4 F=78.245012 beta=1.0000
+epoch=5 F=71.750427 beta=1.0000
+epoch=6 F=66.169099 beta=1.0000
+epoch=7 F=62.295611 beta=1.0000
+epoch=8 F=59.606804 beta=1.0000
+epoch=9 F=56.945802 beta=1.0000
+epoch=10 F=55.306783 beta=1.0000
+epoch=11 F=54.008571 beta=1.0000
+epoch=12 F=52.595653 beta=1.0000
+epoch=13 F=51.745168 beta=1.0000
+epoch=14 F=50.678061 beta=1.0000
+epoch=15 F=52.010408 beta=1.0000
+epoch=16 F=50.883681 beta=1.0000
+epoch=17 F=49.630088 beta=1.0000
+epoch=18 F=49.384006 beta=1.0000
+epoch=19 F=48.107900 beta=1.0000
+
+spearman(epoch,F)=-0.9925 P1=PASS
+test_acc=0.1100

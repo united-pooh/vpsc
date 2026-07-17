@@ -1,0 +1,30 @@
+# Theorem 1 STDP window test, synapse W_up[9->25]
+# beta=1.0 tau_m=10 (leak=0.3, graph-connected trace)
+delta=-8 grad=0.029361
+delta=-7 grad=0.029361
+delta=-6 grad=0.029361
+delta=-5 grad=0.029361
+delta=-4 grad=0.029361
+delta=-3 grad=0.039738
+delta=-2 grad=0.050761
+delta=-1 grad=0.009538
+delta=1 grad=1.315034
+delta=2 grad=0.027747
+delta=3 grad=0.073058
+delta=4 grad=0.077954
+delta=5 grad=0.079231
+delta=6 grad=0.077585
+delta=7 grad=0.073041
+delta=8 grad=0.066079
+delta=9 grad=0.057452
+delta=10 grad=0.047977
+delta=11 grad=0.038403
+delta=12 grad=0.029335
+delta=13 grad=0.021210
+delta=14 grad=0.014285
+delta=15 grad=0.008659
+delta=16 grad=0.004305
+
+pos_sign_frac=1.0000 neg_sign_frac=1.0000
+fit_A=0.051883 fit_tau=4.0 fit_R2=0.8173
+shape_pass=True

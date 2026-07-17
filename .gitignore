@@ -1,0 +1,26 @@
+# Python caches and build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments and local configuration
+.venv/
+venv/
+.env
+.env.*
+
+# Test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Editor and OS metadata
+.idea/
+.vscode/
+.DS_Store
+
+# Downloaded datasets (recreated automatically by the experiment scripts)
+lab/mnist/data/

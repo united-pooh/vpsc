@@ -1,0 +1,102 @@
+# P1: F over training (Theorem 2)
+epoch=0 F=227.215363 beta=1.0000
+epoch=1 F=166.347641 beta=1.0000
+epoch=2 F=123.965652 beta=1.0000
+epoch=3 F=95.198944 beta=1.0000
+epoch=4 F=76.125122 beta=1.0000
+epoch=5 F=63.467934 beta=1.0000
+epoch=6 F=54.790718 beta=1.0000
+epoch=7 F=47.678921 beta=1.0000
+epoch=8 F=42.459702 beta=1.0000
+epoch=9 F=38.656624 beta=1.0000
+epoch=10 F=35.802349 beta=1.0000
+epoch=11 F=33.449581 beta=1.0000
+epoch=12 F=31.369173 beta=1.0000
+epoch=13 F=30.211882 beta=1.0000
+epoch=14 F=29.915276 beta=1.0000
+epoch=15 F=29.855001 beta=1.0000
+epoch=16 F=29.908773 beta=1.0000
+epoch=17 F=29.512348 beta=1.0000
+epoch=18 F=29.569889 beta=1.0000
+epoch=19 F=29.171419 beta=1.0000
+epoch=20 F=29.113943 beta=1.0000
+epoch=21 F=29.021194 beta=1.0000
+epoch=22 F=28.795687 beta=1.0000
+epoch=23 F=28.652315 beta=1.0000
+epoch=24 F=28.691795 beta=1.0000
+epoch=25 F=28.819485 beta=1.0000
+epoch=26 F=29.050400 beta=1.0000
+epoch=27 F=29.074827 beta=1.0000
+epoch=28 F=28.484112 beta=1.0000
+epoch=29 F=27.811855 beta=1.0000
+epoch=30 F=27.725527 beta=1.0000
+epoch=31 F=27.561340 beta=1.0000
+epoch=32 F=27.185854 beta=1.0000
+epoch=33 F=26.934799 beta=1.0000
+epoch=34 F=26.739492 beta=1.0000
+epoch=35 F=26.696953 beta=1.0000
+epoch=36 F=26.668123 beta=1.0000
+epoch=37 F=26.718580 beta=1.0000
+epoch=38 F=26.688797 beta=1.0000
+epoch=39 F=26.485346 beta=1.0000
+epoch=40 F=26.433155 beta=1.0000
+epoch=41 F=26.337111 beta=1.0000
+epoch=42 F=26.222113 beta=1.0000
+epoch=43 F=26.236778 beta=1.0000
+epoch=44 F=26.235064 beta=1.0000
+epoch=45 F=26.197962 beta=1.0000
+epoch=46 F=26.140186 beta=1.0000
+epoch=47 F=25.938513 beta=1.0000
+epoch=48 F=25.897198 beta=1.0000
+epoch=49 F=25.834837 beta=1.0000
+epoch=50 F=25.800673 beta=1.0000
+epoch=51 F=25.728016 beta=1.0000
+epoch=52 F=25.667440 beta=1.0000
+epoch=53 F=25.545221 beta=1.0000
+epoch=54 F=25.528133 beta=1.0000
+epoch=55 F=25.496069 beta=1.0000
+epoch=56 F=25.430128 beta=1.0000
+epoch=57 F=25.387659 beta=1.0000
+epoch=58 F=25.349491 beta=1.0000
+epoch=59 F=25.228397 beta=1.0000
+epoch=60 F=25.131088 beta=1.0000
+epoch=61 F=25.015093 beta=1.0000
+epoch=62 F=25.061705 beta=1.0000
+epoch=63 F=25.039324 beta=1.0000
+epoch=64 F=25.173573 beta=1.0000
+epoch=65 F=25.273411 beta=1.0000
+epoch=66 F=25.538050 beta=1.0000
+epoch=67 F=25.494469 beta=1.0000
+epoch=68 F=25.500355 beta=1.0000
+epoch=69 F=25.541349 beta=1.0000
+epoch=70 F=25.385738 beta=1.0000
+epoch=71 F=25.173334 beta=1.0000
+epoch=72 F=25.022686 beta=1.0000
+epoch=73 F=24.900541 beta=1.0000
+epoch=74 F=24.947823 beta=1.0000
+epoch=75 F=24.924522 beta=1.0000
+epoch=76 F=24.892708 beta=1.0000
+epoch=77 F=24.825842 beta=1.0000
+epoch=78 F=24.706619 beta=1.0000
+epoch=79 F=24.606283 beta=1.0000
+
+spearman(epoch,F)=-0.9869 P1=PASS
+
+# P2: recurrent mean-field susceptibility (Theorem 3)
+# rho(J)=1.0000 beta_c=1.0000
+beta=0.2 chi=0.2018
+beta=0.5 chi=0.5466
+beta=0.7 chi=0.8809
+beta=0.8 chi=1.1453
+beta=0.9 chi=1.5906
+beta=0.95 chi=1.9713
+beta=0.98 chi=2.3053
+beta=1.0 chi=2.6013
+beta=1.02 chi=12.7171
+beta=1.05 chi=25.5969
+beta=1.1 chi=35.5469
+beta=1.2 chi=48.0706
+beta=1.5 chi=66.1997
+beta=2.0 chi=78.3565
+beta=3.0 chi=86.7896
+beta_jump=1.0100 P2=PASS

@@ -1,0 +1,732 @@
+{
+  "experiment": "C2'' trace maintenance under E/I ablation",
+  "formalization_version": "C2pp-v0.1",
+  "parameters": {
+    "n": 8,
+    "g_ee": 7.75,
+    "g_ei": 6.7,
+    "g_ie": 10.0,
+    "g_ii": 6.3,
+    "theta_e": 2.5,
+    "theta_i": 5.75,
+    "tau_e": 1.0,
+    "tau_i": 5.8,
+    "rho_e": 0.15,
+    "rho_i": 0.15,
+    "cue_amplitude": 5.0,
+    "kappa": 6.0,
+    "lambda_i": 1.0,
+    "single_ring_gain": 2.0
+  },
+  "protocol": {
+    "dt": 0.04,
+    "cue": "node k in {0..7}, amplitude 5, t in [0,2)",
+    "instances_per_node": 8,
+    "total_time": 44.0,
+    "decode_window": [
+      12.0,
+      42.0
+    ],
+    "conditions": [
+      "full",
+      "no_positive",
+      "no_negative",
+      "single_ring"
+    ],
+    "ridge_lambda": 1.0,
+    "shuffle_reps": 4,
+    "thresholds": {
+      "s1_acc": 0.6,
+      "s2_ablation_max": 0.325,
+      "label_range": [
+        0.025,
+        0.225
+      ],
+      "chance": 0.125
+    }
+  },
+  "base": {
+    "seed": 0,
+    "oscillation": {
+      "late_std": 0.3206387947560351,
+      "spectral_purity": 0.9595535636822967,
+      "dominant_frequency": 0.06666666666666667,
+      "state_min": 0.013604276432593092,
+      "state_max": 0.9152224667708022,
+      "bounded": true,
+      "pass": true
+    },
+    "dominant_frequency": 0.06666666666666667,
+    "acc_by_condition": {
+      "full": 1.0,
+      "no_positive": 1.0,
+      "no_negative": 1.0,
+      "single_ring": 0.34375
+    },
+    "acc_label_shuffle": 0.2109375,
+    "s1_trace_decodable": true,
+    "s2_ablation_destroys": false,
+    "s3_no_leakage": true,
+    "point_pass": false
+  },
+  "grid": {
+    "factors": [
+      0.9,
+      1.0,
+      1.1
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "num_runs": 27,
+    "pass_count": 0,
+    "pass_rate": 0.0,
+    "verdict": "REJECT",
+    "runs": [
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.26313734716479,
+          "spectral_purity": 0.8500271142322181,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.012319142789297174,
+          "state_max": 0.867085838571504,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.3125
+        },
+        "acc_label_shuffle": 0.2109375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.24407310493603976,
+          "spectral_purity": 0.8359305526488017,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.012083883858438988,
+          "state_max": 0.8646230634410669,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.3125
+        },
+        "acc_label_shuffle": 0.2109375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.22624556018138936,
+          "spectral_purity": 0.8358309246568834,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.01187313382462019,
+          "state_max": 0.8635568558719886,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.3125
+        },
+        "acc_label_shuffle": 0.265625,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": false,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.3352342809276339,
+          "spectral_purity": 0.9006371449146923,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.014019215871141664,
+          "state_max": 0.9282163040799855,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.3125
+        },
+        "acc_label_shuffle": 0.2734375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": false,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.3206387947560351,
+          "spectral_purity": 0.9595535636822967,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.013604276432593092,
+          "state_max": 0.9152224667708022,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.34375
+        },
+        "acc_label_shuffle": 0.2109375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.3047242398840956,
+          "spectral_purity": 0.9446574390691191,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.013228340950481475,
+          "state_max": 0.9011720203055438,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.34375
+        },
+        "acc_label_shuffle": 0.265625,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": false,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 2.6431834327180794e-05,
+          "spectral_purity": 0.6829306178915963,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.015600631577675807,
+          "state_max": 0.9620375342926971,
+          "bounded": true,
+          "pass": false
+        },
+        "point_pass": false,
+        "reason": "no_oscillation",
+        "positive_factor": 1.1,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.0016125540340442268,
+          "spectral_purity": 0.9368716474549829,
+          "dominant_frequency": 0.1,
+          "state_min": 0.015295453755870823,
+          "state_max": 0.9546754215946829,
+          "bounded": true,
+          "pass": false
+        },
+        "point_pass": false,
+        "reason": "no_oscillation",
+        "positive_factor": 1.1,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 0,
+        "oscillation": {
+          "late_std": 0.3535943100258746,
+          "spectral_purity": 0.9492593897941303,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.014958655583433275,
+          "state_max": 0.9468855049487234,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 0.96875,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.3125
+        },
+        "acc_label_shuffle": 0.2578125,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": false,
+        "point_pass": false,
+        "positive_factor": 1.1,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.26311089191997517,
+          "spectral_purity": 0.8498740573779522,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.013024249227621918,
+          "state_max": 0.866998776007437,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.140625,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.24404397319735957,
+          "spectral_purity": 0.8356894806981329,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.01276939589782244,
+          "state_max": 0.8645079084459585,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.1484375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.2262191224385705,
+          "spectral_purity": 0.8353348845076083,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.012537599890074814,
+          "state_max": 0.863409136171476,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.1328125,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.3352564391174704,
+          "spectral_purity": 0.9008195378500141,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.014956913467277061,
+          "state_max": 0.9284830238176519,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.125,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.32055430930235884,
+          "spectral_purity": 0.9594768178166606,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.014498099947065269,
+          "state_max": 0.9155438994123123,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.46875
+        },
+        "acc_label_shuffle": 0.0859375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.3047002815242866,
+          "spectral_purity": 0.9445380675301589,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.014093393149456767,
+          "state_max": 0.9015549085082952,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.46875
+        },
+        "acc_label_shuffle": 0.109375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 2.6408910335138033e-05,
+          "spectral_purity": 0.6871107711036594,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.016852679677403483,
+          "state_max": 0.9622600422777308,
+          "bounded": true,
+          "pass": false
+        },
+        "point_pass": false,
+        "reason": "no_oscillation",
+        "positive_factor": 1.1,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.0016168164648722554,
+          "spectral_purity": 0.9381930320131762,
+          "dominant_frequency": 0.1,
+          "state_min": 0.01648075501605749,
+          "state_max": 0.9549834951088702,
+          "bounded": true,
+          "pass": false
+        },
+        "point_pass": false,
+        "reason": "no_oscillation",
+        "positive_factor": 1.1,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 1,
+        "oscillation": {
+          "late_std": 0.35543446417988256,
+          "spectral_purity": 0.9640779235219964,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.016080327551173543,
+          "state_max": 0.9472804773938165,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.46875
+        },
+        "acc_label_shuffle": 0.140625,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.1,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.2631368620297104,
+          "spectral_purity": 0.8499148320435924,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.013363862965957327,
+          "state_max": 0.8668663882409369,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.1328125,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.24407523825859043,
+          "spectral_purity": 0.8357257808943794,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.013097551084113741,
+          "state_max": 0.8642900787210479,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.1328125,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.22625129743539538,
+          "spectral_purity": 0.835208136137673,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.012854314537772568,
+          "state_max": 0.8630950407740682,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.1171875,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 0.9,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.33524582597111796,
+          "spectral_purity": 0.900719588386002,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.01540788531708886,
+          "state_max": 0.9286177720275317,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.03333333333333333,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.1171875,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.3205514816280539,
+          "spectral_purity": 0.9594735375344512,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.014925286663078555,
+          "state_max": 0.9156840504973476,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.0859375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.30471258992779476,
+          "spectral_purity": 0.9445735686432837,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.01450599644615565,
+          "state_max": 0.9017195094781985,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.09375,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.0,
+        "negative_factor": 1.1
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 2.661408704902973e-05,
+          "spectral_purity": 0.6885172547235843,
+          "dominant_frequency": 0.03333333333333333,
+          "state_min": 0.016637909201101975,
+          "state_max": 0.9623190213122654,
+          "bounded": true,
+          "pass": false
+        },
+        "point_pass": false,
+        "reason": "no_oscillation",
+        "positive_factor": 1.1,
+        "negative_factor": 0.9
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.0016204009449510214,
+          "spectral_purity": 0.9381159116882339,
+          "dominant_frequency": 0.1,
+          "state_min": 0.016550980728959292,
+          "state_max": 0.9550747482994218,
+          "bounded": true,
+          "pass": false
+        },
+        "point_pass": false,
+        "reason": "no_oscillation",
+        "positive_factor": 1.1,
+        "negative_factor": 1.0
+      },
+      {
+        "seed": 2,
+        "oscillation": {
+          "late_std": 0.35546640982677513,
+          "spectral_purity": 0.9640531577931425,
+          "dominant_frequency": 0.06666666666666667,
+          "state_min": 0.01646200081018193,
+          "state_max": 0.9473998576896161,
+          "bounded": true,
+          "pass": true
+        },
+        "dominant_frequency": 0.06666666666666667,
+        "acc_by_condition": {
+          "full": 1.0,
+          "no_positive": 1.0,
+          "no_negative": 1.0,
+          "single_ring": 0.4375
+        },
+        "acc_label_shuffle": 0.078125,
+        "s1_trace_decodable": true,
+        "s2_ablation_destroys": false,
+        "s3_no_leakage": true,
+        "point_pass": false,
+        "positive_factor": 1.1,
+        "negative_factor": 1.1
+      }
+    ]
+  }
+}

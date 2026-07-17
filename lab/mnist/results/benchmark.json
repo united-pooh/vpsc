@@ -1,0 +1,33 @@
+{
+  "config": {
+    "epochs": 5,
+    "T": 10,
+    "device": "cpu"
+  },
+  "results": {
+    "MLP": {
+      "params": 218058,
+      "train_time_s": 7.373172998428345,
+      "infer_time_s": 0.17832366625467935,
+      "ms_per_image": 0.017832366625467937,
+      "throughput_img_s": 56077.80621624356,
+      "n_test": 10000
+    },
+    "CNN": {
+      "params": 56714,
+      "train_time_s": 46.84362435340881,
+      "infer_time_s": 0.3607436815897624,
+      "ms_per_image": 0.03607436815897624,
+      "throughput_img_s": 27720.513235134073,
+      "n_test": 10000
+    },
+    "VPSC": {
+      "params": 234122,
+      "train_time_s": 20.928993940353394,
+      "infer_time_s": 0.5071964263916016,
+      "ms_per_image": 0.05071964263916016,
+      "throughput_img_s": 19716.227243839243,
+      "n_test": 10000
+    }
+  }
+}

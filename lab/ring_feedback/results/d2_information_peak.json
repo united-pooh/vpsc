@@ -1,0 +1,3040 @@
+{
+  "experiment": "D2 E/I information peak",
+  "formalization_version": "D2-v0.1",
+  "parameters": {
+    "n": 8,
+    "g_ee": 7.75,
+    "g_ei": 6.7,
+    "g_ie": 10.0,
+    "g_ii": 6.3,
+    "theta_e": 2.5,
+    "theta_i": 5.75,
+    "tau_e": 1.0,
+    "tau_i": 5.8,
+    "rho_e": 0.15,
+    "rho_i": 0.15,
+    "cue_amplitude": 5.0,
+    "kappa": 6.0,
+    "lambda_i": 1.0,
+    "single_ring_gain": 2.0
+  },
+  "stimuli": [
+    [
+      5.0,
+      5.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      5.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0
+    ],
+    [
+      5.0,
+      0.0,
+      5.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      5.0,
+      5.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      5.0,
+      0.0
+    ],
+    [
+      0.0,
+      5.0,
+      5.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      5.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0,
+      0.0,
+      5.0,
+      0.0
+    ],
+    [
+      5.0,
+      5.0,
+      5.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "protocol": {
+    "dt": 0.04,
+    "grid_factors": [
+      0.4,
+      0.6,
+      0.8,
+      1.0,
+      1.25,
+      1.5
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "stim_seed": 20260717,
+    "n_stim": 8,
+    "active_per_stim": 3,
+    "instances": 4,
+    "window": [
+      4.0,
+      16.0
+    ],
+    "quant_edges": [
+      0.2,
+      0.4,
+      0.6,
+      0.8
+    ],
+    "amp_factors": [
+      0.1,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0,
+      1.3,
+      1.6
+    ],
+    "margins": {
+      "mi": 0.5,
+      "entropy": 0.5,
+      "dr": 0.2
+    },
+    "ablation_ratio": 0.5,
+    "label_shuffle_reps": 16
+  },
+  "cells": {
+    "0.4,0.4": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5634741557494944,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5633018875559317,
+          "dr_i10": 0.1,
+          "dr_i90": 0.36584901286476984,
+          "dr_magnitudes": [
+            0.0036653278497325026,
+            0.010290247243859851,
+            0.024833751729481657,
+            0.017780870818049577,
+            0.012442872345333034,
+            0.010380490826575328,
+            0.009446812390353942,
+            0.00923879436871422
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5644767860700561,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3668400855630365,
+          "dr_magnitudes": [
+            0.0029264074850132715,
+            0.009553660471719239,
+            0.024072995711293288,
+            0.01704153378532003,
+            0.0117241598623401,
+            0.009670105344930624,
+            0.008740289517527255,
+            0.00853314109922787
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5626437936224955,
+          "dr_i10": 0.1,
+          "dr_i90": 0.365295055350065,
+          "dr_magnitudes": [
+            0.003938306917911638,
+            0.010584882841187082,
+            0.02498124147179759,
+            0.01788153120433822,
+            0.01256423266636264,
+            0.010511551094824934,
+            0.009582484072675368,
+            0.009375510987755686
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.4,0.6": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5526818842183009,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5522094991734299,
+          "dr_i10": 0.1,
+          "dr_i90": 0.35662312325192275,
+          "dr_magnitudes": [
+            0.0031640380187041295,
+            0.008853994531594744,
+            0.01642899663902808,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.555678612395425,
+          "dr_i10": 0.1,
+          "dr_i90": 0.35948321110367887,
+          "dr_magnitudes": [
+            0.0021104584170726914,
+            0.007793006917054535,
+            0.0153897190111697,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5501575410860478,
+          "dr_i10": 0.1,
+          "dr_i90": 0.35494212176123086,
+          "dr_magnitudes": [
+            0.003506238276363982,
+            0.009208949563771718,
+            0.01655909268125544,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.4,0.8": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.4955075096416029,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.49555674613401013,
+          "dr_i10": 0.1,
+          "dr_i90": 0.313008943110157,
+          "dr_magnitudes": [
+            0.00272356068690105,
+            0.007626302151777731,
+            0.009903114163959614,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5148711415296278,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3272435848165335,
+          "dr_magnitudes": [
+            0.001379569337102926,
+            0.006270260422409635,
+            0.00864732125969514,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.47609464126117096,
+          "dr_i10": 0.1,
+          "dr_i90": 0.2992916780647577,
+          "dr_magnitudes": [
+            0.003130802563804269,
+            0.008038859131094922,
+            0.010030936016932057,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.4,1.0": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.2680516823655626,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26597018064022165,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18448887417932008,
+          "dr_magnitudes": [
+            0.0023349487544893632,
+            0.0065717396216615764,
+            0.004824473780427052,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.274829114399304,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1882908059613189,
+          "dr_magnitudes": [
+            0.0007218910437787329,
+            0.0049454667609967196,
+            0.0033955794526796534,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26335575205716205,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18338159765155143,
+          "dr_magnitudes": [
+            0.0028035295150951045,
+            0.007039490654194291,
+            0.0049611324724286865,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.4,1.25": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.2554061875351347,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26624722273085344,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1846065995735912,
+          "dr_magnitudes": [
+            0.0019109580546790017,
+            0.005454099493467757,
+            3.833895000338039e-05,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.23736091579460386,
+          "dr_i10": 0.11000000000000001,
+          "dr_i90": 0.19,
+          "dr_magnitudes": [
+            0.0,
+            0.003519565259510915,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2626104240799468,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18306715152188618,
+          "dr_magnitudes": [
+            0.002451594181370975,
+            0.00598779461775778,
+            0.00019753023237689682,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.4,1.5": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.25529759774383437,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26671569876543166,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1848058432512898,
+          "dr_magnitudes": [
+            0.0015447125444298937,
+            0.004518655417473649,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.23736091579460386,
+          "dr_i10": 0.11000000000000001,
+          "dr_i90": 0.19,
+          "dr_magnitudes": [
+            0.0,
+            0.0023036432419862862,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26181617867146767,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1827326610405649,
+          "dr_magnitudes": [
+            0.002152844831078249,
+            0.0051152012631849875,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.6,0.4": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5646617573031932,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5654438676558955,
+          "dr_i10": 0.1,
+          "dr_i90": 0.36765787071163236,
+          "dr_magnitudes": [
+            0.010956993804765558,
+            0.03786438525652369,
+            0.09922233147770032,
+            0.09744594241438098,
+            0.09442583131846649,
+            0.09315922079157968,
+            0.09256642286839245,
+            0.09243263889828546
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5636099533284649,
+          "dr_i10": 0.10051996878458143,
+          "dr_i90": 0.36801226960577244,
+          "dr_magnitudes": [
+            0.009643461739963666,
+            0.03666644264194652,
+            0.09783972805317376,
+            0.09614950838675052,
+            0.09317932792460426,
+            0.09193255517497656,
+            0.09134895953475919,
+            0.09121724808300158
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5649314509252196,
+          "dr_i10": 0.1,
+          "dr_i90": 0.36722433320612724,
+          "dr_magnitudes": [
+            0.011630989242058964,
+            0.03889254297041422,
+            0.09977788633122764,
+            0.09798779977598071,
+            0.09500545769524715,
+            0.09375584797872916,
+            0.09317117743802827,
+            0.09303924150959164
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.6,0.6": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5369576417933697,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5371894222046384,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3445001554442444,
+          "dr_magnitudes": [
+            0.009044835600329648,
+            0.030088288361619586,
+            0.04703951095886971,
+            0.021553270264037083,
+            0.011802608725193342,
+            0.008334415810242413,
+            0.006791987298582436,
+            0.0064501002517508566
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5400286782726453,
+          "dr_i10": 0.1,
+          "dr_i90": 0.34675974768625384,
+          "dr_magnitudes": [
+            0.0072145588144648665,
+            0.02826794127800958,
+            0.04527620042790759,
+            0.02003902989805817,
+            0.010374974210662025,
+            0.0069377520930955505,
+            0.005409194678845486,
+            0.005070392456970163
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5336548249028253,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3417077469367832,
+          "dr_magnitudes": [
+            0.009792443751385993,
+            0.031072078995693975,
+            0.04730099033418167,
+            0.021969931423295286,
+            0.01229544193903287,
+            0.008855344118875674,
+            0.007325585175613658,
+            0.006986521477058361
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.6,0.8": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.26907538100496936,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2683680148553063,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18551029449365644,
+          "dr_magnitudes": [
+            0.007497329609899905,
+            0.02419626364757077,
+            0.014670336156274444,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2715270069104049,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1868645876712128,
+          "dr_magnitudes": [
+            0.005224798108935946,
+            0.021888629085696,
+            0.012721429861095701,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26733112124919683,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1850679103457525,
+          "dr_magnitudes": [
+            0.008311653766133631,
+            0.025163848979121384,
+            0.014803732882018195,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.6,1.0": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.2690539589533294,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26800459136013477,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18535512190499026,
+          "dr_magnitudes": [
+            0.006229888343379009,
+            0.019642271221784635,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.27259807173426837,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18732600520587434,
+          "dr_magnitudes": [
+            0.0035734788577791443,
+            0.01693730015477446,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26655921376558506,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18473926599996782,
+          "dr_magnitudes": [
+            0.0071056166822923705,
+            0.020612508842680843,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.6,1.25": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.2692801270661609,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26768133779922976,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18521720992901616,
+          "dr_magnitudes": [
+            0.004947257850421716,
+            0.015291131984550344,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2745713583313727,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18817908752989063,
+          "dr_magnitudes": [
+            0.0018755759352604429,
+            0.012175774138350137,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2655876850678802,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18432646108232176,
+          "dr_magnitudes": [
+            0.0058938071462658614,
+            0.01628204494948471,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.6,1.5": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.2634247819901916,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26752321601711715,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18514978668127405,
+          "dr_magnitudes": [
+            0.003920577310490225,
+            0.012003886338061154,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2581535418479698,
+          "dr_i10": 0.1045217047495401,
+          "dr_i90": 0.18939130052772668,
+          "dr_magnitudes": [
+            0.0004902952305170238,
+            0.008545094895217042,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2645975881054878,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18390671548704385,
+          "dr_magnitudes": [
+            0.004932549878153503,
+            0.013027609066125767,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.8,0.4": {
+      "mi": 1.4019854493483328,
+      "pattern_entropy": 3.0,
+      "dynamic_range": 0.41021180938144414,
+      "label_shuffle_mi": 1.5980145506516672,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.4675810792325539,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.5324189207674461,
+          "label_shuffle_mi_max": 1.8278195311147831,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.4099308891692917,
+          "dr_i10": 0.1,
+          "dr_i90": 0.25699867790593306,
+          "dr_magnitudes": [
+            0.47737142194025717,
+            3.012340615261099,
+            3.5021468326214897,
+            3.4709276453263502,
+            3.452578036931973,
+            3.4452164615160417,
+            3.4418046509263416,
+            3.4410370826388696
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.3596804688852169,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.6403195311147831,
+          "label_shuffle_mi_max": 1.7653195311147831,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.41461558612817156,
+          "dr_i10": 0.1,
+          "dr_i90": 0.25978590615262287,
+          "dr_magnitudes": [
+            0.46507542374162214,
+            2.991558453030364,
+            3.4892635651827577,
+            3.453110463486312,
+            3.4332648409605744,
+            3.425450648906607,
+            3.4218546879445233,
+            3.4210478445566173
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.3786947999272279,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.6213052000727721,
+          "label_shuffle_mi_max": 1.8514097655573916,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.40608895284686897,
+          "dr_i10": 0.1,
+          "dr_i90": 0.25473519516012955,
+          "dr_magnitudes": [
+            0.5385449318468081,
+            3.01492705751518,
+            3.4962956368809874,
+            3.4615722338606543,
+            3.4423072950202127,
+            3.4346967206270897,
+            3.4311897851414472,
+            3.430402512946842
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "0.8,0.6": {
+      "mi": 1.5411301758319562,
+      "pattern_entropy": 2.8333333333333335,
+      "dynamic_range": 0.2689826584528518,
+      "label_shuffle_mi": 1.2201968097592595,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.5733376465266304,
+          "mi_raw": 2.7844813452425075,
+          "label_shuffle_mi_mean": 1.211143698715877,
+          "label_shuffle_mi_max": 1.5344813452425075,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.2685337191529866,
+          "dr_i10": 0.10189591344053749,
+          "dr_i90": 0.1890995459378375,
+          "dr_magnitudes": [
+            0.13644113193634544,
+            1.6516892458564802,
+            1.5389116364553268,
+            1.4471547828985476,
+            1.416772447196986,
+            1.406008734392934,
+            1.4012122885515108,
+            1.4001479194266029
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.490865844789945,
+          "mi_raw": 2.7150182662886326,
+          "label_shuffle_mi_mean": 1.2241524214986876,
+          "label_shuffle_mi_max": 1.3789280318460246,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.26547375474686236,
+          "dr_i10": 0.10266261850062224,
+          "dr_i90": 0.18918473538895803,
+          "dr_magnitudes": [
+            0.12445392581356352,
+            1.6510003271654043,
+            1.5271705815659993,
+            1.4341019666156796,
+            1.4033907209509162,
+            1.392523678991361,
+            1.3876834620053313,
+            1.3866095717428917
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.5591870361792934,
+          "mi_raw": 2.7844813452425075,
+          "label_shuffle_mi_mean": 1.225294309063214,
+          "label_shuffle_mi_max": 1.3469813452425075,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.2729405014587063,
+          "dr_i10": 0.10080239427163333,
+          "dr_i90": 0.18897804380795927,
+          "dr_magnitudes": [
+            0.15267103274259752,
+            1.646580790632798,
+            1.5320748835444453,
+            1.4429539548855557,
+            1.4133940078177343,
+            1.4029161324332953,
+            1.3982461546667615,
+            1.3972097750166683
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "0.8,0.8": {
+      "mi": 1.5594357097199272,
+      "pattern_entropy": 3.0,
+      "dynamic_range": 0.270978700065538,
+      "label_shuffle_mi": 1.4405642902800728,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.5847685792325539,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.4152314207674461,
+          "label_shuffle_mi_max": 1.6403195311147831,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.27239007333739856,
+          "dr_i10": 0.10093829787454886,
+          "dr_i90": 0.18899314420828323,
+          "dr_magnitudes": [
+            0.0680444530446882,
+            0.7438557619180806,
+            0.5918539511948344,
+            0.4953701553900882,
+            0.4653992929920805,
+            0.45496221728967967,
+            0.45033958186020806,
+            0.44931608539125834
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.5548402344426084,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.4451597655573916,
+          "label_shuffle_mi_max": 1.6014097655573916,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.26651666279672037,
+          "dr_i10": 0.10240062260814173,
+          "dr_i90": 0.18915562473423797,
+          "dr_magnitudes": [
+            0.05769508128382905,
+            0.7409822833522179,
+            0.5955048372543663,
+            0.49876525492633417,
+            0.4685822381253779,
+            0.4580616637647168,
+            0.45340070733380533,
+            0.4523686220597376
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.5386983154846194,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.4613016845153806,
+          "label_shuffle_mi_max": 1.625,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.27402936406249506,
+          "dr_i10": 0.10053411898436904,
+          "dr_i90": 0.18894823544270767,
+          "dr_magnitudes": [
+            0.07586986289298814,
+            0.7972277216166943,
+            0.6119332207720469,
+            0.5163575913317211,
+            0.48655329150100135,
+            0.4761665336847378,
+            0.47156511019458636,
+            0.4705462260837123
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "0.8,1.0": {
+      "mi": 1.473735115533134,
+      "pattern_entropy": 2.25,
+      "dynamic_range": 0.27439692713948804,
+      "label_shuffle_mi": 0.7877586662143683,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 1.424823779305326,
+          "mi_raw": 2.2844813452425075,
+          "label_shuffle_mi_mean": 0.8596575659371815,
+          "label_shuffle_mi_max": 1.0969813452425075,
+          "pattern_entropy": 2.25,
+          "dynamic_range": 0.2741543954509374,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1879985048987709,
+          "dr_magnitudes": [
+            0.04180254136289019,
+            0.2506591173156336,
+            0.08407640689469753,
+            0.012325208158241896,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 1.5096510741680436,
+          "mi_raw": 2.25,
+          "label_shuffle_mi_mean": 0.7403489258319563,
+          "label_shuffle_mi_max": 0.9221804688852169,
+          "pattern_entropy": 2.25,
+          "dynamic_range": 0.2752230109316865,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1884616594785912,
+          "dr_magnitudes": [
+            0.03221414177438353,
+            0.241622535599191,
+            0.09351491119726774,
+            0.02118713060618327,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 1.4867304931260328,
+          "mi_raw": 2.25,
+          "label_shuffle_mi_mean": 0.7632695068739672,
+          "label_shuffle_mi_max": 0.9375,
+          "pattern_entropy": 2.25,
+          "dynamic_range": 0.27381337503584025,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18785094105346806,
+          "dr_magnitudes": [
+            0.04708277580681086,
+            0.26616832431068205,
+            0.09442320193347298,
+            0.02249810853272516,
+            0.0009307483206026923,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.8,1.25": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.2728050364304547,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2723220942096174,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18720700451193184,
+          "dr_magnitudes": [
+            0.02584830455586129,
+            0.11839519432452184,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.27460939856526284,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18819557102280743,
+          "dr_magnitudes": [
+            0.016769785201259158,
+            0.10970658356364438,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2714836165164837,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18684591894900132,
+          "dr_magnitudes": [
+            0.029780585630737155,
+            0.12419980044865575,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "0.8,1.5": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.27181493595979905,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.27095286308171085,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18661771310128444,
+          "dr_magnitudes": [
+            0.0172153891653819,
+            0.06811405530727432,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2749849085580396,
+          "dr_i10": 0.1,
+          "dr_i90": 0.18835836350845783,
+          "dr_magnitudes": [
+            0.008427929102501786,
+            0.05976651194908844,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.26950703623964667,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1859974697433894,
+          "dr_magnitudes": [
+            0.020492786773085303,
+            0.07169236668691403,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.0,0.4": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.3021644794046058,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.3007261939043422,
+          "dr_i10": 0.1,
+          "dr_i90": 0.19986014304213626,
+          "dr_magnitudes": [
+            0.4909123227741201,
+            0.6462533173818485,
+            0.6989235436661936,
+            0.7115231659411574,
+            0.7156028025069636,
+            0.7170383313091389,
+            0.7176763918742983,
+            0.7178178468805276
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.3073293283424929,
+          "dr_i10": 0.1,
+          "dr_i90": 0.20292209077079373,
+          "dr_magnitudes": [
+            0.4782337802724239,
+            0.6307309614698022,
+            0.6828350586009435,
+            0.6953795971204535,
+            0.6994478860279827,
+            0.7008801402791338,
+            0.7015168613254339,
+            0.7016580288628216
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.2984379159669822,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1988098583896018,
+          "dr_magnitudes": [
+            0.5024894867802647,
+            0.6513548010435581,
+            0.7030412637202055,
+            0.7155126210193901,
+            0.7195597255968513,
+            0.7209848763623308,
+            0.7216185046963286,
+            0.721758992216734
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.0,0.6": {
+      "mi": 0.7166000730830261,
+      "pattern_entropy": 1.38628933528331,
+      "dynamic_range": 0.2817529596434214,
+      "label_shuffle_mi": 0.4985146945946637,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.663909765557392,
+          "mi_raw": 1.1828728799283148,
+          "label_shuffle_mi_mean": 0.5189631143709228,
+          "label_shuffle_mi_max": 0.6439631143709228,
+          "pattern_entropy": 1.5487949406953985,
+          "dynamic_range": 0.2825071190029192,
+          "dr_i10": 0.1,
+          "dr_i90": 0.19164924778334144,
+          "dr_magnitudes": [
+            0.5215268238241784,
+            0.6944383695361456,
+            0.740465118287327,
+            0.750612362929731,
+            0.7538253067652203,
+            0.754947144341676,
+            0.7554443005709848,
+            0.7555543942219387
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.7591928708402187,
+          "mi_raw": 1.2466407621868583,
+          "label_shuffle_mi_mean": 0.4874478913466396,
+          "label_shuffle_mi_max": 0.6452309966294667,
+          "pattern_entropy": 1.061278124459133,
+          "dynamic_range": 0.2837887917351519,
+          "dr_i10": 0.1,
+          "dr_i90": 0.19221567087012306,
+          "dr_magnitudes": [
+            0.5054636731194133,
+            0.6754218969574053,
+            0.72073326184716,
+            0.7308329279485815,
+            0.7340404728963339,
+            0.7351615623235528,
+            0.7356585768520336,
+            0.7357686549228477
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.7266975828514679,
+          "mi_raw": 1.2158306609178966,
+          "label_shuffle_mi_mean": 0.48913307806642864,
+          "label_shuffle_mi_max": 0.6380111298031133,
+          "pattern_entropy": 1.5487949406953985,
+          "dynamic_range": 0.27896296819219296,
+          "dr_i10": 0.1,
+          "dr_i90": 0.19009161840021532,
+          "dr_magnitudes": [
+            0.5335747270409454,
+            0.6975810429690368,
+            0.7421925720168625,
+            0.7521588982358045,
+            0.7553266942969179,
+            0.7564342400026662,
+            0.7569253120447188,
+            0.7570340792657033
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.0,0.8": {
+      "mi": 1.6441357258804714,
+      "pattern_entropy": 2.75,
+      "dynamic_range": 0.21328942611187643,
+      "label_shuffle_mi": 1.1058642741195288,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 1.6327361327786958,
+          "mi_raw": 2.75,
+          "label_shuffle_mi_mean": 1.1172638672213042,
+          "label_shuffle_mi_max": 1.5235902344426084,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.21653716377897458,
+          "dr_i10": 0.1,
+          "dr_i90": 0.16464068478841626,
+          "dr_magnitudes": [
+            0.4571909110117591,
+            0.5924850931678112,
+            0.604675090767075,
+            0.6051622187070205,
+            0.6050852689136565,
+            0.6050287668166945,
+            0.6049985937746643,
+            0.6049914784304535
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 1.647403662084022,
+          "mi_raw": 2.75,
+          "label_shuffle_mi_mean": 1.102596337915978,
+          "label_shuffle_mi_max": 1.2110902344426084,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.217417200028539,
+          "dr_i10": 0.1,
+          "dr_i90": 0.16497464406101842,
+          "dr_magnitudes": [
+            0.4399051780079759,
+            0.5732036776092864,
+            0.584583343426706,
+            0.5850171151806727,
+            0.5849340512562868,
+            0.584876762803896,
+            0.5848464764351791,
+            0.5848393559869027
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 1.6522673827786956,
+          "mi_raw": 2.75,
+          "label_shuffle_mi_mean": 1.0977326172213044,
+          "label_shuffle_mi_max": 1.3360902344426084,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.20591391452811575,
+          "dr_i10": 0.1,
+          "dr_i90": 0.16066227580918643,
+          "dr_magnitudes": [
+            0.467372360192293,
+            0.5929658537347837,
+            0.6036376477657477,
+            0.6039558129371461,
+            0.6038404723929247,
+            0.6037724243495237,
+            0.6037374527490362,
+            0.6037293015666574
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.0,1.0": {
+      "mi": 1.640873673540634,
+      "pattern_entropy": 3.0,
+      "dynamic_range": 0.0,
+      "label_shuffle_mi": 1.359126326459366,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.6417352051372824,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.3582647948627176,
+          "label_shuffle_mi_max": 1.6639097655573916,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.5548402344426084,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.4451597655573916,
+          "label_shuffle_mi_max": 1.5389097655573916,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.726045581042011,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.273954418957989,
+          "label_shuffle_mi_max": 1.4610902344426084,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "1.0,1.25": {
+      "mi": 1.7358239339122283,
+      "pattern_entropy": 3.0,
+      "dynamic_range": 0.0,
+      "label_shuffle_mi": 1.2641760660877717,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.735332470694674,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.264667529305326,
+          "label_shuffle_mi_max": 1.5625,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.74609375,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.25390625,
+          "label_shuffle_mi_max": 1.375,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.726045581042011,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.273954418957989,
+          "label_shuffle_mi_max": 1.4610902344426084,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "1.0,1.5": {
+      "mi": 1.7358239339122283,
+      "pattern_entropy": 3.0,
+      "dynamic_range": 0.0,
+      "label_shuffle_mi": 1.2641760660877717,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.735332470694674,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.264667529305326,
+          "label_shuffle_mi_max": 1.5625,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.74609375,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.25390625,
+          "label_shuffle_mi_max": 1.375,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.726045581042011,
+          "mi_raw": 3.0,
+          "label_shuffle_mi_mean": 1.273954418957989,
+          "label_shuffle_mi_max": 1.4610902344426084,
+          "pattern_entropy": 3.0,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "1.25,0.4": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.4675571085360544,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.46745257784799193,
+          "dr_i10": 0.1,
+          "dr_i90": 0.293394911817301,
+          "dr_magnitudes": [
+            0.07056014843751246,
+            0.08993825128372812,
+            0.10114105069254897,
+            0.10417983058337477,
+            0.10519018060591634,
+            0.10554872698458517,
+            0.10570859727111515,
+            0.10574408177577421
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.47737994940319595,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3001787531899424,
+          "dr_magnitudes": [
+            0.0662727245578596,
+            0.0853276980779718,
+            0.09639431940551724,
+            0.09941140104692625,
+            0.1004163459072025,
+            0.10077319152138742,
+            0.10093233926807788,
+            0.10096766634562826
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.4578387983569753,
+          "dr_i10": 0.1,
+          "dr_i90": 0.28697152019886846,
+          "dr_magnitudes": [
+            0.07335110007010037,
+            0.0921548620773116,
+            0.10315509677114054,
+            0.1061590984420544,
+            0.10716007386803295,
+            0.10751557285902713,
+            0.10767413300121831,
+            0.10770933082960532
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.25,0.6": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.4347294415336791,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.4341331275748195,
+          "dr_i10": 0.1,
+          "dr_i90": 0.27172720871680883,
+          "dr_magnitudes": [
+            0.08305120507351482,
+            0.1044452898117747,
+            0.11608885986056272,
+            0.11913926928106289,
+            0.12014248125727978,
+            0.12049715539397798,
+            0.1206550721999724,
+            0.12069010411918413
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.44789383720557874,
+          "dr_i10": 0.1,
+          "dr_i90": 0.28047479366879097,
+          "dr_magnitudes": [
+            0.0771655881065687,
+            0.09810413128445283,
+            0.10955755290913238,
+            0.11258201609938201,
+            0.11357983420011308,
+            0.11393299713949467,
+            0.11409030802378162,
+            0.1141252111052129
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.42216135982063907,
+          "dr_i10": 0.1,
+          "dr_i90": 0.264339071274638,
+          "dr_magnitudes": [
+            0.0859475275865762,
+            0.10655034827341581,
+            0.11791576994876785,
+            0.12091939788309336,
+            0.12191020224855542,
+            0.12226086945250447,
+            0.12241706781406947,
+            0.12245172405511084
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.25,0.8": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.35423952097591527,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.3535870911264748,
+          "dr_i10": 0.1,
+          "dr_i90": 0.22572886148746638,
+          "dr_magnitudes": [
+            0.09562297111205709,
+            0.11773166199375229,
+            0.1284558104878748,
+            0.1310598009251276,
+            0.13189473106363003,
+            0.1321872797247945,
+            0.1323170883892768,
+            0.13234584738848199
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.37565888764861566,
+          "dr_i10": 0.1,
+          "dr_i90": 0.23749741536422195,
+          "dr_magnitudes": [
+            0.08772092201782566,
+            0.10914351335020989,
+            0.11959120563214753,
+            0.12216566806460705,
+            0.12299670497991677,
+            0.12328862758510262,
+            0.12341828635774643,
+            0.12344702292852983
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.33347258415265535,
+          "dr_i10": 0.1,
+          "dr_i90": 0.21551255919659987,
+          "dr_magnitudes": [
+            0.09845119920398915,
+            0.11949117626474148,
+            0.12984933256104902,
+            0.1323958460689365,
+            0.13321637802724773,
+            0.13350440958796383,
+            0.13363230567656448,
+            0.13366064869812444
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.25,1.0": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.22875921522608925,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.23139400394300275,
+          "dr_i10": 0.1,
+          "dr_i90": 0.17037034542859253,
+          "dr_magnitudes": [
+            0.10322748686787708,
+            0.12167472016429937,
+            0.12776959228454476,
+            0.12874175356988715,
+            0.12899621279783613,
+            0.12907816223442303,
+            0.12911328733835248,
+            0.12912096517843086
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.23796503008974426,
+          "dr_i10": 0.1,
+          "dr_i90": 0.17296770779439785,
+          "dr_magnitudes": [
+            0.09303860239996187,
+            0.11041335761869941,
+            0.11612165672422048,
+            0.11707409821064285,
+            0.11733308289814293,
+            0.11741806803504407,
+            0.11745479382983604,
+            0.11746284779773575
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.21691861164552068,
+          "dr_i10": 0.1,
+          "dr_i90": 0.16478535488805746,
+          "dr_magnitudes": [
+            0.10558546331281704,
+            0.1226585323057705,
+            0.12832259502956234,
+            0.12924179778612022,
+            0.12948612970071682,
+            0.12956543617219562,
+            0.12959954654260208,
+            0.12960701294464982
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.25,1.25": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.0,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.0,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1,
+          "dr_magnitudes": [
+            0.08008146876804734,
+            0.07756098506108078,
+            0.06705131868885594,
+            0.06286210218802957,
+            0.06133595466057873,
+            0.06077820818923474,
+            0.060526779841148404,
+            0.06047074398655017
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.0,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1,
+          "dr_magnitudes": [
+            0.0683948089736619,
+            0.06414764875194034,
+            0.05323171774020263,
+            0.04910677098927074,
+            0.04762331552328458,
+            0.04708346042206646,
+            0.046840486307329066,
+            0.04678636732031283
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.0,
+          "dr_i10": 0.1,
+          "dr_i90": 0.1,
+          "dr_magnitudes": [
+            0.08050450598183456,
+            0.07656070520659952,
+            0.06576903348666185,
+            0.06160680396154916,
+            0.0601021835473432,
+            0.05955371187589087,
+            0.05930670527146198,
+            0.05925167517102725
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.25,1.5": {
+      "mi": 1.4090578125901445,
+      "pattern_entropy": 2.6666666666666665,
+      "dynamic_range": 0.0,
+      "label_shuffle_mi": 1.114801500487494,
+      "oscillating_seeds": [
+        true,
+        true,
+        true
+      ],
+      "oscillating": true,
+      "per_seed": [
+        {
+          "mi": 1.418045117221304,
+          "mi_raw": 2.5121987351738495,
+          "label_shuffle_mi_mean": 1.0941536179525455,
+          "label_shuffle_mi_max": 1.301108500731241,
+          "pattern_entropy": 2.5,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.4817316895798909,
+          "mi_raw": 2.547180468885217,
+          "label_shuffle_mi_mean": 1.065448779305326,
+          "label_shuffle_mi_max": 1.2110902344426084,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        },
+        {
+          "mi": 1.3273966309692387,
+          "mi_raw": 2.5121987351738495,
+          "label_shuffle_mi_mean": 1.1848021042046109,
+          "label_shuffle_mi_max": 1.363608500731241,
+          "pattern_entropy": 2.75,
+          "dynamic_range": 0.0,
+          "dr_i10": NaN,
+          "dr_i90": NaN,
+          "dr_magnitudes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "oscillating": true
+        }
+      ]
+    },
+    "1.5,0.4": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5431714937411737,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5438879326491006,
+          "dr_i10": 0.1,
+          "dr_i90": 0.349854877213554,
+          "dr_magnitudes": [
+            0.020258068898565185,
+            0.02759203417484457,
+            0.0325767801359369,
+            0.03403682940201591,
+            0.03453323652293783,
+            0.034710740280748276,
+            0.03479011483210748,
+            0.03480775182727314
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5497079190027611,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3545748427828826,
+          "dr_magnitudes": [
+            0.01873782245550082,
+            0.02592237867542302,
+            0.030806175919875223,
+            0.032239309228804025,
+            0.03272689938314688,
+            0.03290128545337456,
+            0.032979270881114964,
+            0.03299659959071821
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5359186295716594,
+          "dr_i10": 0.1,
+          "dr_i90": 0.34349358411030584,
+          "dr_magnitudes": [
+            0.021506639669542693,
+            0.02860650019649391,
+            0.03347209475252999,
+            0.03490529162622025,
+            0.03539354623578195,
+            0.035568266180294295,
+            0.0356464192995718,
+            0.03566378689428884
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.5,0.6": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5355988363920917,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5361188007828304,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3436519406578099,
+          "dr_magnitudes": [
+            0.02297574324365126,
+            0.03105743118475246,
+            0.036429715643829574,
+            0.03798104934545332,
+            0.03850597400100675,
+            0.03869335683539976,
+            0.0387770943915422,
+            0.03879569625145951
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5430993805749873,
+          "dr_i10": 0.1,
+          "dr_i90": 0.34922021917765633,
+          "dr_magnitudes": [
+            0.02106195653317222,
+            0.028970152540782834,
+            0.03422526135645754,
+            0.03574610132572076,
+            0.03626117374589377,
+            0.03644509223306702,
+            0.03652728963798424,
+            0.03654554998574433
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5275783278184576,
+          "dr_i10": 0.1,
+          "dr_i90": 0.33695998317356146,
+          "dr_magnitudes": [
+            0.024313341471774663,
+            0.032103904082583234,
+            0.037329288550415285,
+            0.038847613923425506,
+            0.039362497202736435,
+            0.039546444044937346,
+            0.03962867224556099,
+            0.03964694102947952
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.5,0.8": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5250747856915409,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.525409965508182,
+          "dr_i10": 0.1,
+          "dr_i90": 0.33528178928045127,
+          "dr_magnitudes": [
+            0.025959756092706066,
+            0.03476538680550689,
+            0.04045122318539729,
+            0.04206194102175065,
+            0.04260341927233657,
+            0.04279626394515734,
+            0.04288236546003965,
+            0.04290148600071575
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5338170124890199,
+          "dr_i10": 0.1,
+          "dr_i90": 0.341835381771482,
+          "dr_magnitudes": [
+            0.02356996146170154,
+            0.03216879748462986,
+            0.037715813823226085,
+            0.039291531650587075,
+            0.039821913734576775,
+            0.040010887801242845,
+            0.04009527416743808,
+            0.0401140148722412
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5159973790774206,
+          "dr_i10": 0.1,
+          "dr_i90": 0.32809331309770784,
+          "dr_magnitudes": [
+            0.027374439207385137,
+            0.0358203262929182,
+            0.04132721777295334,
+            0.042898121775224674,
+            0.0434275156624464,
+            0.043616225067037995,
+            0.04370050956180993,
+            0.04371922907294934
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.5,1.0": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.5073958173497747,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5076022662424653,
+          "dr_i10": 0.1,
+          "dr_i90": 0.3218120235896511,
+          "dr_magnitudes": [
+            0.02892897623643087,
+            0.03823645564989597,
+            0.043983436971119616,
+            0.04556166853870014,
+            0.04608650439936479,
+            0.046272696280197145,
+            0.04635570261314914,
+            0.046374125301385405
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.5180538811141017,
+          "dr_i10": 0.1,
+          "dr_i90": 0.32965060802344487,
+          "dr_magnitudes": [
+            0.025980844505671286,
+            0.035035584782241,
+            0.040616027014192646,
+            0.042154266501352566,
+            0.042666803866412195,
+            0.04284876310313024,
+            0.042929904361375115,
+            0.04294791491589134
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.49653130469275675,
+          "dr_i10": 0.1,
+          "dr_i90": 0.31371212511008073,
+          "dr_magnitudes": [
+            0.03038519144413776,
+            0.039254353677989684,
+            0.04478881942141033,
+            0.04632090946791223,
+            0.04683189046221159,
+            0.04701335936603357,
+            0.04709429333496207,
+            0.04711225887017356
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.5,1.25": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.4420013815622674,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.4428724083494957,
+          "dr_i10": 0.1,
+          "dr_i90": 0.2772505448859312,
+          "dr_magnitudes": [
+            0.031182545471084566,
+            0.039934562599800216,
+            0.04466324027599544,
+            0.045828914892974915,
+            0.04620086591385242,
+            0.04633080846328408,
+            0.04638839069590528,
+            0.04640114137242257
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.4592878885150767,
+          "dr_i10": 0.1,
+          "dr_i90": 0.28793064393831813,
+          "dr_magnitudes": [
+            0.02748751269362515,
+            0.03590643316989617,
+            0.040429527116923936,
+            0.04155175125684618,
+            0.04191147112983895,
+            0.042037379402174224,
+            0.04209321654577103,
+            0.0421055844296383
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.4238438478222299,
+          "dr_i10": 0.1,
+          "dr_i90": 0.26536512603569606,
+          "dr_magnitudes": [
+            0.03254896603959079,
+            0.040767897788194674,
+            0.045257394849457455,
+            0.046375954687071896,
+            0.04673451760139802,
+            0.04686000552450409,
+            0.04691565280641807,
+            0.04692797832714035
+          ],
+          "oscillating": false
+        }
+      ]
+    },
+    "1.5,1.5": {
+      "mi": 0.0,
+      "pattern_entropy": 0.0,
+      "dynamic_range": 0.06865387101261654,
+      "label_shuffle_mi": 0.0,
+      "oscillating_seeds": [
+        false,
+        false,
+        false
+      ],
+      "oscillating": false,
+      "per_seed": [
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.08263714250691048,
+          "dr_i10": 0.1,
+          "dr_i90": 0.12095870888237939,
+          "dr_magnitudes": [
+            0.026215126724019377,
+            0.030008025872077404,
+            0.030011188238514563,
+            0.02955470670160043,
+            0.029348975138197453,
+            0.02926906746922242,
+            0.029232246791413452,
+            0.02922397370430385
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.09405235707340216,
+          "dr_i10": 0.1,
+          "dr_i90": 0.12418020060171542,
+          "dr_magnitudes": [
+            0.022104574726940385,
+            0.025462922052367887,
+            0.025245966284705545,
+            0.0247601434482565,
+            0.024549739472067955,
+            0.024468895977977745,
+            0.024431788122909914,
+            0.02442346245370075
+          ],
+          "oscillating": false
+        },
+        {
+          "mi": 0.0,
+          "mi_raw": 0.0,
+          "label_shuffle_mi_mean": 0.0,
+          "label_shuffle_mi_max": 0.0,
+          "pattern_entropy": -0.0,
+          "dynamic_range": 0.029272113457536976,
+          "dr_i10": 0.1,
+          "dr_i90": 0.10697249208321123,
+          "dr_magnitudes": [
+            0.02702885195778748,
+            0.03028426123550254,
+            0.03011351222229397,
+            0.02964192283547451,
+            0.02943533310306723,
+            0.029355680262752593,
+            0.029319072169454508,
+            0.029310854703004097
+          ],
+          "oscillating": false
+        }
+      ]
+    }
+  },
+  "p1": {
+    "mi": {
+      "max": 1.7358239339122283,
+      "peak_cells": [
+        [
+          1.0,
+          1.25
+        ],
+        [
+          1.0,
+          1.5
+        ]
+      ],
+      "peak_interior_osc": true,
+      "peak_on_boundary": true,
+      "non_osc_mean": 0.1322231349826425,
+      "margin_ok": true,
+      "pass": false
+    },
+    "pattern_entropy": {
+      "max": 3.0,
+      "peak_cells": [
+        [
+          0.8,
+          0.4
+        ],
+        [
+          0.8,
+          0.8
+        ],
+        [
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.25
+        ],
+        [
+          1.0,
+          1.5
+        ]
+      ],
+      "peak_interior_osc": true,
+      "peak_on_boundary": true,
+      "non_osc_mean": 0.22021687363045897,
+      "margin_ok": true,
+      "pass": false
+    },
+    "dynamic_range": {
+      "max": 0.5646617573031932,
+      "peak_cells": [
+        [
+          0.6,
+          0.4
+        ]
+      ],
+      "peak_interior_osc": false,
+      "peak_on_boundary": true,
+      "non_osc_mean": 0.3546992380026204,
+      "margin_ok": true,
+      "pass": false
+    }
+  },
+  "peak_cell": [
+    1.0,
+    1.25
+  ],
+  "controls": {
+    "0": {
+      "full_mi": 1.735332470694674,
+      "no_positive_mi": 0.0,
+      "no_negative_mi": 0.0,
+      "single_ring_mi": 0.31715467764220495,
+      "conn_shuffle_mi": 1.651309912084022,
+      "mi_raw": 3.0,
+      "label_shuffle_mi_mean": 1.264667529305326,
+      "label_shuffle_mi_max": 1.5625,
+      "p2": true,
+      "p3": false,
+      "p4": true
+    },
+    "1": {
+      "full_mi": 1.74609375,
+      "no_positive_mi": 0.0,
+      "no_negative_mi": 0.0,
+      "single_ring_mi": 0.19697053550223043,
+      "conn_shuffle_mi": 1.638706528292424,
+      "mi_raw": 3.0,
+      "label_shuffle_mi_mean": 1.25390625,
+      "label_shuffle_mi_max": 1.375,
+      "p2": true,
+      "p3": false,
+      "p4": true
+    },
+    "2": {
+      "full_mi": 1.726045581042011,
+      "no_positive_mi": 0.0,
+      "no_negative_mi": 0.0,
+      "single_ring_mi": 0.2932254264934633,
+      "conn_shuffle_mi": 1.591211225542837,
+      "mi_raw": 3.0,
+      "label_shuffle_mi_mean": 1.273954418957989,
+      "label_shuffle_mi_max": 1.4610902344426084,
+      "p2": true,
+      "p3": false,
+      "p4": true
+    }
+  },
+  "verdict": {
+    "p1": false,
+    "p2": true,
+    "p3": false,
+    "p4": true,
+    "d2": "REJECT"
+  }
+}
