@@ -374,6 +374,7 @@ def _sparse_forward(
             query_indices,
             state,
             detach_state=detach_state,
+            _unchecked=True,
         )
         sequence = core_output.sequence
     else:
@@ -515,10 +516,18 @@ def train_model(
     *,
     epochs: int,
     device: torch.device,
+    optimizer_foreach: Optional[bool] = None,
+    optimizer_fused: Optional[bool] = None,
 ) -> Dict[str, Any]:
     model.train(True)
     parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
-    optimizer = torch.optim.AdamW(parameters, lr=1e-3, weight_decay=0.01)
+    optimizer = torch.optim.AdamW(
+        parameters,
+        lr=1e-3,
+        weight_decay=0.01,
+        foreach=None if optimizer_fused else optimizer_foreach,
+        fused=optimizer_fused,
+    )
     timings = []
     losses = []
     input_tokens = 0
@@ -548,7 +557,7 @@ def train_model(
                 input_ids,
                 query_indices,
                 state,
-                use_eligibility=name == "snn_at1",
+                use_eligibility=name in ("snn_at1", "snn_ra0"),
                 detach_state=True,
             )
             loss = F.cross_entropy(
@@ -559,7 +568,9 @@ def train_model(
                     f"non-finite TW0 loss for {name} at update {update + 1}"
                 )
             loss.backward()
-            gradient_norm = torch.nn.utils.clip_grad_norm_(parameters, 1.0)
+            gradient_norm = torch.nn.utils.clip_grad_norm_(
+                parameters, 1.0, foreach=optimizer_foreach
+            )
             optimizer.step()
             _sync(device)
             elapsed_ms = (time.perf_counter_ns() - started) / 1e6

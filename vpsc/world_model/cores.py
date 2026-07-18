@@ -1985,36 +1985,50 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
                 running_decay.clone(),
             )
 
-        (
-            query_trace_pair,
-            query_decay_eligibility,
-            final_pair,
-            final_decay_eligibility,
-        ) = trace_and_decay_snapshots(
-            torch.cat((write_e, write_i), dim=-1),
-            torch.cat((decay_e, decay_i), dim=0),
-            decay_derivative.reshape(-1),
-            torch.cat((initial_e, initial_i), dim=-1),
-        )
-        query_trace_e, query_trace_i = query_trace_pair.chunk(2, dim=-1)
-        final_e, final_i = final_pair.chunk(2, dim=-1)
-        if scan_aligned:
-            coefficient_e = decay_e.view(1, 1, -1).expand_as(write_e)
-            coefficient_i = decay_i.view(1, 1, -1).expand_as(write_i)
-            aligned_e = E3GatedTraceScanCore._affine_prefix_scan(
-                coefficient_e,
-                (1.0 - coefficient_e) * write_e,
-                initial_e,
+        if reverse_adjoint:
+            write_pair = torch.cat((write_e, write_i), dim=-1)
+            decay_pair = torch.cat((decay_e, decay_i), dim=0)
+            initial_pair = torch.cat((initial_e, initial_i), dim=-1)
+            aligned_pair = E3GatedTraceScanCore._constant_affine_prefix_scan(
+                write_pair,
+                decay_pair,
+                initial_pair,
             )
-            aligned_i = E3GatedTraceScanCore._affine_prefix_scan(
-                coefficient_i,
-                (1.0 - coefficient_i) * write_i,
-                initial_i,
+            query_trace_pair = aligned_pair.index_select(1, query_indices).clone()
+            query_trace_e, query_trace_i = query_trace_pair.chunk(2, dim=-1)
+            final_pair = aligned_pair[:, -1].clone()
+            final_e, final_i = final_pair.chunk(2, dim=-1)
+        else:
+            (
+                query_trace_pair,
+                query_decay_eligibility,
+                final_pair,
+                final_decay_eligibility,
+            ) = trace_and_decay_snapshots(
+                torch.cat((write_e, write_i), dim=-1),
+                torch.cat((decay_e, decay_i), dim=0),
+                decay_derivative.reshape(-1),
+                torch.cat((initial_e, initial_i), dim=-1),
             )
-            query_trace_e = aligned_e.index_select(1, query_indices).clone()
-            query_trace_i = aligned_i.index_select(1, query_indices).clone()
-            final_e = aligned_e[:, -1].clone()
-            final_i = aligned_i[:, -1].clone()
+            query_trace_e, query_trace_i = query_trace_pair.chunk(2, dim=-1)
+            final_e, final_i = final_pair.chunk(2, dim=-1)
+            if scan_aligned:
+                coefficient_e = decay_e.view(1, 1, -1).expand_as(write_e)
+                coefficient_i = decay_i.view(1, 1, -1).expand_as(write_i)
+                aligned_e = E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient_e,
+                    (1.0 - coefficient_e) * write_e,
+                    initial_e,
+                )
+                aligned_i = E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient_i,
+                    (1.0 - coefficient_i) * write_i,
+                    initial_i,
+                )
+                query_trace_e = aligned_e.index_select(1, query_indices).clone()
+                query_trace_i = aligned_i.index_select(1, query_indices).clone()
+                final_e = aligned_e[:, -1].clone()
+                final_i = aligned_i[:, -1].clone()
         query_spike_e = (query_trace_e >= float(spike_threshold)).to(dtype=x.dtype)
         query_spike_i = (query_trace_i >= float(spike_threshold)).to(dtype=x.dtype)
         raw_queries = torch.cat(
@@ -2038,37 +2052,21 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         ctx.input_requires_grad = bool(ctx.needs_input_grad[0])
         ctx.reverse_adjoint = bool(reverse_adjoint)
         ctx.query_positions = query_positions
+        ctx.query_indices = query_indices
         ctx.time_steps = int(time_steps)
         ctx.state_dim = int(state_dim)
         ctx.spike_threshold = float(spike_threshold)
         ctx.surrogate_scale = scale
         if reverse_adjoint:
-            if not scan_aligned:
-                coefficient_e = decay_e.view(1, 1, -1).expand_as(write_e)
-                coefficient_i = decay_i.view(1, 1, -1).expand_as(write_i)
-                aligned_e = E3GatedTraceScanCore._affine_prefix_scan(
-                    coefficient_e,
-                    (1.0 - coefficient_e) * write_e,
-                    initial_e,
-                )
-                aligned_i = E3GatedTraceScanCore._affine_prefix_scan(
-                    coefficient_i,
-                    (1.0 - coefficient_i) * write_i,
-                    initial_i,
-                )
             previous_trace_pair = torch.cat(
-                (
-                    torch.cat((initial_e.unsqueeze(1), aligned_e[:, :-1]), dim=1),
-                    torch.cat((initial_i.unsqueeze(1), aligned_i[:, :-1]), dim=1),
-                ),
-                dim=-1,
+                (initial_pair.unsqueeze(1), aligned_pair[:, :-1]), dim=1
             )
             ctx.save_for_backward(
                 query_trace_e,
                 query_trace_i,
                 x,
                 previous_trace_pair,
-                torch.cat((write_e, write_i), dim=-1),
+                write_pair,
                 drive_factors,
                 decay_derivative.reshape(-1),
                 decay_e,
@@ -2254,53 +2252,39 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         )
 
         if ctx.reverse_adjoint:
-            direct_e = torch.zeros(
-                query_trace_e.shape[0],
-                ctx.time_steps,
-                state_dim,
-                device=query_trace_e.device,
-                dtype=query_trace_e.dtype,
-            )
-            direct_i = torch.zeros_like(direct_e)
-            for query_index, position in enumerate(ctx.query_positions):
-                direct_e[:, position] += learning_e[:, query_index]
-                direct_i[:, position] += learning_i[:, query_index]
-            direct_e[:, -1] += final_signal_e
-            direct_i[:, -1] += final_signal_i
+            learning_pair = torch.cat((learning_e, learning_i), dim=-1)
+            final_pair = torch.cat((final_signal_e, final_signal_i), dim=-1)
+            decay_pair = torch.cat((decay_e, decay_i), dim=0)
 
-            def sparse_reverse_adjoint(direct: Tensor, decay: Tensor) -> Tensor:
-                result = torch.zeros_like(direct)
-                impulse_positions = tuple(
-                    sorted(set(ctx.query_positions + (ctx.time_steps - 1,)))
+            def parallel_reverse_adjoint(
+                impulses: Tensor, decay: Tensor
+            ) -> Tensor:
+                direct = torch.zeros(
+                    impulses.shape[0],
+                    ctx.time_steps,
+                    impulses.shape[-1],
+                    device=impulses.device,
+                    dtype=impulses.dtype,
                 )
-                next_value = torch.zeros_like(direct[:, 0])
-                for impulse_index in range(len(impulse_positions) - 1, -1, -1):
-                    position = impulse_positions[impulse_index]
-                    lower = (
-                        impulse_positions[impulse_index - 1] + 1
-                        if impulse_index > 0
-                        else 0
+                direct.index_copy_(1, ctx.query_indices, impulses)
+                direct[:, -1] += final_pair
+                prefix = direct.flip(1)
+                retention = torch.cumprod(
+                    decay.unsqueeze(0).expand(ctx.time_steps, -1), dim=0
+                )
+                offset = 1
+                while offset < ctx.time_steps:
+                    composed = prefix[:, offset:] + retention[offset - 1].view(
+                        1, 1, -1
+                    ) * prefix[:, :-offset]
+                    prefix = torch.cat(
+                        (prefix[:, :offset], composed), dim=1
                     )
-                    value_at_impulse = (
-                        direct[:, position] + decay.unsqueeze(0) * next_value
-                    )
-                    exponents = torch.arange(
-                        position - lower,
-                        -1,
-                        -1,
-                        device=direct.device,
-                        dtype=direct.dtype,
-                    ).unsqueeze(1)
-                    segment = value_at_impulse.unsqueeze(1) * decay.unsqueeze(0).pow(
-                        exponents
-                    ).unsqueeze(0)
-                    result[:, lower : position + 1] = segment
-                    next_value = segment[:, 0]
-                return result
+                    offset *= 2
+                return prefix.flip(1)
 
-            adjoint_e = sparse_reverse_adjoint(direct_e, decay_e)
-            adjoint_i = sparse_reverse_adjoint(direct_i, decay_i)
-            adjoint_pair = torch.cat((adjoint_e, adjoint_i), dim=-1)
+            adjoint_pair = parallel_reverse_adjoint(learning_pair, decay_pair)
+            adjoint_e, adjoint_i = adjoint_pair.chunk(2, dim=-1)
             adjoint_rows = torch.cat(
                 (adjoint_e, adjoint_i, adjoint_e, adjoint_i), dim=-1
             )
@@ -2319,8 +2303,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
                 adjoint_pair * local_decay, dim=(0, 1)
             ).reshape(2, state_dim)
             initial_gradient = (
-                torch.cat((decay_e, decay_i), dim=0).unsqueeze(0)
-                * adjoint_pair[:, 0]
+                decay_pair.unsqueeze(0) * adjoint_pair[:, 0]
             )
             grad_initial_e, grad_initial_i = initial_gradient.chunk(2, dim=-1)
             grad_x = (
@@ -2942,6 +2925,33 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         return prefix_a * initial.unsqueeze(1) + prefix_b
 
     @staticmethod
+    def _constant_affine_prefix_scan(
+        write: Tensor, decay: Tensor, initial: Tensor
+    ) -> Tensor:
+        """Parallel affine scan specialized to a time-invariant decay.
+
+        The generic scan composes both the affine coefficient and bias at every
+        tree level.  Here the coefficient of an ``offset``-long block is known
+        analytically as ``decay**offset``, so only the injected trace prefix is
+        scanned.  This preserves the same recurrence while halving the dynamic
+        scan state and its concatenation dispatches.
+        """
+
+        time_steps = write.shape[1]
+        retention = torch.cumprod(
+            decay.unsqueeze(0).expand(time_steps, -1), dim=0
+        )
+        prefix = (1.0 - decay).view(1, 1, -1) * write
+        offset = 1
+        while offset < time_steps:
+            composed = prefix[:, offset:] + retention[offset - 1].view(
+                1, 1, -1
+            ) * prefix[:, :-offset]
+            prefix = torch.cat((prefix[:, :offset], composed), dim=1)
+            offset *= 2
+        return prefix + retention.unsqueeze(0) * initial.unsqueeze(1)
+
+    @staticmethod
     def _serial_trace(write: Tensor, decay: Tensor, initial: Tensor) -> Tensor:
         state = initial
         traces = []
@@ -2966,6 +2976,7 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         state: Optional[E3ScanState] = None,
         *,
         detach_state: bool = False,
+        _unchecked: bool = False,
     ) -> CoreOutput[E3ScanState]:
         """Return exact sparse-query AT0 outputs with compact eligibility.
 
@@ -2977,25 +2988,32 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         """
 
         batch_size, time_steps = _validate_sequence(x, self.input_dim)
-        if not isinstance(query_indices, Tensor):
-            raise TypeError("query_indices must be a torch.Tensor")
-        if query_indices.ndim != 1:
-            raise ValueError("query_indices must be one-dimensional")
-        if query_indices.dtype != torch.long:
-            raise ValueError("query_indices must use torch.long dtype")
-        if query_indices.numel() == 0:
-            raise ValueError("query_indices must be non-empty")
-        indices = query_indices.to(device=x.device)
-        if int(indices[0].item()) < 0 or int(indices[-1].item()) >= time_steps:
-            raise ValueError(
-                f"query_indices must lie in [0, {time_steps}), got "
-                f"[{int(indices[0].item())}, {int(indices[-1].item())}]"
-            )
-        if indices.numel() > 1 and not bool(torch.all(indices[1:] > indices[:-1])):
-            raise ValueError("query_indices must be strictly increasing and unique")
+        if _unchecked:
+            indices = query_indices
+        else:
+            if not isinstance(query_indices, Tensor):
+                raise TypeError("query_indices must be a torch.Tensor")
+            if query_indices.ndim != 1:
+                raise ValueError("query_indices must be one-dimensional")
+            if query_indices.dtype != torch.long:
+                raise ValueError("query_indices must use torch.long dtype")
+            if query_indices.numel() == 0:
+                raise ValueError("query_indices must be non-empty")
+            indices = query_indices.to(device=x.device)
+            if int(indices[0].item()) < 0 or int(indices[-1].item()) >= time_steps:
+                raise ValueError(
+                    f"query_indices must lie in [0, {time_steps}), got "
+                    f"[{int(indices[0].item())}, {int(indices[-1].item())}]"
+                )
+            if indices.numel() > 1 and not bool(
+                torch.all(indices[1:] > indices[:-1])
+            ):
+                raise ValueError(
+                    "query_indices must be strictly increasing and unique"
+                )
         if state is None:
             state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
-        else:
+        elif not _unchecked:
             self._validate_state(state, batch_size)
         layer = state.layers[0]
         raw, final_e, final_i = _GatedTraceMultiQueryEligibility.apply(

@@ -133,6 +133,7 @@ def _equivalence_case(
     device: torch.device,
     seed: int,
     eligibility_forward_mode: str = "segment",
+    eligibility_backward_mode: str = "forward_eligibility",
 ) -> Dict[str, Any]:
     torch.manual_seed(seed)
     reference = E3GatedTraceScanCore(
@@ -144,6 +145,7 @@ def _equivalence_case(
         state_dim=5,
         execution_mode="scan",
         eligibility_forward_mode=eligibility_forward_mode,  # type: ignore[arg-type]
+        eligibility_backward_mode=eligibility_backward_mode,  # type: ignore[arg-type]
     ).to(device)
     candidate.load_state_dict(reference.state_dict())
     reference_input = torch.randn(
@@ -283,6 +285,7 @@ def _equivalence_case(
         "query_count": len(queries),
         "query_indices": tuple(queries),
         "input_gradient": input_gradient,
+        "eligibility_backward_mode": eligibility_backward_mode,
         "forward": state_records,
         "gradients": gradients,
         "passed": all(record["passed"] for record in state_records.values())

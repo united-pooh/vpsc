@@ -4,6 +4,136 @@
 
 ---
 
+## 2026-07-19：E3-SG0 预注册 — action-conditioned counterfactual sequence generation（进行中）
+
+### 从 sparse-token 非劣到连续世界输出
+
+RA0 已在 TW0 的 K16 teacher-forced token 上同时超过 AT1/BPTT/LSTM 训练速度，但这仍可能只说明“稀疏监督适合 reverse adjoint”。下一任务不立即跳到更大数据，而是用同一批真实 TextWorld transition 构造连续反事实生成：给定当前 observation 与**未实际执行的 action**，模型必须生成该 action 的 `next_obs` 完整 token 序列。它直接检验 action-conditioned world response、连续 K、free-running exposure error 与 paired action sensitivity。
+
+本地原始 `episodes.jsonl` 已审计：train/valid/test 按 game seed 隔离，分别有 `40/10/10` 个 counterfactual transition；action type 为 train `{move:16, inventory:16, look:4, examine:4}`，valid/test 各 `{move:4, inventory:4, look:1, examine:1}`。规范化规则只删除空行、`>` HUD/status 行，并在 observation 存在 `-= Room =-` 时删除其之前的启动 logo/goal；房间、出口、物体、inventory 与终局文本保留。
+
+按最终 compact prompt 序列化重新审计后，word-token context train/valid/test 最大 `76/76/78`、mean `56.2/58.5/58.7`，target（不含 EOS）最大 `64/64/66`、mean `24.3/27.3/25.8`；无空 target、无 format-only target。train target 仅21种，valid/test各6种，但 valid/test 各只有1个完整 target 与 train 重复；规范化 train-only task vocabulary 的 target OOV ratio为 `0%/7.69%/6.59%`，低于10%但必须单列，free generation 按编码后的 `<unk>` target 公平比较。此前 `73/73/75` 是未加入 BOS/EOS 的自然文本预审计值，不用于正式门。
+
+### 任务路线比较
+
+| 路线 / epistemic label | 核心监督 | 价值 | 最小决定实验 | 主要风险 |
+|---|---|---|---|---|
+| **规范化 word-token counterfactual generation** / New task composition | prompt=`observation+candidate action`，连续生成完整 `next_obs+EOS` | 直接测语言世界响应；T<=142 可复用现有模型 | teacher NLL + greedy edit/LCS/feature/paired sensitivity | 40 train examples小；6% OOV |
+| normalized UTF-8 byte generation / Established representation | 无 OOV 的 byte autoregression | 最严格 exact text | 同样60 example、target最长318 bytes | 序列4–5倍长，先混淆表示与动力学 |
+| raw JSON counterfactual-line generation / Baseline shortcut | 生成 action/keys/HUD/next_obs 全行 | 最接近现有 event stream | raw token NLL/exact | JSON与HUD格式主导，不接受为首选 |
+| paired counterfactual discrimination / Established contrastive task | 在两个 candidate next states 中选正确者 | 数据效率高、可测 action sensitivity | pair accuracy | 不是生成，不能证明实时响应 |
+| latent next-state prediction + decoder / Established world-model route | 预测 observation latent 再解码 | 可能提高长文本质量 | latent retrieval + reconstruction | 引入 ANN decoder/额外目标，混淆纯 SNN 主线 |
+| actual+counterfactual multitask generation / Established augmentation | 同时生成实际与反事实 next observation | 训练样本约增50%，结构更广 | channel-conditioned generation | 改变当前单变量任务，失败难归因 |
+| online TextWorld closed-loop rollout / Ultimate evaluation | 模型生成状态并驱动下一 action | 与最终世界模型最接近 | success/consistency over episodes | 当前先需证明单步 free generation 有效 |
+| HomeGrid multimodal dynamics / Cross-domain transfer | image/symbol+action→next frame/state | 多模态关键门 | visual latent rollout | 应在语言生成门之后独立隔离 encoder |
+
+选择第一条；byte generation 是若 OOV 成为主要误差时的下一表示对照，paired discrimination只作诊断，不替代生成。**What if：**RA0 的 reverse scan 成本几乎与 K 无关，而 AT1 eligibility 随 K×parameter 增长；当 K 从16变成每个 target 的5–67个连续位置时，RA0 是否会获得更大的训练优势，同时因 exact gradient 保持 free-running generation 与 BPTT 非劣？
+
+### 冻结数据、训练与指标
+
+- 每例 prompt tokens：`<bos>` + `observation:` + 规范化 observation + `<eos>` + `action:` + candidate action + `<eos>` + `next observation:`；target 为规范化 next_obs 的 word tokens + `<eos>`。compact semantic markers 避免 JSON/channel 标点主导，且全部来自 train vocabulary。输入为 `prompt+target[:-1]`，query 是预测全部 target 的连续 causal positions；不截断 target，不跨样本传 state。
+- tokenizer沿用 manifest/SHA 已验证的 TextWorld event corpus；vocabulary 则由**规范化后的 train prompt+target**重新确定性构建，valid/test 不贡献 token identity 或 frequency。split仍由原 game seed决定。审计必须记录 raw source hash、task-vocabulary fingerprint、example/pair/action分布、context/target长度、OOV、完整 target overlap、copy-observation 与 train action-majority baseline。
+- 模型固定 `D=32,state=31`：BPTT gated trace、AT1 forward eligibility、RA0 parallel reverse adjoint、LSTM、1-layer Transformer；wrapper/三种 SNN初值共享，参数spread<=2%。训练 `100 epochs`、每例B1、每 epoch 使用按 seed 预生成的相同 shuffle schedule；AdamW `lr=1e-3,wd=.01`、clip1、foreach clip+fused optimizer、seeds `{0,1,2}`、CPU4 threads。
+- teacher-forced 报 target NLL/PPL/top1、action-type macro；greedy 从完整 prompt prefill 后生成到 EOS或80 tokens，报 exact、token edit similarity、LCS-F1、world-feature F1（room/direction/coin/inventory/end）、paired action diversity，并保存每例 target/prediction token。另报 prompt prefill和逐 token p50/p95。
+
+### 冻结门
+
+- **H-SG0-DATA**：manifest/game/event SHA通过；counts=`40/10/10`、pair counts=`20/5/5`；context<=80、target<=70；valid/test target OOV<10%、format-only=0、test完整 target与train overlap<=20%。否则任务 INVALID。
+- **H-SG0-TASK**：LSTM/Transformer 每 seed test teacher NLL 均比未训练下降>=`.10`；至少一个 ANN 的三-seed mean greedy edit similarity 必须比 `max(copy_observation, action_majority)` 高>=`.05`，否则生成预算/任务无效。
+- **H-SG0-QUALITY**：RA0 每 seed NLL改善>=`.10`；mean NLL<=最佳ANN+`.25`，与BPTT/AT1 mean gap各<=`.10`；RA0 mean edit similarity>=最佳ANN-.10、与BPTT/AT1差各<=`.05`，且比两种非神经 baseline最佳值高>=`.05`。paired target不同的样本中，RA0生成必须至少50%随action改变。
+- **H-SG0-SPEED**：真实 update p50（prompt+连续target、CE/backward/clip/fused AdamW）RA0 比AT1与BPTT均快>=`1.25x`且<=LSTM；同时报告 K 与 total T 分布。
+- **H-SG0-STREAM**：RA0 greedy token p50/p95均<=LSTM；prompt prefill p50<=LSTM。Transformer cache与完整 generation state bytes单列。
+- 全门通过才进入 online closed-loop；质量失败转 byte/更强 adaptive-spike dynamics，短序列速度失败转 native fused constant-scan/batched variable-query kernel。runner/产物固定为 `experiments/e3_sg0_counterfactual_generation.py`、`results/e3_scan/e3_sg0_counterfactual_generation.json`。
+
+### 正式前任务仪器修正
+
+首个2-epoch smoke 发现，直接复用 raw event vocabulary 会把 JSON 中的转义换行与相邻自然语言粘成 `nYou've` 一类 token，而 SG0 规范化后实际 token 是 `You've`；compact marker `next` 也因此成为40次伪 OOV。这不是模型误差，而是表示仪器不一致。该 smoke 只用于暴露 runner 问题，不参与任何正式判定或结果比较。
+
+正式运行前已在不改变 tokenizer、split、prompt、target、模型与冻结门的前提下修正为 normalized-train-only task vocabulary：只扫描40个 train examples 的 prompt+target 建表，得到 size `183`、fingerprint `dd3e51c6deb5b1aede57b71b9d9745f390a301ba4b7ccd3a66a237f066717364`；train prompt/target unknown均为0，valid/test target unknown为 `21/273` 与 `17/258`（`7.69%/6.59%`）。修正后2-epoch全链路 smoke 的 DATA gate PASS；正式100-epoch结果尚未运行，继续保持“进行中”。
+
+---
+
+## 2026-07-19：E3-RA0 结果 — exact parallel reverse adjoint 在真实任务训推均超过 LSTM（关键正面结果）
+
+### 从“梯度正确”到“并行形式”的路线收敛
+
+7月18日的 RA0 预注册选择 exact reverse adjoint，但首个实现仍有两处与目标不一致：forward 先算 AT1 的 query/decay eligibility、再算完整 trace；backward 用 Python 按 K 个冲激逐段填充伴随场。两者数学正确，却没有把常系数递推充分映射为并行 tensor scan。正式运行前按同一冻结任务与门做 smoke，不改变 K、模型、数据或质量门。
+
+| 路线 / 标签 | 变化 | smoke 结论 | 决定 |
+|---|---|---|---|
+| 原型：双 E/I scan + sparse segment adjoint / exact prototype | E/I 分开 forward；K 段反向闭式 | 梯度通过，但有重复 trace/eligibility 与 Python 分段 dispatch | 淘汰 |
+| 合并 E/I forward scan / algebraic fusion | 把两套同构递推拼成 `2S` 一次 scan | 减少一半 scan 循环/拼接，梯度不变 | 采用 |
+| 常系数 bias-only forward scan / exact specialization | 利用 block coefficient=`lambda^offset`，只扫描 bias | 独立算子 p50 `0.170 ms` vs 通用 affine `0.233 ms` | 采用 |
+| sparse impulses + parallel reverse scan / exact specialization | K 个 learning signal 写入稀疏冲激场，翻转时间后做常系数 prefix scan | 独立算子 p50 `0.175 ms` vs segment `0.251 ms` | **采用为 RA0** |
+| 已审计 query/state unchecked hot path / systems invariant | 公共 API 保留完整验证；TW0 data audit 后的热循环不再 `.item()/torch.all` | 消除 CPU 开销与未来 CUDA host sync；AT1/RA0 同样使用 | 采用 |
+| foreach clip + fused AdamW / fair optimizer control | 五模型统一使用同一 foreach/fused optimizer 路径 | 降低多参数 tensor dispatch，不改变优化方程 | 正式 runner 固定 |
+| embedding-aware scatter / next systems specialization | custom backward 直接 scatter token gradient | profiler 显示 embedding backward 不是当前主瓶颈 | 暂缓；若正式速度失败再做 |
+
+**What if：**既然正向 trace 与反向 adjoint 都是同一个常系数半群，只是 bias 与时间方向不同，是否应把“eligibility vs BPTT”重新表述为双向 prefix-scan 原语，使 CPU 多核与未来 GPU 都只需同一类 kernel？当前 smoke 支持这一表述，但 GPU 尚不可用，不能宣称 GPU 实测成功。
+
+### 当前证据（仅 smoke，不改判正式门）
+
+- 全部 gated-trace 单测仍通过；RA0 对 BPTT 的 input/初态/全部参数梯度保持原 `2e-5/1e-4` 门。
+- 4线程、`T512/K16/input-grad` 的50次交错核心样本：RA0 p50 `1.188 ms`，LSTM `1.497`，AT1 `3.476`，BPTT `3.083`；RA0 相对三者分别为 `1.26x / 2.92x / 2.59x`（按 LSTM/AT1/BPTT 除 RA0）。
+- 同线程一轮真实 TextWorld smoke：RA0 update p50 `1.459 ms`，LSTM `1.506`，AT1 `3.764`，BPTT `2.885`；三种 SNN 的 first/last loss 与 held-out NLL 保持浮点等价。首次在 trainable tied embedding + K16 + optimizer 的实际路径低于 LSTM，但只有单 seed/单 epoch，不能标 PASS。
+- saved-storage smoke 仍过门：RA0/BPTT 为 T512 `17.17%`、T2048 `14.18%`；代价是随 T 线性增长（512→2048 为 `3.74x`），与 AT1 的常数 T 内存形成明确交换。
+
+**决定：**冻结 `combined constant forward scan + parallel reverse scan + audited unchecked hot path + fair fused optimizer`，立即运行原预注册三 seed/20 epoch/1-4-16线程正式矩阵。门槛一项不放宽；若真实速度或质量失败，保留 negative result 并进入 embedding scatter/native fused scan，而不是减少 K 或冻结 embedding。
+
+### 正式产物与等价性
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_ra0_reverse_adjoint.py --output results/e3_scan/e3_ra0_reverse_adjoint.json`；SHA-256 `C4FBB3554B5C21A2994ED0E671FCE1647CB6742B31EA7B1DF9C902179A9A302B`。
+- 环境为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、32 logical CPUs、MKLDNN enabled。宿主虽有 RX 7800 XT 且 WSL 有 `/dev/dxg/rocminfo`，但 ROCm 只枚举 CPU，`torch.cuda.is_available()==False`；本结果只证明 CPU 多核，不声称 GPU。
+- 四个冻结 case 全过。新增 `(B,T,K,input-grad)=(1,512,16,on)` 的 forward 最大误差 `5.96e-7`、全梯度最大误差 `9.69e-8`；其余三 case forward<=`2.98e-7`、gradient<=`3.35e-8`。hard event、query/state、input/初态/全部参数均通过 `2e-5/1e-4`。**H-RA0-EQ PASS。**
+
+input-gradient、K16 的 unique saved storage：
+
+| T | BPTT | AT1 forward eligibility | RA0 reverse adjoint | RA0 / BPTT |
+|---:|---:|---:|---:|---:|
+| 512 | 3,660,616 B | **591,424 B** | 628,688 B | **17.17%** |
+| 2048 | 16,567,112 B | **1,353,280 B** | 2,349,008 B | **14.18%** |
+
+RA0 随 T512→2048 增长 `3.736x`，不具备 AT1 的 T 常数内存，但两档均低于 BPTT 的25%门；custom autograd nodes 为14 vs BPTT `265/313`。**H-RA0-MEM PASS。**
+
+### 多核核心速度
+
+K16、input gradient on 的 p50 ms：
+
+| threads | T | BPTT | AT1 | RA0 | LSTM | RA0 vs AT1 / BPTT | gate |
+|---:|---:|---:|---:|---:|---:|---:|---|
+| 1 | 512 | 3.188 | 3.310 | 1.265 | **1.215** | 2.62x / 2.52x | absolute FAIL |
+| 1 | 2048 | 8.242 | 6.674 | **3.304** | 3.587 | 2.02x / 2.49x | PASS |
+| 4 | 512 | 2.621 | 3.495 | **1.233** | 1.345 | 2.84x / 2.13x | PASS |
+| 4 | 2048 | 6.165 | 5.827 | **2.111** | 4.788 | 2.76x / 2.92x | PASS |
+| 16 | 512 | 5.068 | 7.299 | **2.317** | 2.707 | 3.15x / 2.19x | PASS |
+| 16 | 2048 | 13.396 | 10.925 | **3.822** | 9.136 | 2.86x / 3.51x | PASS |
+
+除单线程 T512 外五档通过；长序列上线程越多，RA0 对 fused LSTM 的优势越明显。**H-RA0-SPEED PASS。** 这不是减少监督换来的：K 固定16、input gradient 必须返回，参数与 forward 动力学未改。
+
+### 三 seed 真实 TextWorld 质量与实际 update
+
+五模型都使用同一 data/query/20 epochs、4 CPU threads、trainable tied embedding、foreach clip + fused AdamW。表内为 test sparse NLL / training update p50 ms：
+
+| seed | BPTT | AT1 | RA0 | LSTM | Transformer |
+|---:|---:|---:|---:|---:|---:|
+| 0 | 2.720 / 2.945 | 2.720 / 4.168 | **2.720 / 1.549** | 2.554 / 1.600 | 3.756 / 4.498 |
+| 1 | 2.547 / 2.947 | **2.454 / 3.869** | 2.578 / **1.493** | 2.446 / 1.535 | 3.623 / 4.372 |
+| 2 | 2.628 / 2.904 | 2.684 / 3.678 | 2.684 / **1.433** | **2.399 / 1.517** | 3.617 / 4.391 |
+| **mean** | 2.632 / 2.932 | 2.619 / 3.905 | **2.660 / 1.492** | **2.467 / 1.550** | 3.666 / 4.420 |
+
+- RA0 每 seed 均从未训练 NLL 改善>=.10；mean 比最佳 ANN 高 `.1937`（门`.25`），与 AT1/BPTT mean gap=`.0413/.0287`（门`.10`）。浮点路径可像 AT1 一样产生不同 hard-event trajectory，但 held-out 功能保持非劣。**H-RA0-TW0 QUALITY PASS。**
+- 实际 update 中 RA0 三 seed 都快于各自 LSTM；mean 对 AT1/BPTT 为 `2.618x/1.965x`，并以 `1.492 < 1.550 ms` 首次通过真实任务的 ANN 绝对训练门。**H-RA0-TW0 SPEED PASS。** 相对原 TW0 AT1 mean `4.032 ms`，同类 sparse-query SNN 训练瓶颈已从“慢于 BPTT/LSTM”翻转为最快。
+- RA0 cached streaming 三 seed p50/p95 为 `.0880/.1427`、`.0886/.1308`、`.0917/.1262 ms`；LSTM 为 `.1099/.1579`、`.1096/.1757`、`.1137/.1603`，每 seed 两个分位都更快。**H-RA0-TW0 STREAM PASS。**
+- full RA0 accuracy `45.8%/46.9%/41.7%`；spike-only `32.3%/39.6%/34.4%`，trace-only `34.4%/28.1%/22.9%`。full 始终更强，继续支持“二值 spike + 连续 trace 互补”的 event-driven trace SNN 边界，仍不能宣称完全 spike-coded。
+
+### 结论与边界
+
+**EQ/MEM/core SPEED 与 TextWorld DATA/TASK/QUALITY/SPEED/STREAM 全 PASS，RA0 overall PASS。** 采用 RA0 exact parallel reverse adjoint 作为当前 gated-trace SNN 的默认训练数学：同一常系数半群支持正向 trace scan 与反向 adjoint scan，既保留 strict binary event forward，也能把真实 trainable-embedding update 压到 LSTM 以下。
+
+这不是最终目标完成：RA0 的 held-out NLL 仍未超过 LSTM，任务仍是 teacher-forced sparse token prediction，尚未验证多 token generation、rollout、closed loop 或多模态；GPU 也未可用。下一正式任务进入 **counterfactual sequence generation**，专门检验 K 从稀疏 token 扩展到连续生成窗口时 RA0 是否仍保持质量/训速；随后接 HomeGrid multimodal dynamics 与闭环 rollout。GPU 路线并行保留为 AMD ROCm/DirectML 可用性与 native constant-scan kernel，而不以 CPU 结果代替。
+
+---
+
 ## 2026-07-18：E3-RA0 预注册 — input-gradient reverse adjoint for sparse event LM（进行中）
 
 ### TW0 后的训练加速路线

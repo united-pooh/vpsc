@@ -481,6 +481,59 @@ class E3GatedTraceScanCoreTests(unittest.TestCase):
                 ),
             )
 
+    def test_constant_affine_scan_matches_generic_and_serial_trace(self) -> None:
+        torch.manual_seed(11196)
+        for time_steps in (1, 7, 64):
+            with self.subTest(time_steps=time_steps):
+                write = torch.randint(
+                    0, 2, (2, time_steps, 6), dtype=torch.float32
+                )
+                decay = torch.linspace(0.55, 0.99, 6)
+                initial = torch.rand(2, 6)
+                coefficient = decay.view(1, 1, -1).expand_as(write)
+                generic = E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient, (1.0 - coefficient) * write, initial
+                )
+                constant = E3GatedTraceScanCore._constant_affine_prefix_scan(
+                    write, decay, initial
+                )
+                serial = E3GatedTraceScanCore._serial_trace(
+                    write, decay, initial
+                )
+                torch.testing.assert_close(
+                    constant, generic, atol=2e-6, rtol=1e-5
+                )
+                torch.testing.assert_close(
+                    constant, serial, atol=2e-6, rtol=1e-5
+                )
+
+    def test_unchecked_query_hot_path_matches_validated_path(self) -> None:
+        torch.manual_seed(11197)
+        core = E3GatedTraceScanCore(
+            4, 6, state_dim=5, eligibility_backward_mode="reverse_adjoint"
+        )
+        value = torch.randn(2, 64, 4)
+        queries = torch.tensor([0, 7, 18, 31, 47, 63], dtype=torch.long)
+        validated = core.forward_multi_query_eligibility(value, queries)
+        unchecked = core.forward_multi_query_eligibility(
+            value, queries, _unchecked=True
+        )
+        torch.testing.assert_close(
+            unchecked.sequence, validated.sequence, atol=0.0, rtol=0.0
+        )
+        torch.testing.assert_close(
+            unchecked.state.layers[0].excitatory,
+            validated.state.layers[0].excitatory,
+            atol=0.0,
+            rtol=0.0,
+        )
+        torch.testing.assert_close(
+            unchecked.state.layers[0].inhibitory,
+            validated.state.layers[0].inhibitory,
+            atol=0.0,
+            rtol=0.0,
+        )
+
     def test_multi_query_and_cached_decay_validation(self) -> None:
         core = E3GatedTraceScanCore(4, 4)
         value = torch.randn(1, 4, 4)
