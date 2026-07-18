@@ -1265,6 +1265,53 @@ def _surrogate_step(value: Tensor, scale: float) -> Tensor:
     return _SurrogateStep.apply(value, scale)
 
 
+class E3InputCodedScanCore(E3CumulativeScanCore):
+    """One-layer exact-reset scan driven by explicit binary input events."""
+
+    def __init__(
+        self,
+        input_dim: int,
+        hidden_dim: int,
+        *,
+        state_dim: Optional[int] = None,
+        base_charge: float = 0.125,
+        event_charge: float = 0.75,
+        event_surrogate_scale: float = 5.0,
+        execution_mode: E3ExecutionMode = "scan",
+    ) -> None:
+        if base_charge < 0.0 or event_charge <= 0.0:
+            raise ValueError("base_charge must be non-negative and event_charge positive")
+        if base_charge + event_charge >= 1.0:
+            raise ValueError("base_charge + event_charge must remain below threshold one")
+        if event_surrogate_scale <= 0.0:
+            raise ValueError("event_surrogate_scale must be positive")
+        super().__init__(
+            input_dim,
+            hidden_dim,
+            state_dim=state_dim,
+            num_layers=1,
+            max_charge=base_charge + event_charge,
+            surrogate_scale=event_surrogate_scale,
+            execution_mode=execution_mode,
+        )
+        self.base_charge = float(base_charge)
+        self.event_charge = float(event_charge)
+        self.event_surrogate_scale = float(event_surrogate_scale)
+        nn.init.zeros_(self.input_to_e.bias)
+        nn.init.zeros_(self.input_to_i.bias)
+
+    def input_events(self, x: Tensor) -> Tuple[Tensor, Tensor]:
+        _validate_sequence(x, self.input_dim)
+        return (
+            _surrogate_step(self.input_to_e(x), self.event_surrogate_scale),
+            _surrogate_step(self.input_to_i(x), self.event_surrogate_scale),
+        )
+
+    def _charge(self, drive: Tensor) -> Tensor:
+        events = _surrogate_step(drive, self.event_surrogate_scale)
+        return self.base_charge + self.event_charge * events
+
+
 class E3FixedPointScanCore(TemporalCore[E3ScanState]):
     """Dynamic-decay hard-reset SNN solved by parallel fixed-point scans.
 

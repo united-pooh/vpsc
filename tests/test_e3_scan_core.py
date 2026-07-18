@@ -4,6 +4,7 @@ import torch
 
 from vpsc.world_model.cores import (
     E3CumulativeScanCore,
+    E3InputCodedScanCore,
     E3LayerState,
     E3ScanState,
     state_nbytes,
@@ -225,6 +226,56 @@ class E3CumulativeScanCoreTests(unittest.TestCase):
             E3CumulativeScanCore(4, 4, charge_levels=1000)
         with self.assertRaisesRegex(ValueError, "execution_mode"):
             E3CumulativeScanCore(4, 4, execution_mode="unknown")  # type: ignore[arg-type]
+
+    def test_input_coded_scan_is_binary_exact_and_gradient_equivalent(self) -> None:
+        torch.manual_seed(9250)
+        serial = E3InputCodedScanCore(
+            4, 6, state_dim=5, execution_mode="serial"
+        )
+        scan = E3InputCodedScanCore(4, 6, state_dim=5, execution_mode="scan")
+        scan.load_state_dict(serial.state_dict())
+        serial_input = torch.randn(2, 32, 4, requires_grad=True)
+        scan_input = serial_input.detach().clone().requires_grad_(True)
+        serial_result, serial_traces = serial.forward_dynamics(serial_input)
+        scan_result, scan_traces = scan.forward_dynamics(scan_input)
+        serial_events = serial.input_events(serial_input)
+        for events in serial_events:
+            self.assertTrue(torch.all((events == 0.0) | (events == 1.0)))
+        torch.testing.assert_close(
+            scan_result.sequence, serial_result.sequence, atol=2e-6, rtol=1e-5
+        )
+        torch.testing.assert_close(
+            scan_traces[0].excitatory_spikes,
+            serial_traces[0].excitatory_spikes,
+            atol=0.0,
+            rtol=0.0,
+        )
+        torch.testing.assert_close(
+            scan_traces[0].inhibitory_spikes,
+            serial_traces[0].inhibitory_spikes,
+            atol=0.0,
+            rtol=0.0,
+        )
+        probe = torch.linspace(-0.4, 0.6, scan_result.sequence.numel()).reshape_as(
+            scan_result.sequence
+        )
+        (scan_result.sequence * probe).mean().backward()
+        (serial_result.sequence * probe).mean().backward()
+        torch.testing.assert_close(
+            scan_input.grad, serial_input.grad, atol=2e-6, rtol=1e-5
+        )
+        serial_parameters = dict(serial.named_parameters())
+        for name, parameter in scan.named_parameters():
+            torch.testing.assert_close(
+                parameter.grad,
+                serial_parameters[name].grad,
+                atol=2e-6,
+                rtol=1e-5,
+                msg=lambda message, parameter_name=name: f"{parameter_name}: {message}",
+            )
+
+        with self.assertRaisesRegex(ValueError, "below threshold"):
+            E3InputCodedScanCore(4, 4, base_charge=0.25, event_charge=0.75)
 
 
 if __name__ == "__main__":

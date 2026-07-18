@@ -4,6 +4,121 @@
 
 ---
 
+## 2026-07-18：E3-IC0 结果 — 二值 input event 将 A0 推到 96%，但未过 99%/streaming 硬门（混合结果）
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_ic0_input_code.py --output results/e3_scan/e3_ic0_input_code.json`；产物 SHA-256 `799A35142D980C0D019663F5D9D5988F61EA0F2FBDF02BFD75724A544968E29B`。
+- input event/output spike 二值性、scan/serial output/state/gradient 等价由新增单测通过。参数/state 与 L1 相同（8,516 / 336 bytes）。
+
+| core | A0 accuracy | NLL | last-100 loss | A0 train p50 ms |
+|---|---:|---:|---:|---:|
+| IC0 | **0.9619** | 0.29 | 0.49 | 1.26 |
+| LSTM | 1.0000 | 0.06 | 0.11 | **0.88** |
+| Transformer | 1.0000 | 0.16 | 0.54 | 1.66 |
+
+IC0 相比 sigmoid-charge L1 的 32.23% 大幅提高，证明显式 binary input-event population code 是正确方向；但冻结门为 99%，实际少约 2.8 个百分点，故 **H-IC0-A0 FAIL**，不向上取整、不增加 update、不跑 short delay。
+
+T=512 core forward+backward p50：threads 1/4/16 为 `1.319/1.110/1.673 ms`，LSTM 为 `1.194/1.431/2.593 ms`；IC0 在 4/16 线程快 `22.5%/35.5%`，scan node 45。streaming p95 IC0 `0.186/0.168/0.192 ms`，仍慢于 LSTM `0.114/0.125/0.163 ms`，所以联合 ANN 门 FAIL。
+
+### 判定
+
+- 正面：strict binary input events + exact hard reset + time-parallel scan 已同时接近 ANN 训练速度与即时 token 质量，这是当前最强 strict-SNN 工程候选。
+- 负面：仍未满足预注册质量与实时 step；additive exact-modulo 的结构调参主线在此停止。后续只允许把 IC0 作为独立 eligibility/online-local 或 exact-event kernel 的 substrate，不能继续事后微调 IC0 同一实验。
+
+---
+
+## 2026-07-18：E3-IC0 预注册 — learnable binary input-event code + exact modulo scan
+
+### 唯一结构变化
+
+S0/L1 的连续 sigmoid charge 让小 embedding 差异主要表现为 phase 微扰，A0/LG0 都未形成可靠类别 code。IC0 仍是一层、仍用同一个 cumulative floor/difference/modulo hard-reset scan，但把每个 token 的 sensory projection 先经 hard surrogate threshold 得到明确的 E/I input events `z_E,z_I∈{0,1}`，再令 `q=0.125+0.75z∈{0.125,0.875}`。两值均为精确 `2^-3` 网格且 `<1`，所以 output spike 仍严格二值、scan/streaming exact。
+
+输入 E/I linear bias 冻结初始化为 0（之后可训练），避免小 embedding 被随机 bias 全部压成同一事件 pattern；其余参数、readout、surrogate、state 与 L1 相同。forward 内没有 sigmoid/ANN recurrent；continuous membrane只作为标准 SNN state/readout存在。
+
+### 门
+
+- scan/serial/streaming 的 output/state/spike/input与全参数 gradient 继续使用 S0 `2e-6/1e-5` 等价门；input events 与 output spikes 都必须只含0/1。
+- `D=32,state_dim=42` 参数/state 与 L1 相同。**H-IC0-A0** 完全复用 D2/L1 A0 300-update 数据与共同 wrapper，global decoder accuracy≥99%，LSTM/Transformer≥99%。不添加 local loss。
+- 同时复测 T=512 threads 1/4/16 train+streaming；只有同线程均≤LSTM 才过 ANN 门。A0 PASS 才跑 delay4/16；FAIL 则 additive exact-modulo quality路线终止。
+- 产物冻结为 `results/e3_scan/e3_ic0_input_code.json`。
+
+---
+
+## 2026-07-18：E3-LG0 结果 — 固定 local code 仅 21%，且损害 global decoder（负面结果）
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_lg0_local_code.py --output results/e3_scan/e3_lg0_local_code.json`；产物 SHA-256 `300E94B26C163FAE81EC53ED5195FA445D347BC64D433049CD6EEA36D401DFEB`。
+- LSTM/Transformer global test accuracy 均为 100%，任务与共享 runner 继续有效。global-only L1 本次复现为 33%；LG0-L1 的 global accuracy 反而降到 `29%`、NLL `2.52`。
+- LG0 固定 codebook 的 local test accuracy 只有 `21%`；last-100 global/local loss 为 `2.69/2.67`。训练 p50 从 global-only `1.28 ms` 增至 `1.46 ms`。
+
+### 判定
+
+- **H-LG0-A0 FAIL**，短 delay不运行。失败不是“local code 学会但 global readout 接不上”：local 本身也远低于 99%，且辅助目标与 global objective 发生负迁移。
+- 这条固定 supervised code 不是 eligibility learning；结果只否定 `weight=1,temp=0.2,seed=19001` 的预注册训练目标，不外推到 BrainTrace/pp-prop。但结合 L1 32% 与 LG0 21%，继续只换 loss 的优先级下降。
+- 下一结构诊断应直接改变 input event representation（显式 learnable binary population injection），保持 exact modulo scan；若仍失败，再终止 additive S0 quality 主线并把资源转到 exact event/eligibility 独立实现。
+
+---
+
+## 2026-07-18：E3-LG0 预注册 — 固定 population code 的训练期 local objective
+
+### 假设 / 构造
+
+L1 已把 A0 从 S0-L2 的 8.69% 提高到 32.23%，证明直接 residual readout 保留了部分 token 信息，但全局 surrogate objective 未形成可分的 16 类 spike code。LG0 保持 L1 forward/inference 完全不变，只在训练期给 WRITE 位置的原始 `[s_E,s_I,u_E,u_I]` 加一个无参数 local code loss。
+
+- 用 seed `19001` 冻结 16×168 的 Rademacher `{-1,+1}` codebook；representation 映射为 `2r-1` 后与 L2-normalised codebook 做 cosine logits，temperature `0.2`；local CE target 就是当前已知 payload。总 loss=`global query CE + 1.0×local CE`。
+- codebook 不训练、不计参数，推理时完全删除 local loss；因此若成功，它证明训练目标/信用分配可修复 population code，不是用额外 ANN inference head 偷渡质量。
+
+### 门 / 边界
+
+- 完全复用 L1-A0 的数据 hash 生成规则、300 update、共同初始化与参数公平；global-only L1、LG0-L1、LSTM、Transformer 同跑。**H-LG0-A0 PASS** 要求 LG0 global decoder test accuracy≥99%，而不是只看 local code accuracy。
+- 另报 global/local loss、global-only 对照和训练 p50；不因看到结果调整 weight/temperature/codebook。A0 PASS 才运行短 delay 4/16，并在 delay 任务只对 WRITE 位置用 current-token local target，不泄漏未来 query target。
+- local target 使用离散 token identity，是工程化 self-supervised encoder loss，但不等于生物 eligibility rule；真正 online eligibility/pp-prop 仍是后续独立分支。
+- 产物冻结为 `results/e3_scan/e3_lg0_local_code.json`。
+
+---
+
+## 2026-07-18：E3-S0-L1 结果 — 即时编码升至 32%，训练部分超过 LSTM，但质量/streaming 双门失败
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_s0_l1.py --output results/e3_scan/e3_s0_l1.json`；产物 SHA-256 `DC4BBF4141243A54190248785A82A5869D8DC22CC052019F0798CB125E257FBF`。
+- A0：LSTM/Transformer 再次为 100%，L1 test accuracy `0.3223`、NLL `2.300`、last-100 train loss `2.57`。相比 L2 的 8.69% 是明确改善，但远低于预注册 99%，故 **H-L1-A0 FAIL**，短 delay 未运行。
+- 参数匹配：L1 core 8,516（LSTM 8,448），state 336 bytes（LSTM 256）。T=512 forward+backward：
+
+| threads | S0-L1 ms | S0-L2 | LSTM | Transformer |
+|---:|---:|---:|---:|---:|
+| 1 | 1.246 | 1.92 | **1.138** | 7.00 |
+| 4 | **1.381** | 1.97 | 1.513 | 3.28 |
+| 16 | **1.859** | 3.33 | 2.635 | 3.45 |
+
+L1 scan node 55；在 4/16 线程训练 p50 首次比 LSTM 快约 `8.7%/29.4%`，但 streaming p95 `0.160/0.296 ms` 仍慢于 LSTM `0.143/0.165 ms`，所以联合 ANN 门 FAIL。
+
+### 判定
+
+- 去掉 spike-only 第二层同时改善了质量与训练速度，支持“第二层是信息/工程负担”；但 32% 说明 additive phase/surrogate 仍没有可靠 token code。
+- L1 是当前 strict hard-reset 候选中最接近 ANN train speed 的实现，却仍不能进入真实任务。下一步用 LG0 训练期 local code objective 检验表示学习，而不是继续改 forward 或增加 update。
+
+---
+
+## 2026-07-18：E3-S0-L1 预注册 — 去除 spike-only 第二层，直接读出 exact-reset population code
+
+### 动机 / 唯一改动
+
+D2 已把 S0 质量失败定位到最小同位 token 编码；两层 S0 的第二层只接收第一层瞬时 spike，丢弃其 residual membrane。L1 只做一个预注册消融：`num_layers=1`，readout 直接使用该层 `[s_E,-s_I,u_E,-u_I]`；cumulative charge、2^-10/2^-12 量化、0/1 spike、hard modulo reset、surrogate 与 prefix scan 全部不变。
+
+`D=32,state_dim=42` 时 core 8,516 参数，较 LSTM 8,448 多 `0.805%`；state 336 bytes，较 LSTM 256 多 31.25%，必须报告。L1 没有 signed inter-layer pathway，只保留 sensory→E/I 与 signed E/I readout；若成功，它是 exact-reset population encoder 的可行性证据，不是完整 recurrent E/I world model。
+
+### 冻结门
+
+- **H-L1-A0**：完全复用 D2-A0 的 `T=32` 随机 WRITE 同位 16-token decode、300 update、共同 wrapper/初始化；L1/LSTM/Transformer 均须≥99%。
+- **H-L1-SPEED**：`B=1,T=512,D=32` scan forward+backward 与 continuous step p95，在 threads 1/4/16 与 LSTM/Transformer/S0-L2 同范围比较；只有同一线程 train+step 都≤LSTM 才过 ANN 门。
+- A0 PASS 后才运行 D2-B 的随机 delay 4/16；B PASS 后才回到 marked 64/256。A0 FAIL 则 exact additive population code 路线终止，转 local objective/eligibility 或 event segmentation。
+- 产物冻结为 `results/e3_scan/e3_s0_l1.json`；先写 A0+speed，后续质量若执行可追加独立文件，不覆盖。
+
+---
+
 ## 2026-07-18：E3-P0 结果 — complex scan 等价，但 T=512 并行/ANN 速度门失败（负面结果）
 
 ### 证据
