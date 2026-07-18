@@ -4,6 +4,661 @@
 
 ---
 
+## 2026-07-18：E3-RA0 预注册 — input-gradient reverse adjoint for sparse event LM（进行中）
+
+### TW0 后的训练加速路线
+
+TW0 已证明 AT1 的最终功能质量足以进入真实语言世界模型任务，失败只在训练速度：冻结 embedding 的 register 上 forward eligibility 很快，但真实 LM 必须把梯度传回 trainable embedding；当前 backward 为恢复每个 `x_t` 梯度又做一次 full reverse affine scan，同时 K=16 还维护 `K×4S×D` 参数 eligibility，造成 `4.03 ms` 慢于 AT0-BPTT `3.12`。下一轮保持同一 forward/模型/数据，只改 exact reverse-mode 数学。
+
+| 方向 / 标签 | 计算结构 | 时间/内存预期 | 主要风险 |
+|---|---|---|---|
+| **sparse-impulse reverse adjoint** / Speculative specialisation | query learning signal 作为 K 个冲激，分段闭式算 `p_t=L_t+lambda*p_{t+1}`；一次 contraction 得全部参数/input gradient | `O(T)` 保存与计算，不再 `O(KSD)` eligibility | 失去 core-only T 常数内存；需保存/recompute trace/event local factor |
+| embedding-aware fused scatter / Systems specialisation | 不返回 dense `grad_x`，直接按 token id `index_add` 到 embedding weight | 省一次 `[T,D]` tensor 与 embedding backward | core 与 tokenizer/wrapper耦合，先证明 adjoint 再融合 |
+| low-rank/diagonal eligibility / Established approximation | 压缩 K×参数 Jacobian | 仍可 online、常数 T | 近似会引入真实任务质量 gap，当前 exact reverse 已可得 |
+| block checkpoint/recompute / Established engineering | 只存 chunk 边界，反向重算事件/trace | 内存可调 | TW0 本身已 chunk=512；重算可能更慢 |
+| native C++/Triton contraction / Systems engineering | 融合 event derivative、adjoint、weight/embedding reduction | 最终吞吐潜力最高 | 当前 CPU/无 CUDA，先排除算法重复计算 |
+| 冻结或预训练 embedding / Baseline shortcut | 恢复 AT1 core-only 路径 | 立即变快 | 真实 LM 质量仪器改变，不接受为本轮答案 |
+| 减少 K / Objective tradeoff | K16→K4 | forward eligibility 更便宜 | 改正式监督与统计量，本轮禁止 |
+
+选择 exact reverse adjoint；它不是一般 recurrent SNN 的免费解，而是 gated diagonal trace 的 reverse-mode 特例。若仍慢，再做 embedding scatter/native kernel，不降低 K、不冻结 embedding。
+
+**What if：**真实世界模型的 K 个 loss 虽稀疏，但 input gradient 必然 dense；此时 forward-mode eligibility 的优势可能被 Jacobian 宽度抵消，而把 K 个 loss 先合成一个反向伴随场，再一次收缩全部 event projection/decay/input gradient，是否才是正确的 CPU/GPU 训练形式？
+
+### 冻结数学与门
+
+对 E/I population，query/final learning signal 仍为 AT1 的 `L_t`，其余时刻为 0：
+
+`p_t = L_t + lambda*p_{t+1}`；
+
+`dL/ddrive_t = (1-lambda)*p_t*[g_t*phi_c, c_t*phi_g]`；
+
+`grad_W = sum_t outer(dL/ddrive_t,x_t)`，`grad_x=sum_rows dL/ddrive_t*W`；
+
+`grad_decay_logit = sum_t p_t*dλ/dlogit*(h_{t-1}-v_t)`，`grad_h_init=lambda*p_0`。
+
+K 个冲激按降序 query 分段；每个无冲激区间用 `lambda^distance` 向前填充，不构建 Hillis–Steele reverse graph。forward 保存 hard content/gate/write local factor、`h_{t-1}`、x 与静态 decay；默认 AT1 `forward_eligibility` 保留，新 mode 明确为 `reverse_adjoint`。
+
+- **H-RA0-EQ**：相对普通 AT0-BPTT 覆盖 AT1 三 case，并新增 `(B,T,K,input_grad)=(1,512,16,on)`；query/state/hard event 与 input/初态/全部参数梯度满足 `2e-5/1e-4`。
+- **H-RA0-MEM**：input-gradient、B1/D32/K16、T512/2048；unique saved bytes 均<=AT0-BPTT 的25%，允许随 T 线性增长并与 AT1 forward eligibility并列报告。
+- **H-RA0-SPEED**：threads1/4/16、T512/2048、input grad on、K16；至少一档 RA0 比 AT1 forward eligibility快>=1.25x、比 AT0-BPTT快>=1.25x且 p50<=LSTM。
+- **H-RA0-TW0**：完全复用 TW0 data/query/20 epochs/三 seed；RA0 每 seed test NLL 改善>=.10，mean NLL<=最佳ANN+.25，且相对 AT1/BPTT mean gap各<=.10。真实 update p50 必须比 AT1快>=1.25x、比AT0快>=1.25x且<=LSTM；streaming沿用同一core并重跑。
+- 若 quality PASS/speed FAIL，进入 embedding-aware fused scatter/native kernel；quality FAIL 则 reverse adjoint实现失败或浮点路径对真实任务不稳。runner/产物：`experiments/e3_ra0_reverse_adjoint.py`、`results/e3_scan/e3_ra0_reverse_adjoint.json`。
+
+---
+
+## 2026-07-18：E3-TW0 结果 — 首个真实 action-conditioned LM 质量 PASS，训练 input-gradient 成为新瓶颈（关键混合结果）
+
+### 数据与任务有效性
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_tw0_sparse_event_lm.py --output results/e3_scan/e3_tw0_sparse_event_lm.json`；SHA-256 `4E029A3D0D2DB662BAD86B1D8D6E7BC377AB7628F5C93BAE3382FCC3F6102DEC`。
+- 所有真实 TextWorld L5 manifest/game/event SHA 通过；无 synthetic fallback。512-token chunk 在 train/valid/test 形成 `384/96/96` 个 query，K/T≈`3.5%`，覆盖 114 个不同 token；格式/JSON token 比例 `31.25%`，低于70%无效线。**H-TW0-DATA PASS。**
+- smoke 暴露 parallel scan chunk final trace 可能因 FP32 舍入略超 `[0,1]`；正式前只在已 detach 的 chunk 边界投影 `clamp[0,1]`，AT0/AT1共同使用。数学递推本就是 `[0,1]` 凸组合；chunk 内方程、query、门与正式数据未变。
+- LSTM/Transformer 每 seed test NLL 都相对未训练值下降远超 .10，故 **H-TW0-TASK PASS**。
+
+### 三 seed held-out 结果
+
+| seed | AT0-BPTT NLL / acc | AT1 NLL / acc | LSTM NLL / acc | Transformer NLL / acc |
+|---:|---:|---:|---:|---:|
+| 0 | 2.735 / 50.0% | **2.723 / 49.0%** | 2.822 / 52.1% | 3.606 / 33.3% |
+| 1 | 2.601 / 52.1% | 2.575 / 51.0% | **2.391 / 53.1%** | 3.706 / 30.2% |
+| 2 | 2.709 / 52.1% | 2.698 / 52.1% | **2.511 / 53.1%** | 3.569 / 33.3% |
+| **mean** | 2.682 | **2.666** | **2.575** | 3.627 |
+
+- AT1 mean 只比最佳 ANN（LSTM）高 `.091`，小于 `.25` 门，并显著优于该小模型 Transformer；AT1/AT0 mean gap=`.0162`。四者每 seed 均从未训练 NLL 下降，故 **H-TW0-QUALITY PASS**。这是项目首个 real held-out action-conditioned language/world-output 任务上的 SNN 功能非劣证据，不再依赖逐参数轨迹。
+- AT1 channel mean NLL：observation `2.754`、counterfactual `2.703`、admissible-actions `2.415`、reward `1.612`、done `1.439`、won `.486`。难点确实位于自然语言 observation/counterfactual，不只是 reward/done 格式。
+- 全部 outcome payload 的 dense test NLL 同样保持：AT1 三 seed约 `2.645/2.437/2.508`，不是只在16个位置记标签。
+
+### 训练与实时
+
+真实端到端 update mean p50：AT0-BPTT `3.122 ms`、AT1 `4.032`、LSTM `1.766`、Transformer `4.797`；AT1/AT0 speedup=`0.774x`。因此 **H-TW0-SPEED FAIL**。register 的速度胜利没有迁移到 trainable embedding + K16：dense input adjoint 与 K×parameter eligibility 的重复工作是现行瓶颈。
+
+每 seed完整 embedding+core+LM-head streaming 均过门：AT1 p50/p95约 `0.0874/0.1274`、`0.0874/0.1271`、`0.0867/0.1195 ms`，LSTM为 `0.1087/0.1569`、`0.1086/0.1492`、`0.1072/0.1377`。**H-TW0-STREAM PASS。** SNN state 248 bytes；Transformer cache继续随历史增长。
+
+### 机制边界与决定
+
+- full AT1 test accuracy约49–52%；spike-only为26–34%，trace-only为29–39%。与 register 的 spike-only chance 不同，真实语言中 spike 已含部分信息，但两种单独通道都明显不及 full，证明稀疏 spike 与连续 trace 是互补读出。
+- **DATA/TASK/QUALITY/STREAM PASS，SPEED/overall FAIL；不进入 counterfactual generation。** 保留 TW0 为首个真实质量基线，进入 RA0 exact reverse adjoint，专门消除 trainable embedding 场景下的 forward-eligibility重复计算；不修改任务或结构。
+
+---
+
+## 2026-07-18：E3-TW0 预注册 — 真实 TextWorld action-conditioned sparse event LM（已执行）
+
+### 为什么现在进入真实任务
+
+AT1 与 AT2 连续得到同一个事实：两种 exact-surrogate 实现都能把 register 做到 3/3 seed 100%，但 hard threshold 令非凸优化轨迹对 `O(1e-8)` reduction 差异敏感。AT2 进一步证明，把梯度投影到 BF16 仍不能让长轨迹一致。因此从本轮开始，**不再把“与 BPTT 得到同一参数”当作真实模型质量代理**；AT1/AT2 的原冻结门仍记为 FAIL，不追溯改判。新实验用 held-out 真数据、多 seed NLL 和功能复现直接检验加速方法。
+
+本地已有经过 manifest/SHA 验证的真实 TextWorld Coin Collector level-5 事件语料：train 4 个 game seed、valid/test 各 1 个互斥 seed，train/valid/test token 数为 `10,983 / 2,751 / 2,783`，词表仅由 train 构造（344 tokens），episode/chunk 不跨边界。这比再造一个 synthetic register 更接近“动作→环境响应”的世界模型接口。
+
+### 任务方向比较
+
+| 方向 / 标签 | 监督 | 世界模型相关性 | 与 AT1 的适配 | 风险 |
+|---|---|---:|---:|---|
+| **TextWorld outcome-channel sparse next-token LM** / New composition | 只在 observation/reward/done/won/admissible-actions/counterfactual payload 内选 K 个 causal target | **高：真实 action-conditioned 语言与反事实响应** | **高：K-query 原生** | 稀疏采样可能偏向格式 token；语料小 |
+| TextWorld dense event LM / Established baseline | 每个 token next-token | 中高 | 低，K≈T 时 eligibility 优势消失 | 格式/ASCII banner 主导，难定位世界状态能力 |
+| counterfactual-only next observation / Focused causal task | 给 action，生成 counterfactual `next_obs` | 很高 | 中 | 训练 transition 数只有几十，held-out 文本开放词表 |
+| TextWorld action imitation / Established policy task | observation→expert action | 中 | 高，action boundary 稀疏 | 更像 policy，不直接学习环境动力学 |
+| HomeGrid multimodal dynamics / Cross-modal next step | 图像/符号 observation + action→next state/reward | **很高** | 中 | 应在语言门之后单独验证 encoder 与闭环 rollout |
+| WikiText dense LM / Established language task | 全 token NLL | 低于 world-model | 低 | 无 action/observation 因果结构 |
+| 在线 closed-loop TextWorld rollout / Ultimate evaluation | 模型状态驱动 action，真实环境回馈 | 最高 | 后续 | 当前先要证明 held-out teacher-forced dynamics 非劣 |
+
+先执行第一条，再按 counterfactual-only → HomeGrid multimodal → closed-loop rollout 推进。它不是为了制造容易的 K：正式产物必须报告 K/T 密度、channel 分布、格式 token 占比和 full outcome-channel NLL，若监督主要落在标点/JSON 结构，任务判 INVALID。
+
+**What if：**世界模型的主要学习信号天然集中在动作后的 observation/reward/done 与反事实分支，而非每个叙述 token；若每 512-token chunk 只取最多 16 个真实 outcome payload token，AT1 是否能保持 held-out next-token NLL，同时把端到端训练和 constant-state response 都压到 LSTM 以下？
+
+### 冻结数据与模型
+
+- 数据根固定为 `results/e2_world_model/textworld_l5`；runner 必须复用现有 manifest/game SHA 验证，不生成或回退 synthetic。split 由 game seed 隔离；每 epoch 按 episode/时间原序遍历，episode 首 chunk 清 state，chunk 间显式 state detach。
+- `sequence_length=512`，selected channels 固定为 `{observation,reward,done,won,admissible_actions,counterfactual}`。只把 channel closing `>` 后到该行 `<eos>` 前的 payload token 视为候选；每 chunk 候选>16 时按等距索引确定性取 16 个，否则全取。query 是目标 token 的前一 causal position；不选择 step/header/channel-marker token。
+- 训练 `20 epochs`、AdamW `lr=1e-3,weight_decay=.01`、clip=1、seeds `{0,1,2}`、CPU 4 threads。embedding/output norm/tied LM head 都训练；四模型共享 wrapper 初值，只替换 `AT0 gated-trace BPTT / AT1 eligibility / LSTM / 1-layer Transformer`，total parameter spread<=2%。AT1 使用默认 segment forward，不使用 AT2 BF16 或 scan-aligned 变体。
+- 每模型先记录未训练 valid/test sparse NLL，再训练；正式评估同时报告 sparse query NLL/PPL/top1/channel 分解与全部 outcome payload token 的 dense NLL。Transformer cache window=512；SNN/LSTM state 跨 chunk，Transformer cache也按相同 episode边界重置。
+
+### 冻结门
+
+- **H-TW0-DATA**：所有 manifest/game/event SHA 通过；train/valid/test 均有非零 selected query，每个 query 严格位于指定 payload；候选中 JSON/标点 token 比例必须<70%，否则任务 INVALID。
+- **H-TW0-TASK**：LSTM 与 Transformer 在每个 seed 的 held-out test sparse NLL 均比各自未训练值降低>=`0.10`；否则训练预算/任务 INVALID。
+- **H-TW0-QUALITY**：AT0/AT1 每 seed test sparse NLL 也均改善>=`0.10`；AT1 三-seed mean NLL 不高于最佳 ANN mean+`0.25`，且 AT1 与 AT0 的 mean absolute NLL gap<=`0.10`。不要求逐 update loss/参数一致。
+- **H-TW0-SPEED**：真实训练 update（含 embedding、core、K-query head、CE、backward、clip、AdamW）后 20% warmup 的 p50；AT1 比 AT0 BPTT快>=`1.25x`且 p50<=LSTM。另报 Transformer、每秒 input tokens 与 supervised query tokens。
+- **H-TW0-STREAM**：同一 test episode、64 warmup+512 measured、4 threads，完整 embedding+core+LM head 的 p50/p95 均<=LSTM；state bytes 单列。
+- **H-TW0-MECH**：AT1 test 做 spike-only/trace-only readout 消融；只报告不作为过门。若 spike-only 仍为 chance/格式基线，继续使用“event-driven trace SNN substrate”边界。
+- 全部门通过才进入 counterfactual sequence generation；质量失败转更强 recurrent/adaptive spike，速度失败转 native fused eligibility kernel。runner/产物固定为 `experiments/e3_tw0_sparse_event_lm.py` 与 `results/e3_scan/e3_tw0_sparse_event_lm.json`。
+
+---
+
+## 2026-07-18：E3-AT2 结果 — scan forward 逐位对齐，BF16 梯度仍无法锁定轨迹（负面结果）
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_at2_bf16_canonical.py --output results/e3_scan/e3_at2_bf16_canonical.json`；SHA-256 `F57B91FF6A32669ADA84D0CECC06C2FE206D636D875A7ADC3334E2B9D89FDA65`。
+- `scan_aligned` 令 T=`1/32/512` 的 query raw、sequence 与 final state 相对 AT0 全部 **bit-exact**；资格迹全梯度仍在 AT1 tolerance 内。saved bytes 与 AT1 相同：T2048 ratio=`0.735%`、128→2048 growth=`1.0x`。**H-AT2-EQ/MEM PASS。**
+- scan-aligned 增加了 forward 常量，但 4-thread T2048 为 AT2 `4.022 ms` vs AT0 `5.840` / LSTM `4.515`，16-thread T2048 为 `6.538` vs `13.445 / 8.857`；**H-AT2-SPEED PASS**。streaming 不受训练 forward mode影响；4-thread cached p50/p95 `0.0656/0.0884 ms` vs LSTM `0.0709/0.0936`，故同线程 **H-AT2-STREAM/ANN PASS**。
+
+### canonicalization 失败
+
+| seed | BF16 后 gradient mismatch | first mismatch | loss max diff | param max diff | AT0 / AT2 test |
+|---:|---:|---:|---:|---:|---:|
+| 0 | 3,184,090 / 5,396,400 = 59.00% | update 2 | 1.809 | .2267 | 100% / 100% |
+| 1 | 2,994,000 / 5,396,400 = 55.48% | update 2 | 1.752 | .2866 | 100% / 100% |
+| 2 | 3,026,227 / 5,396,400 = 56.08% | update 2 | 2.057 | .2097 | 100% / 100% |
+
+- update 1 的 8,994 个 trainable gradient 元素全部量化一致，smoke 的三步小 batch 也全一致；正式 batch32 在 update2 即出现少量不同，随后 hard events 放大为不同路径。BF16 提供相对 mantissa 精度，对接近零梯度没有固定宽度的共同零槽，所以它不是 reduction-order canonicalizer。
+- 两个 SNN 仍在每 seed 达到 100%，LSTM/Transformer 也验证任务；失败仅是预注册 canonical/trajectory gate，但必须记为 **H-AT2-CANON/QUALITY/overall FAIL**，不追溯放宽。
+- power-of-two INT8 可以提供绝对 block bin，但任何离散量化仍有边界，继续用“是否复刻 BPTT 参数”决定世界模型质量会把研究引向数值仪器而非任务。保留 INT8 为未来低精度吞吐实验；当前更有信息量的下一步是 TW0：在真实 held-out action-conditioned language 上比较功能质量、端到端速度与多 seed 稳定性。
+
+---
+
+## 2026-07-18：E3-AT2 预注册 — scan-aligned forward + BF16 canonical gradient（已执行）
+
+### AT1 后的数值鲁棒路线比较
+
+AT1 已经在三 seed 上与 AT0 同为 100%，并同时通过训练、streaming、内存和同线程 ANN 门；失败只来自“逐 update 轨迹必须接近”的冻结子门。单步最大梯度误差仅 `5.22e-8`，但 hard threshold 将这种合法浮点 reduction 差异在 seed 1/2 放大为不同的事件/优化路径。下一轮不修改 gated trace 动力学，而是寻找既适合低精度硬件、又能把等价梯度映射到同一更新的 canonical training math。
+
+| 路线 / 标签 | 数学手段 | 预期作用 | 主要风险 |
+|---|---|---|---|
+| **scan-aligned query forward + BF16 gradient projection** / Cross-domain transfer | query trace 复用 AT0 同一 Hillis–Steele reduction；`Q(g)=float32(bfloat16(g))` 后再 clip/AdamW | forward bit 对齐；小 reduction 差异落到同一低精度格点 | BF16 梯度可能损害小梯度；全 trace forward 增加常量 |
+| power-of-two INT8 block gradient / Established compression | 每 tensor 共享 2 的幂 scale，梯度映射到 signed int8 | 更强 canonicalization，未来通信/硬件更省 | 量化过粗，decay/rare-event gradient 易归零 |
+| threshold-margin regularization / Established robustness | 惩罚 event drive 与 output trace 靠近阈值 | 从动力学上降低离散翻转敏感度 | 新增损失权重，可能压低事件稀疏性或改任务解 |
+| hysteretic/dead-zone spike / Established dynamical idea | 阈值附近保持旧事件或输出 0 | 显式消除窄边界抖动 | 增加状态/串行依赖，破坏当前 exact scan |
+| compensated/pairwise eligibility reduction / Established numerics | Kahan 或固定 reduction tree 计算资格迹收缩 | 降低 FP32 舍入误差且不量化 | 很难逐位复刻 autograd graph，CPU 常数更大 |
+| soft-to-hard curriculum / Established training | 早期连续概率，后期 hard event | 减少早期混沌分叉 | 训练 forward 不再始终严格二值，偏离当前 SNN 边界 |
+| 统计功能等价而非轨迹等价 / Evaluation alternative | 多 seed 比较 accuracy/NLL/event 分布，不要求同参数 | 更符合非凸训练实际 | 只改变证据标准，不能解释/修复数值脆弱性 |
+
+先执行第一条：它不靠 AT0/AT1 梯度互相通信，部署训练只需对自身梯度做确定性 BF16 投影；这也是最小、可证伪且保留 strict binary forward 的方案。INT8、margin、curriculum 作为后续独立实验，禁止在本轮失败后临时扫参。
+
+**What if：**资格迹与 BPTT 的数学梯度相同，但浮点 reduction tree 不同；若先让 query forward 使用完全相同的 scan，再把两种合法 FP32 梯度投影到同一 BF16 格点，是否能在不恢复长 autograd graph 的情况下得到同一 hard-event 优化路径？
+
+### 冻结实现与门
+
+- 新增 `eligibility_forward_mode="scan_aligned"`：custom forward 对 trace 使用 AT0 完全相同的 full affine prefix scan，仅在 custom Function 内取 K 个 query；eligibility/自定义 backward 不变。默认仍为 AT1 的 `segment`，确保 AT1 正式产物可复现。
+- 质量训练的 AT0-BPTT 与 AT2 都在 `backward` 后执行 `Q_BF16(g)`，再执行原来的 global norm clip=1 与 AdamW；参数和 optimizer moment 保持 FP32。没有 loss/参数互传，也不量化 inference。
+- **H-AT2-EQ**：复用 AT1 三个 case；scan-aligned query raw/final state 的 hard event 与 AT0 bit-exact，全部梯度仍满足 `2e-5/1e-4`。
+- **H-AT2-CANON**：三 seed×600 update，每一步报告量化后梯度逐元素 mismatch；总体 mismatch rate 必须 `<=1e-5`，且不得出现非有限值。
+- **H-AT2-QUALITY**：同一 register、初始化、batch 与 test；AT0-BF16/AT2-BF16 每 seed 都须 100%，逐 update loss max<=`1e-3`、最终参数 max<=`5e-3`。LSTM/Transformer 的任务有效性由 AT1 同日正式运行再次确认，不改变任务。
+- **H-AT2-SPEED/MEM**：同 AT1 的 threads、T、K；scan-aligned AT2 至少一档相对 AT0-BPTT `>=1.25x` 且 p50<=LSTM，T=2048 core-only saved bytes<=25% 且增长<=1.25x。BF16 projection 的 optimizer-level质量 timing 单列，不拿 core-only speed 冒充端到端。
+- **H-AT2-ANN**：训练速度门必须与 AT1 已验证的 cached-decay streaming 门在同一线程成立；本轮重跑 streaming，不能跨运行拼最佳数字。
+- 正式 runner/产物：`experiments/e3_at2_bf16_canonical.py`、`results/e3_scan/e3_at2_bf16_canonical.json`。只有全部通过才升级真实 action-conditioned language task。
+
+---
+
+## 2026-07-18：E3-AT1 结果 — 训推/内存/最终质量全过，但 hard-threshold 轨迹门失败（关键混合结果）
+
+### 证据与工程门
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_at1_trace_eligibility.py --output results/e3_scan/e3_at1_trace_eligibility.json`；SHA-256 `7ED99BCED90AE01F4F2EADE2C481C2043A9EBC98443C099172A385C05BCC2658`。环境仍为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、CUDA unavailable。
+- 实现 exact gated-trace K-query custom backward：fused content/gate event projection、decay logit、初态与 input gradient 均覆盖；另新增缓存 bounded decay 的 tensor-only event step。
+- 三个冻结 case 全通过。T=`1/32/512` 的 query raw 最大误差为 `0 / 1.19e-7 / 2.68e-7`，全部梯度最大误差为 `7.45e-9 / 3.73e-8 / 5.22e-8`；非法 query 与 cached/full/uncached step 等价也全部 PASS。**H-AT1-EQ PASS。**
+
+core-only、K=4 的 unique saved bytes：
+
+| T | AT0-BPTT | AT1 | ratio |
+|---:|---:|---:|---:|
+| 128 | 797,416 | **121,568** | 15.25% |
+| 512 | 3,643,112 | **121,568** | 3.34% |
+| 2048 | 16,549,608 | **121,568** | **0.735%** |
+
+- AT1 的 128→2048 growth=`1.0x`；input-grad T2048 为 `1,137,376` bytes，仍比对应 AT0 的 `16,565,480` 少 93.1%。T512 的 K=`1/4/16/32` 保存量为 `67,592/121,568/337,472/625,344`，按 K 线性退化但 K32 仍仅为 AT0 的 17.1%。**H-AT1-MEM PASS。**
+
+K=4 query loss 的正式 p50 ms：
+
+| threads | T | AT0-BPTT | AT1 | speedup | LSTM | IC0-EL1 | Transformer | gate |
+|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 1 | 512 | 3.85 | 1.92 | 2.01x | **1.42** | 1.14 | 7.40 | FAIL absolute |
+| 1 | 2048 | 8.36 | 4.91 | 1.70x | **3.73** | 1.88 | 97.23 | FAIL absolute |
+| 4 | 512 | 2.79 | 1.76 | 1.58x | **1.41** | 1.14 | 2.78 | FAIL absolute |
+| 4 | 2048 | 7.35 | **3.65** | 2.01x | 4.98 | 1.69 | 27.69 | **PASS** |
+| 16 | 512 | 4.54 | **2.06** | 2.21x | 2.81 | 1.72 | 3.66 | **PASS** |
+| 16 | 2048 | 14.03 | **5.14** | 2.73x | 9.49 | 2.27 | 29.48 | **PASS** |
+
+AT1 autograd node 为 13，AT0 随 T512→2048 为 263→311。**H-AT1-SPEED PASS。** cached step 在 threads `1/4/16` 的 p50/p95 为 `0.0653/0.1070`、`0.0650/0.1075`、`0.0788/0.1730 ms`，三档均不慢于 LSTM 的 `0.0709/0.1117`、`0.0746/0.1290`、`0.1054/0.2165`；uncached AT0 p50 为 `0.0728/0.0737/0.0902`。**H-AT1-STREAM PASS；4-thread T2048 与 16-thread 两个 T 均同时满足训练，因此 H-AT1-ANN PASS。**
+
+### 最终任务质量与预注册失败点
+
+所有模型在 16,384 query/seed 上仍为 100%：
+
+| seed | AT0 acc/NLL | AT1 acc/NLL | LSTM | Transformer | loss max diff | parameter max diff |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 100% / .00583 | 100% / .00563 | 100% | 100% | .00117 | .00978 |
+| 1 | 100% / .00722 | 100% / .00751 | 100% | 100% | .95599 | .04690 |
+| 2 | 100% / .00566 | 100% / .00547 | 100% | 100% | 1.88749 | .07735 |
+
+- 功能质量本身完全复现，且 AT1 NLL 与 AT0 同量级；但三个 seed 均超过预注册的 `loss<=1e-3 / parameter<=5e-3` 轨迹门，seed 1/2 被微小 reduction 差异跨 hard threshold 后显著放大。因此 **H-AT1-QUALITY FAIL**，不能因最终 accuracy 好看而改门。
+- 单步梯度误差仅 `O(1e-8)` 与长轨迹分叉同时成立：这是 hard-event 优化的数值脆弱性证据，不是 custom backward 数学不等价证据。正式判定为 **EQ/MEM/SPEED/STREAM/ANN PASS，QUALITY/overall FAIL；不进入 TextWorld。**
+
+### spike/trace 机制消融
+
+- spike-only accuracy 为 seed `0/1/2 = 6.37% / 6.23% / 5.92%`，即 chance；输出 spike 单独没有承载可解码记忆。
+- trace-only 为 `100% / 88.59% / 92.99%`，显著高于 chance 但后两 seed 不足以完全复现 full 100%。因此正确表述是：**连续 signed trace 是主要记忆载体，稀疏 output spike 提供互补读出，但 spike-only code 尚未学会任务。** 当前结果只能称“事件驱动 trace SNN substrate”，不能称完全 spike-coded 世界模型。
+- 保留 AT1 作为已证明的工程加速原语：T-independent exact sparse-query backward、长序列多核训练超过 LSTM、constant-state streaming 也超过 LSTM。下一步 AT2 解决数值 canonicalization；若通过，再进入真实 action-conditioned language task，同时另开结构路线提高 spike-only 信息量。
+
+---
+
+## 2026-07-18：E3-AT1 预注册 — gated-trace exact K-query eligibility + cached-decay step（已执行）
+
+### AT0 成功后的加速路线选择
+
+AT0 已证明动力学质量，不再改事件、decay 范围、trace 或 readout。AT1 只压缩同一函数的训练反向与 streaming 常量开销：
+
+| 路线 / 标签 | 机制 | 精确性 | 最小实验 | 主要风险 |
+|---|---|---:|---|---|
+| **K-query forward eligibility** / Speculative specialisation | 为 fused event projection、decay 与初态递推 exact prefix Jacobian，只保存 K 个快照 | **exact surrogate gradient** | 全梯度矩阵 + saved storage + 600-step 复现 | eligibility 为 `4S×D`，K 密集时增长 |
+| reverse adjoint + forward recompute / Established engineering | backward 重算 events/trace，再做反向 affine scan | exact | 时间/峰值内存对照 | 保存或重算完整 T，未必比 scan BPTT 快 |
+| block checkpoint / Established engineering | 分块保存 trace，块内重算 | exact | block sweep | 不能消除 autograd 与重算成本 |
+| `torch.compile` whole scan / Established engineering | 编译 Hillis–Steele 图与 backward | exact within compiler | cold/steady 分列 | 动态 T、图大、CPU compile 成本高 |
+| C++/Triton fused affine scan / Established engineering | 专用 forward/backward kernel | exact | GPU/CPU extension benchmark | 当前无 CUDA；开发成本高且不先修数学 |
+| pp-prop/e-prop low-rank trace / Established approximation | 用 pre/post 因子减少 full Jacobian | approximate | 与 AT1 exact 做 cosine/quality gap | 当前单层 exact 特例没必要先牺牲精度 |
+
+先执行 exact K-query eligibility；它是 AT0 方程本身的 forward-mode Jacobian，不依赖近似 learning signal。cached-decay tensor step 同时消除 streaming 每 token 重算 `sigmoid(decay_logits)`。若两者仍差 LSTM，才将同一数学交给编译/原生 kernel，而不是改质量已通过的动力学。
+
+**What if：**AT0 的 trace recurrence 与它对参数的 eligibility recurrence具有同一个 decay `lambda`；如果把输出 learning signal 留到 query 才乘，是否能像 EL1 一样把 263/311-node scan backward 折叠成一个 custom node，同时保持可学习 memory？
+
+### 精确梯度构造
+
+对一个 population：`h_t=lambda*h_{t-1}+(1-lambda)v_t`，`v_t=c_t*g_t`；query raw 为 `[H(h_q-theta),h_q]`。query learning signal：
+
+`L_q = g^h_q + g^s_q*phi_out(h_q-theta)`。
+
+content/gate 权重 eligibility 分别递推：
+
+`E^c_t=lambda E^c_{t-1}+(1-lambda) g_t phi_c(d^c_t) outer x_t`；
+
+`E^g_t=lambda E^g_{t-1}+(1-lambda) c_t phi_g(d^g_t) outer x_t`。
+
+decay-logit eligibility 为：
+
+`R_t=lambda R_{t-1}+d(lambda)/d(logit)*(h_{t-1}-v_t)`。
+
+于是 `grad_W=sum_{batch,q} L_q E_q`、`grad_decay=sum L_q R_q`，final-state learning signal 以 T 末快照同样加入；初态系数为 `lambda^(q+1)`。forward 按 query segment 用指数加权 einsum 更新 snapshot，时间点只遍历一次，core-only 保存量 `O(K*4BSD)`、对 T 常数。需要 input gradient 时保存 local event derivative，并用反向 affine adjoint `p_t=L_t+lambda p_{t+1}` 精确恢复 `grad_x`，该模式单独报告。
+
+### 冻结门
+
+- **H-AT1-EQ**：相对普通 AT0 scan，覆盖 `(B,T,K,input_grad)=(1,1,1,on),(2,32,4,on),(1,512,8,off)`、外部初态；query output/final trace、input/initial/fused event projection/decay/output norm/projection 全梯度满足 `atol=2e-5,rtol=1e-4`，hard events/spikes bit-exact；非法 query 索引复用 EL1 validation。
+- **H-AT1-MEM**：`B=1,D=32,K=4,T={128,512,2048}`，core-only T=2048 unique saved bytes <= 普通 AT0 query-BPTT 的 25%，且 T=128→2048 growth<=1.25x；input-gradient 与 K={1,4,16,32} 单列。
+- **H-AT1-SPEED**：threads 1/4/16、T={512,2048}，AT1 至少一档比普通 AT0 scan query-BPTT 快 `>=1.25x`，且绝对 p50<=同任务 LSTM。IC0-EL1 与 Transformer 继续报告。
+- **H-AT1-QUALITY**：完全复用 AT0 三 seed register、初始化、600 updates；AT1 与普通 AT0 每 seed 都须 100%，AT1/AT0 逐 update loss max<=`1e-3`、最终参数 max<=`5e-3`。较宽的轨迹 tolerance 是在 EL1 已观察到 hard-threshold 浮点分叉后预先冻结，不放宽单步 H-EQ。
+- **H-AT1-STREAM**：inference 预计算一次 bounded decay，逐 token tensor step 不重复 sigmoid；threads 1/4/16，64 warmup+512 measured，至少一档 p50/p95 同时<=LSTM。cached 与 uncached AT0、IC0 tensor、Transformer 都报告；缓存只在参数更新后失效一次。
+- **H-AT1-ANN**：H-SPEED 与 H-STREAM 必须在同一线程 lane 成立。所有 AT1 门通过后才进入 TextWorld；质量通过但 ANN 门失败则保留 AT1，转 C++/Inductor kernel。
+- **机制消融（报告项）**：在训练后同一 test 上将 `[spike channels]` 或 `[trace channels]` 置零，报告 full/spike-only/trace-only accuracy。若只有 trace-only 保持质量，结论必须写成“事件驱动 trace SNN”，不得声称输出 spike code 已承载记忆。
+
+### 产物
+
+- 代码/API：`E3GatedTraceScanCore.forward_multi_query_eligibility`、cached-decay tensor step；runner `experiments/e3_at1_trace_eligibility.py`。
+- 正式产物：`results/e3_scan/e3_at1_trace_eligibility.json`；smoke 不能覆盖。
+
+---
+
+## 2026-07-18：E3-AT0 结果 — 三 seed 短期记忆达到 100%，训推速度仍差临门一脚（混合正面结果）
+
+### 证据 / 实现
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_at0_gated_trace.py --output results/e3_scan/e3_at0_gated_trace.json`；产物 SHA-256 `EB4636FF39B1DED55A4B432C9E6BFDCA41933B16636C5B32EDF323D86F9F13D2`。环境为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、CUDA unavailable。
+- 新增 `E3GatedTraceScanCore`：单个 fused linear 产生 E/I content 与 write-gate binary events，`content*gate` 驱动 31 维异质 decay trace；输出为 trace threshold spike + signed trace。另实现 exact tensor-only streaming step，不改变训练方程。
+- core 参数/state 为 `8,402 / 248 bytes`，LSTM 为 `8,448 / 256 bytes`；含共同 wrapper 后 AT0/LSTM/Transformer 为 `8,994/9,040/9,200`，全部在 2% 门内。
+
+### 精确 scan 与并行门
+
+- serial/scan 的 `(B,T)=(1,1),(4,32),(1,512)` 全部通过；T=512 最大 forward/gradient abs 为 `9.54e-7/5.44e-7`。content/gate/write/output spike 逐元素 bit-exact 且 binary，trace 保持 `[0,1]`。连续 64-token tensor/generic streaming 对 full scan 的 sequence/state 最大误差不超过 `5.36e-7`。**H-AT0-EQ PASS**。
+
+K=4 query loss，p50 ms：
+
+| threads | T | AT0 scan | AT0 serial | speedup | node ratio | LSTM | IC0-EL1 |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 512 | 2.841 | 21.773 | 7.66x | 6.36% | **1.237** | 1.120 |
+| 1 | 2048 | 7.448 | 110.034 | 14.77x | 1.89% | **3.512** | 1.883 |
+| 4 | 512 | 2.534 | 20.954 | 8.27x | 6.36% | **1.407** | 1.046 |
+| 4 | 2048 | 6.262 | 118.222 | **18.88x** | 1.89% | **5.116** | 1.768 |
+| 16 | 512 | 3.235 | 25.799 | 7.97x | 6.36% | **2.764** | 1.913 |
+| 16 | 2048 | 13.514 | 171.258 | 12.67x | 1.89% | **9.340** | 2.979 |
+
+所有 lane 都超过 5x 且 node ratio<25%，故 **H-AT0-PAR PASS**。但 AT0 scan 在所有 lane 都慢于 LSTM；最好是 4-thread T=2048 的 `6.262 vs 5.116 ms`，仍慢 22.4%。
+
+### 首个有效的纯 SNN delay4 质量结果
+
+EL1 四段 WRITE→delay4→QUERY register 完全复用，三个模型的 test query 均为 16,384/seed：
+
+| seed | AT0 accuracy / NLL | LSTM accuracy / NLL | Transformer accuracy / NLL | AT0 train p50 | LSTM | Transformer |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | **100% / 0.00594** | 100% / 0.00761 | 100% / 0.00798 | 3.181 ms | **1.066** | 2.173 |
+| 1 | **100% / 0.00526** | 100% / 0.00795 | 100% / 0.00819 | 3.358 ms | **1.203** | 2.536 |
+| 2 | **100% / 0.00611** | 100% / 0.00754 | 100% / 0.00802 | 3.514 ms | **1.092** | 2.281 |
+
+- **H-AT0-QUALITY PASS。** 这是本项目 strict binary input/write event SNN 首次在有效延迟任务上三 seed 达到 ANN 质量；NLL 还略低于两种 ANN，但任务很小，不能外推为总体质量优势。
+- 训练后 write event rate 约 `5.99–12.18%`，output spike rate 约 `0–6.35%`，trace 范围合法，decay 仍覆盖约 `0.548–0.990`。seed 2 的 excitatory output spike rate 为 0 但仍 100%，说明本任务可能主要使用 signed slow trace 与 inhibitory event；后续必须做 spike-only/trace-only 消融，不能把成功全归因于输出 spike code。
+- 与 IC0 的 6–8% 对照支持结构解释：可学习 memory 来自 gated non-reset slow trace，而不是仅增加 update 或换任务；输入、wrapper、预算和 ANN controls 都与 EL1 相同。
+
+### 实时门与总判定
+
+exact tensor step 的 p50/p95 ms：threads 1 为 AT0 `0.0793/0.1211` vs LSTM `0.0701/0.1085`；4 为 `0.0778/0.1616` vs `0.0718/0.1258`；16 为 `0.1069/0.1838` vs `0.1063/0.1800`。16-thread 只差 `0.62%/2.10%`，但冻结门要求两者都不慢，三档仍全部 FAIL。
+
+- **H-EQ PASS；H-QUALITY PASS；H-PAR PASS；H-ANN FAIL；overall=FAIL。** 不直接进入 TextWorld；质量成功不能替训练慢 22%–112% 与 streaming 尾延迟落后的工程事实过门。
+- **保留 AT0 动力学并进入 AT1。** 训练侧为 gated affine trace 推导 exact K-query eligibility，避免构建 263/311-node scan backward；推理侧缓存静态 decay 并测试 fused/compiled tensor step。AT1 必须复现三 seed 100% 且同线程训推都达到 LSTM，才升级真实任务。
+- AT0 仍有明确边界：slow trace 不被 output spike reset，且 readout 可见 continuous trace。它是纯事件驱动 SNN 的 synaptic-state substrate，不是最终完整 hard-reset recurrent 世界模型；后续真实任务与 spike/trace 消融决定是否需要 ALIF/recurrent E/I。
+
+---
+
+## 2026-07-18：E3-AT0 预注册 — gated synaptic-trace exact scan（已执行）
+
+### EL1 后的结构路线比较
+
+EL1 在有效 delay4 任务上把“训练图太慢”和“状态不会记忆”明确拆开：即使梯度精确且长序列训练超过 LSTM，additive modulo IC0 仍为 chance。因此下一轮必须先改变纯 SNN 的时间状态，再为成功动力学推导 online/eligibility；不能继续对 IC0 加训练技巧。
+
+| 结构方向 / 认识论标签 | 状态机制 | 记忆潜力 | 时间并行 | 工程成本 | 主要风险 |
+|---|---|---:|---:|---:|---|
+| **AT0 gated synaptic trace** / Speculative new specialisation | 二值 content×write events 驱动异质指数突触 trace；spike 只读取 trace | 中高 | **exact affine scan** | 低 | trace readout 成功但 spike code 无效；无 reset/recurrent interaction |
+| ALIF/LSNN adaptation / Established direction | spike 提高慢阈值，阈值指数衰减 | 高 | 低；spike/reset 决定未来阈值 | 中 | serial BPTT/RTRL 成本高，CPU 难追 ANN |
+| recurrent E/I event path / Established direction | 上一步 E/I spike 经符号固定 recurrent weights 回注 | 高 | 低；需 fixed point、event segmentation 或 online gradient | 高 | dense recurrent GEMM 与因果链同时变慢 |
+| multi-timescale delay line / Cross-domain analogy | 多个固定/可学习 decay bank 近似 SSM basis | 高 | exact scan/卷积 | 中 | 状态字节随 timescale 数增长，容易变成 ANN SSM |
+| oscillatory phase memory / Established direction | stable complex/real oscillator 以相位保存事件 | 中高 | exact affine scan | 中 | P0 已在本机速度门失败，phase code 质量未证 |
+| event-addressed key/value synapses / Speculative new idea | spike key 选择写入局部 trace，query key 选择读出 | 很高 | key-local 可稀疏并行 | 很高 | 可能等价偷渡 attention，学习规则与硬件均未定 |
+
+推荐顺序为 AT0 → ALIF/recurrent E/I。AT0 的决定性优点不是“更像 LSTM”，而是把非线性 spike/reset 从记忆递推中移出：slow trace 仍只由 0/1 事件更新，输出仍有 0/1 threshold spike，但 trace recurrence 可被精确 scan；若它连 delay4 都学不会，则直接转真正 recurrent/adaptive spike，而不再调 trace。
+
+**What if：**把 hard reset 只留在快速输出膜，而让长期记忆位于不被 spike 清零的慢突触电流中，是否能同时获得 SNN 事件接口、可学习延迟状态和 exact time-parallel training？AT0 只测试这个最小命题，不把 reset-free slow trace 冒充最终完整神经元模型。
+
+### 冻结动力学
+
+`state_dim=31`，每个时间点由单个 fused linear 产生四组 binary events：`c_E,c_I`（content）与 `g_E,g_I`（write gate），全部使用 IC0 同一 hard surrogate threshold；实际写事件为 `v_E=c_E*g_E`、`v_I=c_I*g_I`，仍严格 0/1。每个神经元有可学习但有界的静态 decay：
+
+`lambda = 0.5 + (0.995-0.5)*sigmoid(decay_logit)`；
+
+`h_t = lambda*h_{t-1} + (1-lambda)*v_t`；
+
+`s_t = H(h_t-0.5)`；
+
+`y_t = Linear(LayerNorm([s_E,-s_I,h_E,-h_I]))`。
+
+`h` 解释为慢突触/膜 trace，若初态与事件在 `[0,1]`，forward 应保持 `[0,1]`；`s/c/g/v` 全为 binary。没有 sigmoid/tanh recurrent activation、没有 ANN hidden-to-hidden matrix；continuous trace 是 SNN 标准内部状态。当前 slow trace 不因 spike reset，边界必须保留。
+
+scan 把每步视为 affine pair `(lambda,(1-lambda)v_t)`，用已验证的 Hillis–Steele composition 得到全部前缀；serial 是逐步真值。decay 初值在 31 个神经元上均匀覆盖 `[0.55,0.99]` 的 logit 空间，避免全群同一时间常数。fused input event projection 参数为 `D×4S`；AT0 core 预期约 `8,402` 参数、persistent state `248 bytes`，对 LSTM `8,448/256` 在 2% 内。
+
+### 冻结门
+
+- **H-AT0-EQ**：serial/scan 覆盖 `(B,T)=(1,1),(4,32),(1,512)`、随机外部 trace；sequence/state/逐时刻 trace、input/initial/全部参数 gradient 满足 `atol=2e-5,rtol=1e-4`，content/gate/write/output spike 逐元素 bit-exact 且 binary，trace 始终 `[0,1]`；连续 64-token `step` 与 full scan 最终状态/输出等价。
+- **H-AT0-QUALITY**：完全复用 EL1 已冻结且有效的四段 WRITE→delay4→QUERY 数据、正交 embedding、seeds `{0,1,2}`、600 updates、batch32、test 4096、AdamW/clip。LSTM/Transformer 每 seed 仍须 `>=99%`；AT0 每 seed query accuracy 也须 `>=99%`。不因结果改变 decay 范围、threshold、update 或 embedding。
+- **H-AT0-PAR**：`B=1,D=32,T in {512,2048}`，threads 1/4/16，scan/serial 相同 K=4 query loss；至少一档 scan 比 serial 快 `>=5x` 且 autograd node `<=25%`。
+- **H-AT0-ANN**：同一长序列 benchmark 中至少一档 scan train p50 不慢于 fused LSTM，并在相同线程、B=1 的 continuous streaming p50 与 p95 都不慢于 LSTM。streaming 使用与 EK0 同边界的 exact tensor-only inference step，另以 full scan/连续 step 等价测试约束；编译不是必需门。另报 Transformer、IC0-EL1、参数、state bytes、firing/event rate；不能跨线程拼接 train/step。
+- 质量 PASS、速度 FAIL：保留动力学并进入 AT1 exact K-query trace eligibility/融合 kernel；质量 FAIL：AT0 关闭，转 ALIF 或 explicit recurrent E/I。只有质量与 ANN 训推门都通过才进入真实 TextWorld；AT0 即使通过也仍是 reset-free slow-trace 技术基底，不是最终完整世界模型。
+
+### 来源 / 产物
+
+- e-prop 原始结果把慢适应变量及其 eligibility 描述为跨越延迟监督的“future highway”，同时指出没有慢变量的普通 RSNN 在相同延迟任务上可能失败：<https://www.nature.com/articles/s41467-020-17236-y>。AT0 借用“慢内部变量承载信用”的结构动机，但其 gated affine trace 与 exact scan 是本项目特化，论文没有验证该方程。
+- runner/产物冻结为 `experiments/e3_at0_gated_trace.py` 与 `results/e3_scan/e3_at0_gated_trace.json`；正式结果必须另起条目，失败同样保留。
+
+---
+
+## 2026-07-18：E3-EL1 结果 — K-query 精确加速成立，但 IC0 四步记忆彻底失败（负面结果）
+
+### 证据 / 实现
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_el1_multi_query_eligibility.py --output results/e3_scan/e3_el1_multi_query_eligibility.json`；产物 SHA-256 `3B53C5409B19459748B0E15B4D6EC59C4594480FC4B0B68F74F28BD4B3197BF3`。环境为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、CUDA unavailable。
+- 新增 `E3InputCodedScanCore.forward_multi_query_eligibility` 与 custom backward。每个 query 只保存 exact prefix eligibility；`E_{tau-1}` 由 `E_tau-phi(d_tau) outer x_tau` 恢复，避免重复保存第二份 `[B,K,H,D]`。query validation 拒绝非 tensor、非一维、非 long、空、越界、重复与降序索引。
+- formal 前 quick smoke 只检查执行链，未用于改门或正式结论；临时 smoke JSON 在结果冻结后删除。
+
+### 等价与保存量
+
+- `(B,T,K,input_grad)=(1,1,1,on),(2,32,4,on),(1,512,8,off)` 全通过；query raw/state bit-exact，spike 严格 0/1，sequence 与输入/初态/全参数梯度满足 `2e-6/1e-5`。三组最大 gradient abs 分别为 `2.98e-8 / 2.38e-7 / 1.91e-6`；八个非法索引 case 全被预期错误拒绝。**H-EL1-EQ PASS**。
+
+| mode，K=4 | T=128 unique bytes / nodes | T=512 | T=2048 |
+|---|---:|---:|---:|
+| IC0-BPTT core-only | 298,848 / 43 | 1,125,216 / 43 | 4,430,688 / 43 |
+| **EL1 core-only** | **99,504 / 14** | **99,504 / 14** | **99,504 / 14** |
+| IC0-BPTT input-grad | 309,600 / 46 | 1,135,968 / 46 | 4,441,440 / 46 |
+| EL1 input-grad | 142,512 / 15 | 271,536 / 15 | 787,632 / 15 |
+
+core-only T=2048 ratio=`2.25%`，T=128→2048 growth=`1.0x`，故 **H-EL1-MEM PASS**。输入梯度仍随 T 线性增长，但比对应 BPTT T=2048 少 82.3%。T=512 的 K 扫描进一步给出：K=`1/4/16/32` 时 EL1/BPTT unique-byte ratio=`5.19/8.84/23.42/42.80%`；收益按 K 退化，但到 K=32 仍未交叉。
+
+### 多核长序列训练速度
+
+`B=1,D=32,K=4`，query-only forward+backward p50 ms：
+
+| threads | T | EL1 | IC0-BPTT | speedup | LSTM | Transformer | gate |
+|---:|---:|---:|---:|---:|---:|---:|---|
+| 1 | 512 | 1.126 | **1.103** | 0.98x | 1.119 | 7.145 | FAIL |
+| 1 | 2048 | **1.820** | 2.960 | **1.63x** | 3.547 | 92.862 | **PASS** |
+| 4 | 512 | 1.059 | **1.013** | 0.96x | 1.323 | 2.630 | FAIL |
+| 4 | 2048 | **1.683** | 2.171 | **1.29x** | 4.847 | 25.911 | **PASS** |
+| 16 | 512 | **1.780** | 1.998 | 1.12x | 2.844 | 3.616 | FAIL（<1.25x） |
+| 16 | 2048 | **3.176** | 3.723 | 1.17x | 9.811 | 29.493 | FAIL（<1.25x） |
+
+T=2048 的 1/4-thread lane 同时达到 `>=1.25x` 且快于 LSTM；**H-EL1-SPEED PASS**。T=512 没有加速，说明 K 个分段 einsum 的固定成本只在长序列摊薄；16 线程对该小矩阵反而增加调度开销。
+
+### 有效质量任务上的结构失败
+
+四段 WRITE→delay4→QUERY register 完全通过任务有效门：LSTM 与 Transformer 在 seeds `0/1/2` 的 16,384 个独立 test query 上均为 **100%**，NLL 分别约 `0.0062–0.0078 / 0.0076–0.0083`。因此本轮不再出现 EL0 的 INVALID 问题。
+
+| seed | IC0-BPTT acc | EL1 acc | LSTM | Transformer | EL1 train p50 / BPTT / LSTM ms |
+|---:|---:|---:|---:|---:|---:|
+| 0 | 6.30% | 6.30% | 100% | 100% | 1.946 / 1.654 / 0.999 |
+| 1 | 6.10% | 6.11% | 100% | 100% | 2.308 / 1.909 / 1.081 |
+| 2 | 7.63% | 7.63% | 100% | 100% | 2.001 / 1.721 / 1.129 |
+
+- IC0/EL1 loss 保持在随机猜测 `ln(16)≈2.773`，600 updates 后没有形成四步可读状态；input events 与 output spikes 全程严格二值，平均 firing/event rate 约 `0.52–0.62`，失败不是“没有 spike”。**H-EL1-QUALITY FAIL**。
+- seeds 0/2 的 600-step loss/参数最大差仅 `7.15e-7/1.55e-6`；seed 1 则为 `1.33e-3/3.22e-3`。观察上，前期微小 floating reduction 差异在 hard input threshold 附近被离散事件放大，令两条优化轨迹后期分叉；两者准确率仍同为随机水平。该现象不推翻单步全梯度 tolerance 等价，但否定“长优化轨迹必然保持 1e-4”的质量子门。
+- 在这个真实有效但短 T=32 的任务上，EL1 训练反而比普通 BPTT 慢约 16–21%，也慢于 LSTM；长 T 的 core benchmark 速度胜利不能替代质量约束下的训速结论。
+
+### 判定 / 决定
+
+- **H-EQ PASS；H-MEM PASS；H-SPEED PASS；H-QUALITY FAIL；overall=FAIL。** 不运行 TextWorld K-query，不把 EL1 宣称为世界模型训练方案。
+- 保留 EL1 为“已证明的 sparse-query 长序列梯度压缩原语”，但不再对 additive/non-recurrent IC0 追加任务调参。EL0/EL1 共同说明：训练图与实时 kernel 已可超过 ANN，当前决定性瓶颈是 SNN state transition 不会保持可学习的短期内容。
+- 下一实验必须改变**纯 SNN 动力学**而不是增加 ANN memory：优先测试带可塑时间常数的 adaptive spiking state（ALIF/LSNN 式 adaptation）或显式 recurrent E/I event path，并为其构造 online eligibility/low-rank RTRL；blockwise checkpoint 只解决 dense 训练内存，不能修复本轮表示失败。
+
+---
+
+## 2026-07-18：E3-EL1 预注册 — exact multi-query eligibility + 短延迟寄存器任务（已执行）
+
+### 路线比较与执行顺序
+
+用户已授权“沿用所有可能的数学方法”，所以这里不是排他单选，而是冻结执行顺序：先做当前 IC0 上可证明精确的 EL1，再把近似 online/local 方法作为独立实验，禁止用其中任一条的优点替另一条过门。
+
+| 路线 / 认识论标签 | 核心机制 | 新颖性 | 可行性 / 最小判官 | 证据强度 | 潜在价值 | 主要失败方式 |
+|---|---|---|---|---|---|---|
+| **EL1 exact K-query prefix eligibility** / Speculative new specialisation | 对 K 个监督时刻保存 exact prefix eligibility，反向只组合 K 个 learning signal | 针对 IC0 方程的新特例 | **高**；直接与普通 BPTT 做全梯度矩阵等价 | EL0 已证明 K=1 特例 | 稀疏 action/observation 边界可得到与 T 解耦的 core-only 保存量 | K 接近 T 时状态按 K 线性增长；只适用 additive IC0 |
+| blockwise exact checkpoint/adjoint / Established engineering direction | 每块保留边界状态，块内重算或 BPTT | 低 | 高；扫 block size 与重算时间 | 自动微分/checkpoint 已成熟 | 可覆盖 dense LM，不依赖稀疏标签 | 重算吞吐抵消内存收益，仍非严格在线 |
+| e-prop learning signal × eligibility / Established direction | 前向递推局部 eligibility，当前/广播 learning signal 调制 | 中 | 中；先在同一寄存器任务比较 BPTT gap | 原论文覆盖延迟监督与 RSNN | 真正在线更新，可延伸 recurrent SNN | learning signal 忽略跨神经元未来路径，精度可能掉 |
+| OTTT presynaptic trace / Established direction | detach temporal route，以 presynaptic trace 配即时 loss | 中 | 中；dense query loss 下对照 | 已有图像/事件任务证据 | 常数时间图、适合逐事件监督 | 稀疏延迟 query 缺少及时 learning signal |
+| SLTT / SLTT-K / Established direction | 删除不重要 temporal route，只在 K 个时刻反传 | 中 | 高；K={1,4,16} 与 exact EL1 同台 | 论文报告内存与 T 无关并在视觉任务验证 K 稀疏反传 | dense 监督也能抽样，GPU 友好 | 随机 K 可能跳过世界模型罕见关键边界 |
+| NDOT dynamics sensitivity / Established direction | 用神经动力学敏感度把 temporal/spatial gradient 前向分解 | 中 | 中低；需重推 modulo reset sensitivity | ICML 论文只在较短视觉时间步验证 | 比纯即时梯度保留更多历史依赖 | 对 exact hard modulo 的近似误差未知 |
+| BrainTrace/pp-prop low-rank RTRL / Established direction | 把 pre/post trace 因子化为线性神经元内存 | 高 | 中低；先实现 IC0 单层特例 | 2026 原论文给出模型无关编译器与多任务结果 | 可支持后续真正 recurrent E/I SNN | 近似/编译器复杂度高，迁移成本最大 |
+
+推荐并首先执行 EL1：它把 EL0 的“terminal-only”边界推进到 action/observation 多边界，同时仍能用普通 IC0-BPTT 给出逐元素真值。第二顺位是 blockwise exact 路线，用于 EL1 在 K/T 过密时的退化区；e-prop、OTTT、SLTT-K、NDOT、BrainTrace 后续分别预注册，不能混为一个调参池。
+
+**What if：**如果世界模型真正决定行为的监督主要位于动作提交、下一观察、reward/done 与 rollout 检查点，而不是每个文本子 token，那么 K-query exact eligibility 可能覆盖主要信用分配，同时避开 dense BPTT 的 T 倍保存量。EL1 必须先测 K 密度曲线；若 K/T 很快抹平收益，这个设想即被否证。
+
+### 数学构造
+
+保持 IC0 forward 不变。对任一 E/I population，`Q_t=u_0+sum_{k<=t}q_k`、`s_t=floor(Q_t)-floor(Q_{t-1})`、`u_t=Q_t-stopgrad(floor(Q_t))`。监督索引为严格递增的 `tau_j`，`j=1..K`；event/floor surrogate 分别记为 `phi(d)`、`psi(Q)`，query 上游 spike/residual learning signal 为 `g^s_j/g^u_j`：
+
+`A_j = g^u_j + g^s_j*psi(Q_{tau_j})`；
+
+`B_j = g^s_j*psi(Q_{tau_j-1})`（`tau_j=0` 时为 0）；
+
+`E_t = sum_{k<=t} phi(d_k) outer x_k`；
+
+`grad_W = eta * sum_batch,j [A_j*E_{tau_j} - B_j*E_{tau_j-1}]`。
+
+若 loss 也读取最终 recurrent state，再加 `g_state*E_{T-1}`；bias eligibility 把 `x_k` 换成 1，初态梯度为 `sum_j(A_j-B_j)+g_state`。forward 按 query 分段累计 eligibility，每个时间点只进入一次 einsum，保存 K 个 prefix snapshot 而不是完整 `[B,T,H,D]`。因此冻结输入的 backward 保存量为 `O(KBHD)`、对 T 常数；输入需要梯度时仍保存逐时刻 `phi(d_t)` 并由 query range coefficient 精确恢复 `grad_x`，该模式为 `O(BTH)`，必须单列。
+
+### 冻结等价、内存与速度门
+
+- **H-EL1-EQ**：覆盖 `(B,T,K,input_grad)=(1,1,1,on),(2,32,4,on),(1,512,8,off)`，含外部初态、首/中/末 query。query output/final state、`x/u0/input_to_{e,i}`、output norm/projection 全参数梯度对普通 IC0 scan 满足 `atol=2e-6,rtol=1e-5`；state/spike forward bit-exact。query 索引必须是一维、非空、strictly increasing、无重复且位于 `[0,T)`，错误输入必须拒绝。
+- **H-EL1-MEM**：用 `saved_tensors_hooks` 测 `B=1,D=32,K=4,T in {128,512,2048}`。core-only 的 T=2048 unique saved bytes 必须不超过普通 IC0 K-query BPTT 的 25%，且 EL1 T=128→2048 增长不超过 1.25x；input-gradient 单列。另扫 `K={1,4,16,32}`、T=512，报告 K 线性成本与相对 BPTT break-even，不用 K=1 代替 K=4 过门。
+- **H-EL1-SPEED**：`B=1,D=32,K=4,T in {512,2048}`、CPU threads 1/4/16，query loss 的 forward+backward 交错计时。至少一档 EL1 p50 比普通 IC0-BPTT 快 `>=1.25x`，且绝对不慢于同任务 fused LSTM；Transformer 为第二 ANN 对照。参数、query 索引、输入与 loss 完全一致，不从不同线程拼接。
+- 本机 CUDA unavailable 时 GPU 指标为 null；runner 保留 device/synchronize 路径。多核只按同线程比较，不以 16-thread 绝对时间替 1-thread baseline。
+
+### 冻结质量任务：四段 action-like WRITE/QUERY register
+
+- `T=32,K=4,D=32`。四段起点为 `{0,8,16,24}`：起点 token 是独立均匀的 `WRITE(payload in 0..15)`，四步后的 `{4,12,20,28}` 为共同 `QUERY`，其余为共同 distractor；每个 query 预测本段 payload。随机 payload 防止靠位置猜标签，四步 delay 模拟动作写入后在观察边界读取短期 latent state。
+- 输入词表为 distractor、16 个 WRITE、QUERY，共 18 个 token；所有模型共享冻结的 32 维正交 one-hot code，不训练 embedding。共享 output LayerNorm/decoder 初始化；trainable 总参数相对 LSTM 必须在 `±2%`。这只消除 EL0 随机 embedding 的任务仪器风险，不给任何模型额外未来信息。
+- seeds `{0,1,2}`；每 seed 600 update、batch 32、每 update 数据 seed 固定为 `8_930_000 + 10_000*seed + update`；AdamW `lr=1e-3,weight_decay=0.01`、clip 1.0。test 使用独立 seed、4096 条序列，分块评估；所有 query 共 16,384 个标签。
+- **任务有效门**：每个 seed 的 LSTM 与 Transformer test query accuracy 都须 `>=99%`，否则 H-QUALITY=`INVALID`，不得事后加 update/改 embedding/降门。
+- **H-EL1-QUALITY**：任务有效后，每 seed 普通 IC0-BPTT 与 EL1 都须 `>=99%`；两者逐 update loss 最大差、最终参数最大差均 `<=1e-4`。同时报告 worst-seed NLL、训练 p50、spike/event 二值率。失败时区分“IC0 表示质量不足”与“EL1 梯度不等价”。
+- 只有 H-EQ/MEM/SPEED/QUALITY 全通过才运行独立的真实 TextWorld action/observation-boundary K-query 实验；本任务本身不是语言模型或世界模型成功证据。
+
+### 来源边界与产物
+
+- e-prop 把梯度写成 learning signal × local eligibility，并明确说明实际 online learning signal 会忽略经其他 recurrent neurons 传播的未来影响：<https://www.nature.com/articles/s41467-020-17236-y>。
+- OTTT 提供 online-through-time 参照：<https://arxiv.org/abs/2210.04195>。SLTT-K 随机选择 K 个反传时刻并报告内存对总时间步常数，但实验主要是静态/事件视觉分类，不是 action-conditioned LM：<https://openaccess.thecvf.com/content/ICCV2023/papers/Meng_Towards_Memory-_and_Time-Efficient_Backpropagation_for_Training_Spiking_Neural_Networks_ICCV_2023_paper.pdf>。
+- NDOT 用 neuronal dynamics sensitivity 分解 temporal/spatial gradient：<https://proceedings.mlr.press/v235/jiang24a.html>。BrainTrace/pp-prop 把 RTRL eligibility 近似成 pre/post 因子并提供线性 neuron-memory 编译路径：<https://www.nature.com/articles/s41467-026-68453-w>。这些来源都没有证明本项目 exact modulo IC0 的 K-query 闭式；EL1 的“精确”只由上述推导与本地全梯度等价判官支持。
+- 正式 runner/产物冻结为 `experiments/e3_el1_multi_query_eligibility.py` 与 `results/e3_scan/e3_el1_multi_query_eligibility.json`；任何 smoke 产物不得覆盖正式 JSON。
+
+---
+
+## 2026-07-18：E3-EK0 结果 — exact tensor step 过单流实时门，编译覆盖仍有限（正面结果）
+
+### 证据 / 实现
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_ek0_compiled_streaming.py --output results/e3_scan/e3_ek0_compiled_streaming.json`；产物 SHA-256 `8411FAE1DFE2B396C4669CB7D58C002AA51421A39031F6A1775A8D43E4EF997D`。环境为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、CUDA unavailable。
+- 新增 `E3InputCodedScanCore.forward_step_tensors`：直接对 E/I tensor state 执行 `event=(Wx+b>=0)`、`pre=u+0.125+0.75*event`、`spike=floor(pre)`、`u'=pre-spike`，随后复用原 LayerNorm/projection。它不改变 IC0 参数或动力学，只移除 T=1 sequence、`cumsum/cat`、dataclass 与重复 validation。
+- 首轮 smoke 暴露 `torch.compile` 的 tensor dispatch key 变化：普通 tensor 首次编译后再输入 inference tensor 会触发重编译。正式运行前已统一在 `inference_mode` 内创建 token/state；这是执行接口修复，不改方程、门槛或正式数据。
+- 完整回归 `.venv-wsl/bin/python -m pytest -q` 为 `118 passed, 46 subtests passed`；`compileall -q vpsc experiments tests` 与 `git diff --check` 通过。WSL venv 未安装 Ruff（`No module named ruff`），不把缺失的 lint 运行伪装成通过。
+
+### 等价门
+
+- `B=1/8,T=512` 全通过；tensor-eager 对 generic 的 sequence/state/spike 为 bit-exact。compiled sequence 最大绝对误差分别为 `4.7684e-7/1.4305e-6`，末态与 spike bit-exact，spike 全为 0/1、residual 全在 `[0,1)`。
+- `fullgraph=True,mode=reduce-overhead` 在等价阶段成功；fresh B1 首次调用为 `61.23 s`，B8 为 `1.84 s`，均明确排除在稳态延迟之外。**H-EK0-EQ PASS**。
+
+### 实时逐 token 结果
+
+共同 64 warmup + 512 measured token，逐模型交错计时；数值为 p50 / p95 ms：
+
+| threads / batch | generic IC0 | tensor eager | tensor compiled | fused eager LSTM | compiled 判定 |
+|---|---:|---:|---:|---:|---|
+| 1 / 1 | 0.1091 / 0.1467 | **0.0545 / 0.0888** | 0.0698 / 0.0985 | 0.0707 / **0.0972** | FAIL（p95 慢 1.3%） |
+| 1 / 8 | 0.1211 / 0.1676 | **0.0618 / 0.1021** | 0.0787 / 0.1116 | 0.0736 / **0.0981** | FAIL |
+| 4 / 1 | 0.1102 / 0.1492 | **0.0554 / 0.0729** | **0.0671 / 0.0877** | 0.0754 / 0.1018 | **PASS** |
+| 4 / 8 | 0.1299 / 0.1848 | **0.0698 / 0.1121** | 0.0833 / 0.1278 | 0.0781 / **0.1048** | FAIL |
+| 16 / 1,8 | — | — | NOT RUN | — | `FailOnRecompileLimitHit` |
+
+- 4-thread B1 同一 lane 内，compiled IC0 比 LSTM 快 `11.1%` p50、`13.8%` p95，故按“至少一档同时不慢于 LSTM”的冻结规则 **H-EK0-RT PASS**。不能用 1-thread p50 与 4-thread p95 拼门；表中没有这样做。
+- generic→tensor-eager p50 加速为 `1.86–2.00x`。compiled 在所有成功 lane 都比 tensor-eager 慢，说明主要收益来自精确单步代数与低开销 tensor 接口，不是编译器；不过 4-thread B1 compiled 仍独立过了预注册门。
+- 16-thread 在按线程数产生第 9 个 Dynamo specialization 时达到 cache/recompile 上限，B1/B8 都未测；B8 在 1/4 线程也慢于 LSTM。IC0 参数/state 为 `8516 / 336 bytes`，LSTM 为 `8448 / 256 bytes`，状态开销仍多 31.25%。
+
+### 判定 / 下一步
+
+- **H-EK0-EQ PASS；H-EK0-RT PASS；overall=PASS。** 这是 IC0 首次在 exact streaming 语义下以同线程 p50+p95 越过 fused LSTM；结论只覆盖 4-thread、B1、CPU steady-state，不外推到 batch throughput、冷启动、GPU、真实 LM 或完整世界模型。
+- 当前工程默认候选应优先保留 tensor-eager 路径；`torch.compile` 作为可选缓存层，需先解决线程数导致的 specialization 上限与约一分钟 fresh compile 成本。下一实现把 dispatch-free tensor state 接到完整 transition runtime，并引入真正的 event-skip/segment kernel，而不是继续把 compile 当作主要数学收益。
+- 训练侧与 EL0 结论并列：EL0 已解决 terminal/query-sparse exact backward，但真实任务质量门仍无效。下一轮必须先设计 ANN controls 可学的 EL1 短延迟/K-query，再进入真实 TextWorld/action-conditioned 任务；EK0 不能替代该质量证据。
+
+---
+
+## 2026-07-18：E3-EK0 预注册 — exact tensor streaming + compiled fusion（已执行）
+
+### 动机 / 构造
+
+IC0 已有 T=512 streaming p95 `0.186/0.168/0.192 ms`，仍慢于 LSTM `0.114/0.125/0.163 ms`；但 generic `step()` 实际把单 token 扩成 T=1 sequence，再走 `cumsum/cat/dataclass/validation`，没有使用 IC0 在单步上的最简闭式。
+
+EK0 不改任何权重或动力学。对每个 E/I population 直接计算：`z=1[Wx+b>=0]`，`p=u+0.125+0.75z`，`s=floor(p)`，`u'=p-s`。因 `u in [0,1)` 且单步 charge `<1`，`s` 严格为 0/1，等价于 generic cumulative floor/difference/modulo。readout 仍为原 `LayerNorm([s_E,-s_I,u'_E,-u'_I]) + Linear`。
+
+实现分三层比较：现有 dataclass generic step；只收发 tensor tuple 的 eager exact step；同一 tensor module 经 `torch.compile(fullgraph=True,mode="reduce-overhead")` 的 compiled step。LSTM 使用当前 PyTorch oneDNN/fused `nn.LSTM` eager step 作为 ANN 下界；若 `nn.LSTM` 自身不能被 fullgraph compile，不以较慢的手写 LSTMCell 替换它来制造胜利。
+
+### 冻结门
+
+- **H-EK0-EQ**：`B in {1,4}`、连续 T=512、随机外部 residual；generic/tensor-eager/compiled 的逐 token sequence 通过 `atol=2e-6,rtol=1e-5`，最终 E/I state bit-exact，全部 spike 仅 0/1、residual 始终 `[0,1)`。compiled 必须 `fullgraph=True` 成功；编译时间单列，不计稳态延迟。
+- **H-EK0-RT**：CPU threads 1/4/16，`B=1,D=32`，共同 64 warmup + 512 measured token，逐 token交错顺序，报告 p50/p95/p99。至少一档 compiled IC0 的 p50 和 p95 都不慢于 fused eager LSTM，才过实时门；不能从不同线程拼接。
+- 另报 generic→tensor-eager 与 tensor-eager→compiled speedup、persistent state bytes、参数量和 batch 8 throughput；质量不重训，因为 EQ 要求 forward 完全相同。若只 p50 赢或尾延迟排序不稳，RT FAIL。
+- 本机 CUDA unavailable 只报 CPU；runner 保留 device-aware synchronize。EK0 通过也只解决 IC0 推理核，必须与 EL0 的 query-sparse 训练边界并列，不得宣称 dense LM/世界模型已经达到 ANN 训推速度。
+- 正式产物冻结为 `results/e3_scan/e3_ek0_compiled_streaming.json`。
+
+---
+
+## 2026-07-18：E3-EL0 结果 — 终端 eligibility 在长序列同时过等价/内存/速度门，质量任务无效（混合结果）
+
+### 证据 / 实现
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_el0_terminal_eligibility.py --output results/e3_scan/e3_el0_terminal_eligibility.json`；产物 SHA-256 `0969162D20F7AE8D877A16FE298D7D348D8F9131821B2E68D334C147B7BA1BC2`。环境为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、CUDA unavailable。
+- 新增 `E3InputCodedScanCore.forward_terminal_eligibility`：forward 仍是 IC0 的 strict binary event / exact hard modulo reset；custom backward 只为 terminal sparse loss 保存 `E_T/E_{T-1}` 与末两步 learning signal，输入需要梯度时再保存逐时刻 event derivative。
+- 首轮 smoke 暴露一个真实内存陷阱：保存 `Q_T/Q_{T-1}` 的 view 会 pin 完整 `[B,T,H]` cumulative storage。结果前已把四个末端 view clone；修复后 logical/unique saved bytes 一致，core-only 不再随 T 增长。这是实现修复，不改变公式、门槛或正式数据。
+
+### 等价与 backward 保存量
+
+- `(B,T,input_grad)=(1,1,on),(4,32,on),(1,512,off)` 三个 case 全通过；terminal sequence/state、输入/初态/全部参数 gradient 均满足冻结 `atol=2e-6,rtol=1e-5`。最大原始绝对误差 `1.1444e-5` 出现在 T=512 inhibitory bias gradient，因对应量级满足 relative tolerance；300-update 轨迹提供了更强的累计核验（见质量段）。**H-EL0-EQ PASS**。
+
+| mode | T=128 saved bytes / nodes | T=512 saved bytes / nodes | T=512 vs BPTT |
+|---|---:|---:|---:|
+| IC0 terminal-BPTT, frozen input | 314,688 / 43 | 1,190,208 / 43 | 100% |
+| EL0 core-only, frozen input | **57,928 / 13** | **57,928 / 13** | **4.87%** |
+| IC0 BPTT, input grad | 325,440 / 46 | 1,200,960 / 46 | 100% |
+| EL0, input grad | 100,936 / 14 | 229,960 / 14 | 19.15% |
+
+core-only 的 T=128→512 growth=`1.0×`，T=512 ratio=`4.87%<25%`；**H-EL0-MEM PASS**。需要 encoder/input gradient 时保存量仍随 T 线性增长，不能冒充完全常数内存，但时间 autograd node 仍被压到 14。
+
+### 终端训练速度
+
+`B=1,D=32`，p50 ms；loss 只读取 terminal output，所有核心输入冻结，参数量 IC0/EL0/LSTM/Transformer=`8516/8516/8448/8608`。
+
+| threads | T | EL0 | IC0 BPTT | speedup | LSTM | Transformer |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 512 | **0.82** | 1.13 | 1.38x | 1.13 | 6.86 |
+| 1 | 2048 | **1.62** | 2.84 | **1.75x** | 3.51 | 92.55 |
+| 4 | 512 | **0.74** | 1.02 | 1.38x | 1.30 | 2.57 |
+| 4 | 2048 | **1.43** | 2.00 | 1.40x | 4.45 | 25.54 |
+| 16 | 512 | **1.23** | 1.69 | 1.37x | 2.51 | 3.16 |
+| 16 | 2048 | **2.06** | 3.69 | **1.79x** | 9.27 | 29.28 |
+
+T=512 三档都已快于 LSTM，但没有达到相对 IC0 的 1.5x 门；T=2048 在 1/16 线程同时达到 `>=1.5x` 且快于 LSTM，故按预注册 **H-EL0-SPEED PASS**。4 线程 T=2048 虽绝对最快，也只达到 1.40x，未拼接为该子门的胜项。
+
+### 质量判官无效，但训练轨迹验证闭式梯度
+
+冻结 terminal-delay 任务 300 update 后：IC0-BPTT/EL0 accuracy 都为 `93.75%`、NLL 都为 `0.81537`；LSTM 仅 `6.25%`，Transformer `43.75%`。两个 ANN control 都未到预注册 99%，故 **H-EL0-QUALITY INVALID**，不是 EL0 FAIL/PASS，也不运行 TextWorld K-query。
+
+尽管任务无效，EL0 与普通 IC0 的数值对应是强实现证据：300 次逐 update loss 最大差 `4.7684e-7`，最终全部参数最大差 `3.9116e-7`，test logits 导出的 accuracy/NLL 完全相同。完整训练 p50 为 EL0 `1.38 ms`、IC0-BPTT `1.71 ms`、LSTM `1.70 ms`、Transformer `2.08 ms`；由于 control 质量失败，这些 task-level 时间不能升级为质量约束下的 ANN 胜利。
+
+### 判定 / 下一步
+
+- **H-EL0-EQ PASS；H-EL0-MEM PASS；H-EL0-SPEED PASS；H-EL0-QUALITY INVALID；overall=MIXED。** EL0 是目前第一个在 T=2048 同时保持 strict IC0 forward、精确 surrogate gradient、常数 core-only backward 保存量并超过 LSTM terminal training 的数学加速方案。
+- `forward_terminal_eligibility` 保留为实验 API，不设为 dense LM 默认：它只覆盖 terminal/query-sparse objective；输入梯度模式也不是常数内存。LSTM/Transformer control 失败意味着尚不能把它接到真实 TextWorld 后声称质量成立。
+- 下一步独立执行 EK0 exact compiled streaming step，解决 IC0 已知的实时单步负债；另行预注册一个 ANN controls 可学的 EL1 短延迟/分块 K-query 预算，不能在本轮事后增加 update 或降低 99% 门。
+
+---
+
+## 2026-07-18：E3-EL0 预注册 — exact terminal eligibility scan（已执行）
+
+### 路线比较与选择
+
+当前瓶颈被拆成“时间信用分配”和“单步执行核”两个独立问题。原始资料支持的候选并不等价：
+
+| 路线 | 认识论标签 | 最小机制 | 本项目主要风险 |
+|---|---|---|---|
+| e-prop 三因子规则 | Established direction | learning signal × synaptic eligibility | recurrent loop 下局部 trace 不是完整梯度，状态量可随连接数膨胀 |
+| OTTT presynaptic trace | Established direction | detach reset 后递推突触前活动，以即时 loss 独立求梯度 | 假设即时监督；对延迟 query 的学习信号需要额外 eligibility |
+| SLTT / SLTT-K | Established direction | 删除 temporal-gradient route，并只在 K 个时刻反传 | 长依赖任务上被删掉的正是目标信用路径 |
+| NDOT dynamics sensitivity | Established direction | 用神经动力学敏感度近似在线时间梯度 | 需要为本项目 modulo reset 重新推导，近似误差尚不清楚 |
+| BrainTrace factorised trace | Established direction | pre/post trace 因子化，把在线学习内存降到线性 | 2026 方法与编译器迁移成本高，先做最小代数特例才能定位收益来源 |
+| **EL0 additive exact eligibility** | **Speculative new specialisation** | 利用 IC0 的加性 cumulative charge，把 terminal surrogate gradient 闭式分解为 learning signal × 累积 eligibility | 只天然覆盖稀疏/终端监督；dense LM 仍需分块或 K-query 扩展 |
+| exact sparse-event kernel | Established engineering direction | 事件段 associative scan + 融合 step kernel | 只解决执行，不会自动修复信用分配或质量 |
+
+优先执行 EL0：它是对当前 IC0 方程的可证明特例，不依赖“近似梯度应该够用”的希望；若梯度等价而速度/内存仍失败，就能直接排除这类因子化在当前 PyTorch/CPU 上的工程价值。exact sparse-event/compiled step 作为随后独立 EK0，不用其推理收益替 EL0 训练门过关。
+
+### 数学构造
+
+对单个 E/I population，IC0 保持原 forward：`d_t=Wx_t+b`，`z_t=H(d_t)`，`q_t=q_base+eta*z_t`，`Q_t=u_0+sum_{k<=t}q_k`，`C_t=floor(Q_t)`，`s_t=C_t-C_{t-1}`，`u_t=Q_t-stopgrad(C_t)`。event surrogate 记为 `phi(d)`，periodic-floor surrogate 记为 `psi(Q)`。
+
+若 loss 只读取末时刻 `[s_T,u_T]`，令上游 learning signal 为 `(g_s,g_u)`，则冻结 surrogate 语义下：
+
+`a_T = g_u + g_s*psi(Q_T)`；
+
+`E_T = sum_{k<=T} phi(d_k) outer x_k`，`E_{T-1}` 同理；
+
+`grad_W = eta * sum_batch [a_T*E_T - g_s*psi(Q_{T-1})*E_{T-1}]`。
+
+bias eligibility 把 `x_k` 换成 1；初态梯度使用同一系数。对需要 encoder/input gradient 的模式，保存逐时刻 `phi(d_t)` 并一次矩阵乘得到精确 `grad_x`；对冻结输入的 core-only 模式，只保存聚合 `E_T/E_{T-1}`，反向保存量应与 T 无关。forward 仍是严格 0/1 input event、0/1 output spike、hard modulo reset；EL0 只改训练反向图，不改推理模型。
+
+### 冻结门与边界
+
+- **H-EL0-EQ**：覆盖 `(B,T)=(1,1),(4,32),(1,512)`、外部初态以及 input-gradient 开/关；terminal sequence/state、`x/u0/input_to_{e,i}` 与 output norm/projection 全参数梯度相对普通 IC0 scan 通过 `atol=2e-6,rtol=1e-5`。任一不等价即停止速度/质量解释。
+- **H-EL0-MEM**：用 `saved_tensors_hooks` 统计真实 backward-saved tensor bytes。core-only 在 T=512 必须不超过普通 IC0 terminal-BPTT 的 25%，且 T=128→512 增长不超过 1.25×；full-input-gradient 单独报告，禁止把其线性输入保存冒充常数内存。
+- **H-EL0-SPEED**：`B=1,D=32,T in {512,2048}`、threads 1/4/16，terminal forward+backward 交错计时。EL0 至少一档须比普通 IC0 terminal-BPTT 快 1.5×，并且绝对 p50 不慢于同任务 LSTM；Transformer 保留为第二 ANN 对照。
+- **H-EL0-QUALITY**：冻结 embedding 的 16 类 terminal delayed-token task：payload 只出现在 `t=0` 的 16 种 WRITE token，中间全为同一 distractor，`t=T-1` 为所有样本相同的 QUERY；`T=64,B=8`，embedding 用 seed `8700001` 的 `Normal(0,0.2)` 后冻结，train batch seed `8710000+update`，test 穷举 16 类。训练 300 update、AdamW `lr=1e-3,weight_decay=0.01`、clip 1.0，相同 batch/初始化；LSTM/Transformer test accuracy 均须>=99% 才验证任务。EL0 与普通 IC0 都须>=99%，且逐 update loss 与最终参数最大差不超过 `1e-4`；否则分别记录架构质量失败或梯度实现失败。
+- EL0 PASS 只证明**稀疏终端监督**的精确 eligibility 训法。它不等于 dense next-token LM、一般 recurrent e-prop、完全在线参数更新或世界模型成功；通过后才扩展为 chunked K-query 并接真实 TextWorld event next-token，仍需同时比较 LSTM/Transformer。
+- 正式产物冻结为 `results/e3_scan/e3_el0_terminal_eligibility.json`；本机 CUDA unavailable 时 GPU 指标必须为 null，runner 保留 device-aware 路径但不借文献 GPU 数字过门。
+
+### 来源边界
+
+- e-prop 将权重更新分解为 learning signal 与 eligibility trace；对 recurrent loop 的局部计算边界见 Nature Communications 2020：<https://www.nature.com/articles/s41467-020-17236-y>。
+- OTTT 在 detach-reset 语义下递推 presynaptic activity 并形成三因子在线梯度：<https://arxiv.org/abs/2210.04195>。
+- SLTT/SLTT-K 删除 temporal gradient route，并把 backward 时刻从 T 降到 K：<https://openaccess.thecvf.com/content/ICCV2023/papers/Meng_Towards_Memory-_and_Time-Efficient_Backpropagation_for_Training_Spiking_Neural_Networks_ICCV_2023_paper.pdf>。
+- NDOT 与 BrainTrace 分别提供 dynamics-sensitivity 与 factorised linear-memory 参照：<https://proceedings.mlr.press/v235/jiang24a.html>、<https://www.nature.com/articles/s41467-026-68453-w>。这些来源没有测试本项目 exact modulo IC0；EL0 的闭式等价仍须由本地梯度矩阵证明。
+
+---
+
 ## 2026-07-18：E3-IC0 结果 — 二值 input event 将 A0 推到 96%，但未过 99%/streaming 硬门（混合结果）
 
 ### 证据
