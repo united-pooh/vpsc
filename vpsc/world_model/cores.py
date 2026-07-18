@@ -42,6 +42,10 @@ FeedbackPolicy = Literal[
     "exact_full",
     "margin_full",
 ]
+E2ExecutionMode = Literal["reference", "fused"]
+E3ExecutionMode = Literal["serial", "scan"]
+E3FixedPointMode = Literal["serial", "fixed_point"]
+E3OscillatorMode = Literal["serial", "scan"]
 
 
 @dataclass
@@ -79,7 +83,54 @@ class E2CoreState:
     inhibitory: Tensor
 
 
-CoreState = Union[LSTMCoreState, TransformerCoreState, E2CoreState]
+@dataclass
+class E3LayerState:
+    """Hard-reset residual membrane values for one E/I scan layer."""
+
+    excitatory: Tensor
+    inhibitory: Tensor
+
+
+@dataclass
+class E3ScanState:
+    """Constant-size streaming state for every cumulative-charge layer."""
+
+    layers: Tuple[E3LayerState, ...]
+
+
+@dataclass
+class E3LayerTrace:
+    """Discrete spikes and post-reset membrane sequences for one layer."""
+
+    excitatory_spikes: Tensor
+    inhibitory_spikes: Tensor
+    excitatory_residuals: Tensor
+    inhibitory_residuals: Tensor
+
+
+@dataclass
+class E3OscillatorState:
+    """Complex-valued stable oscillator state."""
+
+    value: Tensor
+
+
+@dataclass
+class E3OscillatorTrace:
+    """Discrete real/imaginary threshold events plus complex state sequence."""
+
+    excitatory_spikes: Tensor
+    inhibitory_spikes: Tensor
+    values: Tensor
+
+
+CoreState = Union[
+    LSTMCoreState,
+    TransformerCoreState,
+    E2CoreState,
+    E3ScanState,
+    E3OscillatorState,
+]
 StateT = TypeVar("StateT", bound=CoreState)
 
 
@@ -636,6 +687,7 @@ class E2SignedCore(TemporalCore[E2CoreState]):
         tau_i: float = 5.80,
         dt: float = 1.0,
         micro_steps: int = 1,
+        execution_mode: E2ExecutionMode = "fused",
     ) -> None:
         super().__init__(input_dim=input_dim, output_dim=hidden_dim)
         state_dim = hidden_dim if state_dim is None else state_dim
@@ -653,6 +705,8 @@ class E2SignedCore(TemporalCore[E2CoreState]):
             raise ValueError("micro_steps must be positive")
         if min(g_ee, g_ei, g_ie, g_ii) < 0.0:
             raise ValueError("signed-channel gain magnitudes cannot be negative")
+        if execution_mode not in ("reference", "fused"):
+            raise ValueError("execution_mode must be 'reference' or 'fused'")
 
         self.hidden_dim = int(hidden_dim)
         self.state_dim = int(state_dim)
@@ -672,6 +726,7 @@ class E2SignedCore(TemporalCore[E2CoreState]):
         self.alpha_e = float(dt / tau_e)
         self.alpha_i = float(dt / tau_i)
         self.micro_steps = int(micro_steps)
+        self.execution_mode: E2ExecutionMode = execution_mode
 
         self.input_to_e = nn.Linear(input_dim, state_dim)
         self.input_to_i = nn.Linear(input_dim, state_dim)
@@ -774,6 +829,91 @@ class E2SignedCore(TemporalCore[E2CoreState]):
         signed_state = torch.cat((state.excitatory, -state.inhibitory), dim=-1)
         return self.output_projection(self.output_norm(signed_state))
 
+    def _forward_reference(
+        self,
+        x: Tensor,
+        state: E2CoreState,
+        gains: E2FeedbackGains,
+    ) -> CoreOutput[E2CoreState]:
+        """Original per-token graph retained as the F0 equivalence control."""
+
+        outputs = []
+        current = state
+        for index in range(x.shape[1]):
+            if self.state_reset:
+                current = E2CoreState(
+                    excitatory=torch.zeros_like(current.excitatory),
+                    inhibitory=torch.zeros_like(current.inhibitory),
+                )
+            current = self._advance(x[:, index], current, gains)
+            outputs.append(self._readout(current))
+        return CoreOutput(sequence=torch.stack(outputs, dim=1), state=current)
+
+    def _signed_block_weight(self, gains: E2FeedbackGains) -> Tensor:
+        """Fuse the four sign-constrained channels into one recurrent matrix."""
+
+        e_to_e = self._positive_channel(self.e_to_e_logits)
+        i_to_e = self._positive_channel(self.i_to_e_logits)
+        e_to_i = self._positive_channel(self.e_to_i_logits)
+        i_to_i = self._positive_channel(self.i_to_i_logits)
+        drive_e = torch.cat(
+            (gains.e_to_e * e_to_e, -gains.i_to_e * i_to_e), dim=-1
+        )
+        drive_i = torch.cat(
+            (gains.e_to_i * e_to_i, -gains.i_to_i * i_to_i), dim=-1
+        )
+        return torch.cat((drive_e, drive_i), dim=0)
+
+    def _forward_fused(
+        self,
+        x: Tensor,
+        state: E2CoreState,
+        gains: E2FeedbackGains,
+    ) -> CoreOutput[E2CoreState]:
+        """Algebraically equivalent F0 graph with sequence-level fusion."""
+
+        # The two projections are evaluated on the complete sequence so the
+        # backend can parallelise over B*T instead of launching per token.
+        input_drive_e = self.input_to_e(x)
+        input_drive_i = self.input_to_i(x)
+        signed_block = self._signed_block_weight(gains)
+
+        excitatory = state.excitatory
+        inhibitory = state.inhibitory
+        excitatory_sequence = []
+        inhibitory_sequence = []
+        for index in range(x.shape[1]):
+            if self.state_reset:
+                excitatory = torch.zeros_like(excitatory)
+                inhibitory = torch.zeros_like(inhibitory)
+
+            for _ in range(self.micro_steps):
+                signed_state = torch.cat((excitatory, inhibitory), dim=-1)
+                recurrent_drive = F.linear(signed_state, signed_block)
+                recurrent_e, recurrent_i = recurrent_drive.chunk(2, dim=-1)
+                target_e = torch.sigmoid(
+                    recurrent_e + input_drive_e[:, index] - self.theta_e
+                )
+                target_i = torch.sigmoid(
+                    recurrent_i + input_drive_i[:, index] - self.theta_i
+                )
+                excitatory = excitatory + self.alpha_e * (target_e - excitatory)
+                inhibitory = inhibitory + self.alpha_i * (target_i - inhibitory)
+
+            excitatory_sequence.append(excitatory)
+            inhibitory_sequence.append(inhibitory)
+
+        excitatory_states = torch.stack(excitatory_sequence, dim=1)
+        inhibitory_states = torch.stack(inhibitory_sequence, dim=1)
+        signed_sequence = torch.cat(
+            (excitatory_states, -inhibitory_states), dim=-1
+        )
+        sequence = self.output_projection(self.output_norm(signed_sequence))
+        return CoreOutput(
+            sequence=sequence,
+            state=E2CoreState(excitatory=excitatory, inhibitory=inhibitory),
+        )
+
     def forward(
         self,
         x: Tensor,
@@ -788,20 +928,706 @@ class E2SignedCore(TemporalCore[E2CoreState]):
             self._validate_state(state, batch_size)
 
         gains = self.effective_gains()
-        outputs = []
-        current = state
-        for index in range(time):
-            if self.state_reset:
-                current = E2CoreState(
-                    excitatory=torch.zeros_like(current.excitatory),
-                    inhibitory=torch.zeros_like(current.inhibitory),
-                )
-            current = self._advance(x[:, index], current, gains)
-            outputs.append(self._readout(current))
-        sequence = torch.stack(outputs, dim=1)
+        if self.execution_mode == "reference":
+            result = self._forward_reference(x, state, gains)
+        else:
+            result = self._forward_fused(x, state, gains)
         if detach_state:
-            current = detach_core_state(current)
-        return CoreOutput(sequence=sequence, state=current)
+            result.state = detach_core_state(result.state)
+        return result
+
+
+class _PeriodicSurrogateFloor(torch.autograd.Function):
+    """Exact floor forward with a bounded periodic threshold surrogate."""
+
+    @staticmethod
+    def forward(ctx: Any, value: Tensor, scale: float) -> Tensor:
+        ctx.save_for_backward(value)
+        ctx.scale = float(scale)
+        return torch.floor(value)
+
+    @staticmethod
+    def backward(ctx: Any, gradient: Tensor) -> Tuple[Tensor, None]:
+        (value,) = ctx.saved_tensors
+        scale = ctx.scale
+        distance = (value - torch.round(value)).abs()
+        surrogate = scale / (1.0 + scale * distance).square()
+        return gradient * surrogate, None
+
+
+def _surrogate_floor(value: Tensor, scale: float) -> Tensor:
+    return _PeriodicSurrogateFloor.apply(value, scale)
+
+
+class _StraightThroughRound(torch.autograd.Function):
+    """Power-of-two charge quantisation with an identity backward pass."""
+
+    @staticmethod
+    def forward(ctx: Any, value: Tensor) -> Tensor:
+        del ctx
+        return torch.round(value)
+
+    @staticmethod
+    def backward(ctx: Any, gradient: Tensor) -> Tensor:
+        del ctx
+        return gradient
+
+
+class E3CumulativeScanCore(TemporalCore[E3ScanState]):
+    """Time-parallel signed E/I SNN with exact hard-reset IF dynamics.
+
+    Each layer emits a strictly sub-threshold positive charge.  Cumulative
+    charge, integer threshold crossings, binary spike differences, and the
+    post-reset residual can therefore be computed with a prefix sum over time.
+    ``serial`` retains the same cumulative-charge training graph as a control;
+    streaming ``step`` evaluates the equivalent one-token hard reset while
+    storing only two residual tensors per layer.
+
+    Same-layer recurrent feedback is intentionally absent in S0: signed E/I
+    pathways connect adjacent scan layers, which keeps the time axis fully
+    parallel.  Dynamic decay and recurrent reset correction belong to S1.
+    """
+
+    def __init__(
+        self,
+        input_dim: int,
+        hidden_dim: int,
+        *,
+        state_dim: Optional[int] = None,
+        num_layers: int = 2,
+        max_charge: float = 0.95,
+        drive_levels: int = 1024,
+        charge_levels: int = 4096,
+        surrogate_scale: float = 5.0,
+        g_ee: float = 1.0,
+        g_ei: float = 1.0,
+        g_ie: float = 1.0,
+        g_ii: float = 1.0,
+        execution_mode: E3ExecutionMode = "scan",
+    ) -> None:
+        super().__init__(input_dim=input_dim, output_dim=hidden_dim)
+        state_dim = hidden_dim if state_dim is None else state_dim
+        if state_dim <= 0:
+            raise ValueError("state_dim must be positive")
+        if num_layers <= 0:
+            raise ValueError("num_layers must be positive")
+        if not 0.0 < max_charge < 1.0:
+            raise ValueError("max_charge must be in (0, 1) for binary spikes")
+        if drive_levels <= 1 or drive_levels & (drive_levels - 1):
+            raise ValueError("drive_levels must be a power of two greater than one")
+        if charge_levels <= 1 or charge_levels & (charge_levels - 1):
+            raise ValueError("charge_levels must be a power of two greater than one")
+        if surrogate_scale <= 0.0:
+            raise ValueError("surrogate_scale must be positive")
+        if min(g_ee, g_ei, g_ie, g_ii) < 0.0:
+            raise ValueError("signed-channel gain magnitudes cannot be negative")
+        if execution_mode not in ("serial", "scan"):
+            raise ValueError("execution_mode must be 'serial' or 'scan'")
+
+        self.hidden_dim = int(hidden_dim)
+        self.state_dim = int(state_dim)
+        self.num_layers = int(num_layers)
+        self.max_charge = float(max_charge)
+        self.drive_levels = int(drive_levels)
+        self.charge_levels = int(charge_levels)
+        self.surrogate_scale = float(surrogate_scale)
+        self.g_ee = float(g_ee)
+        self.g_ei = float(g_ei)
+        self.g_ie = float(g_ie)
+        self.g_ii = float(g_ii)
+        self.execution_mode: E3ExecutionMode = execution_mode
+
+        self.input_to_e = nn.Linear(input_dim, state_dim)
+        self.input_to_i = nn.Linear(input_dim, state_dim)
+        links = num_layers - 1
+        self.e_to_e_logits = nn.ParameterList(
+            [
+                nn.Parameter(_ring_channel_logits(state_dim, reverse=False))
+                for _ in range(links)
+            ]
+        )
+        self.i_to_e_logits = nn.ParameterList(
+            [
+                nn.Parameter(_ring_channel_logits(state_dim, reverse=True))
+                for _ in range(links)
+            ]
+        )
+        self.e_to_i_logits = nn.ParameterList(
+            [
+                nn.Parameter(_ring_channel_logits(state_dim, reverse=False))
+                for _ in range(links)
+            ]
+        )
+        self.i_to_i_logits = nn.ParameterList(
+            [
+                nn.Parameter(_ring_channel_logits(state_dim, reverse=True))
+                for _ in range(links)
+            ]
+        )
+        self.layer_bias_e = nn.ParameterList(
+            [nn.Parameter(torch.zeros(state_dim)) for _ in range(links)]
+        )
+        self.layer_bias_i = nn.ParameterList(
+            [nn.Parameter(torch.zeros(state_dim)) for _ in range(links)]
+        )
+        self.output_norm = nn.LayerNorm(4 * state_dim)
+        self.output_projection = nn.Linear(4 * state_dim, hidden_dim)
+
+    def initial_state(
+        self,
+        batch_size: int,
+        *,
+        device: Optional[torch.device] = None,
+        dtype: Optional[torch.dtype] = None,
+    ) -> E3ScanState:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive")
+        default_device, default_dtype = _module_device_dtype(self)
+        device = default_device if device is None else device
+        dtype = default_dtype if dtype is None else dtype
+        shape = (batch_size, self.state_dim)
+        return E3ScanState(
+            layers=tuple(
+                E3LayerState(
+                    excitatory=torch.zeros(shape, device=device, dtype=dtype),
+                    inhibitory=torch.zeros(shape, device=device, dtype=dtype),
+                )
+                for _ in range(self.num_layers)
+            )
+        )
+
+    def _validate_state(self, state: E3ScanState, batch_size: int) -> None:
+        if len(state.layers) != self.num_layers:
+            raise ValueError(
+                f"expected {self.num_layers} E3 state layers, got {len(state.layers)}"
+            )
+        expected = (batch_size, self.state_dim)
+        for index, layer in enumerate(state.layers):
+            if tuple(layer.excitatory.shape) != expected or tuple(layer.inhibitory.shape) != expected:
+                raise ValueError(
+                    f"invalid E3 layer {index} state shapes: "
+                    f"E={tuple(layer.excitatory.shape)}, "
+                    f"I={tuple(layer.inhibitory.shape)}, expected={expected}"
+                )
+
+    def _integrate_scan(
+        self, charge: Tensor, initial_residual: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        cumulative = initial_residual.unsqueeze(1) + torch.cumsum(charge, dim=1)
+        cumulative_count = _surrogate_floor(cumulative, self.surrogate_scale)
+        previous_count = torch.cat(
+            (torch.zeros_like(cumulative_count[:, :1]), cumulative_count[:, :-1]), dim=1
+        )
+        spikes = cumulative_count - previous_count
+        residuals = cumulative - cumulative_count.detach()
+        return spikes, residuals, residuals[:, -1]
+
+    def _integrate_serial(
+        self, charge: Tensor, initial_residual: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        cumulative = initial_residual
+        previous_count = torch.zeros_like(initial_residual)
+        spikes = []
+        residuals = []
+        for index in range(charge.shape[1]):
+            cumulative = cumulative + charge[:, index]
+            cumulative_count = _surrogate_floor(cumulative, self.surrogate_scale)
+            spikes.append(cumulative_count - previous_count)
+            residuals.append(cumulative - cumulative_count.detach())
+            previous_count = cumulative_count
+        residual_sequence = torch.stack(residuals, dim=1)
+        return torch.stack(spikes, dim=1), residual_sequence, residual_sequence[:, -1]
+
+    def _integrate(
+        self, charge: Tensor, initial_residual: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        if self.execution_mode == "serial":
+            return self._integrate_serial(charge, initial_residual)
+        return self._integrate_scan(charge, initial_residual)
+
+    def _charge(self, drive: Tensor) -> Tensor:
+        drive_levels = float(self.drive_levels)
+        quantised_drive = _StraightThroughRound.apply(drive * drive_levels) / drive_levels
+        continuous = self.max_charge * torch.sigmoid(quantised_drive)
+        levels = float(self.charge_levels)
+        return _StraightThroughRound.apply(continuous * levels) / levels
+
+    def _signed_layer_drive(
+        self,
+        link: int,
+        excitatory_spikes: Tensor,
+        inhibitory_spikes: Tensor,
+    ) -> Tuple[Tensor, Tensor]:
+        e_to_e = torch.softmax(self.e_to_e_logits[link], dim=-1)
+        i_to_e = torch.softmax(self.i_to_e_logits[link], dim=-1)
+        e_to_i = torch.softmax(self.e_to_i_logits[link], dim=-1)
+        i_to_i = torch.softmax(self.i_to_i_logits[link], dim=-1)
+        drive_e = (
+            self.g_ee * F.linear(excitatory_spikes, e_to_e)
+            - self.g_ei * F.linear(inhibitory_spikes, i_to_e)
+            + self.layer_bias_e[link]
+        )
+        drive_i = (
+            self.g_ie * F.linear(excitatory_spikes, e_to_i)
+            - self.g_ii * F.linear(inhibitory_spikes, i_to_i)
+            + self.layer_bias_i[link]
+        )
+        return drive_e, drive_i
+
+    def forward_dynamics(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> Tuple[CoreOutput[E3ScanState], Tuple[E3LayerTrace, ...]]:
+        batch_size, _ = _validate_sequence(x, self.input_dim)
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        else:
+            self._validate_state(state, batch_size)
+
+        drive_e = self.input_to_e(x)
+        drive_i = self.input_to_i(x)
+        traces = []
+        next_layers = []
+        for layer_index in range(self.num_layers):
+            if layer_index > 0:
+                previous = traces[-1]
+                drive_e, drive_i = self._signed_layer_drive(
+                    layer_index - 1,
+                    previous.excitatory_spikes,
+                    previous.inhibitory_spikes,
+                )
+            charge_e = self._charge(drive_e)
+            charge_i = self._charge(drive_i)
+            spikes_e, residuals_e, final_e = self._integrate(
+                charge_e, state.layers[layer_index].excitatory
+            )
+            spikes_i, residuals_i, final_i = self._integrate(
+                charge_i, state.layers[layer_index].inhibitory
+            )
+            traces.append(
+                E3LayerTrace(
+                    excitatory_spikes=spikes_e,
+                    inhibitory_spikes=spikes_i,
+                    excitatory_residuals=residuals_e,
+                    inhibitory_residuals=residuals_i,
+                )
+            )
+            next_layers.append(E3LayerState(excitatory=final_e, inhibitory=final_i))
+
+        final_trace = traces[-1]
+        signed_sequence = torch.cat(
+            (
+                final_trace.excitatory_spikes,
+                -final_trace.inhibitory_spikes,
+                final_trace.excitatory_residuals,
+                -final_trace.inhibitory_residuals,
+            ),
+            dim=-1,
+        )
+        sequence = self.output_projection(self.output_norm(signed_sequence))
+        next_state = E3ScanState(layers=tuple(next_layers))
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        return CoreOutput(sequence=sequence, state=next_state), tuple(traces)
+
+    def forward(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> CoreOutput[E3ScanState]:
+        result, _ = self.forward_dynamics(x, state, detach_state=detach_state)
+        return result
+
+
+class _SurrogateStep(torch.autograd.Function):
+    """Binary threshold forward with a bounded fast-sigmoid derivative."""
+
+    @staticmethod
+    def forward(ctx: Any, value: Tensor, scale: float) -> Tensor:
+        ctx.save_for_backward(value)
+        ctx.scale = float(scale)
+        return (value >= 0.0).to(dtype=value.dtype)
+
+    @staticmethod
+    def backward(ctx: Any, gradient: Tensor) -> Tuple[Tensor, None]:
+        (value,) = ctx.saved_tensors
+        scale = ctx.scale
+        surrogate = scale / (1.0 + scale * value.abs()).square()
+        return gradient * surrogate, None
+
+
+def _surrogate_step(value: Tensor, scale: float) -> Tensor:
+    return _SurrogateStep.apply(value, scale)
+
+
+class E3FixedPointScanCore(TemporalCore[E3ScanState]):
+    """Dynamic-decay hard-reset SNN solved by parallel fixed-point scans.
+
+    The serial dynamics are exact.  In ``fixed_point`` mode, hard-reset events
+    from the previous iteration turn the membrane recurrence into a diagonal
+    affine system, which is composed with a Hillis--Steele prefix scan.  A fixed
+    number of global correction rounds trades exact causal propagation for
+    logarithmic temporal graph depth; experiments must report convergence to
+    the serial reference rather than assuming it.
+    """
+
+    def __init__(
+        self,
+        input_dim: int,
+        hidden_dim: int,
+        *,
+        state_dim: Optional[int] = None,
+        min_decay: float = 0.50,
+        max_decay: float = 0.99,
+        max_charge: float = 1.50,
+        threshold: float = 1.0,
+        surrogate_scale: float = 5.0,
+        fixed_point_iterations: int = 4,
+        execution_mode: E3FixedPointMode = "fixed_point",
+    ) -> None:
+        super().__init__(input_dim=input_dim, output_dim=hidden_dim)
+        state_dim = hidden_dim if state_dim is None else state_dim
+        if state_dim <= 0:
+            raise ValueError("state_dim must be positive")
+        if not 0.0 <= min_decay < max_decay < 1.0:
+            raise ValueError("decay bounds must satisfy 0 <= min < max < 1")
+        if max_charge <= 0.0 or threshold <= 0.0:
+            raise ValueError("max_charge and threshold must be positive")
+        if surrogate_scale <= 0.0:
+            raise ValueError("surrogate_scale must be positive")
+        if fixed_point_iterations <= 0:
+            raise ValueError("fixed_point_iterations must be positive")
+        if execution_mode not in ("serial", "fixed_point"):
+            raise ValueError("execution_mode must be 'serial' or 'fixed_point'")
+
+        self.hidden_dim = int(hidden_dim)
+        self.state_dim = int(state_dim)
+        self.min_decay = float(min_decay)
+        self.max_decay = float(max_decay)
+        self.max_charge = float(max_charge)
+        self.threshold = float(threshold)
+        self.surrogate_scale = float(surrogate_scale)
+        self.fixed_point_iterations = int(fixed_point_iterations)
+        self.execution_mode: E3FixedPointMode = execution_mode
+
+        self.decay_e = nn.Linear(input_dim, state_dim)
+        self.decay_i = nn.Linear(input_dim, state_dim)
+        self.charge_e = nn.Linear(input_dim, state_dim)
+        self.charge_i = nn.Linear(input_dim, state_dim)
+        self.output_norm = nn.LayerNorm(4 * state_dim)
+        self.output_projection = nn.Linear(4 * state_dim, hidden_dim)
+
+    def initial_state(
+        self,
+        batch_size: int,
+        *,
+        device: Optional[torch.device] = None,
+        dtype: Optional[torch.dtype] = None,
+    ) -> E3ScanState:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive")
+        default_device, default_dtype = _module_device_dtype(self)
+        device = default_device if device is None else device
+        dtype = default_dtype if dtype is None else dtype
+        shape = (batch_size, self.state_dim)
+        return E3ScanState(
+            layers=(
+                E3LayerState(
+                    excitatory=torch.zeros(shape, device=device, dtype=dtype),
+                    inhibitory=torch.zeros(shape, device=device, dtype=dtype),
+                ),
+            )
+        )
+
+    def _validate_state(self, state: E3ScanState, batch_size: int) -> None:
+        if len(state.layers) != 1:
+            raise ValueError(f"expected one S1 state layer, got {len(state.layers)}")
+        expected = (batch_size, self.state_dim)
+        layer = state.layers[0]
+        if tuple(layer.excitatory.shape) != expected or tuple(layer.inhibitory.shape) != expected:
+            raise ValueError(
+                "invalid S1 state shapes: "
+                f"E={tuple(layer.excitatory.shape)}, I={tuple(layer.inhibitory.shape)}, "
+                f"expected={expected}"
+            )
+
+    def _decay(self, logits: Tensor) -> Tensor:
+        span = self.max_decay - self.min_decay
+        return self.min_decay + span * torch.sigmoid(logits)
+
+    def _charge(self, logits: Tensor) -> Tensor:
+        return self.max_charge * torch.sigmoid(logits)
+
+    @staticmethod
+    def _affine_prefix_scan(
+        coefficient: Tensor, bias: Tensor, initial: Tensor
+    ) -> Tensor:
+        prefix_a = coefficient
+        prefix_b = bias
+        offset = 1
+        time_steps = coefficient.shape[1]
+        while offset < time_steps:
+            composed_a = prefix_a[:, offset:] * prefix_a[:, :-offset]
+            composed_b = prefix_b[:, offset:] + prefix_a[:, offset:] * prefix_b[:, :-offset]
+            prefix_a = torch.cat((prefix_a[:, :offset], composed_a), dim=1)
+            prefix_b = torch.cat((prefix_b[:, :offset], composed_b), dim=1)
+            offset *= 2
+        return prefix_a * initial.unsqueeze(1) + prefix_b
+
+    def _serial_population(
+        self, decay: Tensor, charge: Tensor, initial: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        membrane = initial
+        spikes = []
+        residuals = []
+        for index in range(decay.shape[1]):
+            pre_reset = decay[:, index] * membrane + charge[:, index]
+            spike = _surrogate_step(
+                pre_reset - self.threshold, self.surrogate_scale
+            )
+            membrane = pre_reset * (1.0 - spike.detach())
+            spikes.append(spike)
+            residuals.append(membrane)
+        residual_sequence = torch.stack(residuals, dim=1)
+        return torch.stack(spikes, dim=1), residual_sequence, residual_sequence[:, -1]
+
+    def _fixed_point_population(
+        self, decay: Tensor, charge: Tensor, initial: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        spike_estimate = torch.zeros_like(charge)
+        pre_reset = charge
+        for _ in range(self.fixed_point_iterations):
+            previous_spike = torch.cat(
+                (torch.zeros_like(spike_estimate[:, :1]), spike_estimate[:, :-1]),
+                dim=1,
+            )
+            coefficient = decay * (1.0 - previous_spike.detach())
+            pre_reset = self._affine_prefix_scan(coefficient, charge, initial)
+            spike_estimate = _surrogate_step(
+                pre_reset - self.threshold, self.surrogate_scale
+            )
+        residuals = pre_reset * (1.0 - spike_estimate.detach())
+        return spike_estimate, residuals, residuals[:, -1]
+
+    def _population(
+        self, decay: Tensor, charge: Tensor, initial: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        if self.execution_mode == "serial":
+            return self._serial_population(decay, charge, initial)
+        return self._fixed_point_population(decay, charge, initial)
+
+    def forward_dynamics(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> Tuple[CoreOutput[E3ScanState], E3LayerTrace]:
+        batch_size, _ = _validate_sequence(x, self.input_dim)
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        else:
+            self._validate_state(state, batch_size)
+        layer_state = state.layers[0]
+        decay_e = self._decay(self.decay_e(x))
+        decay_i = self._decay(self.decay_i(x))
+        charge_e = self._charge(self.charge_e(x))
+        charge_i = self._charge(self.charge_i(x))
+        spikes_e, residuals_e, final_e = self._population(
+            decay_e, charge_e, layer_state.excitatory
+        )
+        spikes_i, residuals_i, final_i = self._population(
+            decay_i, charge_i, layer_state.inhibitory
+        )
+        signed_sequence = torch.cat(
+            (spikes_e, -spikes_i, residuals_e, -residuals_i), dim=-1
+        )
+        sequence = self.output_projection(self.output_norm(signed_sequence))
+        next_state = E3ScanState(
+            layers=(E3LayerState(excitatory=final_e, inhibitory=final_i),)
+        )
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        trace = E3LayerTrace(
+            excitatory_spikes=spikes_e,
+            inhibitory_spikes=spikes_i,
+            excitatory_residuals=residuals_e,
+            inhibitory_residuals=residuals_i,
+        )
+        return CoreOutput(sequence=sequence, state=next_state), trace
+
+    def forward(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> CoreOutput[E3ScanState]:
+        result, _ = self.forward_dynamics(x, state, detach_state=detach_state)
+        return result
+
+
+class E3OscillatoryScanCore(TemporalCore[E3OscillatorState]):
+    """Stable selective complex recurrence with exact serial/scan equivalence.
+
+    This PRF-style branch emits discrete threshold events but deliberately has
+    no hard reset.  It is an oscillatory spiking substrate experiment, not a
+    replacement for the strict reset semantics tested by S0/S1.
+    """
+
+    def __init__(
+        self,
+        input_dim: int,
+        hidden_dim: int,
+        *,
+        state_dim: Optional[int] = None,
+        min_radius: float = 0.50,
+        max_radius: float = 0.995,
+        max_phase_modulation: float = math.pi / 4.0,
+        drive_scale: float = 0.50,
+        spike_threshold: float = 0.50,
+        surrogate_scale: float = 5.0,
+        execution_mode: E3OscillatorMode = "scan",
+    ) -> None:
+        super().__init__(input_dim=input_dim, output_dim=hidden_dim)
+        state_dim = hidden_dim if state_dim is None else state_dim
+        if state_dim <= 0:
+            raise ValueError("state_dim must be positive")
+        if not 0.0 <= min_radius < max_radius < 1.0:
+            raise ValueError("radius bounds must satisfy 0 <= min < max < 1")
+        if max_phase_modulation < 0.0 or drive_scale <= 0.0:
+            raise ValueError("phase modulation cannot be negative and drive_scale must be positive")
+        if surrogate_scale <= 0.0:
+            raise ValueError("surrogate_scale must be positive")
+        if execution_mode not in ("serial", "scan"):
+            raise ValueError("execution_mode must be 'serial' or 'scan'")
+
+        self.hidden_dim = int(hidden_dim)
+        self.state_dim = int(state_dim)
+        self.min_radius = float(min_radius)
+        self.max_radius = float(max_radius)
+        self.max_phase_modulation = float(max_phase_modulation)
+        self.drive_scale = float(drive_scale)
+        self.spike_threshold = float(spike_threshold)
+        self.surrogate_scale = float(surrogate_scale)
+        self.execution_mode: E3OscillatorMode = execution_mode
+
+        self.radius_projection = nn.Linear(input_dim, state_dim)
+        self.phase_projection = nn.Linear(input_dim, state_dim)
+        self.input_real = nn.Linear(input_dim, state_dim)
+        self.input_imag = nn.Linear(input_dim, state_dim)
+        base_phase = torch.linspace(0.05, 0.95 * math.pi, state_dim)
+        self.base_phase = nn.Parameter(base_phase)
+        self.output_norm = nn.LayerNorm(4 * state_dim)
+        self.output_projection = nn.Linear(4 * state_dim, hidden_dim)
+
+    def initial_state(
+        self,
+        batch_size: int,
+        *,
+        device: Optional[torch.device] = None,
+        dtype: Optional[torch.dtype] = None,
+    ) -> E3OscillatorState:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive")
+        default_device, default_dtype = _module_device_dtype(self)
+        device = default_device if device is None else device
+        dtype = default_dtype if dtype is None else dtype
+        shape = (batch_size, self.state_dim)
+        real = torch.zeros(shape, device=device, dtype=dtype)
+        return E3OscillatorState(value=torch.complex(real, torch.zeros_like(real)))
+
+    def _validate_state(self, state: E3OscillatorState, batch_size: int) -> None:
+        expected = (batch_size, self.state_dim)
+        if tuple(state.value.shape) != expected or not state.value.is_complex():
+            raise ValueError(
+                f"invalid oscillator state {tuple(state.value.shape)} / "
+                f"complex={state.value.is_complex()}, expected complex {expected}"
+            )
+
+    def _coefficient_and_drive(self, x: Tensor) -> Tuple[Tensor, Tensor]:
+        radius = self.min_radius + (self.max_radius - self.min_radius) * torch.sigmoid(
+            self.radius_projection(x)
+        )
+        phase = self.base_phase + self.max_phase_modulation * torch.tanh(
+            self.phase_projection(x)
+        )
+        coefficient = torch.polar(radius, phase)
+        drive = self.drive_scale * torch.complex(
+            torch.tanh(self.input_real(x)), torch.tanh(self.input_imag(x))
+        )
+        return coefficient, drive
+
+    @staticmethod
+    def _serial_recurrence(
+        coefficient: Tensor, drive: Tensor, initial: Tensor
+    ) -> Tensor:
+        current = initial
+        values = []
+        for index in range(coefficient.shape[1]):
+            current = coefficient[:, index] * current + drive[:, index]
+            values.append(current)
+        return torch.stack(values, dim=1)
+
+    def forward_dynamics(
+        self,
+        x: Tensor,
+        state: Optional[E3OscillatorState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> Tuple[CoreOutput[E3OscillatorState], E3OscillatorTrace]:
+        batch_size, _ = _validate_sequence(x, self.input_dim)
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        else:
+            self._validate_state(state, batch_size)
+        coefficient, drive = self._coefficient_and_drive(x)
+        if self.execution_mode == "serial":
+            values = self._serial_recurrence(coefficient, drive, state.value)
+        else:
+            values = E3FixedPointScanCore._affine_prefix_scan(
+                coefficient, drive, state.value
+            )
+        excitatory_spikes = _surrogate_step(
+            values.real - self.spike_threshold, self.surrogate_scale
+        )
+        inhibitory_spikes = _surrogate_step(
+            values.imag - self.spike_threshold, self.surrogate_scale
+        )
+        features = torch.cat(
+            (
+                excitatory_spikes,
+                -inhibitory_spikes,
+                values.real,
+                values.imag,
+            ),
+            dim=-1,
+        )
+        sequence = self.output_projection(self.output_norm(features))
+        next_state = E3OscillatorState(value=values[:, -1])
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        trace = E3OscillatorTrace(
+            excitatory_spikes=excitatory_spikes,
+            inhibitory_spikes=inhibitory_spikes,
+            values=values,
+        )
+        return CoreOutput(sequence=sequence, state=next_state), trace
+
+    def forward(
+        self,
+        x: Tensor,
+        state: Optional[E3OscillatorState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> CoreOutput[E3OscillatorState]:
+        result, _ = self.forward_dynamics(x, state, detach_state=detach_state)
+        return result
 
 
 def _assert_streaming_equivalence(

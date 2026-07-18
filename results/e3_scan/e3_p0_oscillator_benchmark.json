@@ -1,0 +1,1251 @@
+{
+  "configuration": {
+    "repeats": 12,
+    "shapes": [
+      [
+        1,
+        32,
+        32
+      ],
+      [
+        8,
+        32,
+        32
+      ],
+      [
+        1,
+        512,
+        32
+      ],
+      [
+        1,
+        2048,
+        32
+      ]
+    ],
+    "state_dim": 31,
+    "streaming_steps": 64,
+    "streaming_warmup": 16,
+    "threads": [
+      1,
+      4,
+      16
+    ],
+    "warmup": 3
+  },
+  "decision": {
+    "ann_checks": {
+      "1": {
+        "passed": false,
+        "stream_lstm_p95_ms": 0.13455655,
+        "stream_p0_p95_ms": 0.26640719999999996,
+        "train_lstm_ms": 1.2340624999999998,
+        "train_p0_ms": 3.7263985
+      },
+      "16": {
+        "passed": false,
+        "stream_lstm_p95_ms": 0.17292044999999995,
+        "stream_p0_p95_ms": 0.25649459999999996,
+        "train_lstm_ms": 2.7826455,
+        "train_p0_ms": 5.1173075
+      },
+      "4": {
+        "passed": false,
+        "stream_lstm_p95_ms": 0.09591559999999998,
+        "stream_p0_p95_ms": 0.14941200000000002,
+        "train_lstm_ms": 1.4350589999999999,
+        "train_p0_ms": 2.5115125000000003
+      }
+    },
+    "ann_train_and_inference_speed_gate": "FAIL",
+    "boundary": "P0 is reset-free even if every measured gate passes.",
+    "equivalence_gate": "PASS",
+    "parallel_checks": {
+      "1": {
+        "node_ratio": 0.08060692271218586,
+        "passed": false,
+        "speedup": 3.778036084975882
+      },
+      "16": {
+        "node_ratio": 0.08060692271218586,
+        "passed": false,
+        "speedup": 3.8670003708004645
+      },
+      "4": {
+        "node_ratio": 0.08060692271218586,
+        "passed": false,
+        "speedup": 5.8372243817221685
+      }
+    },
+    "parallel_training_gate": "FAIL",
+    "run_a0_next": false
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "67d657767f1c2469cbba956533b0d4b56cd8b06b",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M tests/test_world_model_cores.py",
+      " M vpsc/world_model/__init__.py",
+      " M vpsc/world_model/cores.py",
+      "?? experiments/e2_f0_fusion_benchmark.py",
+      "?? experiments/e3_memory_diagnostic.py",
+      "?? experiments/e3_p0_oscillator_benchmark.py",
+      "?? experiments/e3_s0_delayed_copy.py",
+      "?? experiments/e3_s0_marked_delay.py",
+      "?? experiments/e3_s0_scan_benchmark.py",
+      "?? experiments/e3_s1_fixed_point.py",
+      "?? results/e2_acceleration/",
+      "?? results/e3_scan/",
+      "?? tests/test_e3_fixed_point_core.py",
+      "?? tests/test_e3_oscillatory_core.py",
+      "?? tests/test_e3_scan_core.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "equivalence": {
+    "atol": 3e-05,
+    "cases": [
+      {
+        "batch": 1,
+        "checks": {
+          "e_spikes_exact": true,
+          "i_spikes_exact": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_gradient_base_phase": true,
+          "parameter_gradient_input_imag.bias": true,
+          "parameter_gradient_input_imag.weight": true,
+          "parameter_gradient_input_real.bias": true,
+          "parameter_gradient_input_real.weight": true,
+          "parameter_gradient_output_norm.bias": true,
+          "parameter_gradient_output_norm.weight": true,
+          "parameter_gradient_output_projection.bias": true,
+          "parameter_gradient_output_projection.weight": true,
+          "parameter_gradient_phase_projection.bias": true,
+          "parameter_gradient_phase_projection.weight": true,
+          "parameter_gradient_radius_projection.bias": true,
+          "parameter_gradient_radius_projection.weight": true,
+          "sequence": true,
+          "state": true,
+          "state_bytes": true,
+          "state_gradient": true,
+          "streaming_sequence": true,
+          "streaming_state": true
+        },
+        "max_abs_errors": {
+          "input_gradient": 0.0,
+          "parameter_gradient_max": 0.0,
+          "sequence": 0.0,
+          "state": 0.0,
+          "state_gradient": 0.0,
+          "streaming_sequence": 0.0,
+          "streaming_state": 0.0,
+          "values": 0.0
+        },
+        "parameter_gradient_max_abs": {
+          "base_phase": 0.0,
+          "input_imag.bias": 0.0,
+          "input_imag.weight": 0.0,
+          "input_real.bias": 0.0,
+          "input_real.weight": 0.0,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 0.0,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 0.0,
+          "phase_projection.bias": 0.0,
+          "phase_projection.weight": 0.0,
+          "radius_projection.bias": 0.0,
+          "radius_projection.weight": 0.0
+        },
+        "passed": true,
+        "seed": 13000,
+        "time": 1
+      },
+      {
+        "batch": 4,
+        "checks": {
+          "e_spikes_exact": true,
+          "i_spikes_exact": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_gradient_base_phase": true,
+          "parameter_gradient_input_imag.bias": true,
+          "parameter_gradient_input_imag.weight": true,
+          "parameter_gradient_input_real.bias": true,
+          "parameter_gradient_input_real.weight": true,
+          "parameter_gradient_output_norm.bias": true,
+          "parameter_gradient_output_norm.weight": true,
+          "parameter_gradient_output_projection.bias": true,
+          "parameter_gradient_output_projection.weight": true,
+          "parameter_gradient_phase_projection.bias": true,
+          "parameter_gradient_phase_projection.weight": true,
+          "parameter_gradient_radius_projection.bias": true,
+          "parameter_gradient_radius_projection.weight": true,
+          "sequence": true,
+          "state": true,
+          "state_bytes": true,
+          "state_gradient": true,
+          "streaming_sequence": true,
+          "streaming_state": true
+        },
+        "max_abs_errors": {
+          "input_gradient": 9.89530235528946e-10,
+          "parameter_gradient_max": 1.1175870895385742e-08,
+          "sequence": 2.384185791015625e-07,
+          "state": 1.2287812012345967e-07,
+          "state_gradient": 9.47552036834054e-10,
+          "streaming_sequence": 2.384185791015625e-07,
+          "streaming_state": 1.3328003944934608e-07,
+          "values": 2.4575624024691933e-07
+        },
+        "parameter_gradient_max_abs": {
+          "base_phase": 5.3551048040390015e-09,
+          "input_imag.bias": 3.725290298461914e-09,
+          "input_imag.weight": 1.862645149230957e-09,
+          "input_real.bias": 1.862645149230957e-09,
+          "input_real.weight": 5.122274160385132e-09,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 1.1641532182693481e-09,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 1.1175870895385742e-08,
+          "phase_projection.bias": 5.587935447692871e-09,
+          "phase_projection.weight": 4.3655745685100555e-09,
+          "radius_projection.bias": 1.5133991837501526e-09,
+          "radius_projection.weight": 6.402842700481415e-10
+        },
+        "passed": true,
+        "seed": 13001,
+        "time": 32
+      },
+      {
+        "batch": 1,
+        "checks": {
+          "e_spikes_exact": true,
+          "i_spikes_exact": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_gradient_base_phase": true,
+          "parameter_gradient_input_imag.bias": true,
+          "parameter_gradient_input_imag.weight": true,
+          "parameter_gradient_input_real.bias": true,
+          "parameter_gradient_input_real.weight": true,
+          "parameter_gradient_output_norm.bias": true,
+          "parameter_gradient_output_norm.weight": true,
+          "parameter_gradient_output_projection.bias": true,
+          "parameter_gradient_output_projection.weight": true,
+          "parameter_gradient_phase_projection.bias": true,
+          "parameter_gradient_phase_projection.weight": true,
+          "parameter_gradient_radius_projection.bias": true,
+          "parameter_gradient_radius_projection.weight": true,
+          "sequence": true,
+          "state": true,
+          "state_bytes": true,
+          "state_gradient": true,
+          "streaming_sequence": true,
+          "streaming_state": true
+        },
+        "max_abs_errors": {
+          "input_gradient": 3.4924596548080444e-10,
+          "parameter_gradient_max": 7.450580596923828e-09,
+          "sequence": 4.76837158203125e-07,
+          "state": 6.322026990801533e-08,
+          "state_gradient": 1.1999816418306608e-10,
+          "streaming_sequence": 4.470348358154297e-07,
+          "streaming_state": 7.450580596923828e-08,
+          "values": 1.8128045553567063e-07
+        },
+        "parameter_gradient_max_abs": {
+          "base_phase": 5.238689482212067e-10,
+          "input_imag.bias": 1.862645149230957e-09,
+          "input_imag.weight": 3.725290298461914e-09,
+          "input_real.bias": 7.450580596923828e-09,
+          "input_real.weight": 3.725290298461914e-09,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 1.0040821507573128e-09,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 4.6566128730773926e-09,
+          "phase_projection.bias": 1.862645149230957e-09,
+          "phase_projection.weight": 2.9103830456733704e-09,
+          "radius_projection.bias": 8.767528925091028e-10,
+          "radius_projection.weight": 3.2014213502407074e-10
+        },
+        "passed": true,
+        "seed": 13002,
+        "time": 512
+      }
+    ],
+    "passed": true,
+    "rtol": 0.0001
+  },
+  "experiment": "E3-P0 selective complex oscillator scan",
+  "formal": true,
+  "generated_at_utc": "2026-07-18T14:26:29.167115+00:00",
+  "schema_version": 1,
+  "streaming_inference": [
+    {
+      "models": {
+        "lstm": {
+          "count": 64,
+          "mean_ms": 0.078224625,
+          "p50_ms": 0.072107,
+          "p95_ms": 0.13455655,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 13868.27908524831
+        },
+        "p0_scan": {
+          "count": 64,
+          "mean_ms": 0.121820953125,
+          "p50_ms": 0.106728,
+          "p95_ms": 0.26640719999999996,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 9369.612472828123
+        },
+        "p0_serial": {
+          "count": 64,
+          "mean_ms": 0.126221953125,
+          "p50_ms": 0.1058055,
+          "p95_ms": 0.27183899999999994,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 9451.304516305863
+        },
+        "s0_scan": {
+          "count": 64,
+          "mean_ms": 0.2634594375,
+          "p50_ms": 0.233468,
+          "p95_ms": 0.55075295,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 4283.2422430482975
+        },
+        "transformer": {
+          "count": 64,
+          "mean_ms": 0.19577590625,
+          "p50_ms": 0.1719415,
+          "p95_ms": 0.35632169999999996,
+          "state_bytes": 20480,
+          "tokens_per_second_at_p50": 5815.931581380877
+        }
+      },
+      "threads": 1
+    },
+    {
+      "models": {
+        "lstm": {
+          "count": 64,
+          "mean_ms": 0.078398671875,
+          "p50_ms": 0.0757535,
+          "p95_ms": 0.09591559999999998,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 13200.710198208664
+        },
+        "p0_scan": {
+          "count": 64,
+          "mean_ms": 0.110086984375,
+          "p50_ms": 0.107374,
+          "p95_ms": 0.14941200000000002,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 9313.241566859762
+        },
+        "p0_serial": {
+          "count": 64,
+          "mean_ms": 0.118214734375,
+          "p50_ms": 0.1153395,
+          "p95_ms": 0.16080924999999993,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 8670.056658820266
+        },
+        "s0_scan": {
+          "count": 64,
+          "mean_ms": 0.249135375,
+          "p50_ms": 0.23311700000000002,
+          "p95_ms": 0.3165327499999999,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 4289.691442494541
+        },
+        "transformer": {
+          "count": 64,
+          "mean_ms": 0.190181640625,
+          "p50_ms": 0.17354399999999998,
+          "p95_ms": 0.26616294999999984,
+          "state_bytes": 20480,
+          "tokens_per_second_at_p50": 5762.227446641775
+        }
+      },
+      "threads": 4
+    },
+    {
+      "models": {
+        "lstm": {
+          "count": 64,
+          "mean_ms": 0.109950859375,
+          "p50_ms": 0.1006755,
+          "p95_ms": 0.17292044999999995,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 9932.903238623101
+        },
+        "p0_scan": {
+          "count": 64,
+          "mean_ms": 0.156219125,
+          "p50_ms": 0.1254585,
+          "p95_ms": 0.25649459999999996,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 7970.7632404340875
+        },
+        "p0_serial": {
+          "count": 64,
+          "mean_ms": 0.163098921875,
+          "p50_ms": 0.13780150000000002,
+          "p95_ms": 0.26358250000000005,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 7256.815056439878
+        },
+        "s0_scan": {
+          "count": 64,
+          "mean_ms": 0.365583609375,
+          "p50_ms": 0.2879315,
+          "p95_ms": 0.6273193499999999,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 3473.048277107576
+        },
+        "transformer": {
+          "count": 64,
+          "mean_ms": 0.25196315625,
+          "p50_ms": 0.2119675,
+          "p95_ms": 0.39677494999999996,
+          "state_bytes": 20480,
+          "tokens_per_second_at_p50": 4717.7043650559635
+        }
+      },
+      "threads": 16
+    }
+  ],
+  "training_forward_backward": [
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.33314641666666667,
+          "p50_ms": 0.32241200000000003,
+          "p95_ms": 0.4024426,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 99251.88888751039,
+          "versus_p0_serial_speedup": 3.609539967495006
+        },
+        "p0_scan": {
+          "autograd_nodes": 122,
+          "count": 12,
+          "mean_ms": 0.9383193333333333,
+          "p50_ms": 0.8950389999999999,
+          "p95_ms": 1.1504191499999998,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 35752.63200821417,
+          "versus_p0_serial_speedup": 1.3002327272889787
+        },
+        "p0_serial": {
+          "autograd_nodes": 189,
+          "count": 12,
+          "mean_ms": 1.1631436666666668,
+          "p50_ms": 1.163759,
+          "p95_ms": 1.1958060499999998,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 27497.102063227867,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 0.9647519166666667,
+          "p50_ms": 0.9521425,
+          "p95_ms": 1.0268438,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 33608.41470683222,
+          "versus_p0_serial_speedup": 1.2222529715877612
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 0.6022805833333333,
+          "p50_ms": 0.568759,
+          "p95_ms": 0.7117243999999999,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 56262.84595056957,
+          "versus_p0_serial_speedup": 2.046137291893403
+        }
+      },
+      "threads": 1,
+      "time": 32
+    },
+    {
+      "batch": 8,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 9,
+          "count": 12,
+          "mean_ms": 0.4452434166666666,
+          "p50_ms": 0.43716999999999995,
+          "p95_ms": 0.48729429999999996,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 585584.5552073565,
+          "versus_p0_serial_speedup": 3.7398803669053233
+        },
+        "p0_scan": {
+          "autograd_nodes": 122,
+          "count": 12,
+          "mean_ms": 1.3828532500000001,
+          "p50_ms": 1.3731115,
+          "p95_ms": 1.4359311999999997,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 1984,
+          "tokens_per_second_at_p50": 186437.8821384862,
+          "versus_p0_serial_speedup": 1.1906997356004956
+        },
+        "p0_serial": {
+          "autograd_nodes": 189,
+          "count": 12,
+          "mean_ms": 1.6469889166666667,
+          "p50_ms": 1.6349635,
+          "p95_ms": 1.7361103999999998,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 1984,
+          "tokens_per_second_at_p50": 156578.41902892632,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 1.2697326666666666,
+          "p50_ms": 1.260237,
+          "p95_ms": 1.3360926,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 3456,
+          "tokens_per_second_at_p50": 203136.3941861729,
+          "versus_p0_serial_speedup": 1.2973460547500193
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 0.9500009166666666,
+          "p50_ms": 0.9437065,
+          "p95_ms": 1.0260856999999999,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 271270.7817525894,
+          "versus_p0_serial_speedup": 1.732491510866991
+        }
+      },
+      "threads": 1,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 1.2250192500000001,
+          "p50_ms": 1.2340624999999998,
+          "p95_ms": 1.42762855,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 414889.8455305141,
+          "versus_p0_serial_speedup": 11.408229323879466
+        },
+        "p0_scan": {
+          "autograd_nodes": 170,
+          "count": 12,
+          "mean_ms": 3.8318176666666663,
+          "p50_ms": 3.7263985,
+          "p95_ms": 4.457506049999999,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 137398.08021069138,
+          "versus_p0_serial_speedup": 3.778036084975882
+        },
+        "p0_serial": {
+          "autograd_nodes": 2109,
+          "count": 12,
+          "mean_ms": 14.285333333333334,
+          "p50_ms": 14.078468,
+          "p95_ms": 15.185546799999997,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 36367.59340575977,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 1.8656570833333335,
+          "p50_ms": 1.815987,
+          "p95_ms": 2.25772145,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 281940.3442866056,
+          "versus_p0_serial_speedup": 7.752515849507733
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 7.348556333333334,
+          "p50_ms": 7.36741,
+          "p95_ms": 7.660589,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 69495.25002680725,
+          "versus_p0_serial_speedup": 1.91091143291876
+        }
+      },
+      "threads": 1,
+      "time": 512
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 3.6442557499999997,
+          "p50_ms": 3.607121,
+          "p95_ms": 4.161564799999999,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 567765.8165611855,
+          "versus_p0_serial_speedup": 30.559318913892827
+        },
+        "p0_scan": {
+          "autograd_nodes": 194,
+          "count": 12,
+          "mean_ms": 8.645800333333334,
+          "p50_ms": 8.296022,
+          "p95_ms": 10.374153549999999,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 246865.30484128415,
+          "versus_p0_serial_speedup": 13.287231036754724
+        },
+        "p0_serial": {
+          "autograd_nodes": 8253,
+          "count": 12,
+          "mean_ms": 110.5760585,
+          "p50_ms": 110.231161,
+          "p95_ms": 112.8379113,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 18579.13843436703,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 4.309188833333334,
+          "p50_ms": 4.2816825000000005,
+          "p95_ms": 4.4167112500000005,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 478316.6430486146,
+          "versus_p0_serial_speedup": 25.74482367620672
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 94.37503724999999,
+          "p50_ms": 93.2186835,
+          "p95_ms": 99.68390664999998,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 21969.844703932125,
+          "versus_p0_serial_speedup": 1.1825007269063181
+        }
+      },
+      "threads": 1,
+      "time": 2048
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.3720863333333333,
+          "p50_ms": 0.3575585,
+          "p95_ms": 0.4187147,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 89495.84473589636,
+          "versus_p0_serial_speedup": 3.3612709528650555
+        },
+        "p0_scan": {
+          "autograd_nodes": 122,
+          "count": 12,
+          "mean_ms": 0.9462652500000001,
+          "p50_ms": 0.9368084999999999,
+          "p95_ms": 1.0082139,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 34158.52866407596,
+          "versus_p0_serial_speedup": 1.282920682295261
+        },
+        "p0_serial": {
+          "autograd_nodes": 189,
+          "count": 12,
+          "mean_ms": 1.1956150833333334,
+          "p50_ms": 1.201851,
+          "p95_ms": 1.23625915,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 26625.596683781932,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 1.0851514166666667,
+          "p50_ms": 1.0783770000000001,
+          "p95_ms": 1.203687,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 29674.223393117616,
+          "versus_p0_serial_speedup": 1.1144998456013062
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 0.6754369166666666,
+          "p50_ms": 0.6820345,
+          "p95_ms": 0.7650639499999999,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 46918.447673834686,
+          "versus_p0_serial_speedup": 1.762155726726434
+        }
+      },
+      "threads": 4,
+      "time": 32
+    },
+    {
+      "batch": 8,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 9,
+          "count": 12,
+          "mean_ms": 0.487357,
+          "p50_ms": 0.489334,
+          "p95_ms": 0.5272344,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 523160.05019066733,
+          "versus_p0_serial_speedup": 3.3273398128885385
+        },
+        "p0_scan": {
+          "autograd_nodes": 122,
+          "count": 12,
+          "mean_ms": 1.4490596666666666,
+          "p50_ms": 1.3930945000000001,
+          "p95_ms": 1.7590847499999995,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 1984,
+          "tokens_per_second_at_p50": 183763.5566000727,
+          "versus_p0_serial_speedup": 1.1687509354175183
+        },
+        "p0_serial": {
+          "autograd_nodes": 189,
+          "count": 12,
+          "mean_ms": 1.6323980833333334,
+          "p50_ms": 1.6281805,
+          "p95_ms": 1.6745093999999998,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 1984,
+          "tokens_per_second_at_p50": 157230.72472615904,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 1.4374068333333332,
+          "p50_ms": 1.3938760000000001,
+          "p95_ms": 1.61220675,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 3456,
+          "tokens_per_second_at_p50": 183660.5264743779,
+          "versus_p0_serial_speedup": 1.16809565556764
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 0.9231655833333333,
+          "p50_ms": 0.8771855,
+          "p95_ms": 1.1478525999999998,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 291842.4894164347,
+          "versus_p0_serial_speedup": 1.8561416028878728
+        }
+      },
+      "threads": 4,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 1.4369569166666667,
+          "p50_ms": 1.4350589999999999,
+          "p95_ms": 1.60926305,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 356779.75609365193,
+          "versus_p0_serial_speedup": 10.215790430916082
+        },
+        "p0_scan": {
+          "autograd_nodes": 170,
+          "count": 12,
+          "mean_ms": 2.5204841666666664,
+          "p50_ms": 2.5115125000000003,
+          "p95_ms": 2.7377897000000004,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 203861.21908610844,
+          "versus_p0_serial_speedup": 5.8372243817221685
+        },
+        "p0_serial": {
+          "autograd_nodes": 2109,
+          "count": 12,
+          "mean_ms": 14.724588500000001,
+          "p50_ms": 14.660262,
+          "p95_ms": 15.0579828,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 34924.34173413818,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 2.021862083333333,
+          "p50_ms": 2.0228395,
+          "p95_ms": 2.1920116499999995,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 253109.5521913627,
+          "versus_p0_serial_speedup": 7.2473678707579126
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 2.8224282499999997,
+          "p50_ms": 2.771701,
+          "p95_ms": 3.05149635,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 184724.1098516759,
+          "versus_p0_serial_speedup": 5.289265328403027
+        }
+      },
+      "threads": 4,
+      "time": 512
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 4.918595833333334,
+          "p50_ms": 4.76253,
+          "p95_ms": 5.910561400000001,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 430023.5379094725,
+          "versus_p0_serial_speedup": 19.465698378802863
+        },
+        "p0_scan": {
+          "autograd_nodes": 194,
+          "count": 12,
+          "mean_ms": 6.485340416666666,
+          "p50_ms": 6.3163265,
+          "p95_ms": 7.496718649999998,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 324239.0968864577,
+          "versus_p0_serial_speedup": 14.677197655947648
+        },
+        "p0_serial": {
+          "autograd_nodes": 8253,
+          "count": 12,
+          "mean_ms": 96.13302991666667,
+          "p50_ms": 92.7059725,
+          "p95_ms": 113.77346569999997,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 22091.349076781433,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 4.722817666666667,
+          "p50_ms": 4.5892845,
+          "p95_ms": 5.502372399999999,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 446256.9274142843,
+          "versus_p0_serial_speedup": 20.200528535548408
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 28.99134275,
+          "p50_ms": 25.9430935,
+          "p95_ms": 44.209274449999995,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 78942.01206190002,
+          "versus_p0_serial_speedup": 3.573435546535728
+        }
+      },
+      "threads": 4,
+      "time": 2048
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.6374586666666667,
+          "p50_ms": 0.6179574999999999,
+          "p95_ms": 0.9042169999999998,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 51783.49643786183,
+          "versus_p0_serial_speedup": 4.454843577430487
+        },
+        "p0_scan": {
+          "autograd_nodes": 122,
+          "count": 12,
+          "mean_ms": 1.8336773333333334,
+          "p50_ms": 2.09456,
+          "p95_ms": 2.2080354,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 15277.671682835537,
+          "versus_p0_serial_speedup": 1.3143113589488962
+        },
+        "p0_serial": {
+          "autograd_nodes": 189,
+          "count": 12,
+          "mean_ms": 2.475141333333333,
+          "p50_ms": 2.752904,
+          "p95_ms": 2.9123117,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 11624.0885988033,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 2.010191416666667,
+          "p50_ms": 2.2241809999999997,
+          "p95_ms": 2.3415658,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 14387.318298285978,
+          "versus_p0_serial_speedup": 1.2377158153945207
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.1573344166666668,
+          "p50_ms": 1.178251,
+          "p95_ms": 1.4687889499999998,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 27158.899080077168,
+          "versus_p0_serial_speedup": 2.3364325597856483
+        }
+      },
+      "threads": 16,
+      "time": 32
+    },
+    {
+      "batch": 8,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 9,
+          "count": 12,
+          "mean_ms": 0.827184,
+          "p50_ms": 0.8136840000000001,
+          "p95_ms": 0.95730095,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 314618.45138899126,
+          "versus_p0_serial_speedup": 2.4368587805585458
+        },
+        "p0_scan": {
+          "autograd_nodes": 122,
+          "count": 12,
+          "mean_ms": 1.8681569166666667,
+          "p50_ms": 1.723015,
+          "p95_ms": 2.6557355499999993,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 1984,
+          "tokens_per_second_at_p50": 148576.76804903033,
+          "versus_p0_serial_speedup": 1.1507926512537614
+        },
+        "p0_serial": {
+          "autograd_nodes": 189,
+          "count": 12,
+          "mean_ms": 2.12991325,
+          "p50_ms": 1.9828329999999998,
+          "p95_ms": 2.7119082499999996,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 1984,
+          "tokens_per_second_at_p50": 129108.200236732,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 1.9607815000000002,
+          "p50_ms": 1.808337,
+          "p95_ms": 2.6788885999999987,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 3456,
+          "tokens_per_second_at_p50": 141566.5332291492,
+          "versus_p0_serial_speedup": 1.0964952882123187
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.1167493333333334,
+          "p50_ms": 1.0480740000000002,
+          "p95_ms": 1.47635965,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 244257.56196604433,
+          "versus_p0_serial_speedup": 1.891882634241475
+        }
+      },
+      "threads": 16,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 2.750539416666667,
+          "p50_ms": 2.7826455,
+          "p95_ms": 3.19175375,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 183997.56634468888,
+          "versus_p0_serial_speedup": 7.111444846280274
+        },
+        "p0_scan": {
+          "autograd_nodes": 170,
+          "count": 12,
+          "mean_ms": 4.804446583333333,
+          "p50_ms": 5.1173075,
+          "p95_ms": 5.42664645,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 100052.61556003816,
+          "versus_p0_serial_speedup": 3.8670003708004645
+        },
+        "p0_serial": {
+          "autograd_nodes": 2109,
+          "count": 12,
+          "mean_ms": 19.29251675,
+          "p50_ms": 19.788629999999998,
+          "p95_ms": 20.6643811,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 25873.44348749762,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 3.3201882499999997,
+          "p50_ms": 3.518909,
+          "p95_ms": 3.912286,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 145499.64207656408,
+          "versus_p0_serial_speedup": 5.623512855831168
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 3.7617997499999998,
+          "p50_ms": 3.7874385,
+          "p95_ms": 4.2335552,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 135183.71321408916,
+          "versus_p0_serial_speedup": 5.224805630507267
+        }
+      },
+      "threads": 16,
+      "time": 512
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 9.213351333333334,
+          "p50_ms": 9.162887,
+          "p95_ms": 10.35012025,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 223510.34122760655,
+          "versus_p0_serial_speedup": 15.102120488880853
+        },
+        "p0_scan": {
+          "autograd_nodes": 194,
+          "count": 12,
+          "mean_ms": 9.393963666666666,
+          "p50_ms": 9.651340000000001,
+          "p95_ms": 11.15658545,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 212198.51336705574,
+          "versus_p0_serial_speedup": 14.337804232365661
+        },
+        "p0_serial": {
+          "autograd_nodes": 8253,
+          "count": 12,
+          "mean_ms": 138.47929274999998,
+          "p50_ms": 138.37902350000002,
+          "p95_ms": 157.30255119999998,
+          "parameters": 8371,
+          "peak_memory_bytes": null,
+          "state_bytes": 248,
+          "tokens_per_second_at_p50": 14799.931002548228,
+          "versus_p0_serial_speedup": 1.0
+        },
+        "s0_scan": {
+          "autograd_nodes": 117,
+          "count": 12,
+          "mean_ms": 6.438362416666667,
+          "p50_ms": 6.51046,
+          "p95_ms": 7.30935365,
+          "parameters": 8456,
+          "peak_memory_bytes": null,
+          "state_bytes": 432,
+          "tokens_per_second_at_p50": 314570.7062173794,
+          "versus_p0_serial_speedup": 21.254876537141772
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 26.94071658333333,
+          "p50_ms": 26.931367,
+          "p95_ms": 28.28429585,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 76045.15582146276,
+          "versus_p0_serial_speedup": 5.138210158437186
+        }
+      },
+      "threads": 16,
+      "time": 2048
+    }
+  ]
+}

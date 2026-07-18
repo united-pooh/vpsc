@@ -1,0 +1,290 @@
+{
+  "cases": [
+    {
+      "batch": 1,
+      "input_scale": 0.25,
+      "iterations": {
+        "1": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 0.8394893407821655,
+          "passed": false,
+          "spike_mismatch_rate": 0.490234375,
+          "state_close": false,
+          "state_max_abs": 0.8934797048568726
+        },
+        "2": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.0559114217758179,
+          "passed": false,
+          "spike_mismatch_rate": 0.4677734375,
+          "state_close": false,
+          "state_max_abs": 0.8471395969390869
+        },
+        "4": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.0559114217758179,
+          "passed": false,
+          "spike_mismatch_rate": 0.4365234375,
+          "state_close": false,
+          "state_max_abs": 0.8471395969390869
+        },
+        "8": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.0559114217758179,
+          "passed": false,
+          "spike_mismatch_rate": 0.3740234375,
+          "state_close": false,
+          "state_max_abs": 0.8471395969390869
+        }
+      },
+      "parameters": 2256,
+      "seed": 11000,
+      "serial_spike_rate": 0.4990234375,
+      "state_bytes": 128,
+      "time": 32
+    },
+    {
+      "batch": 4,
+      "input_scale": 1.0,
+      "iterations": {
+        "1": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.666353464126587,
+          "passed": false,
+          "spike_mismatch_rate": 0.489990234375,
+          "state_close": false,
+          "state_max_abs": 0.9986426830291748
+        },
+        "2": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.633734107017517,
+          "passed": false,
+          "spike_mismatch_rate": 0.361572265625,
+          "state_close": false,
+          "state_max_abs": 0.9863221049308777
+        },
+        "4": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.5597370862960815,
+          "passed": false,
+          "spike_mismatch_rate": 0.26513671875,
+          "state_close": false,
+          "state_max_abs": 0.9824870824813843
+        },
+        "8": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.5597370862960815,
+          "passed": false,
+          "spike_mismatch_rate": 0.149658203125,
+          "state_close": false,
+          "state_max_abs": 0.9824870824813843
+        }
+      },
+      "parameters": 2256,
+      "seed": 11001,
+      "serial_spike_rate": 0.49658203125,
+      "state_bytes": 512,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "input_scale": 0.25,
+      "iterations": {
+        "1": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.2761859893798828,
+          "passed": false,
+          "spike_mismatch_rate": 0.499755859375,
+          "state_close": false,
+          "state_max_abs": 0.8718893527984619
+        },
+        "2": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.3951377868652344,
+          "passed": false,
+          "spike_mismatch_rate": 0.497802734375,
+          "state_close": false,
+          "state_max_abs": 0.8739521503448486
+        },
+        "4": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.3951377868652344,
+          "passed": false,
+          "spike_mismatch_rate": 0.49578857421875,
+          "state_close": false,
+          "state_max_abs": 0.8739521503448486
+        },
+        "8": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.3951377868652344,
+          "passed": false,
+          "spike_mismatch_rate": 0.49176025390625,
+          "state_close": false,
+          "state_max_abs": 0.8739521503448486
+        }
+      },
+      "parameters": 2256,
+      "seed": 11002,
+      "serial_spike_rate": 0.49981689453125,
+      "state_bytes": 128,
+      "time": 512
+    },
+    {
+      "batch": 1,
+      "input_scale": 1.0,
+      "iterations": {
+        "1": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 2.0888469219207764,
+          "passed": false,
+          "spike_mismatch_rate": 0.49468994140625,
+          "state_close": false,
+          "state_max_abs": 0.9591836929321289
+        },
+        "2": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 2.1103036403656006,
+          "passed": false,
+          "spike_mismatch_rate": 0.36846923828125,
+          "state_close": false,
+          "state_max_abs": 0.9626718163490295
+        },
+        "4": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.9649583101272583,
+          "passed": false,
+          "spike_mismatch_rate": 0.27581787109375,
+          "state_close": false,
+          "state_max_abs": 0.9577223062515259
+        },
+        "8": {
+          "binary_spikes": true,
+          "bounded_residuals": true,
+          "output_close": false,
+          "output_max_abs": 1.4102972745895386,
+          "passed": false,
+          "spike_mismatch_rate": 0.16571044921875,
+          "state_close": false,
+          "state_max_abs": 0.5592173933982849
+        }
+      },
+      "parameters": 2256,
+      "seed": 11003,
+      "serial_spike_rate": 0.50457763671875,
+      "state_bytes": 128,
+      "time": 512
+    }
+  ],
+  "configuration": {
+    "atol": 0.001,
+    "iterations": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "rtol": 0.001,
+    "spike_mismatch_threshold": 0.001,
+    "threads": 1
+  },
+  "decision": {
+    "a0_quality_gate": "NOT_RUN",
+    "boundary": "Failure means K<=8 does not approximate exact serial hard reset at the frozen tolerance; it does not invalidate affine scans without hard reset.",
+    "by_iteration": {
+      "1": {
+        "all_cases_passed": false,
+        "worst_output_max_abs": 2.0888469219207764,
+        "worst_spike_mismatch_rate": 0.499755859375,
+        "worst_state_max_abs": 0.9986426830291748
+      },
+      "2": {
+        "all_cases_passed": false,
+        "worst_output_max_abs": 2.1103036403656006,
+        "worst_spike_mismatch_rate": 0.497802734375,
+        "worst_state_max_abs": 0.9863221049308777
+      },
+      "4": {
+        "all_cases_passed": false,
+        "worst_output_max_abs": 1.9649583101272583,
+        "worst_spike_mismatch_rate": 0.49578857421875,
+        "worst_state_max_abs": 0.9824870824813843
+      },
+      "8": {
+        "all_cases_passed": false,
+        "worst_output_max_abs": 1.5597370862960815,
+        "worst_spike_mismatch_rate": 0.49176025390625,
+        "worst_state_max_abs": 0.9824870824813843
+      }
+    },
+    "convergence_gate": "FAIL",
+    "next": "PRF/reset-free oscillatory code or exact event segmentation",
+    "parallel_speed_gate": "NOT_RUN",
+    "selected_iterations": null
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "67d657767f1c2469cbba956533b0d4b56cd8b06b",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M tests/test_world_model_cores.py",
+      " M vpsc/world_model/__init__.py",
+      " M vpsc/world_model/cores.py",
+      "?? experiments/e2_f0_fusion_benchmark.py",
+      "?? experiments/e3_memory_diagnostic.py",
+      "?? experiments/e3_s0_delayed_copy.py",
+      "?? experiments/e3_s0_marked_delay.py",
+      "?? experiments/e3_s0_scan_benchmark.py",
+      "?? experiments/e3_s1_fixed_point.py",
+      "?? results/e2_acceleration/",
+      "?? results/e3_scan/",
+      "?? tests/test_e3_fixed_point_core.py",
+      "?? tests/test_e3_scan_core.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "experiment": "E3-S1 fixed-point hard-reset convergence",
+  "formal": true,
+  "generated_at_utc": "2026-07-18T14:19:35.546271+00:00",
+  "schema_version": 1
+}

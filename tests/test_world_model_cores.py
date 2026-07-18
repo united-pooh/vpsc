@@ -287,6 +287,140 @@ class E2SignedCoreTests(unittest.TestCase):
         torch.testing.assert_close(ablated_state.excitatory, zero_state.excitatory)
         torch.testing.assert_close(ablated_state.inhibitory, zero_state.inhibitory)
 
+    def test_f0_fused_graph_matches_reference_outputs_states_and_gradients(self) -> None:
+        configurations = (
+            {"policy": "exact", "micro_steps": 1},
+            {"policy": "margin", "no_positive": True, "micro_steps": 2},
+            {"policy": "hybrid", "positive_factor": 0.8, "micro_steps": 1},
+            {"policy": "exact", "state_reset": True, "micro_steps": 2},
+        )
+        for index, configuration in enumerate(configurations):
+            with self.subTest(configuration=configuration):
+                torch.manual_seed(8100 + index)
+                reference = E2SignedCore(
+                    4,
+                    6,
+                    state_dim=5,
+                    execution_mode="reference",
+                    **configuration,
+                )
+                fused = E2SignedCore(
+                    4,
+                    6,
+                    state_dim=5,
+                    execution_mode="fused",
+                    **configuration,
+                )
+                fused.load_state_dict(reference.state_dict())
+
+                reference_input = torch.randn(2, 4, 4, requires_grad=True)
+                fused_input = reference_input.detach().clone().requires_grad_(True)
+                reference_state = E2CoreState(
+                    excitatory=torch.randn(2, 5, requires_grad=True),
+                    inhibitory=torch.randn(2, 5, requires_grad=True),
+                )
+                fused_state = E2CoreState(
+                    excitatory=reference_state.excitatory.detach().clone().requires_grad_(True),
+                    inhibitory=reference_state.inhibitory.detach().clone().requires_grad_(True),
+                )
+
+                reference_result = reference(reference_input, reference_state)
+                fused_result = fused(fused_input, fused_state)
+                torch.testing.assert_close(
+                    fused_result.sequence,
+                    reference_result.sequence,
+                    atol=2e-6,
+                    rtol=1e-5,
+                )
+                torch.testing.assert_close(
+                    fused_result.state.excitatory,
+                    reference_result.state.excitatory,
+                    atol=2e-6,
+                    rtol=1e-5,
+                )
+                torch.testing.assert_close(
+                    fused_result.state.inhibitory,
+                    reference_result.state.inhibitory,
+                    atol=2e-6,
+                    rtol=1e-5,
+                )
+
+                probe = torch.linspace(-0.9, 1.1, reference_result.sequence.numel()).reshape_as(
+                    reference_result.sequence
+                )
+                reference_loss = (reference_result.sequence * probe).sum()
+                reference_loss = reference_loss + 0.17 * (
+                    reference_result.state.excitatory.sum()
+                    - reference_result.state.inhibitory.sum()
+                )
+                fused_loss = (fused_result.sequence * probe).sum()
+                fused_loss = fused_loss + 0.17 * (
+                    fused_result.state.excitatory.sum()
+                    - fused_result.state.inhibitory.sum()
+                )
+                reference_loss.backward()
+                fused_loss.backward()
+
+                torch.testing.assert_close(
+                    fused_input.grad, reference_input.grad, atol=2e-6, rtol=1e-5
+                )
+                for fused_value, reference_value in (
+                    (fused_state.excitatory.grad, reference_state.excitatory.grad),
+                    (fused_state.inhibitory.grad, reference_state.inhibitory.grad),
+                ):
+                    if reference_value is None:
+                        self.assertIsNone(fused_value)
+                    else:
+                        torch.testing.assert_close(
+                            fused_value, reference_value, atol=2e-6, rtol=1e-5
+                        )
+
+                self.assertEqual(
+                    tuple(dict(fused.named_parameters())),
+                    tuple(dict(reference.named_parameters())),
+                )
+                for name, fused_parameter in fused.named_parameters():
+                    reference_gradient = dict(reference.named_parameters())[name].grad
+                    self.assertIsNotNone(reference_gradient, name)
+                    self.assertIsNotNone(fused_parameter.grad, name)
+                    torch.testing.assert_close(
+                        fused_parameter.grad,
+                        reference_gradient,
+                        atol=2e-6,
+                        rtol=1e-5,
+                        msg=lambda message, parameter=name: f"{parameter}: {message}",
+                    )
+
+    def test_f0_fused_streaming_and_detach_contracts(self) -> None:
+        torch.manual_seed(8200)
+        core = E2SignedCore(4, 6, state_dim=5, execution_mode="fused")
+        sequence = torch.randn(2, 5, 4)
+        full = core(sequence)
+        state = None
+        pieces = []
+        for index in range(sequence.shape[1]):
+            stepped = core.step(sequence[:, index], state)
+            pieces.append(stepped.sequence)
+            state = stepped.state
+        torch.testing.assert_close(
+            torch.cat(pieces, dim=1), full.sequence, atol=2e-6, rtol=1e-5
+        )
+        torch.testing.assert_close(
+            state.excitatory, full.state.excitatory, atol=2e-6, rtol=1e-5
+        )
+        torch.testing.assert_close(
+            state.inhibitory, full.state.inhibitory, atol=2e-6, rtol=1e-5
+        )
+
+        detached = core(sequence.requires_grad_(True), detach_state=True)
+        self.assertTrue(detached.sequence.requires_grad)
+        self.assertFalse(detached.state.excitatory.requires_grad)
+        self.assertFalse(detached.state.inhibitory.requires_grad)
+
+    def test_f0_rejects_unknown_execution_mode(self) -> None:
+        with self.assertRaisesRegex(ValueError, "execution_mode"):
+            E2SignedCore(4, 4, execution_mode="unknown")  # type: ignore[arg-type]
+
     def test_state_reset_removes_cross_token_memory(self) -> None:
         torch.manual_seed(99)
         normal = E2SignedCore(4, 4, state_reset=False).eval()

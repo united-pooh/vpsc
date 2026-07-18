@@ -4,6 +4,406 @@
 
 ---
 
+## 2026-07-18：E3-P0 结果 — complex scan 等价，但 T=512 并行/ANN 速度门失败（负面结果）
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_p0_oscillator_benchmark.py --output results/e3_scan/e3_p0_oscillator_benchmark.json`；产物 SHA-256 `0B37CC85AE45B2A126F2E9D7AA918CBF9903F554ABF98762C47063ABA3234879`。
+- `B/T=(1/1),(4/32),(1/512)` 的 serial/scan sequence、complex state、逐元素 spike、streaming、input/state/全参数 gradient 全部通过冻结 `3e-5/1e-4`；P0 8,371 参数、248-byte complex state，与 LSTM 8,448/256 相近。
+
+T=512 forward+backward p50 ms：
+
+| threads | P0 serial | P0 scan | speedup | S0 scan | LSTM | Transformer |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 14.08 | 3.73 | 3.78× | 1.82 | **1.23** | 7.37 |
+| 4 | 14.66 | 2.51 | **5.84×** | 2.02 | **1.44** | 2.77 |
+| 16 | 19.79 | 5.12 | 3.87× | 3.52 | **2.78** | 3.79 |
+
+scan/serial autograd node ratio为 `8.06%`，图深显著下降，但最好加速仅 `5.84×<10×`；复数 multiply/cat 的多轮 Hillis–Steele kernel 在 CPU 上吞掉了算法收益。T=2,048 时相对 serial 达 `13.29–14.68×`，绝对 scan 为 `6.32–9.65 ms`，仍未稳定赢 LSTM `3.61–9.16 ms`，且慢于 S0 `4.28–6.51 ms`。
+
+streaming P0 p95 在 1/4/16 线程为 `0.266/0.149/0.256 ms`，对应 LSTM `0.135/0.096/0.173 ms`；联合 ANN 门三档均失败。
+
+### 判定
+
+- **H-P0-EQ PASS；H-P0-PAR FAIL；H-P0-ANN FAIL；A0 按预注册 NOT_RUN。** reset-free PRF 分支没有获得继续投入质量训练的速度依据。
+- 负面结果限于当前 PyTorch complex prefix 实现/CPU；不否定 FFT/专用 complex kernel 在 GPU 的可能性。本机无 CUDA，不能把文献中的 GPU 加速移植为本项目证据。
+- 下一步优先 exact event segmentation 或 sparse event kernel，因为 S0 已证明 additive exact reset 的并行速度可行；同时把 eligibility/local objective 作为解决 S0 surrogate 表示学习失败的独立方向。
+
+---
+
+## 2026-07-18：E3-P0 预注册 — PRF-style selective complex oscillator scan（reset-free 分支）
+
+### 构造 / 诚实边界
+
+对每个复数 oscillator：`h_t=a_t h_{t-1}+b_t`；`|a_t|∈[0.5,0.995]`，phase 由可学习 base frequency 加输入选择性 phase modulation，`b_t` 由输入的 real/imag drive 产生。复 affine pair 使用与 S1 已验证相同的 associative composition，serial/scan 应在浮点容差内等价。
+
+输出 E/I spikes 分别为 real/imag membrane 越过冻结阈值的 0/1 surrogate step，readout 使用 `[s_real,-s_imag,Re(h),Im(h)]`。内部 oscillator **不执行 reset**；因此即使速度/质量成功，也只能成为后续世界模型的 oscillatory spiking substrate，不能被记为最终 strict hard-reset SNN 替代 ANN。该分支测试的是 PRF/稳定复振荡数学，不覆盖 S1 的 hard-reset fixed-point 失败。
+
+### 冻结门
+
+- `D=32,state_dim=31`，使 core 参数与 LSTM 差≤2%，complex state bytes 单独报告。scan/serial 覆盖 `B∈{1,4},T∈{1,32,512}`；spike 必须逐元素相同，sequence/state/input/全参数 gradient 通过 `atol=3e-5,rtol=1e-4`（complex reduction 的容差在结果前冻结）。
+- **H-P0-PAR**：`B=1,T=512,D=32` scan/serial forward+backward p50≥10×，scan node≤serial 25%；同时与 E3-S0/LSTM/Transformer 报绝对速度。
+- **H-P0-A0**：复用 D2 A0 数据/共同 wrapper，300 update 后 16-token same-position test accuracy≥99%，LSTM/Transformer 仍≥99%；未通过则不跑延迟记忆。
+- **H-P0-ANN**：T=512 train p50 与 continuous streaming p95 在同一线程档达到 LSTM；reset-free 边界不因速度 PASS 消失。
+
+### 决策 / 产物
+
+- EQ/PAR 通过且 A0 通过后，才按短 4/16 → 长 64/256 的顺序测 token memory；若 oscillator 质量通过，再研究 event-triggered exact reset/phase wrap，而不是把连续 complex state隐藏起来。
+- 本机 CPU threads 1/4/16；CUDA-aware 但当前 unavailable。microbenchmark 产物 `results/e3_scan/e3_p0_oscillator_benchmark.json`；A0 结果可同文件或独立 `e3_p0_a0.json`，必须明确 scope。
+
+---
+
+## 2026-07-18：E3-S1-FP 结果 — K≤8 无法逼近 serial hard reset，收敛门失败（明确负面结果）
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_s1_fixed_point.py --output results/e3_scan/e3_s1_fixed_point.json`；产物 SHA-256 `BF453962912F9F0A15CEFC2AB01A808F05137B457B323CC9BD5E62A36836227C`。
+- affine prefix scan 本身已由单测验证：无 reset 时与 serial affine recurrence 的 forward/gradient 通过 `2e-6/1e-5`；T=1 fixed-point 与 exact hard reset 完全一致。因此失败定位在跨时间 reset-event fixed point，而不是 pair composition 实现错误。
+
+四个正式 case 的 serial spike rate 都约 0.50。K=8：
+
+| B | T | input scale | spike mismatch | output max abs | state max abs |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 32 | 0.25 | 0.3740 | 1.056 | 0.847 |
+| 4 | 32 | 1.00 | 0.1492 | 1.560 | 0.982 |
+| 1 | 512 | 0.25 | **0.4918** | 1.398 | 0.869 |
+| 1 | 512 | 1.00 | 0.1681 | 1.408 | 0.561 |
+
+跨全部 case 的 worst mismatch 从 K=1/2/4/8 的 `0.4998/0.4978/0.4958/0.4918` 几乎没有改善；worst output/state error 在 K=8 仍为 `1.560/0.982`，远超预注册 `0.1%` 与 `1e-3` 门。
+
+### 判定 / 数学解释
+
+- **H-S1-CONV FAIL；H-S1-PAR、H-S1-A0 均按预注册 NOT_RUN。** 不能对错误 spike 序列报告速度或质量。
+- 证据支持的解释：Jacobi round 只根据上一轮 `s_{t-1}` 切断 affine coefficient；在约每两步一次 reset 的链上，正确 segment boundary 必须沿时间传播，常数 K 并没有把 hard-reset 因果依赖变成可靠的 O(log T) 解。动态 decay 的 contraction 不足以跨越 threshold discontinuity。
+- 这不否定 reset-free affine/oscillatory scan；它否定的是“用 K≤8 fixed-point correction 保留本轮 exact serial hard reset”的方案。下一步分开测试 PRF/reset-free oscillatory spike code 与 exact event segmentation，不把两者混成一个成功故事。
+
+---
+
+## 2026-07-18：E3-S1-FP 预注册 — dynamic-decay affine scan 与 hard-reset fixed-point correction
+
+### 数学路线
+
+S0 的 prefix sum 已解决时间并行，却在 A0 即时 token 编码失败。S1 不继续调 S0 readout，而测试另一条已预先列出的数学路线：对每个 E/I neuron 由输入生成 `a_t∈[0.5,0.99]` 与正电荷 `b_t`，serial hard-reset dynamics 为：
+
+`p_t = a_t·u_{t-1}+b_t`；`s_t=H(p_t-1)`；`u_t=p_t·(1-s_t)`。
+
+给定上一轮 spike 估计 `ŝ_{t-1}`，它变为 affine recurrence `p_t=A_t p_{t-1}+b_t`，其中 `A_t=a_t(1-ŝ_{t-1})`；pair composition `(A₂,b₂)∘(A₁,b₁)=(A₂A₁,b₂+A₂b₁)` 可用 Hillis–Steele prefix scan 在 `O(log T)` graph depth 并行。每轮由新 `p` 更新 hard spike，做 `K∈{1,2,4,8}` 次 Jacobi/fixed-point correction；forward 始终是 0/1 spike 与乘法 hard reset，backward 对 threshold 用冻结 surrogate、对 reset gate stop-gradient。
+
+这是近似并行求解，不先验宣称 K 与 T 无关；serial reference 是真值。如果 hard reset 的因果边界必须逐步传播而 K=8 仍不收敛，本路线应记录失败，而不是把软 activation 当成功。
+
+### 预注册门
+
+- **H-S1-CONV**：随机/边界压力输入，`B∈{1,4},T∈{32,512}`；报告 K=1/2/4/8 对 serial 的 spike mismatch、state/output max error。选择最小满足 spike mismatch≤0.1%、state/output `atol=1e-3,rtol=1e-3` 的 K；若 K=8 仍失败则 CONV FAIL。
+- **H-S1-PAR**：只有 CONV PASS 才评速度；所选 K 在 `B=1,T=512,D=32` forward+backward p50 至少比 serial `10×`，autograd node≤serial 25%。
+- **H-S1-A0**：参数匹配的同位 16-token decode，冻结 D2-A0 的 300 update；S1 test accuracy≥99%，且 LSTM/Transformer 校验仍为≥99%。未通过则不进入长延迟。
+- **H-S1-ANN**：T=512 train p50 与 continuous step p95 必须在同一线程档达到 LSTM；质量门和速度门分开报告。
+
+### 实现边界 / 后续
+
+- 先实现 diagonal dynamic decay，避免把 dense ANN recurrent GEMM 偷渡进 scan；E/I input drive 与 readout 都用 discrete spike + post-reset membrane。后续 signed inter-layer只在基本收敛/A0 后增加。
+- CUDA-aware runner保留；本机 CUDA unavailable 只能报告 CPU。产物冻结为 `results/e3_scan/e3_s1_fixed_point.json`。
+- 若 CONV FAIL，转 PRF/reset-free oscillatory spike code 或 exact event segmentation；若 CONV PASS 但 A0 FAIL，转 eligibility/local objective，而不是增加 K 掩盖表示失败。
+
+---
+
+## 2026-07-18：E3-MEM-D2 结果 — 共享 runner 有效，E3-S0 在同位 token 编码即失败
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_memory_diagnostic.py --output results/e3_scan/e3_memory_diagnostic.json`；产物 SHA-256 `F6A174C2E0EAB45FF35FBEE6EB8267120BAE164FEE3C7542101FD97F9C7CBB18`。
+- A0 使用 `T=32` 随机 batch，在 WRITE token 同一位置直接预测 payload，训练 300 update；参数 E3/LSTM/Transformer 为 `10,264/10,256/10,416`，公平门通过。
+
+| core | test accuracy | NLL | last-100 train loss | p50 ms/update |
+|---|---:|---:|---:|---:|
+| E3-S0 scan | **0.0869** | 2.7492 | 2.7649 | 2.107 |
+| LSTM | **1.0000** | 0.0658 | 0.1255 | **0.882** |
+| Transformer | **1.0000** | 0.1473 | 0.5116 | 1.431 |
+
+### 判定
+
+- **A0 shared-runner validation PASS，E3-S0 A0 FAIL。** LSTM/Transformer 在相同 embedding/decoder/data/optimizer 下达到 100%，因此不能再把此前 chance 归因于 gather、target、optimizer 或共同训练代码。
+- E3 的 8.69% 只略高于 6.25% chance；梯度 finite 且 norm 非零。证据支持结构性信息瓶颈：S0 第二层只接收第一层瞬时 0/1 spike，在小幅 embedding drive 与随机 phase 下没有形成可解码的 16 类 population code。A1/B 按预注册没有运行，避免在已失败的最小门上浪费实验。
+- S0 的时间并行速度结果仍成立，但质量路线在最小 token 编码处终止；不能进入 TextWorld/HomeGrid。下一步执行 S1 fixed-point selective reset scan。
+
+---
+
+## 2026-07-18：E3-MEM-D2 预注册 — 同位/短延迟诊断阶梯，定位 runner 与长期信用分配
+
+### 冻结阶梯
+
+1. **A0 same-position decode**：`T=32`，在标记 WRITE token 所在位置直接预测 payload；随机 batch，300 update。三核心 test accuracy 均须≥99%，否则 embedding/query gather/decoder/optimizer runner 有 bug。
+2. **A1 fixed-batch overfit**：`T=32`，显式 WRITE 后在 delay 1/4 的 READ 位置预测；同一个 `B=8` batch 重复 1,000 update。三核心 train accuracy 均须≥99%，否则该核心/梯度路径无法完成最小 delayed credit assignment；固定 batch 结果不作为泛化证据。
+3. **B random generalisation**：只有 A0/A1 全部通过才执行；`T=64`、delay 4/16、随机且隔离的 train/test batch，3 seed、500 update。LSTM overall/两 bucket≥90% 才有效；E3 quality PASS 仍要求≥90% 且对 LSTM 非劣 2 个百分点。
+
+所有阶段 `D=32,B=8`、threads 4、AdamW `1e-3`、参数差≤2%，共同 embedding/decoder 初始化。D2 只诊断学习性，不重测或覆盖 S0 已失败的 streaming/`B=8,T=512` 速度门。产物冻结为 `results/e3_scan/e3_memory_diagnostic.json`。
+
+### 决策
+
+- A0 失败：修 runner，不解释神经动力学；A0 PASS/A1 某核心失败：记录该核心的短信用分配失败；A1 PASS/B FAIL：任务泛化或优化失败；B PASS 而 64/256 INVALID：长期梯度/可寻址记忆是瓶颈，进入 S1 selective decay/gating。
+- 禁止在看到阶段结果后增加 update 或降低 99%/90% 阈值；任何新预算另写预注册。
+
+---
+
+## 2026-07-18：E3-S0-MEM-D1 结果 — 显式 WRITE/READ 后三核心仍为 chance，继续判 INVALID
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_s0_marked_delay.py --output results/e3_scan/e3_s0_marked_delay.json`；墙钟约 117 秒。产物 SHA-256 `D54F6C0655308CB4D404D3196929D8B547B1986C624BDD5DF39CAE0496915327`。
+- 3 seed、每模型 1,000 update 全部完成；loss finite，参数公平通过。即使 source 以 delay-specific `WRITE(payload)` 明确标记，三者 loss_last_100 仍约 `2.777≈ln(16)`。
+
+| core | overall acc | delay 64 | delay 256 | NLL | train p50 ms |
+|---|---:|---:|---:|---:|---:|
+| E3-S0 scan | 0.0628 | 0.0605 | 0.0651 | 2.7752 | 6.724 |
+| LSTM | 0.0625 | 0.0671 | 0.0579 | 2.7749 | **3.467** |
+| Transformer | 0.0667 | 0.0703 | 0.0632 | 2.7758 | 16.155 |
+
+### 判定
+
+- LSTM 三项远低于预注册 90%，故 **D1 INVALID**；E3 quality 不判 PASS/FAIL，速度仍比 LSTM 慢 `1.94×`。
+- D1 否定了“只因 source 未标记”这一充分解释，但仍不能区分 runner 错误、稀疏监督优化失败、长 BPTT 信号消失或模型容量不足。按预注册转入 D2 阶梯，不继续盲目增加长任务 update。
+
+---
+
+## 2026-07-18：E3-S0-MEM-D1 预注册 — 标记 WRITE/READ 的双寄存器长延迟诊断
+
+### 为什么需要 D1
+
+紧邻下方的 S0-MEM 正式结果满足预注册 INVALID 条件：LSTM、Transformer、E3 全部停在 chance。事后审计发现原任务没有标记 source，query 到来之前模型不知道 512 个随机 payload 中哪一个会被读取，实质要求 d=32 核心学习完整随机 shift register，而不是验证稀疏事件记忆。D1 不覆盖或“修好”原结果，单独回答更小的问题：核心能否在明确 WRITE(payload) 后跨 64/256 step 响应 READ(delay)。
+
+### 冻结任务 / 判据
+
+- `T=512`；背景只有 4 类 distractor。每条样本放一个 `WRITE64(payload)` source 和一个 `WRITE256(payload)` source（每个 delay 各有 16 个带 payload 的 source token，共 32 个 WRITE token），在精确延迟后放对应 `READ64/READ256` query；source/query 四个位置互不冲突且随 batch seed 随机。每条序列仅 2 个监督点，chance 仍为 6.25%。
+- 仍用 3 seed、`B=8,D=32`、CPU threads 4、1,000 update、AdamW `1e-3`、clip 1.0；train/test seed 隔离、同批次顺序、共同 embedding/decoder 初始化、E3/LSTM/Transformer total parameters 对 LSTM 差≤2%。
+- LSTM overall 与两个 delay mean 均须≥90%，否则 D1 仍 INVALID。D1 的 **S0 quality PASS** 要求 E3 三项均≥90% 且不低于 LSTM 2 个百分点；速度继续原样报告，但 D1 quality PASS 不能覆盖 S0-MEM 已失败的 `B=8,T=512` 速度门。
+- 若 LSTM PASS 而 E3 FAIL，支持“additive modulo state 缺少可寻址/选择性记忆”；进入 S1 dynamic decay/gated charge。若 E3 也 PASS，才逐级增加并发 WRITE 数，而不是直接宣称 TextWorld 就绪。
+- 产物冻结为 `results/e3_scan/e3_s0_marked_delay.json`。
+
+---
+
+## 2026-07-18：E3-S0-MEM 结果 — 三核心均为 chance，任务校验失败，按预注册判 INVALID
+
+### 证据
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_s0_delayed_copy.py --output results/e3_scan/e3_s0_delayed_copy.json`；总墙钟约 121 秒。产物 SHA-256 `5E528DE75C294A6C59D9BC47011AACF5468472488CCC3616BBCE633BCA7F30EF`。
+- 每个模型/seed 完整消费 1,000 个相同 `B=8,T=512` train batch；参数为 E3 9,624、LSTM 9,616、Transformer 9,776，全部在 2% 内。三模型 loss 从约 2.78 收敛到约 `2.77`，即 `ln(16)=2.7726` 附近，没有隐藏发散。
+
+| core | test accuracy mean±std | delay 64 | delay 256 | NLL | train p50 ms/update |
+|---|---:|---:|---:|---:|---:|
+| E3-S0 scan | 0.0640±0.0033 | 0.0646 | 0.0635 | 2.7729 | 7.103 |
+| LSTM | 0.0633±0.0029 | 0.0643 | 0.0623 | 2.7728 | **3.741** |
+| Transformer | 0.0673±0.0008 | 0.0658 | 0.0688 | 2.7728 | 16.132 |
+
+chance 为 0.0625；所有结果都与 chance 相容。E3 两层 E/I spike rate 约 `0.47–0.48`，因此失败不是“完全不发放”，而是 spike/residual 没有形成可解码的延迟地址。E3 本任务训练还比 LSTM 慢 `1.90×`，speed check 同样失败。
+
+### 判定
+
+- **`status=INVALID`，不是 H-S0-MEM FAIL/PASS。** 预注册要求 LSTM≥80%，实际只有 6.33%；不能用 E3 与失败基线相近来宣称非劣。
+- 任务审计后的解释（推断，不冒充直接证据）：source 没有 salience/write marker，模型只有在未来 query 到来时才知道应检索哪个历史 token，d=32 的三种核心在 1,000 update 内都没有学到随机 shift register。下一步用 D1 显式标记 WRITE/READ，区分“训练任务不可学”与“S0 记忆数学不足”。
+- 该 INVALID 不改变已成立的速度事实：S0 prefix scan 在 T=512 相对 serial 通过并行门、T=2,048 部分线程超过 LSTM；也不改变 ANN 联合门仍失败。
+
+---
+
+## 2026-07-18：E3-S0-MEM 预注册 — 512-token 双延迟事件检索质量门
+
+### 任务 / 数据隔离
+
+- 每条序列长度 512，payload vocabulary 16；额外两个 query token 分别要求回忆 64 或 256 step 前的 payload。每条样本各放 4 个不冲突 query，target 只在 8 个 query position 上计 loss/accuracy，chance 为 6.25%。query/source position 随 batch seed 改变，不能靠固定绝对位置背答案。
+- train/test 由不重叠的冻结 seed 生成；所有模型/seed 消费完全相同的预生成 train batch 顺序，数据生成不计入训练吞吐。test batch 不参与调参。
+- 三个 seed；`B=8,T=512,D=32`，CPU threads 固定为 4，1,000 update，AdamW、学习率 `1e-3`、clip norm 1.0。正式运行前只允许 runner smoke 检查 shape/finite，不用 smoke 指标改预算。
+
+### 模型公平性 / 指标
+
+- 共同 token embedding 与 decoder 逐 seed 使用完全相同初值；仅替换 E3-S0 scan / 单层 LSTM / 单层 causal Transformer core。E3 `state_dim=27`、两层；三者 total parameter 与 LSTM 差必须≤2%。
+- 主质量指标为 held-out query token accuracy，另报 delay 64/256、cross-entropy、逐 seed、mean/std。LSTM test mean 若低于 80%，判为训练预算/任务校验失败，不能用“三者都差”给 S0 过关。
+- **H-S0-MEM PASS** 需要：E3 overall 与两个 delay bucket 均≥80%，且各自不低于 LSTM 2 个百分点；同时 E3 的 train p50 milliseconds/update 或等价总 wall-clock 必须低于 LSTM。只快不准、只赢一个 delay、或 Transformer 独赢都不算 S0 memory 成功。
+- 训练吞吐覆盖 embedding + core + query CE + backward + clip + AdamW；报告每 update ms、sequence token/s、query/s。因完整 1,000-step wall-clock 单次样本不足以估 p50，runner 同时记录后 900 step 的逐 update timing 分布。
+
+### 决策
+
+- 若 E3 质量门 PASS，下一步接冻结 TextWorld next-event；若速度 PASS、质量 FAIL，直接支持 S1 dynamic decay/selective memory，不对 S0 事后加泄漏再冒充同一实验。
+- 若 LSTM 自身低于 80%，本轮记为 INVALID 而非 S0 FAIL，并另行预注册更可学习的诊断预算；Transformer 结果仍保留用于确认任务是否可解。
+- 产物冻结为 `results/e3_scan/e3_s0_delayed_copy.json`。
+
+---
+
+## 2026-07-18：E3-S0 速度结果 — exact-reset SNN 时间并行门 PASS；长序列训练首次超过 ANN，但 T=512 训推联合门仍失败（混合结果）
+
+### 证据 / 等价性
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_s0_scan_benchmark.py --output results/e3_scan/e3_s0_scan_benchmark.json`；墙钟约 74 秒。
+- 产物 SHA-256：`25C73ADC54208BED2F68D84723E0A72D56DFA76F0712BE2817BF2D066D74F8B4`。环境仍为 PyTorch `2.13.0+cpu`、Ryzen 9 7950X、CUDA unavailable。
+- 4/4 equivalence case PASS，包含 `T=512` 两层：serial/scan spike 逐元素完全相同，hard-reset residual 有界，sequence/state/input/initial-state/全参数 surrogate gradient、逐 token streaming 全部通过冻结 allclose。全 case 最大绝对差 `3.3379e-6`（发生在允许 relative tolerance 的梯度），streaming sequence 最大差 `3.5763e-7`。
+- `D=32` 时搜索并冻结 E3 `state_dim=27`：E3 8,456 参数，LSTM 8,448，差 `0.095%`；E2 8,416，Transformer 8,608。E3 两层 residual state 为 432 bytes，较 LSTM/E2 的 256 bytes 多 68.75%，不能隐藏这个代价。
+
+### T=512 时间并行硬门
+
+`B=1,D=32` forward+backward p50 ms：
+
+| CPU threads | E3 serial | E3 scan | scan/serial | E2 fused | LSTM | Transformer |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 104.98 | 2.419 | **43.40×** | 56.82 | **1.541** | 8.44 |
+| 4 | 105.01 | 2.845 | **36.91×** | 54.64 | **2.015** | 3.43 |
+| 16 | 105.42 | 4.264 | **24.72×** | 55.89 | **3.318** | 4.33 |
+
+serial autograd node 为 9,313，scan 恒为 117，node ratio `1.256%`，远低于预注册 25%；三档线程都超过 `10×`。**H-S0-PAR PASS**，这与 F0 的 2–4× kernel 收益性质不同：时间图从 O(T) Python/autograd 链变为常数深度 prefix primitive。
+
+绝对速度上，T=512 scan 仍比 LSTM 慢 `1.57×/1.41×/1.29×`，但已快于 Transformer（1/4/16 线程分别约 `3.49×/1.21×/1.02×`），并比 E2 fused 快 `13–24×`。
+
+### 长序列 crossover 与 streaming 负债
+
+T=2,048：
+
+| CPU threads | E3 scan p50 ms | LSTM | Transformer | 判读 |
+|---:|---:|---:|---:|---|
+| 1 | 4.77 | **4.13** | 96.26 | LSTM 仍快 13.4% |
+| 4 | **4.86** | 5.12 | 26.80 | E3 首次快 5.1% |
+| 16 | **6.97** | 9.63 | 29.08 | E3 快 27.6% |
+
+这是本项目第一次在参数匹配条件下观察到严格 spike/reset SNN 的训练 p50 超过 LSTM；但它只发生在长序列，且尚未经过任务质量门，不能外推为“替代 ANN”。
+
+连续 step streaming p95 ms：
+
+| CPU threads | E3 scan | E2 fused | LSTM | Transformer |
+|---:|---:|---:|---:|---:|
+| 1 | 0.291 | 0.13 | **0.098** | 0.22 |
+| 4 | 0.296 | 0.14 | **0.118** | 0.22 |
+| 16 | 0.578 | 0.21 | **0.184** | 0.36 |
+
+S0 的单 token 路径包含两层 Python dispatch、两次 quantise/sigmoid/floor/reset 与 readout，p95 比 LSTM 慢约 `2.5–3.1×`；训练 scan 与 streaming step 没有共用最优 kernel。**H-S0-ANN FAIL**，因为预注册要求同一线程档同时赢 T=512 train 与 streaming。
+
+### 判定 / 下一步
+
+- **H-S0-EQ PASS；H-S0-PAR PASS；H-S0-ANN FAIL。** 数学并行路线得到强支持，工程实时推理仍未解决。
+- 按预注册进入 delayed-event/copy 质量实验：若 additive hard-reset state 无法保留延迟信息，则速度成功仍是任务失败，并直接支持 S1 dynamic-decay/selective memory；若质量非劣，再接真实 TextWorld next-event。
+- 同时保留一个明确优化靶：把 T=1 的量化、两层 E/I update 与 readout 融成单个 streaming kernel；在本机无 CUDA 的条件下先测 Torch compile/C++ extension 的 CPU 下界，GPU 只保留 runner，不声称已验证。
+
+---
+
+## 2026-07-18：E3-S0 预注册 — exact-reset cumulative-charge SNN 与时间并行训练
+
+### 数学构造 / 边界
+
+F0 已证明等价 kernel fusion 不能消除 E2 的非线性时间链。S0 先验证一个可精确并行、带真实离散 spike 与 hard reset 的最小 SNN 基元。对每个 E/I neuron，令归一化单步电荷 `q_t=ρ·sigmoid(d_t)`，冻结 `ρ=0.95<1`，初始膜电位 `u_0∈[0,1)`：
+
+`Q_t = u_0 + Σ_{k≤t} q_k`；`C_t=floor(Q_t)`；`s_t=C_t-C_{t-1}`；`u_t=Q_t-C_t`。
+
+因为每步电荷小于一个阈值，`s_t∈{0,1}`；`u_t∈[0,1)` 正是每次越阈值后减 1 的 hard-reset IF serial dynamics。训练时 `Q` 由 `torch.cumsum` 并行生成，推理时只保存 residual `u` 并 O(1) 更新。S0 是 additive affine monoid `A_t=1` 的严格特例，不宣称已经具有泄漏、选择性遗忘或同层 recurrent feedback；这些属于 S1 动态衰减/reset-correction 扩展。
+
+为避免长序列 float32 prefix reduction、batched GEMM 与逐 token GEMV 的加法顺序在阈值边界产生不同 spike，forward 先把 drive 冻结量化到 `2^-10` 网格，再把 `q_t` 量化为 `2^-12` 网格（4,096 levels）；backward 对两次 round 都使用 straight-through identity。drive 量化误差上界为 `4.8828e-4`，单步 charge 量化误差上界 `1/(2×4096)=1.2207e-4`。在 T≤2,048 的预定范围内，二进制 charge 分数的累计值仍可由 float32 精确表示，使 scan/streaming spike 等价成为可检验的工程不变量；这是明确的数值表示选择，不冒充连续电荷方程完全无误差。
+
+网络冻结为两层：第一层从 dense multimodal token 产生 E/I charge；第二层只接收第一层的离散 E/I spikes，使用四个 row-softmax 非负 magnitude 与固定 `E→E + / I→E - / E→I + / I→I -` 符号。最终 readout 同时读取末层 `[s_E,-s_I,u_E,-u_I]`。因此时间轴并行、层轴串行，不能把它描述成 ANN recurrent hybrid。
+
+### 训练梯度语义
+
+- forward 的 `floor/difference/modulo` 必须保持精确二值 spike 与 hard reset；不得用连续 activation 冒充 spike。
+- backward 使用冻结的 periodic surrogate-floor：以最近整数阈值的距离构造有界 surrogate，scale `5.0`；膜电位 reset count 在 backward 中 stop-gradient，避免把 hard discontinuity 当解析导数。
+- `serial` reference 与 `scan` 必须使用同一 cumulative-charge surrogate 图；另用逐 token `step` 验证实际 hard-reset streaming forward。surrogate gradient 一致性只在这一冻结训练语义内成立，不外推为生物真实性。
+
+### 假设 / 硬门
+
+- **H-S0-EQ**：覆盖 `B∈{1,4},T∈{1,32,512}`、1/2 层和外部 state；scan 与 serial 的 spike 必须逐元素完全相同，sequence/state/input-gradient/全部 parameter-gradient 通过 `atol=2e-6,rtol=1e-5`；full scan 与逐 token hard-reset streaming 同样通过，且所有 spike 只含 0/1、所有 residual 在 `[0,1)`。
+- **H-S0-PAR**：`B=1,T=512,D=32` 的 scan/serial forward+backward p50 加速至少 `10×`；autograd node 随 T 不得线性增长到 serial 的 25% 以上。
+- **H-S0-ANN**：相同输入/输出维度、batch、T、loss 和线程设置下，S0 scan train p50 至少在一档预注册线程数达到 LSTM；连续 step streaming p95 也必须在同一档达到 LSTM。否则不得宣称 S0 已达到 ANN 训推速度。
+- **H-S0-MEM**：在冻结 delayed-event/copy task 上，参数量差≤2%，S0 的 held-out token accuracy 不低于 LSTM 2 个百分点，且 T=512 train p50 更快；再进入真实 TextWorld next-event。真实任务仍须同时报告 LSTM/Transformer，S0 若只快不准则失败。
+
+### 实验顺序 / 产物
+
+1. 先实现 `E3CumulativeScanCore`、serial/scan/step 与严格单测；EQ 失败则停止速度/质量宣称。
+2. 运行 1/4/16 CPU thread；CUDA runner 必须支持 synchronize 与 peak memory，但本机 CUDA unavailable 时明确记 null。microbenchmark 产物冻结为 `results/e3_scan/e3_s0_scan_benchmark.json`。
+3. 只有 H-S0-EQ 通过后才运行 synthetic memory；只有 H-S0-PAR 或 H-S0-ANN 至少一项显示方向性收益后才花预算接 TextWorld/HomeGrid。
+4. S0 之后五条互不混写的路线依次为：S1 dynamic-decay affine scan + reset correction；PRF 共轭振荡 scan；FPT 固定点时间并行；eligibility/online local gradient；exact sparse-event forward/backward。每条都另写预注册和负面结果。
+
+---
+
+## 2026-07-18：E2-F0 结果 — 等价融合成立，但实现速度门与 ANN 训推速度门均失败（明确负面结果）
+
+### 证据 / 可复现性
+
+- 正式命令：`.venv-wsl/bin/python experiments/e2_f0_fusion_benchmark.py --output results/e2_acceleration/e2_f0_fusion_benchmark.json`；墙钟约 56 秒。
+- 产物：`results/e2_acceleration/e2_f0_fusion_benchmark.json`，SHA-256 `12D34D225A41FD7FC8E6F6244A8D7E00D52D98075C1521C91B212F9ABB26CB19`。runner 记录基线 commit `67d657767f1c2469cbba956533b0d4b56cd8b06b` 及精确 dirty-file 列表。
+- 环境：WSL2、Python 3.12.3、PyTorch `2.13.0+cpu`、oneDNN enabled、Ryzen 9 7950X、32 logical CPU；CUDA unavailable，GPU 指标为 null/unavailable，没有用 CPU 结果冒充 GPU。
+- 等价矩阵 8/8 case PASS，覆盖冻结的四类配置与 `(B,T)=(1,1)/(4,32)`；sequence/state/input/state-gradient/全部 parameter-gradient、streaming、参数键/shape/count/state bytes 均通过 `atol=2e-6, rtol=1e-5`。全矩阵最大原始绝对差为 `2.0266e-6`。
+
+### Core forward+backward：图变小，但 T=32 的硬门未达到
+
+`B=1,T=32,D=32`；p50 ms。E2 参数/state 分别与 reference 完全相同（8,416 / 256 bytes），autograd node 从 `1,294` 降到 `616`（减少 52.4%）。
+
+| CPU threads | E2 reference | E2 fused | fused speedup | LSTM | Transformer |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 9.016 | 3.663 | 2.461× | 0.548 | 0.947 |
+| 4 | 9.303 | 3.541 | **2.627×** | 0.556 | 1.047 |
+| 16 | 21.803 | 7.870 | 2.770× | 0.975 | 1.818 |
+
+- canonical T=32 的最好加速只有 `2.770×`，没有达到预注册 `4×`。16 线程反而比 1/4 线程慢，说明许多小 GEMM 之间仍被 Python/非线性时间依赖串行，线程调度开销超过单步并行收益。
+- 在长序列、16 线程上，reference/fused 相对加速到 T=128 的 `4.355×`、T=512 的 `4.612×`，但绝对 p50 仍为 `19.65/71.09 ms`；同条件 LSTM 为 `2.25/4.64 ms`。因此更大的相对加速只是 amortize 旧实现冗余，不能掩盖 fused E2 仍慢 `8.72×/15.32×`。
+
+### 完整 HomeGrid 训练步与 streaming
+
+训练步范围为共同 encoder/heads + forward + 冻结 weighted CE + backward + clip-grad + AdamW.step；`B=1,T=32,D=32`。
+
+| CPU threads | E2 reference p50 ms | E2 fused p50 ms | speedup | LSTM p50 ms | Transformer p50 ms |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 12.967 | 7.524 | 1.723× | **4.186** | 4.628 |
+| 4 | 13.636 | 8.100 | 1.684× | **4.515** | 4.935 |
+| 16 | 23.573 | 11.822 | **1.994×** | **5.684** | 7.644 |
+
+16 线程的最好值 `1.994×` 仍低于预注册 `2×`，不向上取整为 PASS。fused E2 在三档线程上分别比 LSTM 慢约 `1.80×/1.79×/2.08×`。
+
+连续 core streaming p95（ms）如下；所有模型使用同 token 流与有界显式 state。
+
+| CPU threads | E2 reference | E2 fused | LSTM | Transformer |
+|---:|---:|---:|---:|---:|
+| 1 | 0.137 | 0.149 | **0.142** | 0.323 |
+| 4 | 0.180 | 0.176 | **0.153** | 0.338 |
+| 16 | 0.356 | 0.403 | **0.400** | 0.793 |
+
+F0 的 sequence-level hoist 在 T=1 streaming 无法摊销，fused 并不稳定快于 reference；三档均未同时赢 LSTM 的完整训练步与 streaming p95。
+
+### 判定 / 数学方向
+
+- **H-F0-EQ PASS；H-F0-IMPL FAIL；H-F0-ANN FAIL。** fused 可作为等价默认执行图保留，但不能宣称已经达到 ANN 训推速度。
+- 负面结果定位很明确：softmax/input/readout hoist 与 signed block 已移除约一半 autograd 图并取得 1.68–2.77× 实际收益；剩余 6.7–38× core 差距来自每个 token 都必须等上一个 sigmoid/Euler state 的非线性时间链。继续做相同层级的 kernel 拼接不会把复杂度变成时间并行。
+- 下一轮进入 E3，而不是微调 F0 门槛：构建带离散 spike/reset 与 surrogate-gradient 语义的 signed selective affine recurrence，把 subthreshold dynamics 写成 associative pair `(A_t,b_t)` 并用 prefix scan 训练；推理仍保持 O(1) state。先在合成 copy/delay 与真实 token next-event 上验证 scan/serial 等价、梯度、速度和记忆质量，再升级到 HomeGrid 多模态 rollout。
+
+---
+
+## 2026-07-18：E2-F0 预注册 — 等价 signed-block 融合、CPU 多核缩放与 ANN 速度硬门
+
+### 动机 / 研究问题
+
+E2-M0 的正式训练吞吐只有 LSTM 的 26.2%，但当前 `E2SignedCore` 每个 token 都在 Python 中重复计算四次整矩阵 softmax、两次输入投影、四次 recurrent GEMM 和一次逐 token readout；LSTM 则使用融合内核。因此，本轮先回答一个受控问题：**在不改变 E2 的方程、参数、状态、训练数据或优化器的前提下，等价图融合能消除多少实现性开销，剩余差距是否仍要求改变时间动力学的数学形式？**
+
+这不是“纯 SNN 已成立”的证据：E2 仍是连续 sigmoid E/I recurrence。F0 只清除实现混杂，为后续真正离散 spike/reset/surrogate-gradient 且可时间并行的 E3 提供可信基线。
+
+### 冻结改动（仅执行图，不改模型数学）
+
+1. 每次 sequence forward 只计算一次四个 row-softmax channel；参数及梯度路径全部保留。
+2. 把两路 input projection 在完整 `[B,T,D]` 上预计算，再按时间索引读取。
+3. 令 `z=[E,I]`，把四个有符号通道组成单个 `2D×2D` block weight：`[[gEE·WEE, -gIE·WIE], [gEI·WEI, -gII·WII]]`，每个 micro-step 用一次 recurrent GEMM；不删除 gain 为零的参数。
+4. 循环内只保留不可避免的非线性状态更新；先收集 E/I state，再对完整序列批量执行 LayerNorm 与 output projection。
+5. 保留可调用的 reference execution mode，用相同 state dict 做逐项等价验证和交错计时；公开默认改为 fused。`policy/no_positive/state_reset/micro_steps/detach_state/streaming step` 语义不得改变。
+
+### 预注册假设与判据
+
+- **H-F0-EQ（必要门）**：覆盖 `exact/margin/hybrid`、`no_positive`、`state_reset`、`micro_steps∈{1,2}`、初始/外部 state、full-sequence/逐 token streaming。float32 的 sequence、末状态、输入梯度与每个参数梯度均须通过标准 `torch.allclose(atol=2e-6, rtol=1e-5)`，并另存未经隐藏的 `max_abs`；所有参数键、shape、数量和 state bytes 必须完全一致。梯度 probe 冻结为逐元素线性权重的 mean-normalized sequence loss，加 `0.17×` 末状态 E/I mean 差，避免绝对梯度误差随 `B×T×D` 任意缩放。任一失败则 F0 REJECT，不能报告速度收益。
+- **H-F0-IMPL**：`B=1,T=32,D=32` 的 core forward+backward fused/reference p50 加速至少 `4×`，完整 synthetic HomeGrid train-step 至少 `2×`；两项分别须在至少一个预注册线程设置上达到。未达到则记录负面结果，不调低门槛。
+- **H-F0-ANN**：在至少一个相同的预注册线程设置上，fused E2 必须同时达到 LSTM 的 train-step p50 和 streaming inference p95，才可宣称“仅工程融合已达到 ANN 训推速度”。只赢 Transformer、只赢单项或从不同线程设置拼接胜项均不得判 PASS。
+- 即使 H-F0-ANN 通过，也不能宣称 SNN 替代 ANN；还必须在 E3 以后满足真实语言、多模态、action-conditioned rollout 与闭环任务质量门。
+
+### 测量设计 / 公平性
+
+- 环境冻结：WSL Ubuntu、Python 3.12.3、PyTorch `2.13.0+cpu`、oneDNN 可用；主机 Ryzen 9 7950X，16 physical / 32 logical core。当前无 `nvidia-smi` 且 `torch.cuda.is_available=False`，故本机 GPU 结果必须写成 unavailable；runner 仍实现 CUDA synchronize/peak-memory 路径，留待 GPU 环境复跑。
+- CPU 线程为 `1/4/16`；至少覆盖 `(B,T,D)=(1,32,32),(8,32,32),(1,128,32),(1,512,32)`。先 warmup，随后按固定 seed 交错执行 reference/fused/LSTM/causal-Transformer，报告 p50/p95、tokens/s、speedup、autograd node 数；CUDA 可用时额外报告峰值显存。
+- 所有实现使用相同输入 tensor、初始 state 与标量 loss；每次 backward 前清梯度。禁止在看到结果后改变重复次数、线程集合或成功阈值。
+- 产物冻结为 `results/e2_acceleration/e2_f0_fusion_benchmark.json`；正式命令和实际环境/耗时在结果段补录。
+
+### 预先决定的后续分支
+
+- H-F0-EQ 通过后才允许把 fused 设为默认；H-F0-ANN 若失败，差距归入“非线性时间递归”而不是继续微调 benchmark。
+- 下一数学主线固定为 E3：signed selective affine scan（训练期 prefix-scan / 推理期 O(1) state），并保留离散 spike/reset 与 surrogate-gradient 语义；并行振荡 PRF、固定点 FPT、eligibility/local-gradient、exact sparse-event 作为独立分支，必须分别预注册、分别与 LSTM/Transformer 比质量和训推速度，禁止把混合 ANN 内核当最终 SNN 成功。
+
+---
+
 ## 2026-07-18：E2-M0 结果 — 官方 HomeGrid 管线 READY；E2 仅有短视距变化预测信号，未成为世界模型首选（混合/负面结果）
 
 ### 官方数据、provenance 与 READY gate

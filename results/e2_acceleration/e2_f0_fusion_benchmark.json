@@ -1,0 +1,1476 @@
+{
+  "configuration": {
+    "core_shapes": [
+      [
+        1,
+        32,
+        32
+      ],
+      [
+        8,
+        32,
+        32
+      ],
+      [
+        1,
+        128,
+        32
+      ],
+      [
+        1,
+        512,
+        32
+      ]
+    ],
+    "homegrid_repeats": 8,
+    "homegrid_warmup": 2,
+    "repeats": 12,
+    "seed": 8300,
+    "streaming_steps": 64,
+    "streaming_warmup": 16,
+    "threads": [
+      1,
+      4,
+      16
+    ],
+    "warmup": 3
+  },
+  "core_forward_backward": [
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 616,
+          "count": 12,
+          "mean_ms": 3.7142101666666663,
+          "p50_ms": 3.6627075,
+          "p95_ms": 4.2309962,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 8736.706384552957,
+          "versus_e2_reference_speedup": 2.4614341986085435
+        },
+        "e2_reference": {
+          "autograd_nodes": 1294,
+          "count": 12,
+          "mean_ms": 8.980314,
+          "p50_ms": 9.0155135,
+          "p95_ms": 9.46620205,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 3549.4373115851913,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.5405383333333333,
+          "p50_ms": 0.5478945,
+          "p95_ms": 0.6675114499999999,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 58405.40469013652,
+          "versus_e2_reference_speedup": 16.454834826777788
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 0.9244239166666667,
+          "p50_ms": 0.9473585,
+          "p95_ms": 1.18893425,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 33778.1315098772,
+          "versus_e2_reference_speedup": 9.516475019752292
+        }
+      },
+      "threads": 1,
+      "time": 32
+    },
+    {
+      "batch": 8,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 616,
+          "count": 12,
+          "mean_ms": 4.0009871666666665,
+          "p50_ms": 3.955834,
+          "p95_ms": 4.3199248,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 64714.54565585917,
+          "versus_e2_reference_speedup": 2.381941330197374
+        },
+        "e2_reference": {
+          "autograd_nodes": 1294,
+          "count": 12,
+          "mean_ms": 10.037184250000001,
+          "p50_ms": 9.4225645,
+          "p95_ms": 12.792115799999998,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 27168.824368355345,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 9,
+          "count": 12,
+          "mean_ms": 0.7169233333333334,
+          "p50_ms": 0.7351000000000001,
+          "p95_ms": 0.8571481999999999,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 348251.9385117671,
+          "versus_e2_reference_speedup": 12.818071690926404
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.3627120833333333,
+          "p50_ms": 1.391181,
+          "p95_ms": 1.5244414499999999,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 184016.31419635547,
+          "versus_e2_reference_speedup": 6.773068709247754
+        }
+      },
+      "threads": 1,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 2344,
+          "count": 12,
+          "mean_ms": 13.627939416666665,
+          "p50_ms": 13.21496,
+          "p95_ms": 15.3300466,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 9685.99223909872,
+          "versus_e2_reference_speedup": 2.8031322455762258
+        },
+        "e2_reference": {
+          "autograd_nodes": 5134,
+          "count": 12,
+          "mean_ms": 37.350307416666666,
+          "p50_ms": 37.0432805,
+          "p95_ms": 39.56409485,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 3455.4175081766853,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.7734999166666666,
+          "p50_ms": 0.70867,
+          "p95_ms": 1.1197598999999998,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 180620.03471291292,
+          "versus_e2_reference_speedup": 52.271551638985706
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.4947465,
+          "p50_ms": 1.515522,
+          "p95_ms": 1.85061895,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 84459.34800022698,
+          "versus_e2_reference_speedup": 24.442588428277517
+        }
+      },
+      "threads": 1,
+      "time": 128
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 9256,
+          "count": 12,
+          "mean_ms": 58.29199541666667,
+          "p50_ms": 58.3549395,
+          "p95_ms": 63.37951989999999,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 8773.893082349952,
+          "versus_e2_reference_speedup": 2.650807495053611
+        },
+        "e2_reference": {
+          "autograd_nodes": 20494,
+          "count": 12,
+          "mean_ms": 153.92751058333332,
+          "p50_ms": 154.687711,
+          "p95_ms": 157.9815399,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 3309.8944750691926,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 1.8252781666666669,
+          "p50_ms": 1.5178405,
+          "p95_ms": 3.2055282,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 337321.34568816685,
+          "versus_e2_reference_speedup": 101.91302116394971
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 8.49832125,
+          "p50_ms": 7.9449285,
+          "p95_ms": 11.080126649999999,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 64443.625892920245,
+          "versus_e2_reference_speedup": 19.46999409749251
+        }
+      },
+      "threads": 1,
+      "time": 512
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 616,
+          "count": 12,
+          "mean_ms": 3.66305025,
+          "p50_ms": 3.5406405000000003,
+          "p95_ms": 4.277708449999999,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 9037.912773126782,
+          "versus_e2_reference_speedup": 2.627433793405459
+        },
+        "e2_reference": {
+          "autograd_nodes": 1294,
+          "count": 12,
+          "mean_ms": 9.401786166666666,
+          "p50_ms": 9.302798500000002,
+          "p95_ms": 10.3209345,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 3439.8251235904977,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.6010310833333333,
+          "p50_ms": 0.55576,
+          "p95_ms": 0.9329194499999999,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 57578.8109975529,
+          "versus_e2_reference_speedup": 16.738877393119335
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.1050331666666666,
+          "p50_ms": 1.0466864999999999,
+          "p95_ms": 1.5790376499999998,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 30572.669084773715,
+          "versus_e2_reference_speedup": 8.887855628213417
+        }
+      },
+      "threads": 4,
+      "time": 32
+    },
+    {
+      "batch": 8,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 616,
+          "count": 12,
+          "mean_ms": 4.85199725,
+          "p50_ms": 4.657781,
+          "p95_ms": 6.054308449999999,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 54961.79403883523,
+          "versus_e2_reference_speedup": 2.813257214111183
+        },
+        "e2_reference": {
+          "autograd_nodes": 1294,
+          "count": 12,
+          "mean_ms": 13.760510250000001,
+          "p50_ms": 13.103536,
+          "p95_ms": 17.0480846,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 19536.711312122163,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 9,
+          "count": 12,
+          "mean_ms": 0.82452775,
+          "p50_ms": 0.84278,
+          "p95_ms": 0.9712649,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 303756.61501222145,
+          "versus_e2_reference_speedup": 15.547991172073377
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.3904994166666667,
+          "p50_ms": 1.35119,
+          "p95_ms": 1.6904654999999997,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 189462.62183704737,
+          "versus_e2_reference_speedup": 9.697774554281782
+        }
+      },
+      "threads": 4,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 2344,
+          "count": 12,
+          "mean_ms": 15.802987833333333,
+          "p50_ms": 15.6959525,
+          "p95_ms": 17.5041174,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 8154.968613723824,
+          "versus_e2_reference_speedup": 2.6682670898755587
+        },
+        "e2_reference": {
+          "autograd_nodes": 5134,
+          "count": 12,
+          "mean_ms": 44.658874,
+          "p50_ms": 41.8809935,
+          "p95_ms": 57.90458355,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 3056.2789777181383,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 1.0831743333333332,
+          "p50_ms": 1.107247,
+          "p95_ms": 1.30965985,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 115602.02917686838,
+          "versus_e2_reference_speedup": 37.82443619174403
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.5223135833333332,
+          "p50_ms": 1.53592,
+          "p95_ms": 1.8432133999999998,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 83337.67383717903,
+          "versus_e2_reference_speedup": 27.267692002187616
+        }
+      },
+      "threads": 4,
+      "time": 128
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 9256,
+          "count": 12,
+          "mean_ms": 64.13589075,
+          "p50_ms": 64.0700805,
+          "p95_ms": 69.3827601,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 7991.24951934468,
+          "versus_e2_reference_speedup": 2.8370326224266256
+        },
+        "e2_reference": {
+          "autograd_nodes": 20494,
+          "count": 12,
+          "mean_ms": 183.72580991666666,
+          "p50_ms": 181.7689085,
+          "p95_ms": 202.59655425,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 2816.7633520228787,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 2.5894266666666668,
+          "p50_ms": 2.075765,
+          "p95_ms": 4.3248017,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 246656.052106091,
+          "versus_e2_reference_speedup": 87.56719016844393
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 4.2981065,
+          "p50_ms": 4.1549495,
+          "p95_ms": 5.792391449999998,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 123226.52778331001,
+          "versus_e2_reference_speedup": 43.74756143245544
+        }
+      },
+      "threads": 4,
+      "time": 512
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 616,
+          "count": 12,
+          "mean_ms": 7.555233666666666,
+          "p50_ms": 7.869909999999999,
+          "p95_ms": 8.941284150000001,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 4066.1201970543507,
+          "versus_e2_reference_speedup": 2.770461669828499
+        },
+        "e2_reference": {
+          "autograd_nodes": 1294,
+          "count": 12,
+          "mean_ms": 21.35800225,
+          "p50_ms": 21.803283999999998,
+          "p95_ms": 22.59645235,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 1467.6688153949653,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 0.9491089166666667,
+          "p50_ms": 0.9750355,
+          "p95_ms": 1.2913117,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 32819.3178607343,
+          "versus_e2_reference_speedup": 22.3615283751207
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.8940806666666667,
+          "p50_ms": 1.817878,
+          "p95_ms": 2.3929513,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 17602.941451516548,
+          "versus_e2_reference_speedup": 11.99381036571211
+        }
+      },
+      "threads": 16,
+      "time": 32
+    },
+    {
+      "batch": 8,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 616,
+          "count": 12,
+          "mean_ms": 10.26629,
+          "p50_ms": 10.9019215,
+          "p95_ms": 12.58448555,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 23482.099004290205,
+          "versus_e2_reference_speedup": 2.8327223324805635
+        },
+        "e2_reference": {
+          "autograd_nodes": 1294,
+          "count": 12,
+          "mean_ms": 30.566996666666668,
+          "p50_ms": 30.882116500000002,
+          "p95_ms": 33.4198471,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 8289.587276182965,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 9,
+          "count": 12,
+          "mean_ms": 1.5460880833333333,
+          "p50_ms": 1.5279345,
+          "p95_ms": 2.187444349999999,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 2048,
+          "tokens_per_second_at_p50": 167546.44914425325,
+          "versus_e2_reference_speedup": 20.211675631383414
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 1.91320175,
+          "p50_ms": 2.0423435000000003,
+          "p95_ms": 2.3064761000000003,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 125346.20155718172,
+          "versus_e2_reference_speedup": 15.120921872349092
+        }
+      },
+      "threads": 16,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 2344,
+          "count": 12,
+          "mean_ms": 19.748891166666667,
+          "p50_ms": 19.647399999999998,
+          "p95_ms": 21.494215750000002,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 6514.856927634191,
+          "versus_e2_reference_speedup": 4.355317599275223
+        },
+        "e2_reference": {
+          "autograd_nodes": 5134,
+          "count": 12,
+          "mean_ms": 86.6237375,
+          "p50_ms": 85.570667,
+          "p95_ms": 101.51922884999999,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 1495.8396900190107,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 2.213463416666667,
+          "p50_ms": 2.2517605,
+          "p95_ms": 3.0672115499999997,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 56844.41129507334,
+          "versus_e2_reference_speedup": 38.0016733573575
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 2.5346469166666665,
+          "p50_ms": 2.5490839999999997,
+          "p95_ms": 2.86618605,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 50214.1161295587,
+          "versus_e2_reference_speedup": 33.56918289079528
+        }
+      },
+      "threads": 16,
+      "time": 128
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "models": {
+        "e2_fused": {
+          "autograd_nodes": 9256,
+          "count": 12,
+          "mean_ms": 72.1543545,
+          "p50_ms": 71.0934395,
+          "p95_ms": 79.37148865,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 7201.789695376885,
+          "versus_e2_reference_speedup": 4.6116249516947345
+        },
+        "e2_reference": {
+          "autograd_nodes": 20494,
+          "count": 12,
+          "mean_ms": 328.4783545833333,
+          "p50_ms": 327.8562795,
+          "p95_ms": 348.64262635,
+          "parameters": 8416,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 1561.6598857915117,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "autograd_nodes": 8,
+          "count": 12,
+          "mean_ms": 4.588647333333333,
+          "p50_ms": 4.640047,
+          "p95_ms": 6.269613099999999,
+          "parameters": 8448,
+          "peak_memory_bytes": null,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 110343.70988052491,
+          "versus_e2_reference_speedup": 70.6579652102662
+        },
+        "transformer": {
+          "autograd_nodes": 46,
+          "count": 12,
+          "mean_ms": 5.308061333333334,
+          "p50_ms": 4.870801999999999,
+          "p95_ms": 6.768020699999999,
+          "parameters": 8608,
+          "peak_memory_bytes": null,
+          "state_bytes": 0,
+          "tokens_per_second_at_p50": 105116.15951541452,
+          "versus_e2_reference_speedup": 67.31053315244596
+        }
+      },
+      "threads": 16,
+      "time": 512
+    }
+  ],
+  "decision": {
+    "ann_thread_checks": {
+      "1": {
+        "passed": false,
+        "stream_p95_e2_ms": 0.14901335,
+        "stream_p95_lstm_ms": 0.14181255,
+        "train_e2_ms": 7.5243459999999995,
+        "train_lstm_ms": 4.1855835
+      },
+      "16": {
+        "passed": false,
+        "stream_p95_e2_ms": 0.40273459999999994,
+        "stream_p95_lstm_ms": 0.39953334999999995,
+        "train_e2_ms": 11.821812,
+        "train_lstm_ms": 5.6842109999999995
+      },
+      "4": {
+        "passed": false,
+        "stream_p95_e2_ms": 0.17584439999999998,
+        "stream_p95_lstm_ms": 0.15264035,
+        "train_e2_ms": 8.100076,
+        "train_lstm_ms": 4.5152795
+      }
+    },
+    "ann_train_and_inference_speed_gate": "FAIL",
+    "boundary": "F0 changes only the execution graph. Passing any speed gate is not evidence that E2 is a strict SNN or that SNN quality replaces ANN baselines.",
+    "canonical_core_speedups_by_threads": {
+      "1": 2.4614341986085435,
+      "16": 2.770461669828499,
+      "4": 2.627433793405459
+    },
+    "equivalence_gate": "PASS",
+    "homegrid_train_step_speedups_by_threads": {
+      "1": 1.7233871222827872,
+      "16": 1.9940407189693088,
+      "4": 1.683501364678554
+    },
+    "implementation_speed_gate": "FAIL"
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "67d657767f1c2469cbba956533b0d4b56cd8b06b",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M tests/test_world_model_cores.py",
+      " M vpsc/world_model/cores.py",
+      "?? experiments/e2_f0_fusion_benchmark.py",
+      "?? results/e2_acceleration/"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "equivalence": {
+    "atol": 2e-06,
+    "case_count": 8,
+    "cases": [
+      {
+        "batch": 1,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 1,
+          "policy": "exact"
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 0.0,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 9.313225746154785e-10,
+          "initial_state_inhibitory_gradient": 3.725290298461914e-09,
+          "input_gradient": 0.0,
+          "parameter_gradient_max": 3.725290298461914e-09,
+          "sequence": 0.0,
+          "state_excitatory": 0.0,
+          "state_inhibitory": 0.0
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 3.725290298461914e-09,
+          "e_to_i_logits": 7.105427357601002e-14,
+          "i_to_e_logits": 3.637978807091713e-12,
+          "i_to_i_logits": 5.820766091346741e-11,
+          "input_to_e.bias": 3.197442310920451e-14,
+          "input_to_e.weight": 4.263256414560601e-14,
+          "input_to_i.bias": 6.750155989720952e-14,
+          "input_to_i.weight": 9.237055564881302e-14,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 0.0,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 0.0
+        },
+        "passed": true,
+        "seed": 8300,
+        "time": 1
+      },
+      {
+        "batch": 4,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 1,
+          "policy": "exact"
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 1.1920928955078125e-07,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 8.847564458847046e-09,
+          "initial_state_inhibitory_gradient": 1.30385160446167e-08,
+          "input_gradient": 1.83936208486557e-08,
+          "parameter_gradient_max": 1.825392246246338e-07,
+          "sequence": 1.6987323760986328e-06,
+          "state_excitatory": 2.384185791015625e-07,
+          "state_inhibitory": 1.1920928955078125e-07
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 1.0337680578231812e-07,
+          "e_to_i_logits": 7.444759830832481e-08,
+          "i_to_e_logits": 3.0442606657743454e-08,
+          "i_to_i_logits": 1.4164470485411584e-08,
+          "input_to_e.bias": 1.825392246246338e-07,
+          "input_to_e.weight": 1.1920928955078125e-07,
+          "input_to_i.bias": 7.8580342233181e-08,
+          "input_to_i.weight": 1.862645149230957e-08,
+          "output_norm.bias": 3.725290298461914e-09,
+          "output_norm.weight": 6.51925802230835e-09,
+          "output_projection.bias": 7.450580596923828e-09,
+          "output_projection.weight": 1.7229467630386353e-08
+        },
+        "passed": true,
+        "seed": 8301,
+        "time": 32
+      },
+      {
+        "batch": 1,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 2,
+          "no_positive": true,
+          "policy": "margin"
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 0.0,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 1.3642420526593924e-12,
+          "initial_state_inhibitory_gradient": 2.9802322387695312e-08,
+          "input_gradient": 9.313225746154785e-10,
+          "parameter_gradient_max": 4.656612873077393e-10,
+          "sequence": 0.0,
+          "state_excitatory": 0.0,
+          "state_inhibitory": 7.450580596923828e-09
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 0.0,
+          "e_to_i_logits": 5.820766091346741e-11,
+          "i_to_e_logits": 3.92901711165905e-10,
+          "i_to_i_logits": 7.275957614183426e-11,
+          "input_to_e.bias": 4.656612873077393e-10,
+          "input_to_e.weight": 4.656612873077393e-10,
+          "input_to_i.bias": 8.731149137020111e-11,
+          "input_to_i.weight": 1.4551915228366852e-10,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 0.0,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 0.0
+        },
+        "passed": true,
+        "seed": 8400,
+        "time": 1
+      },
+      {
+        "batch": 4,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 2,
+          "no_positive": true,
+          "policy": "margin"
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 1.1920928955078125e-07,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 1.7462298274040222e-10,
+          "initial_state_inhibitory_gradient": 9.313225746154785e-10,
+          "input_gradient": 3.4924596548080444e-10,
+          "parameter_gradient_max": 2.0489096641540527e-08,
+          "sequence": 2.8312206268310547e-07,
+          "state_excitatory": 7.450580596923828e-09,
+          "state_inhibitory": 2.9802322387695312e-08
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 0.0,
+          "e_to_i_logits": 5.820766091346741e-10,
+          "i_to_e_logits": 1.4551915228366852e-10,
+          "i_to_i_logits": 4.3655745685100555e-11,
+          "input_to_e.bias": 2.7939677238464355e-09,
+          "input_to_e.weight": 3.026798367500305e-09,
+          "input_to_i.bias": 5.238689482212067e-10,
+          "input_to_i.weight": 8.149072527885437e-10,
+          "output_norm.bias": 8.381903171539307e-09,
+          "output_norm.weight": 9.313225746154785e-09,
+          "output_projection.bias": 7.450580596923828e-09,
+          "output_projection.weight": 2.0489096641540527e-08
+        },
+        "passed": true,
+        "seed": 8401,
+        "time": 32
+      },
+      {
+        "batch": 1,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 1,
+          "policy": "hybrid",
+          "positive_factor": 0.8
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 0.0,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 5.960464477539063e-08,
+          "initial_state_inhibitory_gradient": 9.313225746154785e-10,
+          "input_gradient": 5.122274160385132e-09,
+          "parameter_gradient_max": 2.9802322387695312e-08,
+          "sequence": 1.1920928955078125e-07,
+          "state_excitatory": 1.1920928955078125e-07,
+          "state_inhibitory": 2.9802322387695312e-08
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 1.30385160446167e-08,
+          "e_to_i_logits": 4.656612873077393e-10,
+          "i_to_e_logits": 0.0,
+          "i_to_i_logits": 1.1641532182693481e-10,
+          "input_to_e.bias": 1.30385160446167e-08,
+          "input_to_e.weight": 2.2351741790771484e-08,
+          "input_to_i.bias": 1.1641532182693481e-10,
+          "input_to_i.weight": 2.3283064365386963e-10,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 1.1175870895385742e-08,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 2.9802322387695312e-08
+        },
+        "passed": true,
+        "seed": 8500,
+        "time": 1
+      },
+      {
+        "batch": 4,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 1,
+          "policy": "hybrid",
+          "positive_factor": 0.8
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 1.1920928955078125e-07,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 1.7229467630386353e-08,
+          "initial_state_inhibitory_gradient": 4.656612873077393e-10,
+          "input_gradient": 3.2014213502407074e-09,
+          "parameter_gradient_max": 5.075708031654358e-08,
+          "sequence": 2.0265579223632812e-06,
+          "state_excitatory": 1.1920928955078125e-07,
+          "state_inhibitory": 1.1920928955078125e-07
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 2.3050233721733093e-08,
+          "e_to_i_logits": 1.4115357771515846e-09,
+          "i_to_e_logits": 0.0,
+          "i_to_i_logits": 6.257323548197746e-10,
+          "input_to_e.bias": 3.166496753692627e-08,
+          "input_to_e.weight": 2.514570951461792e-08,
+          "input_to_i.bias": 2.0954757928848267e-09,
+          "input_to_i.weight": 1.2223608791828156e-09,
+          "output_norm.bias": 5.587935447692871e-09,
+          "output_norm.weight": 1.792795956134796e-08,
+          "output_projection.bias": 7.450580596923828e-09,
+          "output_projection.weight": 5.075708031654358e-08
+        },
+        "passed": true,
+        "seed": 8501,
+        "time": 32
+      },
+      {
+        "batch": 1,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 2,
+          "policy": "exact",
+          "state_reset": true
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 0.0,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 0.0,
+          "initial_state_inhibitory_gradient": 0.0,
+          "input_gradient": 1.6763806343078613e-08,
+          "parameter_gradient_max": 5.960464477539063e-08,
+          "sequence": 1.1920928955078125e-07,
+          "state_excitatory": 1.4901161193847656e-08,
+          "state_inhibitory": 0.0
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 3.14321368932724e-09,
+          "e_to_i_logits": 9.822542779147625e-11,
+          "i_to_e_logits": 1.2732925824820995e-11,
+          "i_to_i_logits": 1.7053025658242404e-13,
+          "input_to_e.bias": 2.9802322387695312e-08,
+          "input_to_e.weight": 2.9802322387695312e-08,
+          "input_to_i.bias": 2.3283064365386963e-10,
+          "input_to_i.weight": 2.3283064365386963e-10,
+          "output_norm.bias": 0.0,
+          "output_norm.weight": 1.1175870895385742e-08,
+          "output_projection.bias": 0.0,
+          "output_projection.weight": 5.960464477539063e-08
+        },
+        "passed": true,
+        "seed": 8600,
+        "time": 1
+      },
+      {
+        "batch": 4,
+        "checks": {
+          "all_parameter_gradients": true,
+          "fused_streaming_sequence": true,
+          "fused_streaming_state_e": true,
+          "fused_streaming_state_i": true,
+          "initial_state_excitatory_gradient": true,
+          "initial_state_inhibitory_gradient": true,
+          "input_gradient": true,
+          "parameter_count": true,
+          "parameter_keys": true,
+          "parameter_shapes": true,
+          "sequence": true,
+          "state_bytes": true,
+          "state_excitatory": true,
+          "state_inhibitory": true
+        },
+        "configuration": {
+          "micro_steps": 2,
+          "policy": "exact",
+          "state_reset": true
+        },
+        "max_abs_errors": {
+          "fused_streaming_sequence": 1.1920928955078125e-07,
+          "fused_streaming_state_e": 0.0,
+          "fused_streaming_state_i": 0.0,
+          "initial_state_excitatory_gradient": 0.0,
+          "initial_state_inhibitory_gradient": 0.0,
+          "input_gradient": 3.4924596548080444e-10,
+          "parameter_gradient_max": 1.5832483768463135e-08,
+          "sequence": 3.5762786865234375e-07,
+          "state_excitatory": 5.960464477539063e-08,
+          "state_inhibitory": 6.984919309616089e-10
+        },
+        "parameter_gradient_max_abs": {
+          "e_to_e_logits": 4.802132025361061e-10,
+          "e_to_i_logits": 2.2282620193436742e-11,
+          "i_to_e_logits": 1.8189894035458565e-12,
+          "i_to_i_logits": 9.947598300641403e-14,
+          "input_to_e.bias": 2.270098775625229e-09,
+          "input_to_e.weight": 3.725290298461914e-09,
+          "input_to_i.bias": 1.4551915228366852e-10,
+          "input_to_i.weight": 7.275957614183426e-11,
+          "output_norm.bias": 2.7939677238464355e-09,
+          "output_norm.weight": 3.259629011154175e-09,
+          "output_projection.bias": 7.450580596923828e-09,
+          "output_projection.weight": 1.5832483768463135e-08
+        },
+        "passed": true,
+        "seed": 8601,
+        "time": 32
+      }
+    ],
+    "passed": true,
+    "rtol": 1e-05
+  },
+  "experiment": "E2-F0 exact signed-block fusion",
+  "formal": true,
+  "generated_at_utc": "2026-07-18T13:39:07.698013+00:00",
+  "homegrid_train_step": [
+    {
+      "batch": 1,
+      "dimension": 32,
+      "includes": "forward+weighted_cross_entropy+backward+clip_grad_norm+AdamW.step",
+      "models": {
+        "e2_fused": {
+          "count": 8,
+          "mean_ms": 7.594664375,
+          "p50_ms": 7.5243459999999995,
+          "p95_ms": 8.48835315,
+          "parameters": 358055,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 4252.861311800388,
+          "versus_e2_reference_speedup": 1.7233871222827872
+        },
+        "e2_reference": {
+          "count": 8,
+          "mean_ms": 12.830320875,
+          "p50_ms": 12.967361,
+          "p95_ms": 13.202769100000001,
+          "parameters": 358055,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 2467.7341827685677,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "count": 8,
+          "mean_ms": 4.131547875,
+          "p50_ms": 4.1855835,
+          "p95_ms": 4.37596245,
+          "parameters": 358087,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 7645.290077237738,
+          "versus_e2_reference_speedup": 3.0981011369143636
+        },
+        "transformer": {
+          "count": 8,
+          "mean_ms": 4.680899,
+          "p50_ms": 4.628214,
+          "p95_ms": 4.89197175,
+          "parameters": 358247,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 6914.114170174499,
+          "versus_e2_reference_speedup": 2.8018067012458805
+        }
+      },
+      "threads": 1,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "includes": "forward+weighted_cross_entropy+backward+clip_grad_norm+AdamW.step",
+      "models": {
+        "e2_fused": {
+          "count": 8,
+          "mean_ms": 8.189391125,
+          "p50_ms": 8.100076,
+          "p95_ms": 9.48866715,
+          "parameters": 358055,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 3950.580216778213,
+          "versus_e2_reference_speedup": 1.683501364678554
+        },
+        "e2_reference": {
+          "count": 8,
+          "mean_ms": 14.49089475,
+          "p50_ms": 13.636489000000001,
+          "p95_ms": 17.48113155,
+          "parameters": 358055,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 2346.64509317611,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "count": 8,
+          "mean_ms": 4.581575625,
+          "p50_ms": 4.5152795,
+          "p95_ms": 5.72281435,
+          "parameters": 358087,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 7087.047435269511,
+          "versus_e2_reference_speedup": 3.020076387297841
+        },
+        "transformer": {
+          "count": 8,
+          "mean_ms": 4.72585075,
+          "p50_ms": 4.9352925,
+          "p95_ms": 5.08403175,
+          "parameters": 358247,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 6483.911541210577,
+          "versus_e2_reference_speedup": 2.7630558877715963
+        }
+      },
+      "threads": 4,
+      "time": 32
+    },
+    {
+      "batch": 1,
+      "dimension": 32,
+      "includes": "forward+weighted_cross_entropy+backward+clip_grad_norm+AdamW.step",
+      "models": {
+        "e2_fused": {
+          "count": 8,
+          "mean_ms": 12.191394875,
+          "p50_ms": 11.821812,
+          "p95_ms": 14.0772763,
+          "parameters": 358055,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 2706.860843329263,
+          "versus_e2_reference_speedup": 1.9940407189693088
+        },
+        "e2_reference": {
+          "count": 8,
+          "mean_ms": 24.0841275,
+          "p50_ms": 23.5731745,
+          "p95_ms": 25.98643155,
+          "parameters": 358055,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 1357.475209798324,
+          "versus_e2_reference_speedup": 1.0
+        },
+        "lstm": {
+          "count": 8,
+          "mean_ms": 5.769033125,
+          "p50_ms": 5.6842109999999995,
+          "p95_ms": 6.54374945,
+          "parameters": 358087,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 5629.629160493867,
+          "versus_e2_reference_speedup": 4.147132205331576
+        },
+        "transformer": {
+          "count": 8,
+          "mean_ms": 7.5948355,
+          "p50_ms": 7.643527000000001,
+          "p95_ms": 8.761078699999999,
+          "parameters": 358247,
+          "peak_memory_bytes": null,
+          "tokens_per_second_at_p50": 4186.548958353911,
+          "versus_e2_reference_speedup": 3.084070285877187
+        }
+      },
+      "threads": 16,
+      "time": 32
+    }
+  ],
+  "schema_version": 1,
+  "streaming_inference": [
+    {
+      "measured_steps": 64,
+      "models": {
+        "e2_fused": {
+          "count": 64,
+          "mean_ms": 0.11173896875,
+          "p50_ms": 0.1013675,
+          "p95_ms": 0.14901335,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 9865.094828224037
+        },
+        "e2_reference": {
+          "count": 64,
+          "mean_ms": 0.0939383125,
+          "p50_ms": 0.0883225,
+          "p95_ms": 0.13716144999999996,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 11322.14328172323
+        },
+        "lstm": {
+          "count": 64,
+          "mean_ms": 0.098721703125,
+          "p50_ms": 0.093417,
+          "p95_ms": 0.14181255,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 10704.689724568334
+        },
+        "transformer": {
+          "count": 64,
+          "mean_ms": 0.216433828125,
+          "p50_ms": 0.203691,
+          "p95_ms": 0.32318324999999987,
+          "state_bytes": 20480,
+          "tokens_per_second_at_p50": 4909.39707694498
+        }
+      },
+      "threads": 1,
+      "warmup_steps": 16
+    },
+    {
+      "measured_steps": 64,
+      "models": {
+        "e2_fused": {
+          "count": 64,
+          "mean_ms": 0.118543796875,
+          "p50_ms": 0.114793,
+          "p95_ms": 0.17584439999999998,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 8711.33257254362
+        },
+        "e2_reference": {
+          "count": 64,
+          "mean_ms": 0.117101953125,
+          "p50_ms": 0.0988675,
+          "p95_ms": 0.1799521999999999,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 10114.54724757883
+        },
+        "lstm": {
+          "count": 64,
+          "mean_ms": 0.111402359375,
+          "p50_ms": 0.1049895,
+          "p95_ms": 0.15264035,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 9524.762000009525
+        },
+        "transformer": {
+          "count": 64,
+          "mean_ms": 0.234904421875,
+          "p50_ms": 0.21113549999999998,
+          "p95_ms": 0.3376901499999999,
+          "state_bytes": 20480,
+          "tokens_per_second_at_p50": 4736.294938558414
+        }
+      },
+      "threads": 4,
+      "warmup_steps": 16
+    },
+    {
+      "measured_steps": 64,
+      "models": {
+        "e2_fused": {
+          "count": 64,
+          "mean_ms": 0.22080771875,
+          "p50_ms": 0.2067525,
+          "p95_ms": 0.40273459999999994,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 4836.700886325437
+        },
+        "e2_reference": {
+          "count": 64,
+          "mean_ms": 0.20735959375,
+          "p50_ms": 0.1756635,
+          "p95_ms": 0.35551454999999976,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 5692.702240362967
+        },
+        "lstm": {
+          "count": 64,
+          "mean_ms": 0.183186875,
+          "p50_ms": 0.1453105,
+          "p95_ms": 0.39953334999999995,
+          "state_bytes": 256,
+          "tokens_per_second_at_p50": 6881.815147563321
+        },
+        "transformer": {
+          "count": 64,
+          "mean_ms": 0.394749734375,
+          "p50_ms": 0.3574535,
+          "p95_ms": 0.7932216999999999,
+          "state_bytes": 20480,
+          "tokens_per_second_at_p50": 2797.5666765047763
+        }
+      },
+      "threads": 16,
+      "warmup_steps": 16
+    }
+  ]
+}
