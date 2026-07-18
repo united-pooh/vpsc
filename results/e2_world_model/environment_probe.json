@@ -1,0 +1,130 @@
+{
+  "automatic_decision": null,
+  "command": "probe",
+  "confirmatory": false,
+  "environment": {
+    "cuda_available": false,
+    "machine": "x86_64",
+    "numpy_version": "2.5.1",
+    "pilot_device": "cpu",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python_executable": "/mnt/d/projects/vpsc/.venv-wsl/bin/python",
+    "python_implementation": "CPython",
+    "python_version": "3.12.3",
+    "system": "Linux",
+    "torch_cpu_threads": 16,
+    "torch_version": "2.13.0+cpu"
+  },
+  "notes": [
+    "Adapter probes do not create fallback environments.",
+    "verify_imports is disabled by default to keep this probe non-mutating.",
+    "No scientific pass/fail decision is produced by this command."
+  ],
+  "official_adapter_probes": {
+    "homegrid": {
+      "available": true,
+      "compatibility_warnings": [
+        "HomeGrid declares Python <4 support, but its pinned, unmaintained Gym 0.26 stack may be fragile on Python 3.12+.",
+        "HomeGrid 0.1.1's top-level homegrid.HomeGrid.reset() does not forward seed. HomeGridRecorder uses an explicit audited compatibility path only for that wrapper and that signature error."
+      ],
+      "data_assets_present": true,
+      "detail": "HomeGrid package and bundled official assets were detected.",
+      "expected_env_ids": [
+        "homegrid-task",
+        "homegrid-future",
+        "homegrid-dynamics",
+        "homegrid-corrections"
+      ],
+      "gym_installed": true,
+      "gym_version": "0.26.0",
+      "importable": true,
+      "install_command": "python -m pip install homegrid==0.1.1",
+      "name": "homegrid",
+      "package_installed": true,
+      "registered_env_ids": [
+        "homegrid-task",
+        "homegrid-future",
+        "homegrid-dynamics",
+        "homegrid-corrections"
+      ],
+      "version": "0.1.1"
+    },
+    "messenger": {
+      "available": false,
+      "compatibility_warnings": [
+        "The official Messenger README recommends Python 3.7 when setup fails.",
+        "The official Messenger README recommends gym<=0.22; its reset/step contract is the legacy Gym API."
+      ],
+      "data_assets_present": null,
+      "detail": "Messenger is not a PyPI environment; clone and install its official messenger-emma repository in a compatible environment.",
+      "expected_env_ids": [
+        "msgr-train-v1",
+        "msgr-train-sc-v1",
+        "msgr-train-mc-v1",
+        "msgr-val-v1",
+        "msgr-test-v1",
+        "msgr-train-v2",
+        "msgr-train-sc-v2",
+        "msgr-train-mc-v2",
+        "msgr-val-v2",
+        "msgr-test-v2",
+        "msgr-train-v3",
+        "msgr-train-sc-v3",
+        "msgr-train-mc-v3",
+        "msgr-val-v3",
+        "msgr-test-v3",
+        "msgr-test-se-v2"
+      ],
+      "gym_installed": true,
+      "gym_version": "0.26.0",
+      "importable": null,
+      "install_command": "git clone https://github.com/ahjwang/messenger-emma.git; python -m pip install -e messenger-emma",
+      "name": "messenger",
+      "package_installed": false,
+      "registered_env_ids": [],
+      "version": null
+    },
+    "textworld": {
+      "available": true,
+      "detail": "The package is present; open a real game file to verify its interpreter.",
+      "install_command": "python -m pip install textworld",
+      "installed": true,
+      "name": "textworld",
+      "platform_supported": true,
+      "version": "1.7.0"
+    }
+  },
+  "package_versions": {
+    "gym": "0.26.0",
+    "homegrid": "0.1.1",
+    "messenger": null,
+    "textworld": "1.7.0"
+  },
+  "schema_version": 1,
+  "scope": "pilot_not_confirmatory",
+  "verify_imports_requested": true,
+  "wikitext2_raw_source": {
+    "archive_bytes": 4721645,
+    "archive_filename": "wikitext-2-raw-v1.zip",
+    "homepage": "https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International",
+    "name": "wikitext-2-raw-v1",
+    "sha256": "ef7edb566e3e2b2d31b29c1fdb0c89a4cc683597484c3dc2517919c615435a11",
+    "split_members": [
+      [
+        "train",
+        "wikitext-2-raw/wiki.train.raw"
+      ],
+      [
+        "valid",
+        "wikitext-2-raw/wiki.valid.raw"
+      ],
+      [
+        "test",
+        "wikitext-2-raw/wiki.test.raw"
+      ]
+    ],
+    "url": "https://huggingface.co/datasets/ggml-org/ci/resolve/main/wikitext-2-raw-v1.zip",
+    "version": "1.0.0"
+  }
+}

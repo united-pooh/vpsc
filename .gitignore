@@ -7,6 +7,7 @@ dist/
 
 # Virtual environments and local configuration
 .venv/
+.venv-wsl/
 venv/
 .env
 .env.*
@@ -24,3 +25,5 @@ venv/
 
 # Downloaded datasets (recreated automatically by the experiment scripts)
 lab/mnist/data/
+data/e2_world_model/
+results/e2_world_model/checkpoints/

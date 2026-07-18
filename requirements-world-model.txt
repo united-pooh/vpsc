@@ -1,0 +1,9 @@
+-r requirements.txt
+
+# E2 real-task adapters. TextWorld officially supports Linux/macOS; use WSL on
+# Windows. HomeGrid currently pins legacy Gym 0.26 and is isolated for the same
+# reason. Messenger requires a separate legacy environment and is intentionally
+# not installed here.
+textworld==1.7.0; platform_system != "Windows"
+homegrid==0.1.1; platform_system != "Windows"
+pytest>=8.0

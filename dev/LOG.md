@@ -4,6 +4,427 @@
 
 ---
 
+## 2026-07-18：E2-M0 结果 — 官方 HomeGrid 管线 READY；E2 仅有短视距变化预测信号，未成为世界模型首选（混合/负面结果）
+
+### 官方数据、provenance 与 READY gate
+
+- 官方 `homegrid-dynamics 0.1.1`、Gym `0.26`；严格隔离的 train/valid/test 为 `32/8/8` episode、`3072/768/768` transition，没有 synthetic/fallback。train/test action phase 分别为 `2,656/664`，test changed patch 为 `8,735`；超过预注册的 `2,000/1,000` 门槛。
+- RGB 按预注册的 `12×12` patch、64 类冻结量化进入模型；train-only language vocabulary 为 26，三个 split 当前/下一 language OOV 都为 0。summary、manifest、transitions 的 SHA-256/size、版本、seed、episode 连续性和统计均由 fail-closed loader 复验。
+- train 中 reward 三类 `0/0.5/1` 都存在，故 reward loss 启用；done 只有 0 类，按预注册禁用。test 没有非零 reward 或 done，因此 test reward accuracy 即使为 1.0 也只是全零类命中，**不构成奖励预测成功证据**。
+- 三模型的训练、held-out、rollout、streaming 指标均有限；三个 gate 全通过，正式 `pipeline_status=READY`。该状态只证明多模态动作条件实验管线可用，模型排序不参与 READY 判定。
+
+### 参数与训练公平性
+
+每个模型/seed 都按同一 episode 顺序训练 3 epoch，共消费 `9,216` transition；参数 spread 为 `0.0537%`，通过 2% 门槛。
+
+| 核心 | 参数 | weighted train loss | train transition/s |
+|---|---:|---:|---:|
+| LSTM | 357,697 | **2.4412** | **5,941** |
+| causal Transformer | 357,857 | 2.4683 | 5,166 |
+| E2 hybrid-0.8 | 357,665 | 2.6338 | 1,555 |
+
+E2 reference kernel 的训练吞吐仅为 LSTM 的 26.2%、Transformer 的 30.1%，即慢约 `3.82×/3.32×`；这是延续 TextWorld 的明确工程负债。
+
+### 一步预测：能识别变化，但没有稳健的 E2 优势
+
+三 seed test mean 如下；changed macro-F1 只对 target 中实际出现的类做宏平均。
+
+| 核心 | visual overall acc | changed acc | changed NLL | changed macro-F1 | next-language acc |
+|---|---:|---:|---:|---:|---:|
+| LSTM | 0.5830 | 0.3063 | 1.7307 | **0.2202** | 0.7053 |
+| causal Transformer | **0.5874** | 0.2980 | 1.7276 | 0.2144 | **0.7305** |
+| E2 hybrid-0.8 | 0.5132 | **0.3115** | **1.7032** | 0.1969 | 0.3194 |
+
+- “复制当前帧” baseline 的 overall accuracy 为 `0.9210`、changed accuracy 为 `0`；train 全局频率 baseline overall 为 `0.2206`。三模型确实学到了复制 baseline 完全不会的变化信号，但当前 decoder/瓶颈没有保住大量静态背景，因此 overall 远低于简单复制。
+- E2 changed accuracy 均值只比 LSTM 高 `0.00515`（0.515 个百分点），逐 seed 赢 2/3；changed NLL 最低，但 macro-F1 反而最差。证据更像对少数高频变化类的集中预测，而非稳健的变化动力学领先，不能据此宣称 E2 胜出。
+- E2 next-language accuracy 只有 `0.3194`，显著低于 LSTM/Transformer 的 `0.7053/0.7305`；这直接否定了当前融合头已经形成统一视觉—语言状态的说法。
+
+### 受控 action-conditioned rollout：一步信号没有延伸为长时世界模型
+
+下表每格为 `overall / changed accuracy`。rollout 从真实 anchor 出发，后续 action、language、read flag 仍使用真实序列，只递归回输预测视觉，所以它不是自主规划或闭环任务成功率。
+
+| horizon | LSTM | causal Transformer | E2 hybrid-0.8 |
+|---:|---:|---:|---:|
+| 1 | 0.5334 / 0.3509 | **0.5368** / 0.3356 | 0.4517 / **0.3564** |
+| 3 | **0.4808 / 0.3666** | 0.4790 / 0.3577 | 0.4506 / 0.3544 |
+| 5 | **0.4679 / 0.3614** | 0.4678 / 0.3541 | 0.4473 / 0.3468 |
+| 10 | 0.4619 / **0.3629** | **0.4623** / 0.3533 | 0.4409 / 0.3385 |
+
+E2 只在 horizon 1 的 changed mean 第一；到 3/5/10 步均由 LSTM 的 changed accuracy 领先。horizon 10 上 E2 三个 seed 都没有赢，且均值最差，因此没有长时想象优势。
+
+### 完整 transition 实时性
+
+96-step history、batch 1，计时覆盖共同视觉/语言/action encoder、时序核心和所有 heads，而非只测 core。
+
+| 核心 | p50 / p95 / p99 ms | transition/s | core state bytes |
+|---|---:|---:|---:|
+| LSTM | **0.308 / 0.395 / 0.516** | **3,422** | **256** |
+| causal Transformer | 0.556 / 0.729 / 0.894 | 1,889 | 24,576 |
+| E2 hybrid-0.8 | 0.319 / 0.583 / 0.780 | 2,940 | **256** |
+
+- E2 对 Transformer 的 p95 低 `19.93%`，略低于方向性 H-RT 的 20% 线；state 少 `98.96%`。但 H-RT 还要求质量非劣，而且正式历史门槛是 2048，不是本轮 96，所以不能判 PASS。
+- E2 对 LSTM 的 p95 高 `47.5%`，state 同为 256 bytes；Transformer 对 LSTM 的 p95 高 `84.3%`、state 为 96 倍。本轮实际 transition 上，LSTM 是更强的实时基线。
+
+### 判定 / 下一步
+
+- **E2-M0 PIPELINE READY；H-WM 与 H-RT 均不通过。** 正面结果仅限于：E2 以固定小状态获得一步 changed accuracy/NLL 的微弱均值信号，并相对 tiny Transformer 大幅节省状态；负面结果是该信号不稳定、macro-F1 最差、语言融合明显落后、3–10 步 rollout 不领先、训练很慢且实时性输给 LSTM。
+- 继续保留三条核心：LSTM 作为当前主基线与可部署候选；Transformer 作为语言/长上下文上界但需解决 KV 成本；E2 只作为待验证的生物约束 recurrent 分支，不再默认升级为主干。
+- M1 不允许在 M0 上事后调参冒充复现。下一轮应预注册结构修复：显式 `next = current + sparse change` 的残差视觉头、保留 `12×12` 空间 latent 而非一次 flatten 到 32 维、把 counterfactual action ranking 和真正闭环任务成功率作为首要指标；仍须同时跑 LSTM/Transformer/E2，并把 horizon 10 与完整 transition 延迟作为硬约束。
+
+### 可复现信息
+
+- 正式结果：`results/e2_world_model/homegrid_dynamics_pilot_s0_s1_s2.json`；数据：`results/e2_world_model/homegrid_dynamics/`。
+- 命令：`.venv-wsl/bin/python experiments/e2_homegrid_world_model.py --corpus-dir results/e2_world_model/homegrid_dynamics --output results/e2_world_model/homegrid_dynamics_pilot_s0_s1_s2.json --seeds 0 1 2 --d-model 32 --visual-embedding-dim 8 --num-heads 4 --sequence-length 32 --epochs 3 --learning-rate 0.001 --cache-window 128 --streaming-warmup-steps 32 --streaming-steps 64 --rollout-horizons 1 3 5 10`。
+- 环境：WSL Ubuntu，Python 3.12.3、PyTorch 2.13.0+cpu、HomeGrid 0.1.1、Gym 0.26、NumPy 2.5.1；正式运行约 93 秒，无异常。
+
+---
+
+## 2026-07-18：E2-T0′ 结果 — provenance 闭环通过；质量完全复现，LSTM 延迟优势翻转暴露计时噪声（混合结果）
+
+### 证明链与 READY gate
+
+T0′ 按紧邻下方预注册只增加 fail-closed provenance/decision，没有改变模型或预算。新 runner 在训练前逐项验证：TextWorld `1.7.0`、冻结且跨 split 唯一的 6 个 seed、split summary 对 manifest/episodes/token-events 的 SHA-256/size、manifest 对真实 `.z8` 的 SHA-256/size、6 个 episode 的 `won=True/return=1.0/game_sha`，以及 event header 对 episode seed/split/count。所有检查通过。
+
+- available shifted target：train `10,979`、valid `2,750`、test `2,782`；100-update 单遍训练实际消费 `6,345`，没有 cycle/repeat；valid/test 均全量消费。
+- `official_dataset_provenance_verified`、冻结 seed、episode boundary、跨模型/seed等量消费、held-out 完成、所有指标有限等 7 项 gate 全为 true。
+- **正式 `pipeline_status=READY`**；该状态只证明官方事件 LM 数据/训练管线可用，不改变“尚未验证结构化世界预测与规划”的边界。
+
+### 确定性质量复现与计时复跑
+
+三模型 valid/test NLL、PPL、逐 seed 值与 provenance-incomplete T0 产物**逐位一致**：LSTM test `37.19±0.98`、Transformer `74.68±6.50`、E2 `67.76±2.11`。因此 T0 的负面质量结论被正式确认：LSTM 三 seed 全胜，E2 比 LSTM 高 82.2%，只在平均上比 tiny Transformer 低 9.3%。
+
+| 核心 | verified train token/s | verified stream p50 / p95 ms | state bytes |
+|---|---:|---:|---:|
+| LSTM | 33,599 | 0.148 / **0.192** | 256 |
+| causal Transformer | 27,253 | 0.359 / 0.453 | 28,160 |
+| E2 hybrid-0.8 | 2,184 | **0.145** / 0.257 | 256 |
+
+- E2 对 Transformer 仍有清楚的流式结构优势：p95 低约 43%、状态少 99.1%；但对 LSTM，p50 只低约 2.6%，p95 反而高约 34%。
+- 完全相同质量复跑中，T0 原始 p95 曾显示 E2 `0.274` vs LSTM `0.303`，T0′ 变为 E2 `0.257` vs LSTM `0.192`。**LSTM/E2 尾延迟排序翻转**，证明 100 次、固定模型顺序的 sub-ms CPU microbenchmark 不足以声称二者谁更实时；M0 必须测完整 transition，并把重复/交错计时列为后续工程修复。
+- E2 verified 训练吞吐仍仅为 LSTM 的约 6.5%、Transformer 的约 8.0%，负面 kernel 结论稳定。
+
+### 决定
+
+- T0′ 正式恢复 T0 的 **EVENT PIPELINE READY**，同时把旧结果 JSON 永久保留为 provenance-incomplete 审计案例；后续引用质量时以 verified 产物为准。
+- 不再把本轮 E2-vs-LSTM sub-ms p95 当结构收益。当前唯一稳定的实时证据是 recurrent state 相对 Transformer KV 的固定内存，以及 E2 相对本轮 Transformer 的延迟；LSTM 仍是质量、状态和工程效率的最强基线。
+- 继续执行已预注册的 HomeGrid M0；其 changed-patch 与 rollout 结果决定是否值得进入 planner，而不是由 event PPL 或一次 microbenchmark 决定。
+
+### 可复现信息
+
+- verified 产物：`results/e2_world_model/textworld_event_lm_pilot_s0_s1_s2_verified.json`；旧产物不覆盖。
+- 与 T0 相同命令，仅 output 改为 `_verified.json`；运行前 provenance hard gate、运行后 `pipeline_status=READY`，无异常。
+
+---
+
+## 2026-07-18：E2-T0′ 预注册 — TextWorld provenance 闭环修复（预注册）
+
+### 触发证据
+
+T0 模型数值、episode reset 和 token 公平检查已完成，但发布前红队审计发现结果 runner 只读取 split manifest 字段与 manifest 自身 SHA，没有把 `summary.json → episodes.jsonl/token_events.txt/manifest.json → .z8` 的 SHA/size、官方版本、精确 seed、获胜 episode 和 event header 串成闭环。现有真实文件可由人工逐项核对，但原结果 JSON 中的 `synthetic=false/fallback=false` 尚不能由 runner 自证；因此 T0 的质量数字保留为 provenance-incomplete 观测，PIPELINE READY 暂缓为正式判定。
+
+### 冻结唯一修复
+
+- 不改变语料、tokenizer、词表、模型、初始化、E2 策略、seed、100/50 step 预算、优化器、KV window 或指标；只增加 fail-closed provenance 与 READY 状态计算。
+- 强制 TextWorld `1.7.0`；精确 seeds 为 train `{20260718..20260721}`、valid `{20260722}`、test `{20260723}`，跨 split 唯一。
+- 逐 split 校验 summary 中 manifest/episodes/token-events 的 path、SHA-256、size；manifest 中每个真实 `.z8` 的 path/SHA/size；episodes 与 manifest 的 seed/split/game SHA 一致且 `won=True, return=1.0`；event episode header 与 episodes 的 seed/split/count 一致。任一缺失、篡改、错误版本或 fake fixture 都硬失败。
+- 结果新增 available shifted train targets、实际 consumed targets 和 `pipeline_status`。只有 provenance 全通过、available targets ≥10,000、episode/reset/参数公平通过且全部训练/held-out/streaming 数值有限时才写 `READY`；该状态仍只指数据/事件 LM 管线，不等于 H-WM。
+
+### 复跑与接受边界
+
+- 使用与 T0 完全相同命令/预算写新产物 `results/e2_world_model/textworld_event_lm_pilot_s0_s1_s2_verified.json`，不覆盖 provenance-incomplete 原产物。
+- 质量 NLL/PPL 应在确定性 CPU 容差内复现；吞吐/尾延迟允许受系统噪声变化。若质量排序改变或 provenance 失败，记录为 REVISE，不回写旧结果。
+
+---
+
+## 2026-07-18：E2-T0 结果 — 官方 TextWorld 事件流管线 READY，但 LSTM 质量显著领先（混合/负面结果）
+
+### 真实数据与公平性证据
+
+- 官方 TextWorld `1.7.0` `tw-coin_collector` level 5 共 6 个 seed-disjoint 游戏：train 4、valid 1、test 1；全部由官方 interpreter 执行 `extra.walkthrough` 并以 `won=True, return=1.0` 结束。每个真实步骤另由 `Environment.copy()` 记录最多 2 个候选动作的真实反事实，没有 replay/synthetic fallback。
+- 事件语料为 train `4 episode / 10,983 token`、valid `1 / 2,751`、test `1 / 2,783`；train-only vocab 344，corpus fingerprint `10e4599b792fe59c7af779bb38c010a44692410dbde76fd9d87f290ac54e7e34`。episode 首 chunk reset 审计全部通过，chunk 不跨 episode。
+- 三模型每 seed 均训练 100 update / `6,345` target token；valid `2,750`、test `2,782` target 全量评估。总参数 LSTM `19,864`、Transformer `20,024`、E2 `19,832`，spread `0.9645%`，通过 2% 门槛。
+
+### 三 seed 原始汇总（mean；括号为 population std）
+
+| 核心 | valid PPL | test PPL | train token/s | stream p50 / p95 ms | 110-token state bytes |
+|---|---:|---:|---:|---:|---:|
+| LSTM | **35.66 (1.06)** | **37.19 (0.98)** | **32,067** | 0.179 / 0.303 | 256 |
+| causal Transformer | 72.45 (6.36) | 74.68 (6.50) | 24,938 | 0.366 / 0.459 | 28,160 |
+| E2 hybrid-0.8 | 65.52 (2.19) | 67.76 (2.11) | 1,913 | **0.172 / 0.274** | 256 |
+
+- LSTM 在三个 seed 的 test PPL 均第一；E2 相对 LSTM 平均高 `82.2%`，明确不满足 5% 非劣解释。这个负结果必须随 E2 一起保留，不能只引用 WikiText 上约 1% 的均值优势。
+- E2 平均 test PPL 比 Transformer 低约 `9.3%`，但只在 seed 1/2 更好；seed 0 为 Transformer `66.65`、E2 `69.66`。因此只支持“小数据事件流中 E2 平均优于本轮 tiny Transformer”，不支持普遍架构排序。
+- 流式 reference 实现中，E2 p95 比 Transformer 低约 `40.2%`、状态少 `99.1%`（256 vs 28,160 bytes），但 LSTM 状态同为 256 bytes，且 E2 对 LSTM 的 p95 优势仅约 `9.5%`、逐 seed 只赢 2/3。
+- E2 训练吞吐仅为 LSTM 的约 `6.0%`、Transformer 的约 `7.7%`，即慢约 `16.8×/13.0×`；这是比 WikiText 更明显的 kernel 工程负债。LSTM 吞吐跨首次运行有较大系统噪声，但不影响数量级结论。
+
+### 判定 / 决定
+
+- **E2-T0 EVENT PIPELINE READY；质量结果为负面。** 官方数据超过 10,000 train token，三核心有限训练并完成 held-out 游戏评估，数据/状态/公平性管线达到预注册 READY；但 E2 未接近最佳 LSTM，不能据此升级 H-WM 或声称动作世界建模有效。
+- 当前 event LM 把目标、观察、动作、反事实、奖励等序列化后做 teacher forcing；它验证真实任务语言事件兼容性，却没有单独测 next-state、reward/done、counterfactual ranking 或闭环规划。下一阶段不能再用事件 PPL 代替世界模型指标。
+- **保留 LSTM 为强基线**：M0 HomeGrid 必须同时比较 changed-patch、开放环 rollout 与整 transition 延迟；若 E2 仍明显落后 LSTM，即使比 Transformer 省 KV 内存，也不能作为首选基底。
+
+### 可复现信息
+
+- 数据产物：`results/e2_world_model/textworld_l5/{train,valid,test}/`；结果：`results/e2_world_model/textworld_event_lm_pilot_s0_s1_s2.json`。
+- 命令：`.venv-wsl/bin/python experiments/e2_textworld_lm.py --corpus-dir results/e2_world_model/textworld_l5 --output results/e2_world_model/textworld_event_lm_pilot_s0_s1_s2.json --seeds 0 1 2 --d-model 32 --num-heads 4 --batch-size 1 --sequence-length 64 --steps 100 --eval-steps 50 --learning-rate 0.001 --cache-window 128 --streaming-warmup-steps 10 --streaming-steps 100`。
+- 环境：WSL Ubuntu，Python 3.12.3、PyTorch 2.13.0+cpu、TextWorld 1.7.0；运行完成无异常。相关事件/CLI 测试 `9 passed, 3 subtests`。
+
+---
+
+## 2026-07-18：E2-M0 预注册 — HomeGrid 官方多模态动作条件视觉动力学 pilot（预注册）
+
+### 任务选择与边界
+
+按已确认的“语言校准 → 文本动作世界 → 多模态世界”路线，Gate M 首个任务冻结为官方 HomeGrid `0.1.1` 的 `homegrid-dynamics`，而不是序列分类或自造 gridworld。该环境同时给出 `96×96×3` RGB、逐 token 动力学语言、动作、奖励与终止；M0 只验证**动作条件下一视觉/语言预测和有限开放环想象**，尚无统一 planner、任务成功率或自主选择 imagined action，因此无论结果多好都不判完整 H-WM，也不把内部激活称为“思考”。
+
+### 冻结真实数据
+
+- split 按环境 seed 严格隔离：train `2026071800..2026071831`（32 episode），valid `2026071900..2026071907`（8），test `2026072000..2026072007`（8）；每 episode 最多 96 个官方 transition，真实终止则提前停止。
+- 动作仅由独立的 `random.Random(seed + 1_000_003).randrange(10)` 产生，禁止从 observation/test 指标选择动作；HomeGrid 环境 RNG 仍走已审计的 `0.1.1` seed 兼容路径。记录 preread `is_read_step=True` 与真实 action phase，分层报告，不把 preread 中被环境忽略的动作混作动力学证据。
+- RGB 只通过冻结的无学习编码进入模型：把 `96×96` 切为 `12×12` 个 `8×8` patch，每通道均值按 `[0,64,128,192,256]` 量化为 4 档，合成 `r*16+g*4+b` 的 64 类视觉 token。每帧保存原始 RGB SHA-256 和 144 token；结果目录不保存/提交原始 RGB，也不允许 synthetic fallback。
+- 保存 current/next visual token、当前/下一官方 language token、human-readable language、read flag、action、reward、terminated/truncated；manifest 固化 HomeGrid/Gym/Python/NumPy 版本、量化定义、seed mode、artifact SHA-256 和各 split 的 episode/transition/read/action/changed-patch/reward/done 计数。
+
+### 冻结模型与训练
+
+- 三模型只替换时序核心：一层 stateful LSTM、一层 causal Transformer（真实 KV cache，window 128）、E2 signed E/I `hybrid + positive_factor=0.8`；`d_model=32`，共同视觉 token/patch-position encoder、train-only language-token vocabulary、action/read embeddings、输出 LayerNorm 和 next-visual/next-language/read/reward-done heads。
+- 总参数（含所有共享形式的 encoder/head）spread ≤2%；模型 seed `{0,1,2}`。每个 episode 以 sequence length 32 顺序训练，batch 1、3 个 epoch；episode 首 chunk reset，chunk 间保留并 detach state，禁止跨 episode。AdamW `lr=1e-3`；每个模型消费完全相同的 transition 次序与数量。
+- 总 loss 冻结为 next-visual 144 patch 平均交叉熵 + `0.25×` next-language CE + `0.10×` next-read CE；reward/done 仅在训练 split 同时存在正负/多类别时各加 `0.10×`，否则标为不可判而不制造类别。禁止依据 test 排名重调 loss、量化阈值或模型宽度。
+
+### 指标与判定
+
+- 视觉：test overall/changed/unchanged patch NLL 与 accuracy、macro-F1；必须同时给“复制当前帧”与 64 类频率基线，overall 高分不得掩盖 changed-patch 失败。
+- 语言/事件：next-language accuracy、next-read accuracy；reward/done 只有类别可识别时报告 Brier/accuracy，并按 preread/action phase 分层。
+- 想象：在 test action phase 从真实 anchor 出发，后续 action 与 language token 固定为真实序列，仅把模型预测视觉递归回输，报告 horizon `{1,3,5,10}` changed/overall accuracy。它是受控 action-conditioned visual rollout，不是自主规划。
+- 实时：batch=1 整个 transition update 的 p50/p95/p99、transitions/s 与 core state bytes；96-step history 仍不足 H-RT 的 2048 门槛，只作工程数据。
+- **M0 PIPELINE READY** 只要求：官方数据与 split/边界验证通过、train action-phase ≥2,000 transition 且 test changed patch ≥1,000、三模型 loss/held-out/rollout/latency 全为有限值。模型排序与 E2/LSTM 非劣仅作为下一轮 planner/反事实任务的设计证据，不自动判 H-WM/H-RT。
+
+### 预定产物
+
+- 数据清单：`results/e2_world_model/homegrid_dynamics/`，真实轨迹缓存可放 ignored `data/e2_world_model/homegrid_dynamics/`。
+- 比较结果：`results/e2_world_model/homegrid_dynamics_pilot_s0_s1_s2.json`。
+
+---
+
+## 2026-07-18：E2-T0 预注册 — TextWorld 官方事件流 LM 校准（预注册）
+
+### 目的与严格边界
+
+E2′ 已修复共享 LM 输出仪器并完成 WikiText pilot（见下条）。进入完整 H-WM 前，先用官方 TextWorld Coin Collector 检验同一 causal core 是否能消费“目标—观察—可行动作—反事实—真实动作—下一观察—奖励—终止”的事件流。该实验仍是 **teacher-forced event LM 校准**：它是实际 LLM-agent 任务数据，但不等于下一状态结构化预测、自由 rollout、统一 planner 或闭环成功率，因而无论结果多好都不能判 H-WM。
+
+### 冻结数据
+
+- 官方 TextWorld `1.7.0`、challenge `tw-coin_collector`、level 5；只调用虚拟环境同目录的 `tw-make`，生成 `.z8` 后由官方 interpreter 执行 `extra.walkthrough` 并要求终局 `won=True`。
+- 按游戏 seed 隔离：train `{20260718,20260719,20260720,20260721}`，valid `{20260722}`，test `{20260723}`；禁止同 seed 跨 split。
+- 每个真实步骤保存当前 observation、admissible actions、walkthrough action、next observation/reward/done，并用 `Environment.copy()` 记录最多 2 个候选动作的真实反事实；禁止 replay 或自造环境 fallback。
+- 数据集逐 split 保存 manifest、游戏 SHA-256、canonical JSONL 和 token-event text。LM corpus 以 `<|episode|>` 开头严格切 episode，train-only 建 vocab；每个 episode 首 chunk reset state，chunk 不跨 episode。
+
+### 冻结比较
+
+- 复用 E2′ 已接受的共同 wrapper：`Normal(0,d^-0.5)` tied embedding + shared output LayerNorm。
+- LSTM / causal Transformer / E2 `hybrid + positive_factor=0.8`；`d_model=32`、1 layer、Transformer KV window 128、参数 spread ≤2%。
+- seed `{0,1,2}`；batch 1、sequence length 64；对 train 事件流做一个确定性 pass、最多 100 update；valid/test 各最多 50 chunk。AdamW `lr=1e-3`，数据顺序、step 和 token 数必须逐模型相同。
+- 报告 train/valid/test token-weighted NLL/PPL、训练 token/s、streaming p50/p95/p99 与状态 bytes；数据过小或某 split 不足预算时按实际 token 数报告，不重复 episode 填满预算。
+
+### 判定
+
+- 本轮不设 H-WM PASS。若三模型都能有限 loss 训练并完成真实 held-out game event PPL，则事件表示/训练管线 **READY**；若任一核心数值失败、episode reset 泄漏或真实数据不足 10,000 train token，则 **PIPELINE REVISE**。
+- LSTM/Transformer/E2 排序只作为下一轮结构化 next-state / reward-done / counterfactual ranking 设计证据；不得声称规划或世界模型已验证。
+
+### 预定产物
+
+- 数据：`results/e2_world_model/textworld_l5/`；游戏二进制只缓存于 ignored `data/e2_world_model/textworld/games_l5/`。
+- 结果：`results/e2_world_model/textworld_event_lm_pilot_s0_s1_s2.json`。
+
+---
+
+## 2026-07-18：E2′ 结果 — 共享尺度修复通过；WikiText pilot 中 E2≈LSTM、Transformer 较差（正面但非确认性）
+
+### 仪器接受
+
+按紧邻下方的 E2′ 预注册，只改变共同 LM wrapper 后，训练前同一真实 batch 的尺度为：
+
+| 核心 | embedding std | hidden std | logits std | initial NLL |
+|---|---:|---:|---:|---:|
+| LSTM | 0.1768 | 0.9989 | 1.0187 | 8.695 |
+| Transformer | 0.1765 | 1.0001 | 1.0150 | 8.813 |
+| E2 | 0.1764 | 1.0000 | 1.0175 | 8.539 |
+
+`log(4096)=8.318`；三者 NLL 最大差 0.273 nat、logits std 比 1.004，全部通过预注册门槛。加入共同 LayerNorm 后总参数为 LSTM `143,680`、Transformer `143,840`、E2 `143,648`，spread `0.001336`（0.134%）。因此 E2′ 仪器 ACCEPT，随后原预算重跑有效；P0 的极端 Transformer PPL 被确认是读出尺度伪差异。
+
+### 修复后原始结果（3 seed mean；括号内为 population std）
+
+| 核心 | valid PPL | test PPL | train token/s | stream p50 / p95 ms | 80-token state bytes |
+|---|---:|---:|---:|---:|---:|
+| LSTM | 255.91 (4.80) | 273.38 (3.04) | 17,404 | 0.180 / 0.234 | 256 |
+| Transformer | 347.62 (11.96) | 372.84 (15.68) | 18,454 | 0.342 / 0.430 | 20,480 |
+| E2 hybrid-0.8 | 261.23 (3.97) | 270.71 (11.92) | 5,042 | 0.251 / 0.322 | 256 |
+
+- test PPL：E2 比 LSTM 低约 0.98%，但逐 seed 为 E2 `[253.85,279.23,279.04]`、LSTM `[269.11,275.05,275.98]`，只在 seed 0 更好；valid 上 E2 比 LSTM 高 2.08%。因此当前证据是**两者近似、E2 满足 5% 非劣 pilot 线**，不是 E2 稳定胜出。
+- Transformer 在尺度修复后从 P0 的约 31,529 恢复至 372.84，证明修复有效；它仍比 LSTM/E2 高约 36–38%，但该结论只适用于 143k 参数、25.6k 训练 token 的小数据 pilot，不外推到成熟 Transformer 或 LLM 规模。
+- 训练效率：Transformer≈18.45k、LSTM≈17.40k、E2≈5.04k token/s；当前 reference E2 kernel 慢约 3.5–3.7 倍，是明确工程负债。
+- 流式：E2 p95 比 Transformer 低约 25%，但比 LSTM 高约 37%；E2/ LSTM 的 state 都为 256 bytes，Transformer 在 80-token 历史为 20,480 bytes。E2 只相对 Transformer有内存/延迟优势，不支配 LSTM。
+
+### 判定 / 决定
+
+- **E2′ SCALE INSTRUMENT ACCEPT；WikiText Gate-L pilot 支持 E2 非劣，但不作 confirmatory PASS。** 三 seed、真实 test、参数与 token 公平下，E2 与 LSTM 同一量级，满足继续进入动作条件任务的最低语言兼容条件。
+- **H-RT 未判定**：只测 80-token history，不是预注册 2048；且 E2 虽快于 Transformer，却慢于 LSTM。不得用 256 vs 20,480 bytes 单独宣称总体实时胜出。
+- **效率结论保留负面**：E2 训练吞吐明显落后；下一阶段必须同时保留 LSTM 基线，不能只与 Transformer 比内存。
+- 下一步执行 E2-T0 官方 TextWorld 事件流校准；通过后再增加结构化 next-state/reward-done/counterfactual ranking 与闭环 planner，才触及 H-WM。
+
+### 可复现信息
+
+- 原始结果：`results/e2_world_model/wikitext_pilot_scale_fixed_s0_s1_s2.json`；仪器：`results/e2_world_model/wikitext_scale_diagnostic.json`。
+- 配置除共同 wrapper 两项修复外与 P0 完全一致；WSL Python 3.12.3、PyTorch 2.13.0+cpu、NumPy 2.5.1、16 CPU threads。
+
+---
+
+## 2026-07-18：E2′ 预注册 — 共享 LM 输出尺度仪器修复（预注册）
+
+### 触发证据 / 唯一问题
+
+紧邻下条 E2-P0 在真实 WikiText-2 上满足数据、参数量、token 和 seed 公平，但未训练诊断显示共享 tied embedding 仍使用 PyTorch `nn.Embedding` 默认 `std≈1`。Transformer 的末层 LayerNorm 使 hidden `std≈1.000`，从而得到 logits `std=5.679`、初始 NLL `26.278`；LSTM 的 hidden `std=0.145`，初始 NLL 仅 `8.573`。因此 P0 的 Transformer test PPL≈31,529 主要混入了**共享读出仪器对核心输出尺度不等价**，不能作为架构结论。
+
+### 冻结修复与禁止项
+
+E2′ 只允许修改所有核心共用的 `CausalLanguageModel` 包装器：
+
+1. tied embedding 初始化改为宽度感知的 `Normal(0, d_model^-0.5)`，不再使用 `std≈1`；padding 行保持 0；
+2. 在共同 LM head 前增加同一个可训练 `LayerNorm(core.output_dim)`，使 LSTM、Transformer、E2 进入 tied head 前使用同一种输出尺度仪器。
+
+三模型都增加相同形式的 LayerNorm；tokenizer、WikiText archive、4096 train-only vocab、模型宽度、核心结构、E2 `hybrid/positive_factor=0.8`、seed `{0,1,2}`、每模型 100 step/25,600 target token、AdamW `lr=1e-3`、valid/test 20 batch、KV window 128 与 streaming 预算全部不变。禁止根据 E2′ 结果再选择 embedding std、额外温度、学习率或核心宽度。
+
+### 仪器接受与结果边界
+
+- 训练前、同一首 batch 上，三模型初始 NLL 均须落在 `log(4096) ± 1.0 nat`，且最大两两差 ≤0.5 nat；否则 E2′ 仍以仪器失败停止。
+- 三模型初始 logits std 均须在 `[0.5,1.5]`，且最大/最小 ≤2；参数量 spread 仍须 ≤2%。
+- 仪器通过后才运行与 P0 完全相同的三 seed pilot。它仍标为 `pilot_not_confirmatory`：只比较修复后的 test PPL、训练 tokens/s、流式 p50/p95/p99 和当前 80-token 状态字节；不据此判 H-LM/H-RT，也不把 80-token cache 结果外推为 2048-token 门槛。
+- 若 E2′ Transformer 恢复而排序改变，P0 永久保留为无效仪器负例；不得删除或回写成成功实验。
+
+### 预定产物
+
+- 代码：`vpsc/world_model/lm.py` 及对应单元测试。
+- 结果：`results/e2_world_model/wikitext_pilot_scale_fixed_s0_s1_s2.json`；另保存训练前尺度诊断。
+
+---
+
+## 2026-07-18：E2-P0 结果 — 真实 WikiText pilot 运行完成，但共享输出尺度仪器失败（无架构判定）
+
+### 数据与公平性证据
+
+- 数据为 WikiText-2 raw，archive SHA-256 `ef7edb566e3e2b2d31b29c1fdb0c89a4cc683597484c3dc2517919c615435a11`、4,721,645 bytes；原 MetaMind S3 URL 当日返回无可用跳转的 HTTP 301，改用 ggml-org Hugging Face 上**同 byte size、同 SHA-256**镜像，内容判据未改变，且没有 synthetic fallback。
+- train-only regex word+punct vocab 4096；实际 token 数 train `2,158,836`、valid `225,370`、test `254,046`。
+- seed `{0,1,2}`；每模型每 seed 100 step × batch 4 × length 64 = 25,600 target token；valid/test 各 20 batch。
+- 总参数：LSTM `143,616`、Transformer `143,776`、E2 `143,584`，relative spread `0.001337`（0.134%），通过 2% 公平门槛。
+- E2 冻结低增益策略为 `hybrid + positive_factor=0.8`，有效增益 `E→E=5.89, I→E=0, E→I=9.5, I→I=5.985`。
+
+### 原始结果（3 seed mean；仅作故障定位）
+
+| 核心 | test PPL | train token/s | streaming p50 / p95 ms | 80-token 后状态 bytes |
+|---|---:|---:|---:|---:|
+| LSTM | 1,075.7 | 18,336 | 0.129 / 0.211 | 256 |
+| Transformer | 31,528.7 | 19,305 | 0.275 / 0.488 | 20,480 |
+| E2 hybrid-0.8 | 877.3 | 5,193 | 0.118 / 0.239 | 256 |
+
+E2 的 pilot test PPL 数值最好、Transformer 最差约 29 倍；但以下训练前诊断否定了把该排序解释为时序核心能力：
+
+| 核心 | embedding std | hidden std | logits std | initial NLL |
+|---|---:|---:|---:|---:|
+| LSTM | 0.9999 | 0.1451 | 0.8340 | 8.573 |
+| Transformer | 1.0021 | 1.0001 | 5.6789 | 26.278 |
+| E2 | 0.9985 | 0.7020 | 3.9978 | 13.892 |
+
+### 判定 / 决定
+
+- **E2-P0 INSTRUMENT REJECT；不作 LSTM/Transformer/E2 架构判定。** tied embedding 的默认 `std≈1` 与各核心天然输出幅度相乘，导致模型在第一个优化步骤前就处于完全不同的 softmax 温度；“共享同一个 head”在数值仪器上并不等于公平。
+- P0 仍保留两个可用工程观察，但都不是预注册 H-RT 结论：当前 reference kernel 中 Transformer 训练吞吐最高，E2 训练吞吐最低；80-token 流式状态下 recurrent state 为 256 bytes，Transformer KV 为 20,480 bytes。历史尚未达到 2048，禁止对 H-RT 判定。
+- 开 E2′ 单一仪器修复：所有模型共同采用宽度感知 embedding 初始化与共同输出 LayerNorm；其余预算冻结后原样重跑。
+
+### 其他真实任务可运行证据（尚非训练结果）
+
+- TextWorld 1.7.0：官方 `tw-coin_collector` level 5 / seed 20260718 成功生成 `.z8`，SHA-256 `93e02d9fcd540040d29f52160c2046c09b4ad9d546f4c9b4924b4853745f06a4`；真实 interpreter reset、`Environment.copy()` 三个候选反事实和 live step 均通过。
+- HomeGrid 0.1.1：四个官方 ID 均完成固定 seed reset/step，观察含 `96×96×3` RGB、语言 token/embedding；两个独立 `homegrid-dynamics` 实例在 seed 20260720 + action 3 下初始/下一图像哈希、语言与 reward 完全一致。
+- Messenger 未安装；官方旧 Gym/Python/SDL 栈留作独立兼容环境，不以自造任务替换。
+
+### 可复现信息
+
+- 命令：`python experiments/e2_world_model.py wikitext-pilot --cache-dir data/e2_world_model/wikitext2 --seeds 0 1 2 --d-model 32 --num-heads 4 --vocab-size 4096 --batch-size 4 --sequence-length 64 --steps 100 --eval-steps 20 --learning-rate 0.001 --cache-window 128 --e2-policy hybrid --positive-factor 0.8 --streaming-warmup-steps 16 --streaming-steps 64`。
+- 原始产物：`results/e2_world_model/wikitext_pilot_s0_s1_s2.json`；环境产物：`results/e2_world_model/environment_probe.json`。
+- 环境：WSL Ubuntu，Python 3.12.3，PyTorch 2.13.0+cpu，NumPy 2.5.1，16 CPU threads；运行无异常。
+
+---
+
+## 2026-07-18：E2 预注册 — 统一 token-event 流式语言世界模型（预注册）
+
+### 背景 / 动机
+
+用户目标不是再验证一个序列分类器，而是判断 VPSC/E1 的有符号反馈机制能否成为可演化到**多模态、实时响应、可通过内部世界预测进行思考**的模型基底。因此 E2 将比较对象改为真实语言模型与动作条件世界模型任务，并把“思考”冻结为可被环境核验的 imagined rollout / 反事实预测是否改善行动，而不是生成的 chain-of-thought 是否流畅。
+
+本条只预注册问题、协议和判官，**不包含 E2 结果**；首次结果必须另起日志条目，失败、依赖不兼容和未完成阶段同样记录。
+
+### A–E 可继承的正面效果与不可越界结论
+
+| 阶段 | 可继承的成功效果 | 本轮不得扩大解释的边界 |
+|---|---|---|
+| A | 小温度时转移算子可逼近恒等映射（A2 `||S-I||_max=1.01e-6`），大温度时行分布可逼近平稳分布（误差 `5.59e-8`）；环形拓扑谱隙 `0.0979` 小于稠密拓扑 `0.8213`，提供较慢混合的结构候选 | A1 任务结果无效；A3 的拟合 `R^2<0`，没有证明持续模态、功能记忆或任务收益 |
+| B | STDP 时间窗拟合 `R^2=0.82, tau≈4`；纯生成自由能单调；深层任务出现 `beta*=0.80`、`beta_c≈0.81`；MNIST 达 `96.95%`；Fixation 的 Poisson/静态输入分别由 `59.01/52.96%` 提升至 `96.45/96.40%`；训练约比 CNN 快 `2.2x` | MNIST 仍落后 CNN/MLP，且推理更慢；本轮必须同时报告质量、延迟、吞吐和内存，不能只挑训练速度 |
+| C | 完整 E/I 环在冻结协议下形成有界振荡：`late_std=0.3206`、谱纯度 `0.9596`、状态范围 `[0.0136,0.9152]`，局部网格 `21/27` 通过 | “正反馈=记忆、负反馈=门控”的强命题 `0/27`，不得作为已证机制；E2 必须用消融重新建立任务级因果 |
+| D | D2 信息峰 `1.736 bit`；去正反馈在 30/30 信息案例中使校正 MI 为 0，支持“正反馈是信息载体”的局部工程结论；负反馈作用随正反馈增益分区翻转；D3 的敏感区稳定落在 `beta*rho∈[0.95,1.00]` | D1 cue probe 及 shuffle/ablation 都接近 1，属于被动残留；D2 拓扑置换 29/30 保持；D3 两类回响时间仪器均失败，精确临界也从未严格最优 |
+| E | E1 外推 60 案例通过：hybrid 名义 median `1.663` vs exact `1.583`；漂移最坏 median `1.489` vs `1.241`，崩溃 `4` vs `12`；去正反馈全为 0。分层上 `g_ee×0.8` 与 `×1.0` 有效，`×1.25` 有害 | E1 只证明冻结 MI 协议上的工程组合，不证明语言建模或世界建模；E2 必须冻结按层策略并分层报告，禁止 pooled 结果掩盖高增益失败 |
+
+E2 的最小新意是把 E1 规则实现为**显式分离的 excitatory / inhibitory 动态状态和有符号通道**，而不是在现有单一对称 `W_rec` 上贴标签。冻结策略为：低增益层使用 `hybrid = 0.95 margin + 移除负反馈`，中增益层使用 `0.95 margin/full E/I`，高增益层保留 `exact/full E/I`。
+
+### 研究问题与预注册假设
+
+- **H-LM（语言兼容）**：在共享 tokenizer、embedding、LM head 和数据顺序下，E2 能完成真实语料的因果 next-token 建模；test perplexity 不比最佳 LSTM/Transformer 基线差超过 5%。
+- **H-WM（动作条件世界预测）**：在 TextWorld 的未见游戏上，E2 对下一观察、奖励、终止和动作后果的预测，以及统一 planner 下的闭环成功率，不比最佳基线差超过 3 个百分点。
+- **H-RT（流式结构收益）**：在质量非劣前提下，E2 至少满足一项：2048-token 历史下 batch=1 的 p95 在线更新延迟降低 ≥20%；在线状态/解码缓存降低 ≥30%；或长轨迹闭环成功率提高 ≥5 个百分点。
+- **H-MECH（机制归因）**：`no_positive` 或 episode 中途 `state_reset` 至少一项必须显著破坏长程预测、反事实排序或闭环表现；否则即使 E2 数值更好，也不得把收益归因于 A–E 的正反馈载体机制。
+- **总边界**：只通过 WikiText 不能称为世界模型；通过 TextWorld 仍只支持文本世界模型；至少在 HomeGrid 或 Messenger 的官方多模态任务上复现世界预测/规划收益后，才允许称为“多模态世界模型技术基底候选”。
+
+### 冻结任务路线与 token-event 表示
+
+1. **Gate L — WikiText-2 causal LM 校准**：使用真实 WikiText-2 raw train/valid/test，词汇仅由 train 构建；禁止 synthetic fallback。先做可复现 CPU pilot，再在资源允许时扩大预算。
+2. **Gate T — TextWorld 动作条件因果预实验**：使用官方 TextWorld 生成器/环境和未见游戏；输入目标、文本观察、上一动作和奖励，预测下一观察、奖励、done、可行动作及候选动作后果；报告 teacher-forcing 与自由闭环。
+3. **Gate M — HomeGrid / Messenger 多模态主实验**：沿 Dynalang 的官方任务接口，把文本、视觉/符号观察、动作、奖励串成同一事件流；只替换时序核心。若 Windows/依赖阻断，明确记为 BLOCKED/未运行，不能换成自造 gridworld 后仍称官方任务。
+
+统一逻辑流冻结为：
+
+```text
+<goal> text
+<obs:text> ... <obs:vision> latent_tokens
+<prev_action> ... <reward> ...
+<predict:next_obs> ... <predict:reward_done> ... <predict:next_action> ...
+```
+
+WikiText 只使用其中的文本子流；后续任务追加模态 token，而不更换核心接口。
+
+### 模型、资源公平与禁止项
+
+- 三个核心：stateful LSTM、causal Transformer、E2 signed E/I recurrent core；共享 tokenizer、输入 embedding、位置/模态编码方案、输出 heads、优化器、训练样本顺序和 planner。
+- 主比较匹配**总参数量（含 embedding/head）±2%**、训练 token/transition 数、BPTT/attention 窗口、超参数搜索次数和随机种子 `{0,1,2}`；另报告实测训练时间、吞吐和峰值内存。若 FLOP 不能同时严格匹配，明确列为限制，不用“等参数”冒充“等计算”。
+- Transformer 增量推理必须使用真实 KV cache；主实时泳道使用与 LSTM/E2 在线状态字节匹配的固定/滑动窗口，完整上下文 Transformer 仅作为单独上界，不与固定内存结论混池。
+- LSTM/E2 必须跨 chunk 保留状态；只在真实 document/episode 边界 reset。训练截断长度与 Transformer 窗口相同。
+- 同时报告 reference PyTorch 实现与可用优化实现的边界；若 E2 没有优化 kernel，不能把成熟 Transformer kernel 的差异直接解释为算法差异，反之亦然。
+- 禁止：静默 synthetic fallback、从 test 建词表/调增益、只做 teacher forcing、把生成文本的可读性当作思考、按测试地图切换 E2 策略、只报 pooled 均值或单 seed。
+
+### 指标、分层与判官
+
+- **语言**：train/valid/test NLL 与 perplexity；128/512/2048 历史长度的退化；连续流式与每 chunk reset 对照。
+- **世界预测**：下一观察 token NLL/F1、reward/done Brier 或 calibration、1/3/5/10 步开放环误差、同一状态下候选动作的反事实排序。
+- **规划**：统一 planner 下闭环成功率、步数、非法动作率、无 imagination 与 1/3 步 imagination 的 planning gain，以及 predicted/realized return gap。
+- **实时性**：TTFT；逐事件/逐 token p50、p95（必要时 p99）延迟；稳态 tokens/s；峰值 CPU/GPU 内存；持久状态/KV-cache 字节。
+- **分层**：任务/游戏难度、轨迹长度、预测 horizon、正常/OOD、E2 增益层分别给出；`g_ee×1.25` 必须独立列出，不得由低增益层抵消。
+- **结论规则**：H-LM 失败则停止世界模型主张但仍记录负结果；H-LM 通过后进入 H-WM；H-WM 与 H-RT 同时通过且 H-MECH 有效，才把 E2 提升为多模态 Gate M 候选。LSTM 与 Transformer 的真实任务对比无论 E2 成败都必须保留。
+
+### 最小实现与产物
+
+- 代码：`vpsc/world_model/`；统一入口预定为 `experiments/e2_world_model.py`。
+- 原始产物：`results/e2_world_model/` 下的配置、数据清单/SHA-256、逐 seed JSONL、汇总 JSON 和实时基准；图表只能由原始结果生成。
+- 测试：离线 tiny fixture 只验证 tokenizer、mask、状态连续性、KV cache、E/I 符号约束和适配接口；它不替代真实任务结果。
+- 首轮运行环境现状：系统 Python `3.12.7` 未安装 PyTorch；已有 `atri` 环境为 Python `3.13.2`、`torch 2.7.0.dev20250209+cpu`、16 CPU threads。显卡为 AMD Radeon RX 7800 XT，但该环境只暴露 CPU。正式运行前必须把实际解释器、依赖版本、设备与命令写入结果条目。
+
+---
+
 ## 2026-07-17：E1 结果 — D2 载体规则 × D3 5% 裕量外推通过（正面结果，有限采用）
 
 ### 背景 / 动机

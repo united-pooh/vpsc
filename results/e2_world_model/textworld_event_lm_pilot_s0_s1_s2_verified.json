@@ -1,0 +1,1605 @@
+{
+  "aggregate": {
+    "models": {
+      "e2": {
+        "evaluation": {
+          "test": {
+            "batches": {
+              "count": 3,
+              "max": 44.0,
+              "mean": 44.0,
+              "min": 44.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 4.243695684853944,
+              "mean": 4.215547895762893,
+              "min": 4.171701043222895,
+              "std_population": 0.03141817468468812
+            },
+            "ppl": {
+              "count": 3,
+              "max": 69.66483595920874,
+              "mean": 67.7644795785917,
+              "min": 64.82562957037331,
+              "std_population": 2.1076576855778195
+            },
+            "target_count": {
+              "count": 3,
+              "max": 2782.0,
+              "mean": 2782.0,
+              "min": 2782.0,
+              "std_population": 0.0
+            }
+          },
+          "train": {
+            "batches": {
+              "count": 3,
+              "max": 50.0,
+              "mean": 50.0,
+              "min": 50.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 4.258744622669081,
+              "mean": 4.215231618313238,
+              "min": 4.162698966667638,
+              "std_population": 0.03972578958401862
+            },
+            "ppl": {
+              "count": 3,
+              "max": 70.72114598018798,
+              "mean": 67.76305247420065,
+              "min": 64.24468307584051,
+              "std_population": 2.6735213663540986
+            },
+            "target_count": {
+              "count": 3,
+              "max": 3151.0,
+              "mean": 3151.0,
+              "min": 3151.0,
+              "std_population": 0.0
+            }
+          },
+          "valid": {
+            "batches": {
+              "count": 3,
+              "max": 43.0,
+              "mean": 43.0,
+              "min": 43.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 4.20765253795277,
+              "mean": 4.181737123431581,
+              "min": 4.133978831898083,
+              "std_population": 0.03381111452455924
+            },
+            "ppl": {
+              "count": 3,
+              "max": 67.19860833088084,
+              "mean": 65.5166385267529,
+              "min": 62.42581126385692,
+              "std_population": 2.1883871481211563
+            },
+            "target_count": {
+              "count": 3,
+              "max": 2750.0,
+              "mean": 2750.0,
+              "min": 2750.0,
+              "std_population": 0.0
+            }
+          }
+        },
+        "parameters": {
+          "core_total": 8416,
+          "core_trainable": 8416,
+          "core_type": "E2SignedCore",
+          "embedding_total": 11008,
+          "embedding_trainable": 11008,
+          "lm_head_total": 11352,
+          "lm_head_trainable": 11352,
+          "model_total": 19832,
+          "model_trainable": 19832,
+          "output_norm_total": 64,
+          "output_norm_trainable": 64,
+          "shared_embedding_head": 11008,
+          "tied_weights": true,
+          "wrapper_unique_total": 11416,
+          "wrapper_unique_trainable": 11416
+        },
+        "streaming": {
+          "latency_mean_ms": {
+            "count": 3,
+            "max": 0.22820594,
+            "mean": 0.16503807333333334,
+            "min": 0.12426548999999999,
+            "std_population": 0.04529213193801497
+          },
+          "latency_p50_ms": {
+            "count": 3,
+            "max": 0.2213205,
+            "mean": 0.14450949999999999,
+            "min": 0.09966449999999999,
+            "std_population": 0.05456747780500763
+          },
+          "latency_p95_ms": {
+            "count": 3,
+            "max": 0.28098689999999993,
+            "mean": 0.2568971,
+            "min": 0.22053105,
+            "std_population": 0.026163042449894824
+          },
+          "latency_p99_ms": {
+            "count": 3,
+            "max": 0.4424543000000003,
+            "mean": 0.3554905733333336,
+            "min": 0.30971408000000017,
+            "std_population": 0.06152117599468191
+          },
+          "measured_steps": {
+            "count": 3,
+            "max": 100.0,
+            "mean": 100.0,
+            "min": 100.0,
+            "std_population": 0.0
+          },
+          "state_nbytes": {
+            "count": 3,
+            "max": 256.0,
+            "mean": 256.0,
+            "min": 256.0,
+            "std_population": 0.0
+          },
+          "tokens_per_second": {
+            "count": 3,
+            "max": 8047.286499252527,
+            "mean": 6479.937485529692,
+            "min": 4382.006883782254,
+            "std_population": 1542.6613975115672
+          },
+          "warmup_steps": {
+            "count": 3,
+            "max": 10.0,
+            "mean": 10.0,
+            "min": 10.0,
+            "std_population": 0.0
+          }
+        },
+        "training": {
+          "elapsed_seconds": {
+            "count": 3,
+            "max": 3.066803004,
+            "mean": 2.910629215666667,
+            "min": 2.757900417,
+            "std_population": 0.126132478051652
+          },
+          "mean_gradient_norm": {
+            "count": 3,
+            "max": 3.2403801816701887,
+            "mean": 3.1606618950764336,
+            "min": 3.0937049591541292,
+            "std_population": 0.06055600316100616
+          },
+          "nll": {
+            "count": 3,
+            "max": 4.933585102150438,
+            "mean": 4.869055362558127,
+            "min": 4.795444223390404,
+            "std_population": 0.05676019414950854
+          },
+          "ppl": {
+            "count": 3,
+            "max": 138.87650738390641,
+            "mean": 130.4067475490708,
+            "min": 120.95810226850935,
+            "std_population": 7.34783292346627
+          },
+          "steps": {
+            "count": 3,
+            "max": 100.0,
+            "mean": 100.0,
+            "min": 100.0,
+            "std_population": 0.0
+          },
+          "target_count": {
+            "count": 3,
+            "max": 6345.0,
+            "mean": 6345.0,
+            "min": 6345.0,
+            "std_population": 0.0
+          },
+          "tokens_per_second": {
+            "count": 3,
+            "max": 2300.6632004871262,
+            "mean": 2184.039061524278,
+            "min": 2068.9297590110227,
+            "std_population": 94.61084512074162
+          }
+        }
+      },
+      "lstm": {
+        "evaluation": {
+          "test": {
+            "batches": {
+              "count": 3,
+              "max": 44.0,
+              "mean": 44.0,
+              "min": 44.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 3.6525930436200844,
+              "mean": 3.615811335849099,
+              "min": 3.595193480348347,
+              "std_population": 0.026072080291721804
+            },
+            "ppl": {
+              "count": 3,
+              "max": 38.5745619976676,
+              "mean": 37.19421454276347,
+              "min": 36.422746391846374,
+              "std_population": 0.9783074177652408
+            },
+            "target_count": {
+              "count": 3,
+              "max": 2782.0,
+              "mean": 2782.0,
+              "min": 2782.0,
+              "std_population": 0.0
+            }
+          },
+          "train": {
+            "batches": {
+              "count": 3,
+              "max": 50.0,
+              "mean": 50.0,
+              "min": 50.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 3.629946929921956,
+              "mean": 3.58895757076514,
+              "min": 3.562709489953741,
+              "std_population": 0.029362076434437164
+            },
+            "ppl": {
+              "count": 3,
+              "max": 37.710815248167485,
+              "mean": 36.21202451380369,
+              "min": 35.25860066358436,
+              "std_population": 1.072818055699295
+            },
+            "target_count": {
+              "count": 3,
+              "max": 3151.0,
+              "mean": 3151.0,
+              "min": 3151.0,
+              "std_population": 0.0
+            }
+          },
+          "valid": {
+            "batches": {
+              "count": 3,
+              "max": 43.0,
+              "mean": 43.0,
+              "min": 43.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 3.6145712335759943,
+              "mean": 3.5735084487452653,
+              "min": 3.5476473555131394,
+              "std_population": 0.02936006283300787
+            },
+            "ppl": {
+              "count": 3,
+              "max": 37.13542009038269,
+              "mean": 35.656879393286744,
+              "min": 34.731510397378464,
+              "std_population": 1.0564704290785276
+            },
+            "target_count": {
+              "count": 3,
+              "max": 2750.0,
+              "mean": 2750.0,
+              "min": 2750.0,
+              "std_population": 0.0
+            }
+          }
+        },
+        "parameters": {
+          "core_total": 8448,
+          "core_trainable": 8448,
+          "core_type": "StatefulLSTMCore",
+          "embedding_total": 11008,
+          "embedding_trainable": 11008,
+          "lm_head_total": 11352,
+          "lm_head_trainable": 11352,
+          "model_total": 19864,
+          "model_trainable": 19864,
+          "output_norm_total": 64,
+          "output_norm_trainable": 64,
+          "shared_embedding_head": 11008,
+          "tied_weights": true,
+          "wrapper_unique_total": 11416,
+          "wrapper_unique_trainable": 11416
+        },
+        "streaming": {
+          "latency_mean_ms": {
+            "count": 3,
+            "max": 0.17326411,
+            "mean": 0.14950174666666666,
+            "min": 0.11390086999999999,
+            "std_population": 0.025639960534057427
+          },
+          "latency_p50_ms": {
+            "count": 3,
+            "max": 0.176845,
+            "mean": 0.14836133333333335,
+            "min": 0.101658,
+            "std_population": 0.033289021536970546
+          },
+          "latency_p95_ms": {
+            "count": 3,
+            "max": 0.2013565,
+            "mean": 0.19161586666666666,
+            "min": 0.17904439999999996,
+            "std_population": 0.009326223409409752
+          },
+          "latency_p99_ms": {
+            "count": 3,
+            "max": 0.34514476,
+            "mean": 0.28682616333333355,
+            "min": 0.24421079000000037,
+            "std_population": 0.04267598850472095
+          },
+          "measured_steps": {
+            "count": 3,
+            "max": 100.0,
+            "mean": 100.0,
+            "min": 100.0,
+            "std_population": 0.0
+          },
+          "state_nbytes": {
+            "count": 3,
+            "max": 256.0,
+            "mean": 256.0,
+            "min": 256.0,
+            "std_population": 0.0
+          },
+          "tokens_per_second": {
+            "count": 3,
+            "max": 8779.564194724764,
+            "mean": 6916.393638428002,
+            "min": 5771.535720813734,
+            "std_population": 1328.9190118621816
+          },
+          "warmup_steps": {
+            "count": 3,
+            "max": 10.0,
+            "mean": 10.0,
+            "min": 10.0,
+            "std_population": 0.0
+          }
+        },
+        "training": {
+          "elapsed_seconds": {
+            "count": 3,
+            "max": 0.292129848,
+            "mean": 0.20435869799999998,
+            "min": 0.160361174,
+            "std_population": 0.062063642667939276
+          },
+          "mean_gradient_norm": {
+            "count": 3,
+            "max": 3.153995451927185,
+            "mean": 3.0292542413870494,
+            "min": 2.8624792861938477,
+            "std_population": 0.12266633737673922
+          },
+          "nll": {
+            "count": 3,
+            "max": 4.7351056627254025,
+            "mean": 4.711385302772853,
+            "min": 4.697358066327371,
+            "std_population": 0.016865897366177086
+          },
+          "ppl": {
+            "count": 3,
+            "max": 113.87549047722504,
+            "mean": 111.22198448056412,
+            "min": 109.65708268270782,
+            "std_population": 1.8863607655045225
+          },
+          "steps": {
+            "count": 3,
+            "max": 100.0,
+            "mean": 100.0,
+            "min": 100.0,
+            "std_population": 0.0
+          },
+          "target_count": {
+            "count": 3,
+            "max": 6345.0,
+            "mean": 6345.0,
+            "min": 6345.0,
+            "std_population": 0.0
+          },
+          "tokens_per_second": {
+            "count": 3,
+            "max": 39566.93407595033,
+            "mean": 33599.498328753114,
+            "min": 21719.793589869663,
+            "std_population": 8400.249970686025
+          }
+        }
+      },
+      "transformer": {
+        "evaluation": {
+          "test": {
+            "batches": {
+              "count": 3,
+              "max": 44.0,
+              "mean": 44.0,
+              "min": 44.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 4.413726142976543,
+              "mean": 4.309440294672996,
+              "min": 4.199463855954574,
+              "std_population": 0.08756471520889983
+            },
+            "ppl": {
+              "count": 3,
+              "max": 82.57658311827737,
+              "mean": 74.68352877838674,
+              "min": 66.65058714442107,
+              "std_population": 6.502513015806762
+            },
+            "target_count": {
+              "count": 3,
+              "max": 2782.0,
+              "mean": 2782.0,
+              "min": 2782.0,
+              "std_population": 0.0
+            }
+          },
+          "train": {
+            "batches": {
+              "count": 3,
+              "max": 50.0,
+              "mean": 50.0,
+              "min": 50.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 4.39123756701664,
+              "mean": 4.302548933821129,
+              "min": 4.189289321826776,
+              "std_population": 0.08425585314254105
+            },
+            "ppl": {
+              "count": 3,
+              "max": 80.74027868200655,
+              "mean": 74.14734680526333,
+              "min": 65.97588667283989,
+              "std_population": 6.130015303981528
+            },
+            "target_count": {
+              "count": 3,
+              "max": 3151.0,
+              "mean": 3151.0,
+              "min": 3151.0,
+              "std_population": 0.0
+            }
+          },
+          "valid": {
+            "batches": {
+              "count": 3,
+              "max": 43.0,
+              "mean": 43.0,
+              "min": 43.0,
+              "std_population": 0.0
+            },
+            "nll": {
+              "count": 3,
+              "max": 4.38247792746804,
+              "mean": 4.279039312189275,
+              "min": 4.1663121004971595,
+              "std_population": 0.08849340730622723
+            },
+            "ppl": {
+              "count": 3,
+              "max": 80.03611157136574,
+              "mean": 72.45263432694053,
+              "min": 64.4772275678303,
+              "std_population": 6.357930712489647
+            },
+            "target_count": {
+              "count": 3,
+              "max": 2750.0,
+              "mean": 2750.0,
+              "min": 2750.0,
+              "std_population": 0.0
+            }
+          }
+        },
+        "parameters": {
+          "core_total": 8608,
+          "core_trainable": 8608,
+          "core_type": "CausalTransformerCore",
+          "embedding_total": 11008,
+          "embedding_trainable": 11008,
+          "lm_head_total": 11352,
+          "lm_head_trainable": 11352,
+          "model_total": 20024,
+          "model_trainable": 20024,
+          "output_norm_total": 64,
+          "output_norm_trainable": 64,
+          "shared_embedding_head": 11008,
+          "tied_weights": true,
+          "wrapper_unique_total": 11416,
+          "wrapper_unique_trainable": 11416
+        },
+        "streaming": {
+          "latency_mean_ms": {
+            "count": 3,
+            "max": 0.35628659,
+            "mean": 0.34050007666666665,
+            "min": 0.32798212,
+            "std_population": 0.011784123571077422
+          },
+          "latency_p50_ms": {
+            "count": 3,
+            "max": 0.371616,
+            "mean": 0.35868933333333336,
+            "min": 0.337355,
+            "std_population": 0.015198040977558766
+          },
+          "latency_p95_ms": {
+            "count": 3,
+            "max": 0.46881874999999995,
+            "mean": 0.4532466166666666,
+            "min": 0.43170754999999983,
+            "std_population": 0.015727121190549274
+          },
+          "latency_p99_ms": {
+            "count": 3,
+            "max": 0.6709309500000006,
+            "mean": 0.6181051666666674,
+            "min": 0.5888859100000009,
+            "std_population": 0.03742368432867458
+          },
+          "measured_steps": {
+            "count": 3,
+            "max": 100.0,
+            "mean": 100.0,
+            "min": 100.0,
+            "std_population": 0.0
+          },
+          "state_nbytes": {
+            "count": 3,
+            "max": 28160.0,
+            "mean": 28160.0,
+            "min": 28160.0,
+            "std_population": 0.0
+          },
+          "tokens_per_second": {
+            "count": 3,
+            "max": 3048.9466925819006,
+            "mean": 2940.3326087498644,
+            "min": 2806.7292681433787,
+            "std_population": 100.45120669928028
+          },
+          "warmup_steps": {
+            "count": 3,
+            "max": 10.0,
+            "mean": 10.0,
+            "min": 10.0,
+            "std_population": 0.0
+          }
+        },
+        "training": {
+          "elapsed_seconds": {
+            "count": 3,
+            "max": 0.261355297,
+            "mean": 0.23451533466666666,
+            "min": 0.212558109,
+            "std_population": 0.020218345253652587
+          },
+          "mean_gradient_norm": {
+            "count": 3,
+            "max": 2.327977645397186,
+            "mean": 2.3035480801264447,
+            "min": 2.2563264566659926,
+            "std_population": 0.03339742154758485
+          },
+          "nll": {
+            "count": 3,
+            "max": 5.469860191736004,
+            "mean": 5.28496444818383,
+            "min": 5.048811567590592,
+            "std_population": 0.1756719604773262
+          },
+          "ppl": {
+            "count": 3,
+            "max": 237.42699618448057,
+            "mean": 200.3301659909769,
+            "min": 155.83715247021738,
+            "std_population": 33.716991712263386
+          },
+          "steps": {
+            "count": 3,
+            "max": 100.0,
+            "mean": 100.0,
+            "min": 100.0,
+            "std_population": 0.0
+          },
+          "target_count": {
+            "count": 3,
+            "max": 6345.0,
+            "mean": 6345.0,
+            "min": 6345.0,
+            "std_population": 0.0
+          },
+          "tokens_per_second": {
+            "count": 3,
+            "max": 29850.66074331702,
+            "mean": 27253.017177764577,
+            "min": 24277.296357991934,
+            "std_population": 2290.9684197621955
+          }
+        }
+      }
+    },
+    "seed_count": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "statistics": "mean, population std, min, and max across seeds"
+  },
+  "automatic_decision": null,
+  "command": "textworld-l5-event-lm-pilot",
+  "config": {
+    "batch_size": 1,
+    "d_model": 32,
+    "dropout": 0.0,
+    "e2_policy": "hybrid",
+    "e2_positive_factor": 0.8,
+    "episode_state_reset": true,
+    "eval_max_batches_per_split": 50,
+    "learning_rate": 0.001,
+    "num_heads": 4,
+    "parameter_tolerance": 0.02,
+    "same_data_order_for_all_models": true,
+    "same_step_limits_for_all_models": true,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sequence_length": 64,
+    "streaming_measured_steps": 100,
+    "streaming_warmup_steps": 10,
+    "train_steps": 100,
+    "transformer_kv_cache_tokens": 128
+  },
+  "confirmatory": false,
+  "dataset": {
+    "corpus_root": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5",
+    "episode_reset_audit": {
+      "no_chunk_crosses_episode_boundary": true,
+      "policy": "reset state on the first chunk of every episode",
+      "splits": {
+        "test": {
+          "episode_count": 1,
+          "reset_chunk_count": 1,
+          "verified": true
+        },
+        "train": {
+          "episode_count": 4,
+          "reset_chunk_count": 4,
+          "verified": true
+        },
+        "valid": {
+          "episode_count": 1,
+          "reset_chunk_count": 1,
+          "verified": true
+        }
+      }
+    },
+    "event_corpus": {
+      "corpus_fingerprint_sha256": "10e4599b792fe59c7af779bb38c010a44692410dbde76fd9d87f290ac54e7e34",
+      "episode_channel": "<|episode|>",
+      "format": "textworld-token-events-v1",
+      "splits": {
+        "test": {
+          "episode_count": 1,
+          "physical_line_count": 40,
+          "source_bytes": 10102,
+          "source_path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/test/token_events.txt",
+          "source_sha256": "0cbf64747f11ad0d2c97801ced80c05191b3bd0d9b6fe6de37e04c196b4bc7b5",
+          "split": "test",
+          "token_count": 2783
+        },
+        "train": {
+          "episode_count": 4,
+          "physical_line_count": 160,
+          "source_bytes": 39429,
+          "source_path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/train/token_events.txt",
+          "source_sha256": "b6ccecf4e606766353256a9d7afc8be0a437172a2064695cb0f1d62e1fcb76f9",
+          "split": "train",
+          "token_count": 10983
+        },
+        "valid": {
+          "episode_count": 1,
+          "physical_line_count": 40,
+          "source_bytes": 9936,
+          "source_path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/valid/token_events.txt",
+          "source_sha256": "4cc26e49e90e669b2fa9fa60c851ada400fe582f62172c5f4382ffa1faae0097",
+          "split": "valid",
+          "token_count": 2751
+        }
+      },
+      "tokenizer": {
+        "kind": "regex-word-punct",
+        "line_boundary_token": "<eos>",
+        "lowercase": false,
+        "pattern": "\\w+(?:['\u2019]\\w+)*|[^\\w\\s]",
+        "unicode": true
+      },
+      "vocabulary": {
+        "actual_size": 344,
+        "built_from": "train_only",
+        "fingerprint_sha256": "631125281cb4c16fad7fbb94a0658c851996e410bb386b77f3a9f708de90992d"
+      },
+      "vocabulary_fingerprint": "631125281cb4c16fad7fbb94a0658c851996e410bb386b77f3a9f708de90992d",
+      "vocabulary_size": 344
+    },
+    "fallback_used": false,
+    "manifests": {
+      "cross_split_seed_disjoint": true,
+      "fingerprint_sha256": "59bcfea05a55aefd48e7b9c4ee9ef5bac89639a57ff33725768406259f9e4e8b",
+      "frozen_seeds": {
+        "test": [
+          20260723
+        ],
+        "train": [
+          20260718,
+          20260719,
+          20260720,
+          20260721
+        ],
+        "valid": [
+          20260722
+        ]
+      },
+      "splits": {
+        "test": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/test/episodes.jsonl",
+              "sha256": "52d6a96c310a23395aafb0999aaeb7cbf572c099c8ec88bc3550c96209ea6962",
+              "size_bytes": 13712
+            },
+            "manifest": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/test/manifest.json",
+              "sha256": "8811930c54bd9c67708465200e6355e807accf9711dc8a99ddab59af72726b42",
+              "size_bytes": 590
+            },
+            "token_events": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/test/token_events.txt",
+              "sha256": "0cbf64747f11ad0d2c97801ced80c05191b3bd0d9b6fe6de37e04c196b4bc7b5",
+              "size_bytes": 10102
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 1,
+          "event_episode_count": 1,
+          "game_count": 1,
+          "games": [
+            {
+              "path": "/mnt/d/projects/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260723.z8",
+              "seed": 20260723,
+              "sha256": "c769a6df8555222e1a40bf81e0a603c927c04cafc52d02bd6e3e04b454a5f41f",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/test/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260723
+          ],
+          "sha256": "8811930c54bd9c67708465200e6355e807accf9711dc8a99ddab59af72726b42",
+          "size_bytes": 590,
+          "summary_path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/test/summary.json",
+          "summary_sha256": "e59176f93e39c07afb44df042773331705899e58cf4b36535064756e6a94aa2c",
+          "textworld_version": "1.7.0",
+          "verified": true
+        },
+        "train": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/train/episodes.jsonl",
+              "sha256": "5938045cf8e93fb2e1863aeefbe058e73e4ede8e62cd887db89c663d93444fd3",
+              "size_bytes": 53426
+            },
+            "manifest": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/train/manifest.json",
+              "sha256": "f000c67e649f16724c633a2989d7ad4f4cc3e4fd5daa9ccbe9ec225877cf3ecd",
+              "size_bytes": 1765
+            },
+            "token_events": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/train/token_events.txt",
+              "sha256": "b6ccecf4e606766353256a9d7afc8be0a437172a2064695cb0f1d62e1fcb76f9",
+              "size_bytes": 39429
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 4,
+          "event_episode_count": 4,
+          "game_count": 4,
+          "games": [
+            {
+              "path": "/mnt/d/projects/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260718.z8",
+              "seed": 20260718,
+              "sha256": "93e02d9fcd540040d29f52160c2046c09b4ad9d546f4c9b4924b4853745f06a4",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260719.z8",
+              "seed": 20260719,
+              "sha256": "e82ccfbd3125953edd87d5ebe38ce8d27a9ac4f0691bdb848cf8ebb691152a4a",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260720.z8",
+              "seed": 20260720,
+              "sha256": "3e58ba40fa1ded963f9e1670d826fa4dc722b2121e1a23c2136507086f2f0f3b",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260721.z8",
+              "seed": 20260721,
+              "sha256": "eadfa27eb15f99cc702acd46773df9a24c6a291c79ce253071d097ea9d9e734d",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/train/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260718,
+            20260719,
+            20260720,
+            20260721
+          ],
+          "sha256": "f000c67e649f16724c633a2989d7ad4f4cc3e4fd5daa9ccbe9ec225877cf3ecd",
+          "size_bytes": 1765,
+          "summary_path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/train/summary.json",
+          "summary_sha256": "fb6dd94482c60b718e7a4ebe1d5beced84401c6a9f40012a27011ee36783d4ad",
+          "textworld_version": "1.7.0",
+          "verified": true
+        },
+        "valid": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/valid/episodes.jsonl",
+              "sha256": "1437f6800372658fdf48db2f27a1ce6c1308953cafd9a3d85c3e3bdc6fd502d4",
+              "size_bytes": 13425
+            },
+            "manifest": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/valid/manifest.json",
+              "sha256": "af18f13a798fcf9461e549dc7340c930de61e68c46acf7ff6880700fb48684b7",
+              "size_bytes": 592
+            },
+            "token_events": {
+              "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/valid/token_events.txt",
+              "sha256": "4cc26e49e90e669b2fa9fa60c851ada400fe582f62172c5f4382ffa1faae0097",
+              "size_bytes": 9936
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 1,
+          "event_episode_count": 1,
+          "game_count": 1,
+          "games": [
+            {
+              "path": "/mnt/d/projects/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260722.z8",
+              "seed": 20260722,
+              "sha256": "ef387f610e4e053fc5e64e9886216ccf5260c9665f4fc71dcf89cb97ceeef488",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/valid/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260722
+          ],
+          "sha256": "af18f13a798fcf9461e549dc7340c930de61e68c46acf7ff6880700fb48684b7",
+          "size_bytes": 592,
+          "summary_path": "/mnt/d/projects/vpsc/results/e2_world_model/textworld_l5/valid/summary.json",
+          "summary_sha256": "7b640857e66f6f7533d5ef1c145d1f1d699cc9242d90eea743337622e1c11f3a",
+          "textworld_version": "1.7.0",
+          "verified": true
+        }
+      },
+      "textworld_version": "1.7.0",
+      "verified": true
+    },
+    "name": "TextWorld Coin Collector level 5 token events",
+    "synthetic": false,
+    "token_accounting": {
+      "available_target_tokens": {
+        "test": 2782,
+        "train": 10979,
+        "valid": 2750
+      },
+      "configured_eval_max_chunks_per_split": 50,
+      "configured_train_max_updates": 100,
+      "consumed_evaluation_target_tokens_per_model": {
+        "test": 2782,
+        "train": 3151,
+        "valid": 2750
+      },
+      "consumed_training_target_tokens_per_model": 6345,
+      "definition": "shifted causal-LM target tokens; BOS has no target",
+      "one_deterministic_pass_without_episode_repeat": true,
+      "same_counts_across_models_and_seeds": true
+    }
+  },
+  "device": "cpu",
+  "interpretation_boundary": "pipeline_status only gates the event-LM data/training pipeline. It is not an H-WM pass/fail or confirmatory architecture claim.",
+  "pipeline_checks": {
+    "all_metrics_finite": true,
+    "available_train_targets_at_least_10000": true,
+    "episode_boundaries_verified": true,
+    "equal_data_consumption": true,
+    "frozen_seed_splits_verified": true,
+    "held_out_event_evaluation_completed": true,
+    "official_dataset_provenance_verified": true
+  },
+  "pipeline_status": "READY",
+  "results": [
+    {
+      "e2_effective_gains": {
+        "e_to_e": 5.89,
+        "e_to_i": 9.5,
+        "i_to_e": 0.0,
+        "i_to_i": 5.984999999999999
+      },
+      "models": {
+        "e2": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 4.243695684853944,
+              "ppl": 69.66483595920874,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 4.258744622669081,
+              "ppl": 70.72114598018798,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 4.20765253795277,
+              "ppl": 67.19860833088084,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8416,
+            "core_trainable": 8416,
+            "core_type": "E2SignedCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 19832,
+            "model_trainable": 19832,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.22820594,
+            "latency_p50_ms": 0.2213205,
+            "latency_p95_ms": 0.26917335,
+            "latency_p99_ms": 0.3143033400000003,
+            "measured_steps": 100,
+            "seed": 0,
+            "state_nbytes": 256,
+            "tokens_per_second": 4382.006883782254,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 2.757900417,
+            "mean_gradient_norm": 3.2403801816701887,
+            "nll": 4.933585102150438,
+            "ppl": 138.87650738390641,
+            "seed": 0,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 2300.6632004871262
+          }
+        },
+        "lstm": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 3.6525930436200844,
+              "ppl": 38.5745619976676,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 3.629946929921956,
+              "ppl": 37.710815248167485,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 3.6145712335759943,
+              "ppl": 37.13542009038269,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8448,
+            "core_trainable": 8448,
+            "core_type": "StatefulLSTMCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 19864,
+            "model_trainable": 19864,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.11390086999999999,
+            "latency_p50_ms": 0.101658,
+            "latency_p95_ms": 0.17904439999999996,
+            "latency_p99_ms": 0.2711229400000003,
+            "measured_steps": 100,
+            "seed": 0,
+            "state_nbytes": 256,
+            "tokens_per_second": 8779.564194724764,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 0.292129848,
+            "mean_gradient_norm": 2.8624792861938477,
+            "nll": 4.701692179265785,
+            "ppl": 110.13338028175949,
+            "seed": 0,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 21719.793589869663
+          }
+        },
+        "transformer": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 4.199463855954574,
+              "ppl": 66.65058714442107,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 4.189289321826776,
+              "ppl": 65.97588667283989,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 4.1663121004971595,
+              "ppl": 64.4772275678303,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8608,
+            "core_trainable": 8608,
+            "core_type": "CausalTransformerCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 20024,
+            "model_trainable": 20024,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.33723152,
+            "latency_p50_ms": 0.367097,
+            "latency_p95_ms": 0.45921354999999997,
+            "latency_p99_ms": 0.6709309500000006,
+            "measured_steps": 100,
+            "seed": 0,
+            "state_nbytes": 28160,
+            "tokens_per_second": 2965.321865524314,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 0.261355297,
+            "mean_gradient_norm": 2.3263401383161546,
+            "nll": 5.048811567590592,
+            "ppl": 155.83715247021738,
+            "seed": 0,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 24277.296357991934
+          }
+        }
+      },
+      "parameter_budget": {
+        "auto_matched": false,
+        "base_relative_spread": 0.009645010046885465,
+        "e2_core": 8416,
+        "e2_total": 19832,
+        "lstm_core": 8448,
+        "lstm_total": 19864,
+        "relative_spread": 0.009645010046885465,
+        "selected_e2_state_dim": 32,
+        "selected_transformer_mlp_ratio": 2.0,
+        "tolerance": 0.02,
+        "transformer_core": 8608,
+        "transformer_total": 20024,
+        "within_tolerance": true
+      },
+      "seed": 0
+    },
+    {
+      "e2_effective_gains": {
+        "e_to_e": 5.89,
+        "e_to_i": 9.5,
+        "i_to_e": 0.0,
+        "i_to_i": 5.984999999999999
+      },
+      "models": {
+        "e2": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 4.171701043222895,
+              "ppl": 64.82562957037331,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 4.162698966667638,
+              "ppl": 64.24468307584051,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 4.133978831898083,
+              "ppl": 62.42581126385692,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8416,
+            "core_trainable": 8416,
+            "core_type": "E2SignedCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 19832,
+            "model_trainable": 19832,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.12426548999999999,
+            "latency_p50_ms": 0.09966449999999999,
+            "latency_p95_ms": 0.22053105,
+            "latency_p99_ms": 0.30971408000000017,
+            "measured_steps": 100,
+            "seed": 1,
+            "state_nbytes": 256,
+            "tokens_per_second": 8047.286499252527,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 2.907184226,
+            "mean_gradient_norm": 3.0937049591541292,
+            "nll": 4.795444223390404,
+            "ppl": 120.95810226850935,
+            "seed": 1,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 2182.5242250746855
+          }
+        },
+        "lstm": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 3.595193480348347,
+              "ppl": 36.422746391846374,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 3.562709489953741,
+              "ppl": 35.25860066358436,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 3.558306757146662,
+              "ppl": 35.103707692099086,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8448,
+            "core_trainable": 8448,
+            "core_type": "StatefulLSTMCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 19864,
+            "model_trainable": 19864,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.16134025999999999,
+            "latency_p50_ms": 0.166581,
+            "latency_p95_ms": 0.1944467,
+            "latency_p99_ms": 0.24421079000000037,
+            "measured_steps": 100,
+            "seed": 1,
+            "state_nbytes": 256,
+            "tokens_per_second": 6198.080999745507,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 0.160585072,
+            "mean_gradient_norm": 3.071287986040115,
+            "nll": 4.7351056627254025,
+            "ppl": 113.87549047722504,
+            "seed": 1,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 39511.76732043935
+          }
+        },
+        "transformer": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 4.413726142976543,
+              "ppl": 82.57658311827737,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 4.39123756701664,
+              "ppl": 80.74027868200655,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 4.38247792746804,
+              "ppl": 80.03611157136574,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8608,
+            "core_trainable": 8608,
+            "core_type": "CausalTransformerCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 20024,
+            "model_trainable": 20024,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.35628659,
+            "latency_p50_ms": 0.371616,
+            "latency_p95_ms": 0.46881874999999995,
+            "latency_p99_ms": 0.5944986400000005,
+            "measured_steps": 100,
+            "seed": 1,
+            "state_nbytes": 28160,
+            "tokens_per_second": 2806.7292681433787,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 0.212558109,
+            "mean_gradient_norm": 2.327977645397186,
+            "nll": 5.469860191736004,
+            "ppl": 237.42699618448057,
+            "seed": 1,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 29850.66074331702
+          }
+        }
+      },
+      "parameter_budget": {
+        "auto_matched": false,
+        "base_relative_spread": 0.009645010046885465,
+        "e2_core": 8416,
+        "e2_total": 19832,
+        "lstm_core": 8448,
+        "lstm_total": 19864,
+        "relative_spread": 0.009645010046885465,
+        "selected_e2_state_dim": 32,
+        "selected_transformer_mlp_ratio": 2.0,
+        "tolerance": 0.02,
+        "transformer_core": 8608,
+        "transformer_total": 20024,
+        "within_tolerance": true
+      },
+      "seed": 1
+    },
+    {
+      "e2_effective_gains": {
+        "e_to_e": 5.89,
+        "e_to_i": 9.5,
+        "i_to_e": 0.0,
+        "i_to_i": 5.984999999999999
+      },
+      "models": {
+        "e2": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 4.231246959211842,
+              "ppl": 68.80297320619304,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 4.224251265602995,
+              "ppl": 68.32332836657346,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 4.203580000443892,
+              "ppl": 66.92549598552093,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8416,
+            "core_trainable": 8416,
+            "core_type": "E2SignedCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 19832,
+            "model_trainable": 19832,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.14264279,
+            "latency_p50_ms": 0.1125435,
+            "latency_p95_ms": 0.28098689999999993,
+            "latency_p99_ms": 0.4424543000000003,
+            "measured_steps": 100,
+            "seed": 2,
+            "state_nbytes": 256,
+            "tokens_per_second": 7010.5190735542965,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 3.066803004,
+            "mean_gradient_norm": 3.1479005444049837,
+            "nll": 4.878136762133539,
+            "ppl": 131.38563299479662,
+            "seed": 2,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 2068.9297590110227
+          }
+        },
+        "lstm": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 3.5996474835788663,
+              "ppl": 36.585335238776445,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 3.5742162924197243,
+              "ppl": 35.666657629659234,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 3.5476473555131394,
+              "ppl": 34.731510397378464,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8448,
+            "core_trainable": 8448,
+            "core_type": "StatefulLSTMCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 19864,
+            "model_trainable": 19864,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.17326411,
+            "latency_p50_ms": 0.176845,
+            "latency_p95_ms": 0.2013565,
+            "latency_p99_ms": 0.34514476,
+            "measured_steps": 100,
+            "seed": 2,
+            "state_nbytes": 256,
+            "tokens_per_second": 5771.535720813734,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 0.160361174,
+            "mean_gradient_norm": 3.153995451927185,
+            "nll": 4.697358066327371,
+            "ppl": 109.65708268270782,
+            "seed": 2,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 39566.93407595033
+          }
+        },
+        "transformer": {
+          "evaluation": {
+            "test": {
+              "batches": 44,
+              "nll": 4.31513088508787,
+              "ppl": 74.8234160724618,
+              "target_count": 2782
+            },
+            "train": {
+              "batches": 50,
+              "nll": 4.32711991261997,
+              "ppl": 75.72587506094351,
+              "target_count": 3151
+            },
+            "valid": {
+              "batches": 43,
+              "nll": 4.288327908602628,
+              "ppl": 72.84456384162556,
+              "target_count": 2750
+            }
+          },
+          "parameters": {
+            "core_total": 8608,
+            "core_trainable": 8608,
+            "core_type": "CausalTransformerCore",
+            "embedding_total": 11008,
+            "embedding_trainable": 11008,
+            "lm_head_total": 11352,
+            "lm_head_trainable": 11352,
+            "model_total": 20024,
+            "model_trainable": 20024,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 11008,
+            "tied_weights": true,
+            "wrapper_unique_total": 11416,
+            "wrapper_unique_trainable": 11416
+          },
+          "streaming": {
+            "latency_mean_ms": 0.32798212,
+            "latency_p50_ms": 0.337355,
+            "latency_p95_ms": 0.43170754999999983,
+            "latency_p99_ms": 0.5888859100000009,
+            "measured_steps": 100,
+            "seed": 2,
+            "state_nbytes": 28160,
+            "tokens_per_second": 3048.9466925819006,
+            "warmup_steps": 10
+          },
+          "training": {
+            "elapsed_seconds": 0.229632598,
+            "mean_gradient_norm": 2.2563264566659926,
+            "nll": 5.336221585224894,
+            "ppl": 207.72634931823274,
+            "seed": 2,
+            "steps": 100,
+            "target_count": 6345,
+            "tokens_per_second": 27631.094431984784
+          }
+        }
+      },
+      "parameter_budget": {
+        "auto_matched": false,
+        "base_relative_spread": 0.009645010046885465,
+        "e2_core": 8416,
+        "e2_total": 19832,
+        "lstm_core": 8448,
+        "lstm_total": 19864,
+        "relative_spread": 0.009645010046885465,
+        "selected_e2_state_dim": 32,
+        "selected_transformer_mlp_ratio": 2.0,
+        "tolerance": 0.02,
+        "transformer_core": 8608,
+        "transformer_total": 20024,
+        "within_tolerance": true
+      },
+      "seed": 2
+    }
+  ],
+  "schema_version": 2,
+  "scope": "pilot_not_confirmatory"
+}

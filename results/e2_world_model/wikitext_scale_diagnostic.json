@@ -1,0 +1,39 @@
+{
+  "accepted": true,
+  "batch_size": 4,
+  "dataset_archive_sha256": "ef7edb566e3e2b2d31b29c1fdb0c89a4cc683597484c3dc2517919c615435a11",
+  "log_vocab": 8.317766166719343,
+  "logits_std_ratio": 1.0036588827617812,
+  "models": {
+    "e2": {
+      "embedding_std": 0.17642603814601898,
+      "hidden_std": 1.0000383853912354,
+      "initial_nll": 8.539402961730957,
+      "logits_std": 1.0174638032913208
+    },
+    "lstm": {
+      "embedding_std": 0.17682108283042908,
+      "hidden_std": 0.9989473819732666,
+      "initial_nll": 8.695497512817383,
+      "logits_std": 1.0187357664108276
+    },
+    "transformer": {
+      "embedding_std": 0.17650993168354034,
+      "hidden_std": 1.0000560283660889,
+      "initial_nll": 8.81269359588623,
+      "logits_std": 1.0150219202041626
+    }
+  },
+  "nll_gap": 0.27329063415527344,
+  "parameter_budget": {
+    "e2_total": 143648,
+    "lstm_total": 143680,
+    "relative_spread": 0.001335906189698679,
+    "transformer_total": 143840,
+    "within_tolerance": true
+  },
+  "scope": "e2prime_preregistered_scale_acceptance",
+  "seed": 0,
+  "sequence_length": 64,
+  "vocab_size": 4096
+}

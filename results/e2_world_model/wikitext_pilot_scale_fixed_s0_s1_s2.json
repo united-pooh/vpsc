@@ -1,0 +1,685 @@
+{
+  "automatic_decision": null,
+  "command": "wikitext-pilot",
+  "config": {
+    "batch_size": 4,
+    "d_model": 32,
+    "dropout": 0.0,
+    "e2_policy": "hybrid",
+    "e2_positive_factor": 0.8,
+    "eval_steps": 20,
+    "learning_rate": 0.001,
+    "num_heads": 4,
+    "same_data_order_for_all_models": true,
+    "same_step_limits_for_all_models": true,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sequence_length": 64,
+    "streaming_steps": 64,
+    "streaming_warmup_steps": 16,
+    "train_steps": 100,
+    "transformer_cache_window": 128
+  },
+  "confirmatory": false,
+  "dataset": {
+    "archive": "/mnt/d/projects/vpsc/data/e2_world_model/wikitext2/wikitext-2-raw-v1/wikitext-2-raw-v1.zip",
+    "cache_root": "/mnt/d/projects/vpsc/data/e2_world_model/wikitext2/wikitext-2-raw-v1",
+    "download_requested": false,
+    "manifest": {
+      "archive": {
+        "bytes": 4721645,
+        "filename": "wikitext-2-raw-v1.zip",
+        "sha256": "ef7edb566e3e2b2d31b29c1fdb0c89a4cc683597484c3dc2517919c615435a11"
+      },
+      "dataset": "WikiText-2 raw",
+      "format_version": 1,
+      "source": {
+        "archive_bytes": 4721645,
+        "archive_filename": "wikitext-2-raw-v1.zip",
+        "homepage": "https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/",
+        "license": "Creative Commons Attribution-ShareAlike 4.0 International",
+        "name": "wikitext-2-raw-v1",
+        "sha256": "ef7edb566e3e2b2d31b29c1fdb0c89a4cc683597484c3dc2517919c615435a11",
+        "split_members": [
+          [
+            "train",
+            "wikitext-2-raw/wiki.train.raw"
+          ],
+          [
+            "valid",
+            "wikitext-2-raw/wiki.valid.raw"
+          ],
+          [
+            "test",
+            "wikitext-2-raw/wiki.test.raw"
+          ]
+        ],
+        "url": "https://huggingface.co/datasets/ggml-org/ci/resolve/main/wikitext-2-raw-v1.zip",
+        "version": "1.0.0"
+      },
+      "splits": {
+        "test": {
+          "archive_member": "wikitext-2-raw/wiki.test.raw",
+          "bytes": 1290590,
+          "filename": "wiki.test.raw",
+          "sha256": "173c87a53759e0201f33e0ccf978e510c2042d7f2cb78229d9a50d79b9e7dd08"
+        },
+        "train": {
+          "archive_member": "wikitext-2-raw/wiki.train.raw",
+          "bytes": 10940747,
+          "filename": "wiki.train.raw",
+          "sha256": "6707892fa3788b5ab9ed78ab5ff37d9fe825f6011a2ad4fcd6a6d467f0e7da57"
+        },
+        "valid": {
+          "archive_member": "wikitext-2-raw/wiki.valid.raw",
+          "bytes": 1146846,
+          "filename": "wiki.valid.raw",
+          "sha256": "4cd0f6876d07a413aa911261ff6d363c72d757d47f0fdd6015702014c89cb9c7"
+        }
+      }
+    },
+    "manifest_path": "/mnt/d/projects/vpsc/data/e2_world_model/wikitext2/wikitext-2-raw-v1/manifest.json",
+    "name": "wikitext-2-raw-v1",
+    "source": {
+      "archive_bytes": 4721645,
+      "archive_filename": "wikitext-2-raw-v1.zip",
+      "homepage": "https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/",
+      "license": "Creative Commons Attribution-ShareAlike 4.0 International",
+      "name": "wikitext-2-raw-v1",
+      "sha256": "ef7edb566e3e2b2d31b29c1fdb0c89a4cc683597484c3dc2517919c615435a11",
+      "split_members": [
+        [
+          "train",
+          "wikitext-2-raw/wiki.train.raw"
+        ],
+        [
+          "valid",
+          "wikitext-2-raw/wiki.valid.raw"
+        ],
+        [
+          "test",
+          "wikitext-2-raw/wiki.test.raw"
+        ]
+      ],
+      "url": "https://huggingface.co/datasets/ggml-org/ci/resolve/main/wikitext-2-raw-v1.zip",
+      "version": "1.0.0"
+    },
+    "synthetic": false,
+    "verified_archive": true,
+    "version": "1.0.0",
+    "vocabulary": {
+      "actual_size": 4096,
+      "built_from": "train_only",
+      "fingerprint_sha256": "6162c94f8a669bca4d30a971053ef84f5b84c669d012b102cbdc4e660694a22c",
+      "requested_max_size": 4096,
+      "special_tokens": [
+        "<pad>",
+        "<unk>",
+        "<bos>",
+        "<eos>"
+      ],
+      "tokenizer": {
+        "kind": "regex-word-punct",
+        "line_boundary_token": "<eos>",
+        "lowercase": false,
+        "pattern": "\\w+(?:['\u2019]\\w+)*|[^\\w\\s]",
+        "unicode": true
+      }
+    }
+  },
+  "device": "cpu",
+  "interpretation_boundary": "Pilot measurements only. No automatic pass/fail or confirmatory claim is produced.",
+  "results": [
+    {
+      "e2_effective_gains": {
+        "e_to_e": 5.89,
+        "e_to_i": 9.5,
+        "i_to_e": 0.0,
+        "i_to_i": 5.984999999999999
+      },
+      "models": {
+        "e2": {
+          "parameters": {
+            "core_total": 8416,
+            "core_trainable": 8416,
+            "core_type": "E2SignedCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143648,
+            "model_trainable": 143648,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.24811478125,
+            "latency_p50_ms": 0.248537,
+            "latency_p95_ms": 0.3455981000000001,
+            "latency_p99_ms": 0.4325871799999999,
+            "measured_steps": 64,
+            "seed": 0,
+            "state_nbytes": 256,
+            "tokens_per_second": 4030.392687457028,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.536736989021302,
+            "ppl": 253.8483366857913,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 5.221332101,
+            "mean_gradient_norm": 1.1823364055156709,
+            "nll": 6.408220419883728,
+            "ppl": 606.8128475540003,
+            "seed": 0,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 4902.9633635249975
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.544066333770752,
+            "ppl": 255.71571362461017,
+            "target_count": 5120
+          }
+        },
+        "lstm": {
+          "parameters": {
+            "core_total": 8448,
+            "core_trainable": 8448,
+            "core_type": "StatefulLSTMCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143680,
+            "model_trainable": 143680,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.165936015625,
+            "latency_p50_ms": 0.151042,
+            "latency_p95_ms": 0.24092710000000003,
+            "latency_p99_ms": 0.4341994199999992,
+            "measured_steps": 64,
+            "seed": 0,
+            "state_nbytes": 256,
+            "tokens_per_second": 6026.4192570460855,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.595113515853882,
+            "ppl": 269.10819640518986,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 1.821897989,
+            "mean_gradient_norm": 1.2668612831830979,
+            "nll": 6.753251810073852,
+            "ppl": 856.8405198357633,
+            "seed": 0,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 14051.28067244384
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.570494627952575,
+            "ppl": 262.5639385899108,
+            "target_count": 5120
+          }
+        },
+        "transformer": {
+          "parameters": {
+            "core_total": 8608,
+            "core_trainable": 8608,
+            "core_type": "CausalTransformerCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143840,
+            "model_trainable": 143840,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.243950328125,
+            "latency_p50_ms": 0.212173,
+            "latency_p95_ms": 0.40657705000000005,
+            "latency_p99_ms": 0.59885121,
+            "measured_steps": 64,
+            "seed": 0,
+            "state_nbytes": 20480,
+            "tokens_per_second": 4099.195142248796,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.860740613937378,
+            "ppl": 350.9839914205755,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 1.38636903,
+            "mean_gradient_norm": 1.3275889199972153,
+            "nll": 7.244499063491821,
+            "ppl": 1400.3802186653108,
+            "seed": 0,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 18465.501930607898
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.807224273681641,
+            "ppl": 332.69437430921715,
+            "target_count": 5120
+          }
+        }
+      },
+      "parameter_budget": {
+        "auto_matched": false,
+        "base_relative_spread": 0.001335906189698679,
+        "e2_core": 8416,
+        "e2_total": 143648,
+        "lstm_core": 8448,
+        "lstm_total": 143680,
+        "relative_spread": 0.001335906189698679,
+        "selected_e2_state_dim": 32,
+        "selected_transformer_mlp_ratio": 2.0,
+        "tolerance": 0.02,
+        "transformer_core": 8608,
+        "transformer_total": 143840,
+        "within_tolerance": true
+      },
+      "seed": 0
+    },
+    {
+      "e2_effective_gains": {
+        "e_to_e": 5.89,
+        "e_to_i": 9.5,
+        "i_to_e": 0.0,
+        "i_to_i": 5.984999999999999
+      },
+      "models": {
+        "e2": {
+          "parameters": {
+            "core_total": 8416,
+            "core_trainable": 8416,
+            "core_type": "E2SignedCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143648,
+            "model_trainable": 143648,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.247409578125,
+            "latency_p50_ms": 0.245521,
+            "latency_p95_ms": 0.26969980000000005,
+            "latency_p99_ms": 0.29223178,
+            "measured_steps": 64,
+            "seed": 1,
+            "state_nbytes": 256,
+            "tokens_per_second": 4041.88070477516,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.6320188522338865,
+            "ppl": 279.2252635346329,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 5.164011053,
+            "mean_gradient_norm": 1.1767238545417786,
+            "nll": 6.613641281127929,
+            "ppl": 745.1915363649128,
+            "seed": 1,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 4957.386755616612
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.579243874549865,
+            "ppl": 264.8712541540134,
+            "target_count": 5120
+          }
+        },
+        "lstm": {
+          "parameters": {
+            "core_total": 8448,
+            "core_trainable": 8448,
+            "core_type": "StatefulLSTMCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143680,
+            "model_trainable": 143680,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.200772515625,
+            "latency_p50_ms": 0.1941385,
+            "latency_p95_ms": 0.2217401,
+            "latency_p99_ms": 0.32821609999999946,
+            "measured_steps": 64,
+            "seed": 1,
+            "state_nbytes": 256,
+            "tokens_per_second": 4980.761419893674,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.616939282417297,
+            "ppl": 275.0462546960078,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 1.421844775,
+            "mean_gradient_norm": 1.2468533408641815,
+            "nll": 6.824168882369995,
+            "ppl": 919.8116146309154,
+            "seed": 1,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 18004.778334540773
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.527174878120422,
+            "ppl": 251.43257901659968,
+            "target_count": 5120
+          }
+        },
+        "transformer": {
+          "parameters": {
+            "core_total": 8608,
+            "core_trainable": 8608,
+            "core_type": "CausalTransformerCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143840,
+            "model_trainable": 143840,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.4112334375,
+            "latency_p50_ms": 0.409477,
+            "latency_p95_ms": 0.44729855,
+            "latency_p99_ms": 0.47875488,
+            "measured_steps": 64,
+            "seed": 1,
+            "state_nbytes": 20480,
+            "tokens_per_second": 2431.7088758133873,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.958403158187866,
+            "ppl": 386.99166610591345,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 1.424284985,
+            "mean_gradient_norm": 1.2406056517362594,
+            "nll": 7.246945867538452,
+            "ppl": 1403.8108700053876,
+            "seed": 1,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 17973.930968597553
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.852719950675964,
+            "ppl": 348.18012647480367,
+            "target_count": 5120
+          }
+        }
+      },
+      "parameter_budget": {
+        "auto_matched": false,
+        "base_relative_spread": 0.001335906189698679,
+        "e2_core": 8416,
+        "e2_total": 143648,
+        "lstm_core": 8448,
+        "lstm_total": 143680,
+        "relative_spread": 0.001335906189698679,
+        "selected_e2_state_dim": 32,
+        "selected_transformer_mlp_ratio": 2.0,
+        "tolerance": 0.02,
+        "transformer_core": 8608,
+        "transformer_total": 143840,
+        "within_tolerance": true
+      },
+      "seed": 1
+    },
+    {
+      "e2_effective_gains": {
+        "e_to_e": 5.89,
+        "e_to_i": 9.5,
+        "i_to_e": 0.0,
+        "i_to_i": 5.984999999999999
+      },
+      "models": {
+        "e2": {
+          "parameters": {
+            "core_total": 8416,
+            "core_trainable": 8416,
+            "core_type": "E2SignedCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143648,
+            "model_trainable": 143648,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.270522828125,
+            "latency_p50_ms": 0.2595825,
+            "latency_p95_ms": 0.3508749500000001,
+            "latency_p99_ms": 0.45151740999999956,
+            "measured_steps": 64,
+            "seed": 2,
+            "state_nbytes": 256,
+            "tokens_per_second": 3696.5457108777964,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.631367802619934,
+            "ppl": 279.0435331987545,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 4.862658871,
+            "mean_gradient_norm": 1.197216677069664,
+            "nll": 6.543180446624756,
+            "ppl": 694.491863584545,
+            "seed": 2,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 5264.609482000408
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.572552347183228,
+            "ppl": 263.1047777123191,
+            "target_count": 5120
+          }
+        },
+        "lstm": {
+          "parameters": {
+            "core_total": 8448,
+            "core_trainable": 8448,
+            "core_type": "StatefulLSTMCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143680,
+            "model_trainable": 143680,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.202048703125,
+            "latency_p50_ms": 0.19463950000000002,
+            "latency_p95_ms": 0.240321,
+            "latency_p99_ms": 0.27606805999999995,
+            "measured_steps": 64,
+            "seed": 2,
+            "state_nbytes": 256,
+            "tokens_per_second": 4949.301750189098,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.620313215255737,
+            "ppl": 275.97580953281835,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 1.270139576,
+            "mean_gradient_norm": 1.2723030245304108,
+            "nll": 6.649918141365052,
+            "ppl": 772.7210690542319,
+            "seed": 2,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 20155.26520370388
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.5362331628799435,
+            "ppl": 253.72047347094855,
+            "target_count": 5120
+          }
+        },
+        "transformer": {
+          "parameters": {
+            "core_total": 8608,
+            "core_trainable": 8608,
+            "core_type": "CausalTransformerCore",
+            "embedding_total": 131072,
+            "embedding_trainable": 131072,
+            "lm_head_total": 135168,
+            "lm_head_trainable": 135168,
+            "model_total": 143840,
+            "model_trainable": 143840,
+            "output_norm_total": 64,
+            "output_norm_trainable": 64,
+            "shared_embedding_head": 131072,
+            "tied_weights": true,
+            "wrapper_unique_total": 135232,
+            "wrapper_unique_trainable": 135232
+          },
+          "streaming": {
+            "latency_mean_ms": 0.404826625,
+            "latency_p50_ms": 0.404493,
+            "latency_p95_ms": 0.43488585,
+            "latency_p99_ms": 0.5452918799999996,
+            "measured_steps": 64,
+            "seed": 2,
+            "state_nbytes": 20480,
+            "tokens_per_second": 2470.1932586573325,
+            "warmup_steps": 16
+          },
+          "test": {
+            "batches": 20,
+            "nll": 5.941570448875427,
+            "ppl": 380.53206668492373,
+            "target_count": 5120
+          },
+          "train": {
+            "elapsed_seconds": 1.352816802,
+            "mean_gradient_norm": 1.461382583975792,
+            "nll": 7.412518944740295,
+            "ppl": 1656.5939643150148,
+            "seed": 2,
+            "steps": 100,
+            "target_count": 25600,
+            "tokens_per_second": 18923.478746089673
+          },
+          "valid": {
+            "batches": 20,
+            "nll": 5.891570949554444,
+            "ppl": 361.97348002924804,
+            "target_count": 5120
+          }
+        }
+      },
+      "parameter_budget": {
+        "auto_matched": false,
+        "base_relative_spread": 0.001335906189698679,
+        "e2_core": 8416,
+        "e2_total": 143648,
+        "lstm_core": 8448,
+        "lstm_total": 143680,
+        "relative_spread": 0.001335906189698679,
+        "selected_e2_state_dim": 32,
+        "selected_transformer_mlp_ratio": 2.0,
+        "tolerance": 0.02,
+        "transformer_core": 8608,
+        "transformer_total": 143840,
+        "within_tolerance": true
+      },
+      "seed": 2
+    }
+  ],
+  "schema_version": 1,
+  "scope": "pilot_not_confirmatory"
+}
