@@ -1,0 +1,3471 @@
+{
+  "cached_stream_replications": [
+    {
+      "alpha_parameter_count": 5280,
+      "candidate_timing": {
+        "count": 7680,
+        "mean_ms": 0.08458797031250001,
+        "p50_ms": 0.0745315,
+        "p95_ms": 0.1274725,
+        "p99_ms": 0.16572422000000003,
+        "tokens_per_second_at_p50": 13417.145770580224
+      },
+      "candidate_timing_sample_count": 7680,
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9833333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.95,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9833333333333333,
+      "example_count": 60,
+      "kernel": "suffix3_phase",
+      "logical_model_storage_bytes_uint8_keys_float32_alpha": 23520,
+      "macro_channel_accuracy": 0.9958333333333333,
+      "max_full_score_abs_difference": 0.0,
+      "mode": "persistent_spike_delay_plus_suffix_kernel_memory",
+      "persistent_state_bytes_max": 32,
+      "prototype_count": 480,
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.95,
+      "timing_replication": 0
+    },
+    {
+      "alpha_parameter_count": 5280,
+      "candidate_timing": {
+        "count": 7680,
+        "mean_ms": 0.08681748802083335,
+        "p50_ms": 0.075413,
+        "p95_ms": 0.132753,
+        "p99_ms": 0.16886111,
+        "tokens_per_second_at_p50": 13260.313208597989
+      },
+      "candidate_timing_sample_count": 7680,
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9833333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.95,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9833333333333333,
+      "example_count": 60,
+      "kernel": "suffix3_phase",
+      "logical_model_storage_bytes_uint8_keys_float32_alpha": 23520,
+      "macro_channel_accuracy": 0.9958333333333333,
+      "max_full_score_abs_difference": 0.0,
+      "mode": "persistent_spike_delay_plus_suffix_kernel_memory",
+      "persistent_state_bytes_max": 32,
+      "prototype_count": 480,
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.95,
+      "timing_replication": 1
+    },
+    {
+      "alpha_parameter_count": 5280,
+      "candidate_timing": {
+        "count": 7680,
+        "mean_ms": 0.08314810898437501,
+        "p50_ms": 0.07383,
+        "p95_ms": 0.12506394999999992,
+        "p99_ms": 0.15820371,
+        "tokens_per_second_at_p50": 13544.629554381687
+      },
+      "candidate_timing_sample_count": 7680,
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9833333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.95,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9833333333333333,
+      "example_count": 60,
+      "kernel": "suffix3_phase",
+      "logical_model_storage_bytes_uint8_keys_float32_alpha": 23520,
+      "macro_channel_accuracy": 0.9958333333333333,
+      "max_full_score_abs_difference": 0.0,
+      "mode": "persistent_spike_delay_plus_suffix_kernel_memory",
+      "persistent_state_bytes_max": 32,
+      "prototype_count": 480,
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.95,
+      "timing_replication": 2
+    }
+  ],
+  "configuration": {
+    "batch_groups": 16,
+    "block_examples": 48,
+    "corpus_dir": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg2_l5",
+    "cv_folds": 4,
+    "cv_split_key": "train game seed",
+    "deployment_alpha_dtype": "float32",
+    "kernel_specs": [
+      "candidate_only",
+      "suffix1",
+      "suffix2",
+      "suffix3_no_phase",
+      "suffix3_phase",
+      "depth_weighted_phase"
+    ],
+    "primary_kernel": "suffix3_phase",
+    "ridge_lambdas": [
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "schedule_seeds": [
+      0,
+      1,
+      2
+    ],
+    "threads": 4,
+    "timing_repeats_per_candidate": 128,
+    "timing_warmup_repeats_per_candidate": 16,
+    "training_dtype": "float64"
+  },
+  "dataset": {
+    "action_alphabet": [
+      "<event_examine_coin>",
+      "<event_go_east>",
+      "<event_go_north>",
+      "<event_go_south>",
+      "<event_go_west>",
+      "<event_inventory>",
+      "<event_look>",
+      "<event_take_coin>"
+    ],
+    "audit": {
+      "cv_fold_count": 4,
+      "cv_fold_example_counts": [
+        120,
+        120,
+        120,
+        120
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "passed": true,
+      "sg10_multichannel": {
+        "channels": {
+          "done": [
+            "<continue>",
+            "<done>"
+          ],
+          "move_exit_count_after": [
+            "<exit_count_0>",
+            "<exit_count_1>",
+            "<exit_count_2>"
+          ],
+          "reward": [
+            "<reward_zero>",
+            "<reward_positive>"
+          ],
+          "room_relation": [
+            "<room_no_observation>",
+            "<room_novel>",
+            "<room_previous>",
+            "<room_same>"
+          ]
+        },
+        "expected_counts": {
+          "test": 60,
+          "train": 480,
+          "valid": 60
+        },
+        "expected_groups": {
+          "test": 20,
+          "train": 160,
+          "valid": 20
+        },
+        "heldout_full_input_coverage": {
+          "test": {
+            "covered": 52,
+            "total": 60
+          },
+          "valid": {
+            "covered": 38,
+            "total": 60
+          }
+        },
+        "label_sources": {
+          "done": "recorded transition done",
+          "move_exit_count_after": "counterfactual admissible_actions_after or next factual step",
+          "reward": "recorded transition reward",
+          "room_relation": "normalized next_obs room vs current/prior rooms"
+        },
+        "passed": true,
+        "splits": {
+          "test": {
+            "ambiguous_input_count": 0,
+            "channel_label_counts": {
+              "done": {
+                "<continue>": 56,
+                "<done>": 4
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 4,
+                "<exit_count_1>": 20,
+                "<exit_count_2>": 36
+              },
+              "reward": {
+                "<reward_positive>": 4,
+                "<reward_zero>": 56
+              },
+              "room_relation": {
+                "<room_no_observation>": 24,
+                "<room_novel>": 16,
+                "<room_previous>": 16,
+                "<room_same>": 4
+              }
+            },
+            "exact_vector_count": 8,
+            "exact_vector_majority_accuracy": 0.2,
+            "example_count": 60,
+            "game_count": 4,
+            "groups_valid": true,
+            "length_group_counts": {
+              "2": 4,
+              "3": 4,
+              "4": 4,
+              "5": 4,
+              "6": 4
+            },
+            "passed": true,
+            "prompt_length": {
+              "max": 6,
+              "mean": 4.0,
+              "min": 2,
+              "p50": 4.0,
+              "p95": 6.0
+            },
+            "prompt_unknown_count": 0,
+            "step_group_count": 20
+          },
+          "train": {
+            "ambiguous_input_count": 0,
+            "channel_label_counts": {
+              "done": {
+                "<continue>": 448,
+                "<done>": 32
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 32,
+                "<exit_count_1>": 160,
+                "<exit_count_2>": 288
+              },
+              "reward": {
+                "<reward_positive>": 32,
+                "<reward_zero>": 448
+              },
+              "room_relation": {
+                "<room_no_observation>": 192,
+                "<room_novel>": 128,
+                "<room_previous>": 128,
+                "<room_same>": 32
+              }
+            },
+            "exact_vector_count": 8,
+            "exact_vector_majority_accuracy": 0.2,
+            "example_count": 480,
+            "game_count": 32,
+            "groups_valid": true,
+            "length_group_counts": {
+              "2": 32,
+              "3": 32,
+              "4": 32,
+              "5": 32,
+              "6": 32
+            },
+            "passed": true,
+            "prompt_length": {
+              "max": 6,
+              "mean": 4.0,
+              "min": 2,
+              "p50": 4.0,
+              "p95": 6.0
+            },
+            "prompt_unknown_count": 0,
+            "step_group_count": 160
+          },
+          "valid": {
+            "ambiguous_input_count": 0,
+            "channel_label_counts": {
+              "done": {
+                "<continue>": 56,
+                "<done>": 4
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 4,
+                "<exit_count_1>": 20,
+                "<exit_count_2>": 36
+              },
+              "reward": {
+                "<reward_positive>": 4,
+                "<reward_zero>": 56
+              },
+              "room_relation": {
+                "<room_no_observation>": 24,
+                "<room_novel>": 16,
+                "<room_previous>": 16,
+                "<room_same>": 4
+              }
+            },
+            "exact_vector_count": 8,
+            "exact_vector_majority_accuracy": 0.2,
+            "example_count": 60,
+            "game_count": 4,
+            "groups_valid": true,
+            "length_group_counts": {
+              "2": 4,
+              "3": 4,
+              "4": 4,
+              "5": 4,
+              "6": 4
+            },
+            "passed": true,
+            "prompt_length": {
+              "max": 6,
+              "mean": 4.0,
+              "min": 2,
+              "p50": 4.0,
+              "p95": 6.0
+            },
+            "prompt_unknown_count": 0,
+            "step_group_count": 20
+          }
+        },
+        "task": "multichannel action-conditioned real TextWorld event delta"
+      },
+      "spike_delay_line": {
+        "action_alphabet": [
+          "<event_examine_coin>",
+          "<event_go_east>",
+          "<event_go_north>",
+          "<event_go_south>",
+          "<event_go_west>",
+          "<event_inventory>",
+          "<event_look>",
+          "<event_take_coin>"
+        ],
+        "action_alphabet_size": 8,
+        "conditional_history": {
+          "1": {
+            "splits": {
+              "test": {
+                "covered_examples": 60,
+                "covered_majority_accuracy": 0.8833333333333333,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 0.8708333333333333,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 60,
+                "covered_majority_accuracy": 0.85,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 15,
+            "train_examples_in_ambiguous_keys": 217,
+            "train_key_count": 34
+          },
+          "2": {
+            "splits": {
+              "test": {
+                "covered_examples": 59,
+                "covered_majority_accuracy": 0.9491525423728814,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 0.9645833333333333,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 54,
+                "covered_majority_accuracy": 0.9259259259259259,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 12,
+            "train_examples_in_ambiguous_keys": 41,
+            "train_key_count": 101
+          },
+          "3": {
+            "splits": {
+              "test": {
+                "covered_examples": 55,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 42,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 0,
+            "train_examples_in_ambiguous_keys": 0,
+            "train_key_count": 189
+          },
+          "4": {
+            "splits": {
+              "test": {
+                "covered_examples": 52,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 38,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 0,
+            "train_examples_in_ambiguous_keys": 0,
+            "train_key_count": 228
+          }
+        },
+        "heldout_unknown_action_events": {
+          "test": [],
+          "train": [],
+          "valid": []
+        },
+        "independent_confirmation_required": true,
+        "passed": true,
+        "primary_order": 3,
+        "test_labels_already_observed_during_mechanism_design": true
+      }
+    },
+    "synthetic": false,
+    "vocabulary_fingerprint": "9d31551deae8300719634f1fc584b6ec508348c74b94efd3c456eb2096f1f749"
+  },
+  "decision": {
+    "cached_stream_gate": "PASS",
+    "data_gate": "PASS",
+    "independent_fresh_game_confirmation_required": true,
+    "mechanism_gate": "PASS",
+    "next_route": "sg13r_fresh_games_then_closed_loop_planner",
+    "online_equivalence_gate": "PASS",
+    "overall": "PASS",
+    "per_replication_stream_comparison": [
+      {
+        "passed": true,
+        "replication": 0,
+        "snn_model_bytes": 23520,
+        "snn_p50_ms": 0.0745315,
+        "snn_p95_ms": 0.1274725,
+        "transformer_p50_ms": 0.3001195,
+        "transformer_p95_ms": 0.5383575499999999,
+        "transformer_parameter_bytes": 81504
+      },
+      {
+        "passed": true,
+        "replication": 1,
+        "snn_model_bytes": 23520,
+        "snn_p50_ms": 0.075413,
+        "snn_p95_ms": 0.132753,
+        "transformer_p50_ms": 0.294489,
+        "transformer_p95_ms": 0.5241264999999999,
+        "transformer_parameter_bytes": 81504
+      },
+      {
+        "passed": true,
+        "replication": 2,
+        "snn_model_bytes": 23520,
+        "snn_p50_ms": 0.07383,
+        "snn_p95_ms": 0.12506394999999992,
+        "transformer_p50_ms": 0.30004,
+        "transformer_p95_ms": 0.530286,
+        "transformer_parameter_bytes": 81504
+      }
+    ],
+    "primary_cross_validated_metrics": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9895833333333334,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.96875,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9895833333333334,
+      "example_count": 480,
+      "macro_channel_accuracy": 0.9973958333333334,
+      "mse": 0.012278858895493312,
+      "step_group_count": 160,
+      "step_group_exact_consistency": 0.96875
+    },
+    "primary_kernel": "suffix3_phase",
+    "primary_quality_gate": "PASS",
+    "primary_test_metrics": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9833333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.95,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9833333333333333,
+      "example_count": 60,
+      "macro_channel_accuracy": 0.9958333333333333,
+      "mse": 0.005662170197241838,
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.95
+    },
+    "selection_plus_fit_wall_seconds": 0.044341433,
+    "sg12_primary_exact": 0.9333333333333333,
+    "suffix2_cross_validated_exact": 0.9416666666666667,
+    "training_speed_gate": "PASS",
+    "transformer_mean_training_wall_seconds": 1.0892893043333334
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "42cdfdbc1e30b0efc7227302ca81f833aea07e3d",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      "?? experiments/e3_sg10_multichannel_delta.py",
+      "?? experiments/e3_sg11_temporal_basis.py",
+      "?? experiments/e3_sg12_spike_delay_rls.py",
+      "?? experiments/e3_sg13_suffix_spike_kernel.py",
+      "?? experiments/e3_sg6_move_delta.py",
+      "?? experiments/e3_sg7_paired_binary_batch.py",
+      "?? experiments/e3_sg8_bilinear_closed_form.py",
+      "?? experiments/e3_sg9_atomic_event_stream.py",
+      "?? results/e3_scan/e3_sg10_multichannel_delta.json",
+      "?? results/e3_scan/e3_sg11_temporal_basis.json",
+      "?? results/e3_scan/e3_sg12_spike_delay_rls.json",
+      "?? results/e3_scan/e3_sg6_move_delta.json",
+      "?? results/e3_scan/e3_sg7_paired_binary_batch.json",
+      "?? results/e3_scan/e3_sg8_bilinear_closed_form.json",
+      "?? results/e3_scan/e3_sg9_atomic_event_stream.json",
+      "?? results/e3_scan/e3_sg9r_atomic_event_stream_replication.json",
+      "?? tests/test_e3_sg10_multichannel_delta.py",
+      "?? tests/test_e3_sg11_temporal_basis.py",
+      "?? tests/test_e3_sg12_spike_delay_rls.py",
+      "?? tests/test_e3_sg13_suffix_spike_kernel.py",
+      "?? tests/test_e3_sg6_move_delta.py",
+      "?? tests/test_e3_sg7_paired_binary_batch.py",
+      "?? tests/test_e3_sg8_bilinear_closed_form.py",
+      "?? tests/test_e3_sg9_atomic_event_stream.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "experiment": "E3-SG13 hierarchical suffix spike kernel associative memory",
+  "formal": true,
+  "generated_at_utc": "2026-07-19T03:54:04.493753+00:00",
+  "kernel_results": {
+    "candidate_only": {
+      "alpha_parameter_count": 5280,
+      "cross_validated": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8,
+          "reward": 1.0,
+          "room_relation": 0.7291666666666666
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.4,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 0.4921875,
+            "<room_previous>": 0.4921875,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.5979166666666667,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.8822916666666667,
+        "mse": 0.21289539675845384,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.16875
+      },
+      "cross_validation_candidates": [
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8,
+              "reward": 1.0,
+              "room_relation": 0.7291666666666666
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.4,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.4921875,
+                "<room_previous>": 0.4921875,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.5979166666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.8822916666666667,
+            "mse": 0.21289539675845384,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.16875
+          },
+          "lambda": 1e-06
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8,
+              "reward": 1.0,
+              "room_relation": 0.6958333333333333
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.4,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.4296875,
+                "<room_previous>": 0.4296875,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.5708333333333333,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.8739583333333334,
+            "mse": 0.21289537733757724,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.1375
+          },
+          "lambda": 0.0001
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8,
+              "reward": 1.0,
+              "room_relation": 0.7083333333333334
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.4,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.578125,
+                "<room_previous>": 0.328125,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.5791666666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.8770833333333333,
+            "mse": 0.21289348894959703,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.10625
+          },
+          "lambda": 0.01
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8,
+              "reward": 1.0,
+              "room_relation": 0.7083333333333334
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.4,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.453125,
+                "<room_previous>": 0.453125,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.5770833333333333,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.8770833333333333,
+            "mse": 0.2132018906027549,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.14375
+          },
+          "lambda": 1.0
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8,
+              "reward": 1.0,
+              "room_relation": 0.7208333333333333
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.4,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.4765625,
+                "<room_previous>": 0.4765625,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.5875,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.8802083333333334,
+            "mse": 0.5633386457346187,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.15625
+          },
+          "lambda": 100.0
+        }
+      ],
+      "cross_validation_folds": [
+        {
+          "fold": 0,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 1,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 2,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 3,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        }
+      ],
+      "kernel": {
+        "name": "candidate_only",
+        "phase_weight": 0.0,
+        "positive_semidefinite_by_construction": true,
+        "primary": false,
+        "suffix_weights": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "prototype_count": 480,
+      "selected_lambda": 1e-06,
+      "selection_split": "4-fold train-game cross-validation",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8,
+          "reward": 1.0,
+          "room_relation": 0.8333333333333334
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.4,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 0.6875,
+            "<room_previous>": 0.6875,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.6666666666666666,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9083333333333333,
+        "mse": 0.20181997325507345,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.25
+      },
+      "timing": {
+        "cross_validation_solve_seconds": 0.045963281,
+        "evaluation_kernel_seconds": {
+          "test": 0.000115199,
+          "valid": 0.000163501
+        },
+        "full_fit_seconds": 0.002108963,
+        "selection_plus_full_fit_wall_seconds": 0.087448861,
+        "train_kernel_seconds": 0.01158854
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8,
+          "reward": 1.0,
+          "room_relation": 0.7541666666666667
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.4,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 0.5390625,
+            "<room_previous>": 0.5390625,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.6208333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.8885416666666667,
+        "mse": 0.20471861471861497,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.19375
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8,
+          "reward": 1.0,
+          "room_relation": 0.6
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.4,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 0.25,
+            "<room_previous>": 0.25,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.48333333333333334,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.85,
+        "mse": 0.21667029165461485,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.1
+      }
+    },
+    "depth_weighted_phase": {
+      "alpha_parameter_count": 5280,
+      "cross_validated": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9895833333333334,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.96875,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9895833333333334,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9973958333333334,
+        "mse": 0.021977987122040844,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.96875
+      },
+      "cross_validation_candidates": [
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9895833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.96875,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9895833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9973958333333334,
+            "mse": 0.021977987122040844,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.96875
+          },
+          "lambda": 1e-06
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9895833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.96875,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9895833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9973958333333334,
+            "mse": 0.021978039265304134,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.96875
+          },
+          "lambda": 0.0001
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9895833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.96875,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9895833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9973958333333334,
+            "mse": 0.021983308610357622,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.96875
+          },
+          "lambda": 0.01
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9875,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.9625,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9875,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.996875,
+            "mse": 0.022923363206446484,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.9625
+          },
+          "lambda": 1.0
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9375,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.8125,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9375,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.984375,
+            "mse": 0.23193563862368574,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.8125
+          },
+          "lambda": 100.0
+        }
+      ],
+      "cross_validation_folds": [
+        {
+          "fold": 0,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 1,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 2,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 3,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        }
+      ],
+      "kernel": {
+        "name": "depth_weighted_phase",
+        "phase_weight": 1.0,
+        "positive_semidefinite_by_construction": true,
+        "primary": false,
+        "suffix_weights": [
+          1.0,
+          2.0,
+          4.0,
+          8.0
+        ]
+      },
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "prototype_count": 480,
+      "selected_lambda": 1e-06,
+      "selection_split": "4-fold train-game cross-validation",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.95,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9958333333333333,
+        "mse": 0.009310868323921986,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.95
+      },
+      "timing": {
+        "cross_validation_solve_seconds": 0.013209203,
+        "evaluation_kernel_seconds": {
+          "test": 0.000258922,
+          "valid": 0.00027373
+        },
+        "full_fit_seconds": 0.001591922,
+        "selection_plus_full_fit_wall_seconds": 0.046409363,
+        "train_kernel_seconds": 0.003820161
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 480,
+        "macro_channel_accuracy": 1.0,
+        "mse": 2.5136373617985925e-16,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.95,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.95,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9875,
+        "mse": 0.03976727005122631,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.85
+      }
+    },
+    "suffix1": {
+      "alpha_parameter_count": 5280,
+      "cross_validated": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8645833333333334,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.63125,
+            "<exit_count_2>": 0.9791666666666666
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8645833333333334,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9661458333333334,
+        "mse": 0.07414923393234855,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.61875
+      },
+      "cross_validation_candidates": [
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8645833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.63125,
+                "<exit_count_2>": 0.9791666666666666
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8645833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9661458333333334,
+            "mse": 0.0744438528542614,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.61875
+          },
+          "lambda": 1e-06
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8645833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.63125,
+                "<exit_count_2>": 0.9791666666666666
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8645833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9661458333333334,
+            "mse": 0.07444364906763337,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.61875
+          },
+          "lambda": 0.0001
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8645833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.63125,
+                "<exit_count_2>": 0.9791666666666666
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8645833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9661458333333334,
+            "mse": 0.07442349430344285,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.61875
+          },
+          "lambda": 0.01
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8645833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.63125,
+                "<exit_count_2>": 0.9791666666666666
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8645833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9661458333333334,
+            "mse": 0.07414923393234855,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.61875
+          },
+          "lambda": 1.0
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8666666666666667,
+              "reward": 1.0,
+              "room_relation": 0.9770833333333333
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.9140625,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8479166666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9609375,
+            "mse": 0.47269137702131625,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.56875
+          },
+          "lambda": 100.0
+        }
+      ],
+      "cross_validation_folds": [
+        {
+          "fold": 0,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 1,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 2,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 3,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        }
+      ],
+      "kernel": {
+        "name": "suffix1",
+        "phase_weight": 0.0,
+        "positive_semidefinite_by_construction": true,
+        "primary": false,
+        "suffix_weights": [
+          1.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "prototype_count": 480,
+      "selected_lambda": 1.0,
+      "selection_split": "4-fold train-game cross-validation",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9708333333333333,
+        "mse": 0.06299340644305518,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.65
+      },
+      "timing": {
+        "cross_validation_solve_seconds": 0.01271438,
+        "evaluation_kernel_seconds": {
+          "test": 0.000135127,
+          "valid": 0.000187536
+        },
+        "full_fit_seconds": 0.001103034,
+        "selection_plus_full_fit_wall_seconds": 0.043203013000000005,
+        "train_kernel_seconds": 0.001597522
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8708333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.625,
+            "<exit_count_2>": 0.9930555555555556
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8708333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9677083333333334,
+        "mse": 0.06512813809190578,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.625
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.85,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.6,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.85,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9625,
+        "mse": 0.08774281585042691,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.55
+      }
+    },
+    "suffix2": {
+      "alpha_parameter_count": 5280,
+      "cross_validated": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9416666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.88125,
+            "<exit_count_2>": 0.96875
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9416666666666667,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9854166666666666,
+        "mse": 0.0295255350237784,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.825
+      },
+      "cross_validation_candidates": [
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9416666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.88125,
+                "<exit_count_2>": 0.96875
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9416666666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9854166666666666,
+            "mse": 0.029591891286862376,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.825
+          },
+          "lambda": 1e-06
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9416666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.88125,
+                "<exit_count_2>": 0.96875
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9416666666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9854166666666666,
+            "mse": 0.02959121675497619,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.825
+          },
+          "lambda": 0.0001
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9416666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.88125,
+                "<exit_count_2>": 0.96875
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9416666666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9854166666666666,
+            "mse": 0.0295255350237784,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.825
+          },
+          "lambda": 0.01
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9416666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.88125,
+                "<exit_count_2>": 0.96875
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9416666666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9854166666666666,
+            "mse": 0.030545860888761153,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.825
+          },
+          "lambda": 1.0
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8666666666666667,
+              "reward": 1.0,
+              "room_relation": 0.9895833333333334
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.9609375,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8583333333333333,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9640625,
+            "mse": 0.4396753629639767,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.59375
+          },
+          "lambda": 100.0
+        }
+      ],
+      "cross_validation_folds": [
+        {
+          "fold": 0,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 1,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 2,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 3,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        }
+      ],
+      "kernel": {
+        "name": "suffix2",
+        "phase_weight": 0.0,
+        "positive_semidefinite_by_construction": true,
+        "primary": false,
+        "suffix_weights": [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+        ]
+      },
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "prototype_count": 480,
+      "selected_lambda": 0.01,
+      "selection_split": "4-fold train-game cross-validation",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.95,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.95,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9875,
+        "mse": 0.02379379713320726,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.85
+      },
+      "timing": {
+        "cross_validation_solve_seconds": 0.012307127,
+        "evaluation_kernel_seconds": {
+          "test": 0.000316045,
+          "valid": 0.000224937
+        },
+        "full_fit_seconds": 0.002505676,
+        "selection_plus_full_fit_wall_seconds": 0.04370974,
+        "train_kernel_seconds": 0.00110886
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9645833333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.9125,
+            "<exit_count_2>": 0.9895833333333334
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9645833333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9911458333333334,
+        "mse": 0.014520671510698784,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.89375
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9166666666666666,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9166666666666666,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9791666666666666,
+        "mse": 0.06105580805986401,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.75
+      }
+    },
+    "suffix3_no_phase": {
+      "alpha_parameter_count": 5280,
+      "cross_validated": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9625,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.90625,
+            "<exit_count_2>": 0.9895833333333334
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9625,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.990625,
+        "mse": 0.01897810193491727,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.8875
+      },
+      "cross_validation_candidates": [
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9625,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.90625,
+                "<exit_count_2>": 0.9895833333333334
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9625,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.990625,
+            "mse": 0.01897810193491727,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.8875
+          },
+          "lambda": 1e-06
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9625,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.90625,
+                "<exit_count_2>": 0.9895833333333334
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9625,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.990625,
+            "mse": 0.018978246152830718,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.8875
+          },
+          "lambda": 0.0001
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9625,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.90625,
+                "<exit_count_2>": 0.9895833333333334
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9625,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.990625,
+            "mse": 0.018993507754640718,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.8875
+          },
+          "lambda": 0.01
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9625,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.90625,
+                "<exit_count_2>": 0.9895833333333334
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9625,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.990625,
+            "mse": 0.02361949199399416,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.8875
+          },
+          "lambda": 1.0
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.875,
+              "reward": 1.0,
+              "room_relation": 0.9958333333333333
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.625,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 0.984375,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8729166666666667,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9677083333333334,
+            "mse": 0.42108091096551276,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.61875
+          },
+          "lambda": 100.0
+        }
+      ],
+      "cross_validation_folds": [
+        {
+          "fold": 0,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 1,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 2,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 3,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        }
+      ],
+      "kernel": {
+        "name": "suffix3_no_phase",
+        "phase_weight": 0.0,
+        "positive_semidefinite_by_construction": true,
+        "primary": false,
+        "suffix_weights": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "prototype_count": 480,
+      "selected_lambda": 1e-06,
+      "selection_split": "4-fold train-game cross-validation",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9666666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.9,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9666666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9916666666666667,
+        "mse": 0.010074628415853305,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.9
+      },
+      "timing": {
+        "cross_validation_solve_seconds": 0.012868894,
+        "evaluation_kernel_seconds": {
+          "test": 0.000218785,
+          "valid": 0.000228955
+        },
+        "full_fit_seconds": 0.001169579,
+        "selection_plus_full_fit_wall_seconds": 0.044654146,
+        "train_kernel_seconds": 0.002827596
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 480,
+        "macro_channel_accuracy": 1.0,
+        "mse": 1.0671706902082574e-14,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9166666666666666,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9166666666666666,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9791666666666666,
+        "mse": 0.0483503522765389,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.75
+      }
+    },
+    "suffix3_phase": {
+      "alpha_parameter_count": 5280,
+      "cross_validated": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9895833333333334,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.96875,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9895833333333334,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9973958333333334,
+        "mse": 0.012278858895493312,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.96875
+      },
+      "cross_validation_candidates": [
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9895833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.96875,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9895833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9973958333333334,
+            "mse": 0.012278858895493312,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.96875
+          },
+          "lambda": 1e-06
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9895833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.96875,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9895833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9973958333333334,
+            "mse": 0.012278938796113081,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.96875
+          },
+          "lambda": 0.0001
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9895833333333334,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.96875,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9895833333333334,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9973958333333334,
+            "mse": 0.01228792138486018,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.96875
+          },
+          "lambda": 0.01
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9875,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.9625,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9875,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.996875,
+            "mse": 0.01644615704710086,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.9625
+          },
+          "lambda": 1.0
+        },
+        {
+          "cross_validated": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8708333333333333,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6125,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8708333333333333,
+            "example_count": 480,
+            "macro_channel_accuracy": 0.9677083333333334,
+            "mse": 0.32778643676621133,
+            "step_group_count": 160,
+            "step_group_exact_consistency": 0.6125
+          },
+          "lambda": 100.0
+        }
+      ],
+      "cross_validation_folds": [
+        {
+          "fold": 0,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 1,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 2,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        },
+        {
+          "fold": 3,
+          "train_examples": 360,
+          "train_game_count": 24,
+          "valid_examples": 120,
+          "valid_game_count": 8
+        }
+      ],
+      "kernel": {
+        "name": "suffix3_phase",
+        "phase_weight": 1.0,
+        "positive_semidefinite_by_construction": true,
+        "primary": true,
+        "suffix_weights": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "official_valid_or_test_used_for_selection": false,
+      "prototype_count": 480,
+      "selected_lambda": 1e-06,
+      "selection_split": "4-fold train-game cross-validation",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.95,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9958333333333333,
+        "mse": 0.005662170197241838,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.95
+      },
+      "timing": {
+        "cross_validation_solve_seconds": 0.013302065,
+        "evaluation_kernel_seconds": {
+          "test": 0.00024256,
+          "valid": 0.000377286
+        },
+        "full_fit_seconds": 0.002467553,
+        "selection_plus_full_fit_wall_seconds": 0.044341433,
+        "train_kernel_seconds": 0.000783738
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 480,
+        "macro_channel_accuracy": 1.0,
+        "mse": 7.476022690588536e-15,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.02668856669446328,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      }
+    }
+  },
+  "online_replications": [
+    {
+      "algorithm": "block Cholesky-Schur kernel recursive least squares; no explicit ill-conditioned inverse",
+      "max_alpha_abs_difference_from_batch": 4.160741806646939e-09,
+      "max_score_abs_difference_from_batch": 1.176836406102666e-14,
+      "prediction_equivalent_to_batch": true,
+      "schedule_seed": 0,
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.95,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9958333333333333,
+        "mse": 0.005662170197241841,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.95
+      },
+      "timing": {
+        "block_timing": {
+          "count": 10,
+          "mean_ms": 0.8873981000000001,
+          "p50_ms": 0.4950745,
+          "p95_ms": 2.5180657,
+          "tokens_per_second_at_p50": 2019.898015349205
+        },
+        "block_updates": 10,
+        "elapsed_seconds": 0.011302176,
+        "examples_seen": 480,
+        "factorization": "block Cholesky update of each Schur complement",
+        "final_factor_dimension": 480,
+        "final_factor_reconstruction_max_abs_error": 5.329070518200751e-15
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 480,
+        "macro_channel_accuracy": 1.0,
+        "mse": 7.476022658271074e-15,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.026688566694463407,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      }
+    },
+    {
+      "algorithm": "block Cholesky-Schur kernel recursive least squares; no explicit ill-conditioned inverse",
+      "max_alpha_abs_difference_from_batch": 4.767021610785349e-09,
+      "max_score_abs_difference_from_batch": 1.2878587085651816e-14,
+      "prediction_equivalent_to_batch": true,
+      "schedule_seed": 1,
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.95,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9958333333333333,
+        "mse": 0.005662170197241866,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.95
+      },
+      "timing": {
+        "block_timing": {
+          "count": 10,
+          "mean_ms": 0.3964425,
+          "p50_ms": 0.362919,
+          "p95_ms": 0.5751927999999997,
+          "tokens_per_second_at_p50": 2755.4357859467264
+        },
+        "block_updates": 10,
+        "elapsed_seconds": 0.004633966,
+        "examples_seen": 480,
+        "factorization": "block Cholesky update of each Schur complement",
+        "final_factor_dimension": 480,
+        "final_factor_reconstruction_max_abs_error": 1.9539925233402755e-14
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 480,
+        "macro_channel_accuracy": 1.0,
+        "mse": 7.476022697369294e-15,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.026688566694463334,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      }
+    },
+    {
+      "algorithm": "block Cholesky-Schur kernel recursive least squares; no explicit ill-conditioned inverse",
+      "max_alpha_abs_difference_from_batch": 5.2813141915297734e-09,
+      "max_score_abs_difference_from_batch": 1.1546319456101628e-14,
+      "prediction_equivalent_to_batch": true,
+      "schedule_seed": 2,
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.95,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9958333333333333,
+        "mse": 0.005662170197241823,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.95
+      },
+      "timing": {
+        "block_timing": {
+          "count": 10,
+          "mean_ms": 0.3743844,
+          "p50_ms": 0.3328415,
+          "p95_ms": 0.5364863,
+          "tokens_per_second_at_p50": 3004.4330409519243
+        },
+        "block_updates": 10,
+        "elapsed_seconds": 0.0044789,
+        "examples_seen": 480,
+        "factorization": "block Cholesky update of each Schur complement",
+        "final_factor_dimension": 480,
+        "final_factor_reconstruction_max_abs_error": 1.7763568394002505e-14
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 480,
+        "macro_channel_accuracy": 1.0,
+        "mse": 7.476022734847277e-15,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.02668856669446328,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      }
+    }
+  ],
+  "references": {
+    "sg10": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg10_multichannel_delta.json",
+      "sha256": "56BD001A17AD7093F4B3A37329B9B2083AD127F848072F5881148C941C02A77F"
+    },
+    "sg12": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg12_spike_delay_rls.json",
+      "sha256": "EB776BC2884CA6E23EEA319A81312098EF8AC93111FC62919BE8E7EEBE5EA76C"
+    }
+  },
+  "research_hypothesis": {
+    "epistemic_status": "mechanism experiment; original test already observed",
+    "statement": "A PSD hierarchy of exact and backed-off spike suffix matches can generalize the exact delay state without iterative backpropagation.",
+    "what_if": "What if sparse event memory should interpolate through a suffix kernel rather than expand every multi-event conjunction?"
+  },
+  "schema_version": 1
+}
