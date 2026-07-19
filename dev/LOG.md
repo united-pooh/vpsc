@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-07-20：E3-SG27B 结果 — 全融合Triton门控轨迹覆盖T160并再次加速（阶段PASS）
+
+- canonical artifact=`results/e3_scan/e3_sg27b_rocm_triton_fused.json`，SHA-256=`510EDFCF1677F66D2D5186D43F06FD74A55D8F4F43EBA0E5F403E39EB6C429E6`；runner/fused源码SHA-256分别为`A19700F18F876D848E04F3637B231BC44F8317D8DCC83FA6FC0C9059869F4AE9`/`6CED69232C10D860300E8C0B2F61343F4A2D8CCE17C6FDD9771CA2687372F6C8`。环境仍为同一RX 7800 XT、ROCm 7.2、B16/S31、warmup5+30 repeats；进程退出继续出现`SharedSignalPool, 2 Signals leaked` warning，但运行与artifact成功完成。
+- formal equivalence的`T31/Q11`与`T160/Q71`均PASS；full-fused相对serial的hard spike disagreement均为`0`。长桶raw/final最大差`1.79e-7/1.19e-7`，drive/decay/initial最大梯度差`9.54e-7/4.29e-5/1.07e-6`，均低于预注册`2e-4`。
+
+| bucket | serial train/infer p50 ms | Triton composed train/infer | Triton fused train/infer | fused vs serial | fused vs composed | fused incremental peak |
+|---|---:|---:|---:|---:|---:|---:|
+| T64/Q27 | `5.234 / 1.050` | `1.302 / .659` | `.707 / .169` | `7.41x / 6.22x` | `1.84x / 3.91x` | `1,331,712 B` |
+| T96/Q55 | `7.226 / 1.402` | `1.330 / .380` | `.742 / .147` | `9.74x / 9.54x` | `1.79x / 2.58x` | `2,569,728 B` |
+| T128/Q71 | `8.721 / 1.725` | `1.340 / .427` | `.729 / .224` | `11.96x / 7.70x` | `1.84x / 1.90x` | `3,331,584 B` |
+| T160/Q71 | `11.172 / 2.295` | `1.224 / .382` | `.692 / .148` | `16.15x / 15.50x` | `1.77x / 2.58x` | `3,458,560 B` |
+
+- full-fused在全部四桶、train/inference均同时胜serial、tensor-tree和composed，speed PASS；incremental allocated仅为composed的`.540/.594/.588/.549x`，memory PASS。T160不再需要serial fallback；收益来自常decay结合律、event/query/adjoint融合和避免coefficient/bias物化，未减少token、query、输出或反向参数。
+
+**决定：SG27B overall PASS。** 这是训练语义完整的SNN gated-trace原语成功，不是整模型已超越ANN。下一步把该backend接入SG26C raw-language snapshot self-roll-in；必须在同机同协议报告SNN/LSTM/Transformer端到端更新吞吐、roll-in wall、生成质量和任务门，不能把上表primitive wall外推成LLM/world-model胜利。
+
+---
+
 ## 2026-07-20：E3-SG27B 预注册 — 常decay全融合Triton门控轨迹
 
 ### 从组合式bridge到完整训练原语
