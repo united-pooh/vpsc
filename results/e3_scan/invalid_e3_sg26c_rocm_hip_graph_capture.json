@@ -1,0 +1,23 @@
+{
+  "experiment": "E3-SG26C local ROCm HIP Graph capability probe",
+  "timestamp_utc_recorded": "2026-07-19T16:40:38.0510094Z",
+  "formal": false,
+  "valid_result": false,
+  "command": "/home/atri/.venvs/vpsc-rocm72/bin/python experiments/e3_sg26c_snapshot_self_rollin.py --quick --output results/e3_scan/smoke_e3_sg26c_snapshot_self_rollin_rocm.json",
+  "environment": {
+    "device": "AMD Radeon RX 7800 XT",
+    "rocm": "7.2.0",
+    "torch": "2.9.1+rocm7.2.0.git7e1940d4",
+    "triton": "3.5.1+rocm7.2.0.gita272dfa8"
+  },
+  "exit_code": 1,
+  "wall_seconds": 70.3,
+  "failure": {
+    "hip_error_code": 900,
+    "message": "operation not permitted when stream is capturing",
+    "origin": "hipBLASLt amd_detail/hipblaslt.cpp:147",
+    "shared_signal_pool_leaked_signals": 1759
+  },
+  "interpretation": "The fused Triton recurrence passed standalone ROCm tests; the failure occurred only while capturing the complete optimizer/model step into a HIP Graph.",
+  "decision": "Disable graph capture for every architecture and use one uniform eager plus fused-AdamW protocol for the local comparison."
+}
