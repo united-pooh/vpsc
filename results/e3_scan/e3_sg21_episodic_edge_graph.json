@@ -1,0 +1,1920 @@
+{
+  "base_split_metrics": {
+    "test": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 160,
+        "macro_channel_accuracy": 1.0,
+        "mse": 0.012370067893347225,
+        "step_group_count": 40,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.9859375,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.9625,
+            "negative_recall": 0.9902912621359223,
+            "positive_recall": 0.9122807017543859
+          },
+          "go north": {
+            "accuracy": 0.96875,
+            "negative_recall": 0.946236559139785,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.9893617021276596,
+            "positive_recall": 0.9696969696969697
+          },
+          "go west": {
+            "accuracy": 0.975,
+            "negative_recall": 0.9901960784313726,
+            "positive_recall": 0.9482758620689655
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.93125,
+        "example_count": 160
+      }
+    },
+    "train": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 640,
+        "macro_channel_accuracy": 1.0,
+        "mse": 3.517570341373113e-17,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 1.0,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go north": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go west": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 1.0,
+        "example_count": 640
+      }
+    },
+    "valid": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 160,
+        "macro_channel_accuracy": 1.0,
+        "mse": 0.013707399842858578,
+        "step_group_count": 40,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.98671875,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.975,
+            "negative_recall": 1.0,
+            "positive_recall": 0.9259259259259259
+          },
+          "go north": {
+            "accuracy": 0.95625,
+            "negative_recall": 0.9333333333333333,
+            "positive_recall": 0.9857142857142858
+          },
+          "go south": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.9888888888888889,
+            "positive_recall": 0.9714285714285714
+          },
+          "go west": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.9905660377358491,
+            "positive_recall": 0.9629629629629629
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.9375,
+        "example_count": 160
+      }
+    }
+  },
+  "base_weighted_fit": {
+    "ambiguous_unique_key_count": 0,
+    "compression_ratio": 0.6921875,
+    "deployment_training_wall_seconds": 0.14904911,
+    "expanded_equivalence_audit_seconds_excluded": 0.024611882,
+    "expanded_example_count": 640,
+    "expanded_prediction_equivalent": true,
+    "expanded_train_score_max_abs_difference": 2.220446049250313e-15,
+    "kernel": "affordance_phase_suffix_times_return_edge_and_objective_plan_tape",
+    "mask_decision_threshold": 1e-06,
+    "ridge_lambda": 1e-06,
+    "single_pass_aggregation_seconds": 0.035367596,
+    "unique_kernel_seconds": 0.02255333,
+    "unique_prototype_count": 443,
+    "weighted_cholesky_solve_seconds": 0.020913171
+  },
+  "configuration": {
+    "action_order": [
+      "examine coin",
+      "go east",
+      "go north",
+      "go south",
+      "go west",
+      "inventory",
+      "look",
+      "take coin"
+    ],
+    "base_kernel": "affordance_phase_suffix_times_return_edge_and_objective_plan_tape",
+    "corpus_dir": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5",
+    "graph_update": "one-shot local source-action-destination binding",
+    "known_edge_projection": "room relation plus stored affordance and derived exit count",
+    "objective_plan_source": "public objective string only",
+    "reward_done_source": "unchanged SG19 learned residual",
+    "threads": 4,
+    "walkthrough_role": "audit equality only; never model input"
+  },
+  "dataset": {
+    "base_action_alphabet": [
+      "<event_examine_coin>",
+      "<event_go_east>",
+      "<event_go_north>",
+      "<event_go_south>",
+      "<event_go_west>",
+      "<event_inventory>",
+      "<event_look>",
+      "<event_take_coin>"
+    ],
+    "base_vocabulary_fingerprint": "9d31551deae8300719634f1fc584b6ec508348c74b94efd3c456eb2096f1f749",
+    "exhaustive_counts": {
+      "test": 160,
+      "train": 640,
+      "valid": 160
+    },
+    "graph_audit": {
+      "all_binding_steps_precede_snapshot_root": true,
+      "all_masks_match_exhaustive_cache": true,
+      "all_rooms_unique_and_present": true,
+      "canonical_snapshot_sha256": "74C671713BF1F0A48A90D2269A7A5F0D8BB0229B110B32738E8EF104C9BA208A",
+      "inverse_binding": "same observed physical edge at binding step",
+      "no_edge_conflicts": true,
+      "source": "past factual observations and executed moves only",
+      "splits": {
+        "test": {
+          "build_seconds": 0.006594961,
+          "edge_conflict_count": 0,
+          "edge_conflicts_first_20": [],
+          "game_count": 8,
+          "leakage_violation_count": 0,
+          "leakage_violations_first_20": [],
+          "mask_mismatch_count": 0,
+          "mask_mismatches_first_20": [],
+          "maximum_edge_count": 8,
+          "maximum_logical_graph_bytes": 189,
+          "maximum_node_count": 5,
+          "room_extraction_failure_count": 0,
+          "room_failures_first_20": [],
+          "snapshot_count": 40
+        },
+        "train": {
+          "build_seconds": 0.014655852,
+          "edge_conflict_count": 0,
+          "edge_conflicts_first_20": [],
+          "game_count": 32,
+          "leakage_violation_count": 0,
+          "leakage_violations_first_20": [],
+          "mask_mismatch_count": 0,
+          "mask_mismatches_first_20": [],
+          "maximum_edge_count": 8,
+          "maximum_logical_graph_bytes": 189,
+          "maximum_node_count": 5,
+          "room_extraction_failure_count": 0,
+          "room_failures_first_20": [],
+          "snapshot_count": 160
+        },
+        "valid": {
+          "build_seconds": 0.006926005,
+          "edge_conflict_count": 0,
+          "edge_conflicts_first_20": [],
+          "game_count": 8,
+          "leakage_violation_count": 0,
+          "leakage_violations_first_20": [],
+          "mask_mismatch_count": 0,
+          "mask_mismatches_first_20": [],
+          "maximum_edge_count": 8,
+          "maximum_logical_graph_bytes": 189,
+          "maximum_node_count": 5,
+          "room_extraction_failure_count": 0,
+          "room_failures_first_20": [],
+          "snapshot_count": 40
+        }
+      }
+    },
+    "objective_plan_audit": {
+      "all_plans_equal_walkthrough_for_audit": true,
+      "compiler": "word-boundary compass directions in text order plus take coin",
+      "game_count": 48,
+      "records": [
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260801,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260802,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260803,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260804,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260805,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260806,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260807,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260808,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260809,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260810,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260811,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260812,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260813,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260814,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260815,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260816,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260817,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260818,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260819,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260820,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260821,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260822,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260823,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260824,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260825,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260826,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260827,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260828,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go south",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260829,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go south",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260830,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260831,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260832,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go east",
+            "go east",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261201,
+          "split": "valid",
+          "walkthrough": [
+            "go south",
+            "go east",
+            "go east",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261202,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20261203,
+          "split": "valid",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261204,
+          "split": "valid",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261205,
+          "split": "valid",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261206,
+          "split": "valid",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261207,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261208,
+          "split": "valid",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261209,
+          "split": "test",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20261210,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go east",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261211,
+          "split": "test",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go east",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261212,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261213,
+          "split": "test",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261214,
+          "split": "test",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261215,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20261216,
+          "split": "test",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go east",
+            "take coin"
+          ]
+        }
+      ],
+      "source": "public objective text only"
+    },
+    "persistent_room_tree_repair": {
+      "changed_pair_count": 48,
+      "changed_pair_ids": [
+        "20261209:0:inventory:look",
+        "20261209:1:inventory:look",
+        "20261209:2:inventory:look",
+        "20261209:3:inventory:look",
+        "20261209:4:examine coin:look",
+        "20261209:4:inventory:look",
+        "20261210:0:inventory:look",
+        "20261210:1:inventory:look",
+        "20261210:2:inventory:look",
+        "20261210:3:inventory:look",
+        "20261210:4:examine coin:look",
+        "20261210:4:inventory:look",
+        "20261211:0:inventory:look",
+        "20261211:1:inventory:look",
+        "20261211:2:inventory:look",
+        "20261211:3:inventory:look",
+        "20261211:4:examine coin:look",
+        "20261211:4:inventory:look",
+        "20261212:0:inventory:look",
+        "20261212:1:inventory:look",
+        "20261212:2:inventory:look",
+        "20261212:3:inventory:look",
+        "20261212:4:examine coin:look",
+        "20261212:4:inventory:look",
+        "20261213:0:inventory:look",
+        "20261213:1:inventory:look",
+        "20261213:2:inventory:look",
+        "20261213:3:inventory:look",
+        "20261213:4:examine coin:look",
+        "20261213:4:inventory:look",
+        "20261214:0:inventory:look",
+        "20261214:1:inventory:look",
+        "20261214:2:inventory:look",
+        "20261214:3:inventory:look",
+        "20261214:4:examine coin:look",
+        "20261214:4:inventory:look",
+        "20261215:0:inventory:look",
+        "20261215:1:inventory:look",
+        "20261215:2:inventory:look",
+        "20261215:3:inventory:look",
+        "20261215:4:examine coin:look",
+        "20261215:4:inventory:look",
+        "20261216:0:inventory:look",
+        "20261216:1:inventory:look",
+        "20261216:2:inventory:look",
+        "20261216:3:inventory:look",
+        "20261216:4:examine coin:look",
+        "20261216:4:inventory:look"
+      ],
+      "repaired_tree_sha256": "1A8C6C1C61BDCCF06D66F75A547C4FA55BAEBC8A8A4B9F5E5391AB1F352BB373",
+      "rule": "if first delta has no room text, preserve physical current room; a following look is room_same, not room_previous",
+      "source_tree_sha256": "EAF5F15797C1E0BB4C28E1FDA55828C11801B1D15D7FCBF7409E78C2A1416217"
+    }
+  },
+  "decision": {
+    "graph_plus_base_training_wall_seconds": 0.163704962,
+    "mechanism_gate": "PASS",
+    "next_route": "sg21r_sixth_fresh_matched_ann_confirmation",
+    "no_leak_graph_gate": "PASS",
+    "overall": "PASS",
+    "response_comparisons": [
+      {
+        "ann_model": "lstm",
+        "ann_p50_ms": 0.3962425,
+        "ann_p95_ms": 0.5171319999999999,
+        "passed": true,
+        "seed": 0,
+        "snn_p50_ms": 0.3174675,
+        "snn_p95_ms": 0.4473325
+      },
+      {
+        "ann_model": "transformer",
+        "ann_p50_ms": 0.6414624999999999,
+        "ann_p95_ms": 0.7963085,
+        "passed": true,
+        "seed": 0,
+        "snn_p50_ms": 0.3174675,
+        "snn_p95_ms": 0.4473325
+      },
+      {
+        "ann_model": "lstm",
+        "ann_p50_ms": 0.4295155,
+        "ann_p95_ms": 0.6898262500000001,
+        "passed": true,
+        "seed": 1,
+        "snn_p50_ms": 0.3174675,
+        "snn_p95_ms": 0.4473325
+      },
+      {
+        "ann_model": "transformer",
+        "ann_p50_ms": 0.6642405,
+        "ann_p95_ms": 1.08424825,
+        "passed": true,
+        "seed": 1,
+        "snn_p50_ms": 0.3174675,
+        "snn_p95_ms": 0.4473325
+      },
+      {
+        "ann_model": "lstm",
+        "ann_p50_ms": 0.402749,
+        "ann_p95_ms": 0.6365732500000001,
+        "passed": true,
+        "seed": 2,
+        "snn_p50_ms": 0.3174675,
+        "snn_p95_ms": 0.4473325
+      },
+      {
+        "ann_model": "transformer",
+        "ann_p50_ms": 0.6581589999999999,
+        "ann_p95_ms": 1.09935375,
+        "passed": true,
+        "seed": 2,
+        "snn_p50_ms": 0.3174675,
+        "snn_p95_ms": 0.4473325
+      }
+    ],
+    "response_speed_gate": "PASS",
+    "storage_gate": "PASS",
+    "training_speed_gate": "PASS",
+    "world_state_gate": "PASS"
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "541941085e56942e2f90848b4adaf25a54ca876e",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M experiments/e3_sg19_plan_edge_spikes.py",
+      "?? experiments/e3_sg20_strict_return_blocks.py",
+      "?? experiments/e3_sg21_episodic_edge_graph.py",
+      "?? results/e3_scan/e3_sg20_strict_return_blocks.json",
+      "?? results/e3_scan/smoke_e3_sg20_strict_return_blocks.json",
+      "?? results/e3_scan/smoke_e3_sg21_episodic_edge_graph.json",
+      "?? results/e3_scan/smoke_e3_sg21_invalid_imagined_exit_projection.json",
+      "?? tests/test_e3_sg20_strict_return_blocks.py",
+      "?? tests/test_e3_sg21_episodic_edge_graph.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "experiment": "E3-SG21 episodic edge spikes and causal output projection",
+  "formal": true,
+  "generated_at_utc": "2026-07-19T06:44:49.527365+00:00",
+  "graph_split_metrics": {
+    "test": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 160,
+        "macro_channel_accuracy": 1.0,
+        "missing_prediction_count": 0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.99140625,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.975,
+            "negative_recall": 0.9902912621359223,
+            "positive_recall": 0.9473684210526315
+          },
+          "go north": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.967741935483871,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 0.9875,
+            "negative_recall": 0.9893617021276596,
+            "positive_recall": 0.9848484848484849
+          },
+          "go west": {
+            "accuracy": 0.9875,
+            "negative_recall": 0.9901960784313726,
+            "positive_recall": 0.9827586206896551
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.9625,
+        "example_count": 160
+      },
+      "projection_kind_counts": {
+        "imagined_edge_residual": 32,
+        "known_edge_projection": 32,
+        "stationary_hold": 88,
+        "terminal": 8
+      }
+    },
+    "train": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 640,
+        "macro_channel_accuracy": 1.0,
+        "missing_prediction_count": 0
+      },
+      "next_affordance": {
+        "bit_accuracy": 1.0,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go north": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go west": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 1.0,
+        "example_count": 640
+      },
+      "projection_kind_counts": {
+        "imagined_edge_residual": 128,
+        "known_edge_projection": 128,
+        "stationary_hold": 352,
+        "terminal": 32
+      }
+    },
+    "valid": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 160,
+        "macro_channel_accuracy": 1.0,
+        "missing_prediction_count": 0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.9921875,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.9875,
+            "negative_recall": 1.0,
+            "positive_recall": 0.9629629629629629
+          },
+          "go north": {
+            "accuracy": 0.96875,
+            "negative_recall": 0.9444444444444444,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 0.99375,
+            "negative_recall": 1.0,
+            "positive_recall": 0.9857142857142858
+          },
+          "go west": {
+            "accuracy": 0.9875,
+            "negative_recall": 0.9905660377358491,
+            "positive_recall": 0.9814814814814815
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.96875,
+        "example_count": 160
+      },
+      "projection_kind_counts": {
+        "imagined_edge_residual": 32,
+        "known_edge_projection": 32,
+        "stationary_hold": 88,
+        "terminal": 8
+      }
+    }
+  },
+  "references": {
+    "exhaustive_cache": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg18_exhaustive_affordance_cache.json",
+      "sha256": "2E6F7462C2620163CC1F89C3F52D7EE6851C2EAE4C52BADBA5DB08287561A9AB"
+    },
+    "sg17_rollout_tree": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg17_two_step_rollout.json",
+      "sha256": "E46E5F24C3D57A40A3405D8BCFBF737A5223C151371FC235BC527DC2096CC7EF"
+    },
+    "sg18_affordance_negative": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg18_affordance_weighted_krr.json",
+      "sha256": "86D069D6AEAC497ABBCAD64CD6E327DB8A4CB7A85C081EB3A68DC92A1CF08FE3"
+    },
+    "sg19_plan_edge_negative": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg19_plan_edge_spikes.json",
+      "sha256": "EA2C855CDC9ECA0D41B8345B3CF3918F4BD2BADCCCA0B35F17DFE1F104505C22"
+    }
+  },
+  "research_hypothesis": {
+    "epistemic_status": "mechanism repair on observed fifth games",
+    "statement": "One-shot sparse bindings should replay experienced topology while the SG19 kernel predicts only unknown residual dynamics.",
+    "what_if": "What if remembering experienced facts is a local spike write, not a gradient-learning problem?"
+  },
+  "schema_version": 1,
+  "storage": {
+    "base_model_logical_bytes": 40756,
+    "combined_logical_bytes": 40945,
+    "maximum_episode_graph_logical_bytes": 189
+  },
+  "two_step_rollout": {
+    "first_all_admissible": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 1.0,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 1.0,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 1.0,
+      "example_count": 160,
+      "macro_channel_accuracy": 1.0,
+      "missing_prediction_count": 0
+    },
+    "first_next_affordance": {
+      "bit_accuracy": 0.99140625,
+      "by_action": {
+        "examine coin": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "go east": {
+          "accuracy": 0.975,
+          "negative_recall": 0.9902912621359223,
+          "positive_recall": 0.9473684210526315
+        },
+        "go north": {
+          "accuracy": 0.98125,
+          "negative_recall": 0.967741935483871,
+          "positive_recall": 1.0
+        },
+        "go south": {
+          "accuracy": 0.9875,
+          "negative_recall": 0.9893617021276596,
+          "positive_recall": 0.9848484848484849
+        },
+        "go west": {
+          "accuracy": 0.9875,
+          "negative_recall": 0.9901960784313726,
+          "positive_recall": 0.9827586206896551
+        },
+        "inventory": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "look": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "take coin": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        }
+      },
+      "exact_mask_accuracy": 0.9625,
+      "example_count": 160
+    },
+    "first_projection_kind_counts": {
+      "imagined_edge_residual": 32,
+      "known_edge_projection": 32,
+      "stationary_hold": 88,
+      "terminal": 8
+    },
+    "first_routing_accuracy": 1.0,
+    "premature_stop_first_branch_count": 0,
+    "second_projection_kind_counts": {
+      "imagined_edge_residual": 88,
+      "known_edge_projection": 160,
+      "stationary_hold": 336,
+      "terminal": 32
+    },
+    "self_error_records_first_100": [],
+    "self_minus_teacher_exact": 0.0,
+    "self_pair_timing": {
+      "max_ms": 3.638359,
+      "mean_ms": 0.3498960308441558,
+      "min_ms": 0.257378,
+      "p50_ms": 0.317888,
+      "p95_ms": 0.448013,
+      "p99_ms": 0.7005397000000004,
+      "sample_count": 616
+    },
+    "self_rollout_second": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 1.0,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 1.0,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 1.0,
+      "example_count": 616,
+      "macro_channel_accuracy": 1.0,
+      "missing_prediction_count": 0
+    },
+    "teacher_forced_second": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 1.0,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 1.0,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 1.0,
+      "example_count": 616,
+      "macro_channel_accuracy": 1.0,
+      "missing_prediction_count": 0
+    },
+    "teacher_pair_timing": {
+      "max_ms": 3.461073,
+      "mean_ms": 0.3478446477272727,
+      "min_ms": 0.256968,
+      "p50_ms": 0.3174675,
+      "p95_ms": 0.4473325,
+      "p99_ms": 0.55892385,
+      "sample_count": 616
+    }
+  }
+}

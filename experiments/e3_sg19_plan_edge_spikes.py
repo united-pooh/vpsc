@@ -269,9 +269,13 @@ def fit_weighted_extended(
     unique: Mapping[str, Any],
     *,
     device: torch.device,
+    kernel_fn=plan_edge_kernel,
+    kernel_name: str = (
+        "affordance_phase_suffix_times_return_edge_and_objective_plan_tape"
+    ),
 ) -> Tuple[torch.Tensor, Dict[str, Any]]:
     kernel_started = time.perf_counter_ns()
-    kernel = plan_edge_kernel(unique, unique)
+    kernel = kernel_fn(unique, unique)
     _sync(device)
     kernel_seconds = (time.perf_counter_ns() - kernel_started) / 1e9
     sqrt_counts = unique["counts"].sqrt()
@@ -288,7 +292,7 @@ def fit_weighted_extended(
     solve_seconds = (time.perf_counter_ns() - solve_started) / 1e9
 
     audit_started = time.perf_counter_ns()
-    expanded_kernel = plan_edge_kernel(train, train)
+    expanded_kernel = kernel_fn(train, train)
     expanded_factor = torch.linalg.cholesky(
         expanded_kernel
         + FROZEN_LAMBDA
@@ -299,7 +303,7 @@ def fit_weighted_extended(
     expanded_alpha = torch.cholesky_solve(
         train["target_code"], expanded_factor
     )
-    unique_train_kernel = plan_edge_kernel(train, unique)
+    unique_train_kernel = kernel_fn(train, unique)
     unique_scores = unique_train_kernel @ coefficients
     expanded_scores = expanded_kernel @ expanded_alpha
     difference = float((unique_scores - expanded_scores).abs().max().item())
@@ -317,9 +321,7 @@ def fit_weighted_extended(
     )
     audit_seconds = (time.perf_counter_ns() - audit_started) / 1e9
     return coefficients, {
-        "kernel": (
-            "affordance_phase_suffix_times_return_edge_and_objective_plan_tape"
-        ),
+        "kernel": kernel_name,
         "ridge_lambda": FROZEN_LAMBDA,
         "mask_decision_threshold": sg18.MASK_DECISION_THRESHOLD,
         "expanded_example_count": train["keys"].shape[0],
@@ -347,8 +349,10 @@ def evaluate_split(
     unique: Mapping[str, Any],
     coefficients: torch.Tensor,
     action_order: Sequence[str],
+    *,
+    kernel_fn=plan_edge_kernel,
 ) -> Dict[str, Any]:
-    scores = plan_edge_kernel(split, unique) @ coefficients
+    scores = kernel_fn(split, unique) @ coefficients
     return {
         "delta": sg10._ridge_multichannel_metrics(
             scores[:, : sg10.TOTAL_LOGITS],
@@ -374,6 +378,7 @@ def _runtime_score(
     unique: Mapping[str, Any],
     coefficients: torch.Tensor,
     device: torch.device,
+    kernel_fn=plan_edge_kernel,
 ) -> Tuple[torch.Tensor, Tuple[int, ...], float]:
     phase_value = len(context_actions)
     plan_current, plan_next = _plan_slots(plan, phase_value)
@@ -421,7 +426,7 @@ def _runtime_score(
     }
     _sync(device)
     started = time.perf_counter_ns()
-    scores = plan_edge_kernel(query, unique, dtype=torch.float32) @ coefficients
+    scores = kernel_fn(query, unique, dtype=torch.float32) @ coefficients
     scores.sum().item()
     _sync(device)
     predicted_mask = tuple(
@@ -446,6 +451,7 @@ def evaluate_two_step(
     coefficients: torch.Tensor,
     action_order: Sequence[str],
     device: torch.device,
+    kernel_fn=plan_edge_kernel,
 ) -> Dict[str, Any]:
     lookup = {
         (
@@ -490,6 +496,8 @@ def evaluate_two_step(
     routed_count = 0
     premature = 0
     previous_errors = 0
+    previous_return_errors = 0
+    previous_nonreturn_errors = 0
     errors = []
     for first in tree["first_records"]:
         seed = int(first["game_seed"])
@@ -506,6 +514,7 @@ def evaluate_two_step(
             unique=runtime_unique,
             coefficients=runtime_coefficients,
             device=device,
+            kernel_fn=kernel_fn,
         )
         first_summary = sg16.decode_prediction(
             first_scores[:, : sg10.TOTAL_LOGITS]
@@ -540,6 +549,7 @@ def evaluate_two_step(
                 unique=runtime_unique,
                 coefficients=runtime_coefficients,
                 device=device,
+                kernel_fn=kernel_fn,
             )
             teacher_prediction = sg17._prediction_indices(
                 sg16.decode_prediction(
@@ -563,6 +573,7 @@ def evaluate_two_step(
                     unique=runtime_unique,
                     coefficients=runtime_coefficients,
                     device=device,
+                    kernel_fn=kernel_fn,
                 )
                 self_prediction = sg17._prediction_indices(
                     sg16.decode_prediction(
@@ -575,6 +586,10 @@ def evaluate_two_step(
             if self_prediction != target:
                 if target[0] == sg10.ROOM_LABELS.index("<room_previous>"):
                     previous_errors += 1
+                    if return_edge_spike(next_last_move, str(second["action"])):
+                        previous_return_errors += 1
+                    else:
+                        previous_nonreturn_errors += 1
                 if len(errors) < 100:
                     errors.append(
                         {
@@ -614,6 +629,8 @@ def evaluate_two_step(
         "first_routing_accuracy": routing_correct / routed_count,
         "premature_stop_first_branch_count": premature,
         "previous_room_self_error_count": previous_errors,
+        "previous_room_return_edge_error_count": previous_return_errors,
+        "previous_room_nonreturn_error_count": previous_nonreturn_errors,
         "teacher_pair_timing": sg16._timing_summary(teacher_timings),
         "self_pair_timing": sg16._timing_summary(self_timings),
         "self_error_records_first_100": tuple(errors),
