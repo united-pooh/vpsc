@@ -428,8 +428,18 @@ def evaluate_split_with_graph(
     action_order: Sequence[str],
     plans: Optional[Mapping[int, Sequence[str]]] = None,
     enforce_plan_path_constraint: bool = False,
+    score_matrix: Optional[torch.Tensor] = None,
 ) -> Dict[str, Any]:
-    scores = sg19.plan_edge_kernel(split, unique) @ coefficients
+    scores = (
+        sg19.plan_edge_kernel(split, unique) @ coefficients
+        if score_matrix is None
+        else score_matrix
+    )
+    expected_shape = (len(records), coefficients.shape[1])
+    if scores.shape != expected_shape:
+        raise ValueError(
+            f"graph score matrix shape {tuple(scores.shape)} != {expected_shape}"
+        )
     predictions = []
     masks = []
     projection_kinds: Dict[str, int] = {}

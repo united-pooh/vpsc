@@ -4,6 +4,769 @@
 
 ---
 
+## 2026-07-20：E3-SG27B 预注册 — 常decay全融合Triton门控轨迹
+
+### 从组合式bridge到完整训练原语
+
+- SG27A已证明双向仿射scan本身正确且快，但组合路线仍在PyTorch中物化event writes、`[B,T,2S]` coefficient/bias，并单独做query gather；该结果不能直接代表最终训练原语。SG27B保持pure-SNN hard-spike、E/I trace、fast-sigmoid surrogate与稀疏query语义不变，把event threshold、常decay prefix、query输出、反向direct-gradient scatter和反序adjoint都移入Triton；不引入ANN状态单元，也不删梯度项。
+- 前向每个`(batch,polarity,state)`程序计算`z_t=d*z_(t-1)+(1-d)w_t`的associative prefix；反向对`lambda_t=g_t+d*lambda_(t+1)`做反序scan，并由`lambda_t(z_(t-1)-w_t)`累加decay梯度。为覆盖SG26A唯一fallback桶，时间上限冻结为`T<=256`，正式速度加入`T160/Q71`，不得继续用serial fallback掩盖长序列。
+- 实现后、正式计时前的harness smoke只作可运行性证据：portable、generic Triton与full-fused共44 tests PASS；`T={1,3,31,96,128,160}`的raw/final、hard spike、drives/decays/initial梯度及padding覆盖通过。smoke artifact=`results/e3_scan/smoke_e3_sg27b_rocm_triton_fused.json`；其短重复速度只用于发现runner错误，不作为canonical结论。
+
+### 冻结判官
+
+1. **等价性**：formal另以`B3/S31`审计非二次方`T31/Q11`和长桶`T160/Q71`；四路线用相同输入与相同输出probe。full-fused相对serial surrogate须hard spike disagreement=`0`，raw/final/drives/decays/initial最大绝对差统一`<=2e-4`。由于hard step使用STE，不伪称hard函数有限差分导数。
+2. **速度**：同一RX 7800 XT、同一ROCm 7.2环境，`B16/S31`四桶`(64,27)/(96,55)/(128,71)/(160,71)`；每路线同seed重建等值输入，warmup5+30 repeats，每次计时前后device synchronize。training包含完整forward+loss+backward，inference包含完整forward；full-fused的p50须在每个桶、两个phase都不慢于serial、PyTorch tensor-tree和Triton composed，才判speed PASS。
+3. **显存**：每路线清grad/cache后记录baseline与peak；full-fused incremental peak allocated在四桶均须不高于Triton composed，才判memory PASS。不能只报reserved或隐藏trace/direct buffer。
+4. **边界**：SG27B overall只等于`equivalence && speed && memory`，仍是完整门控trace原语而非整模型胜ANN。通过后必须接入SG26C，在真实raw-language self-roll-in任务上同机重跑SNN/LSTM/Transformer端到端训练、生成质量和wall；primitive加速不得替代模型级结论。`SharedSignalPool`退出warning继续原样记录。
+
+---
+
+## 2026-07-20：E3-SG27A bridge结果 — 本机ROCm/Triton双向仿射扫描正确且显著加速（阶段PASS）
+
+### 环境恢复与真实GPU门
+
+- 用户明确确认后，先冻结旧AMD/ROCm包清单：73包、核心ROCm=`6.3.2`、清单SHA-256=`33d568f59ab0efd6b60cb2ee1e346cf4160f1572a980e4c3c5e6cd95d5cb755a`。按AMD官方“不支持原地升级”的边界执行`amdgpu-uninstall -y`，首次无`-y`调用只展示115包/35.4 GB删除清单并自动Abort，未修改；确认范围后正式卸载，再安装仓库包`amdgpu-install_7.2.70200-1_all.deb`，下载SHA-256=`9b9127cfbcffd20c6e1a8a080c3bb2977db22b7bbf82d7c406056c2a507cb17e`，用`--usecase=wsl,rocm --no-dkms`安装ROCm `7.2.0`。
+- 升级后`rocm_agent_enumerator=gfx1101`；`rocminfo`明确列出`AMD Radeon RX 7800 XT`、GPU、60 CU。保留Windows Adrenalin `26.5.2`，未回退驱动。隔离环境=`/home/atri/.venvs/vpsc-rocm72`，PyTorch=`2.9.1+rocm7.2.0.git7e1940d4`、HIP=`7.2.26015-fc0010cf6a`、Triton=`3.5.1+rocm7.2.0.gita272dfa8`、NumPy=`1.26.4`；FP32/FP16 2048方阵matmul与真实backward均finite，`torch.cuda.is_available=True`、显存=`16,963,137,536 bytes`。
+- AMD wheel内未发现需删除的`libhsa-runtime64.so*`副本，故官方WSL替换步骤为no-op，系统`/opt/rocm-7.2.0/lib/libhsa-runtime64.so.1.18.70200`保留。每个PyTorch GPU进程退出时均提示`SharedSignalPool, 2 Signals leaked`；运算/测试未失败，但作为ROCm WSL runtime风险保留，不把warning隐去。
+
+### 数学实现与正确性证据
+
+- 新增`portable_gated_trace.py`：把`z_t=a_t z_(t-1)+b_t`写成Hillis-Steele inclusive affine scan，非二次方长度不padding丢token；hard binary forward与fast-sigmoid surrogate backward保持E3语义。CPU覆盖`T={1,2,3,31,64,96,128}`的值、全部输入梯度、query padding与`ceil(log2 T)`轮数，23 tests PASS；SG26C本机逻辑另4 tests PASS。
+- 新增`triton_affine_scan.py`：Triton forward用`(a_r,b_r)o(a_l,b_l)=(a_r a_l,a_r b_l+b_r)`；backward把时间反序后用同一scan计算`lambda_t=g_t+a_(t+1)lambda_(t+1)`，再得`dL/db_t=lambda_t`、`dL/da_t=lambda_t z_(t-1)`与initial梯度。首次JIT因`typing.Tuple`注解被Triton前端拒绝，移除JIT Python注解后；第二次因block adjoint写scalar pointer被拒，改为单lane masked block pointer后通过。两次均是编译期失败，无错误数值产物。
+- ROCm GPU测试涵盖通用affine forward/backward、`gfx1101`身份及组合式完整门控trace，最终36 tests PASS。formal equivalence在`B3/T31/S31/Q11`上：Triton raw/final max gap=`1.19e-7/5.96e-8`，drive/decay/initial最大梯度gap=`4.92e-7/7.63e-6/8.34e-7`，hard spike disagreement=`0`，PASS。
+
+### 正式同机速度与显存
+
+- canonical artifact=`results/e3_scan/e3_sg27a_rocm_triton_bridge.json`，SHA-256=`9F8AEF0FA602C7A7616E4D501497AD09B29FC9D5CF75B4208406C1722A6B2794`。B16/S31、SG26A三主桶、warmup5+30 repeats；每样本计时包含完整门控event、query gather，训练含backward并在区间两端device synchronize。三路线严格复用相同seed/input，serial与tensor-tree走已验证后的unchecked热路径，禁止把`.item()` query审计同步混入其wall。
+
+| bucket | serial train/infer p50 ms | tensor-tree train/infer | Triton composed train/infer | Triton vs serial train/infer | Triton incremental peak |
+|---|---:|---:|---:|---:|---:|
+| T64/Q27 | `4.881 / 1.646` | `1.871 / .511` | `1.083 / .357` | `4.51x / 4.62x` | `2,465,280 B` |
+| T96/Q55 | `7.355 / 1.430` | `2.032 / .599` | `1.257 / .362` | `5.85x / 3.95x` | `4,327,936 B` |
+| T128/Q71 | `8.907 / 1.698` | `2.105 / .604` | `1.292 / .359` | `6.89x / 4.73x` | `5,664,256 B` |
+
+- Triton在三桶的train/inference p50均同时快于serial与纯PyTorch tree，speed PASS；其incremental allocated peak与serial分别为`.998/.998/.998x`，而tensor-tree为serial的`2.23/2.23/2.25x`。说明单kernel associative scan不仅减少依赖深度，也消除了张量树每层concat中间量；加速并非少算梯度或少存输出。
+
+**决定：SG27A bridge overall PASS。** 这是本机AMD上第一个“完整hard-spike/surrogate训练语义 + O(log T)双向scan + 正式速度/显存”证据，保留Triton为primary。边界：当前是门控trace primitive而非整模型更新，尚未与同机LSTM/Transformer比较；event threshold、coefficient materialization与query gather仍是PyTorch算子，未做全融合；`SharedSignalPool` warning未解决。下一步实现常decay专用全融合Triton gated kernel并做bridge/fused判官，然后接入SG26C三架构同机训练，不能用本轮primitive速度替代ANN任务速度门。
+
+---
+
+## 2026-07-19：E3-SG27A 预注册 — 本机ROCm/Triton可移植双向仿射扫描（环境门待确认）
+
+### 从远端CUDA转为本机AMD的事实边界
+
+- AutoDL实例因欠费已释放，后续正式训练、吞吐与SNN/LSTM/Transformer对比全部转到本机；既有V100 artifact、runner SHA与负结果原样保留，只作历史复现证据。**不得把RX 7800 XT的新wall与V100旧wall直接相除并声称架构加速**，新速度结论必须来自同一台本机GPU、同一软件栈、同一数据和schedule。
+- 本机Windows可见RX 7800 XT与Adrenalin `26.5.2`；WSL2为Ubuntu `24.04.3`、kernel `6.6.87.2`、`/dev/dxg`存在，但已装ROCm=`6.3.2`的`rocminfo`只列CPU agent。项目主`.venv-wsl`为PyTorch `2.13.0+cpu`、`torch.version.hip=None`、device count=`0`。因此当前状态明确判为**ROCm GPU unavailable**，不能直接运行SG26C。
+- AMD官方ROCm 7.2 WSL矩阵列出RX 7800 XT，production组合为PyTorch `2.9.1`、ROCm `7.2`、Triton `3.5.1`；官方同时注明Radeon Linux stack不支持原地升级，推荐先卸载再安装。当前Windows驱动`26.5.2`高于但不等于矩阵冻结的`26.1.1 for WSL2`，只能通过实机门验证，不能先假定兼容。
+
+### creative-ai候选发散与选择
+
+| 路线 | 保留价值 | 主要失败风险 | 本轮决定 |
+|---|---|---|---|
+| CPU serial/reference | 无系统改动、可作最可信公式判官 | 不解决训练慢，不能给GPU实时结论 | 只作oracle/control |
+| DirectML | Windows现成，SG23H已证大Gram有batch算力 | strict FP32、custom backward与长期维护边界已失败 | 不作主训练后端 |
+| 自动HIPify现有`.cu` | 与SG25F语义最接近、移植量较小 | 继续绑定厂商工具链与128-thread实现，NVIDIA/AMD双维护 | 作为Triton失败后的fallback |
+| 手写C++/HIP extension | 控制最完整，可精调wave64与共享内存 | 编译/ABI/autograd/图捕获维护成本最高 | 只在性能判官失败后使用 |
+| pure PyTorch scan + `torch.compile` | 代码最便携，易与reference核对 | Hillis-Steele中间量与编译器波动可能吞掉收益 | 作为可运行保底与oracle中间层 |
+| **Triton associative scan** | 同一DSL覆盖AMD/NVIDIA，公式透明，可写专用前向/反向并进入graph | 需验证AMD scan lowering、Triton custom autograd和HIP graph捕获 | **primary** |
+
+选择Triton不是把SNN改回ANN：只替换SG25F的执行后端，神经动力学、binary spike、E/I trace、surrogate derivative和稀疏query语义不变。核心加速仍来自递推的数学重写：
+
+`z_t = a_t z_(t-1) + b_t`表示为仿射元组`(a_t,b_t)`，结合律为
+`(a_r,b_r) o (a_l,b_l) = (a_r*a_l, a_r*b_l+b_r)`；前向做inclusive parallel prefix，反向伴随`lambda_t=g_t+a*lambda_(t+1)`在反序上用同一结合律。目标是把时间依赖深度从`O(T)`降为`O(log T)`，不是靠减少训练样本、截短序列或隐藏host wall。
+
+### 分阶段实现与冻结硬门
+
+1. **ENV**：系统级ROCm变更前冻结当前package/version清单；只有`rocminfo`出现RX 7800 XT对应`gfx1101` agent、隔离Python3.12环境报告`torch==2.9.1+rocm7.2`与`torch.version.hip`非空、`torch.cuda.is_available=True`，且真实FP32 add/matmul同步完成，才进入实现。若需要回退Windows驱动或重启，暂停并显式确认，不静默执行。
+2. **FORMULA**：先实现不依赖Triton的pure-PyTorch仿射scan oracle；Triton forward须在`T={1,2,3,31,64,96,128}`、多batch/state/query上对serial reference满足trace/final max gap `<=5e-6`、hard spikes/query完全一致。不得只测二次方长度。
+3. **BACKWARD**：drives、decays、initial E/I梯度分别对serial surrogate autograd做有限随机与边界样本审计，max gap `<=2e-5`；smooth affine primitive另做数值gradcheck，hard-forward surrogate因本来就是straight-through estimator，不伪装成hard step的有限差分真导数。任何梯度项缺失即FAIL，不能用forward快替代可训练性。
+4. **PORTABILITY/EVENT**：primary源码不得依赖NVCC或NVIDIA-only API；记录Triton kernel cache key、ROCm/PyTorch/Triton版本、同步边界和kernel/event数。HIP graph捕获单列验证；若不可用，三架构先在同为eager/compile的协议比较，不把一方graph与另一方eager混报。
+5. **SPEED/MEMORY**：在本机同一RX 7800 XT上比较serial SNN、Triton SNN、LSTM、Transformer，输入至少覆盖SG26A四bucket。报告compile/cold、warm resident、端到端、examples/s、target tokens/s、p50/p95及peak allocated/reserved；Triton SNN须快于serial且warm aggregate不慢于两ANN，才恢复“训练加速”结论。
+6. **TASK**：SG27A只判后端；通过后SG26C固定alpha0、`{0,.25,.5,1}`与50+50 snapshot self-roll-in协议在同一本机栈重跑。rate仍只用train/valid选择，test调用保持0；SNN/LSTM/Transformer都须重跑，不引用V100 ANN wall代替。
+
+**暂停点：** 官方升级需要卸载ROCm 6.3.2并安装7.2，属于系统级可破坏变更；在获得明确确认前只完成预注册、代码静态准备与CPU oracle，不执行`amdgpu-uninstall`、Windows驱动回退或重启。
+
+---
+
+## 2026-07-19：E3-SG26C 预注册 — 两阶段并行self-roll-in修复teacher-forcing暴露偏差（进行中）
+
+### 从SG26B排除单纯loss归一化
+
+- SG26B的`alpha=0`把长token质量恢复后，SNN valid NLL=`.65964`且相对alpha1略好，但edit仅`.61966`，相对alpha1 `.61740`只增`.00226`；move edit=`.33061`仍低于valid majority `.38184`。三种alpha train/valid NLL都正常而自回归失败，故剩余主假设转为teacher forcing只见gold prefix、推理却递归消费自身错误的exposure bias。
+- 不做逐step Python scheduled sampling，也不在每个optimizer update增加第二次完整forward。选择**两阶段snapshot self-roll-in**：前50 data epochs正常teacher train；仅在中点对320个train examples做一次greedy free-run，冻结预测；后50 epochs仍用相同CUDA Graph训练，但按确定性mask把target-history输入替换成自身rollout token。一次顺序collection的wall单列，后续1150个update保持并行图执行。
+- 缺失rollout位置（模型提前EOS）统一填EOS，使模型显式学习从过早终止状态恢复；prompt、query、target、bucket、loss target均不改。只替换用于预测后续token的历史位置，不替换首个target监督的prompt末位。
+
+### 冻结候选、选择与门
+
+- primary loss固定为SG26B选出的标准token mean `alpha=0`；self-roll-in rate只取`{0,.25,.5,1.0}`，用确定性32-bit位置hash选择，rate0为同runner control。不得在SG22R test上选rate。
+- 每候选总预算仍为100 epochs=`50 teacher + 50 mixed =2300 updates`、默认AdamW、B16四桶。中点rollout只来自该候选自身stage1模型，不共享SNN预测给ANN；记录selected/replaced/mismatched/EOS-injected token比例和rollout SHA。
+- SNN四rate只用valid NLL/edit/room/sensitivity选择：所有loss finite、valid NLL不劣rate0 `.10`、sensitivity`>=.5`后，按valid edit、room accuracy、较小rate择优；须超过train-majority-on-valid edit=`.62853`至少`.05`才过selection/task门。
+- 选定rate后LSTM/Transformer用相同rate、stage split、总updates和alpha0对照。resident update吞吐仍要求SNN aggregate examples/s、target tokens/s、p50不慢于ANN；另报告含中点rollout collection的端到端训练wall，不能把顺序采样成本隐藏。
+- runner对SG22R test model teacher/generation调用必须为0。若通过，SG26D生成fresh corpus确认；若仍失败，exposure bias单因不足，转显式room/transition factorized world-state objective或扩大状态容量，不再继续扫rate。
+
+---
+
+## 2026-07-19：E3-SG26B 结果 — token-mean被valid选中但收益极小，长序列欠加权不是主因（负面）
+
+- canonical artifact=`results/e3_scan/e3_sg26b_length_mass_objective.json`，SHA-256=`76AD23327FDDD50E6D60F583EE6ADB1B4BB3BF3AB7FD88AB6F3DEC321DDBE35F`，runner SHA-256=`CE538A7325512427EDC511865F8704DC25B44124BE3004B83822F09208B20906`。首次smoke的alpha0公式参考因V100 FP32 reduction结合次序差`2.3842e-7`而被`1e-7`误拒，保留`invalid_smoke_e3_sg26b_fp32_formula_tolerance.json`，SHA-256=`EB81C37851DCB14241AE2D2DD8DB44782DEFF4F01B0E592DE84EF301E17171B9`；仅将公式审计容差改为两ULP级`5e-7`后重跑，alpha1相对legacy gap仍精确0。
+- SG22R model test teacher/generation调用均为0；所有选择只用valid。valid majority edit=`.62853`，冻结任务阈值=`.67853`。
+
+| SNN loss alpha | train NLL | valid NLL | valid edit | room acc | move edit | generated length |
+|---:|---:|---:|---:|---:|---:|---:|
+| `1.0` example mean | `.35672` | `.66354` | `.61740` | `0` | `.32857` | `21.09` |
+| `.5` sqrt mass | `.35239` | `.67768` | `.60997` | `.05` | `.31285` | `15.35` |
+| `0` token mean | `.34742` | `.65964` | `.61966` | `.025` | `.33061` | `19.66` |
+
+- valid选择按冻结规则取alpha0，但相对alpha1 edit仅`+.00226`，且仍低于majority`.00887`、低于任务阈值`.05887`，selection/task FAIL。说明per-example normalization确有轻微NLL/长度影响，但不能解释rollout失败。
+- selected alpha0同轮SNN/LSTM/Transformer速度=`22356.85/21415.89/14248.74 examples/s`，target throughput=`545996.30/523016.17/347981.05 token/s`，p50=`.04088/.04092/.06284 ms`，speed PASS。valid NLL=`.65964/.63404/1.12594`，edit=`.61966/.63933/.59601`；SNN跨架构quality仍PASS，但最佳LSTM也未过`.67853`任务门。
+
+**决定：SG26B overall FAIL。** 保留alpha0作为更符合长world-state token质量的目标，但不把`.00226`提升称为机制成功。下一步SG26C按预注册做中点snapshot self-roll-in，直接检验暴露偏差；继续保持test隔离与CUDA Graph更新路径。
+
+---
+
+## 2026-07-19：E3-SG26B 预注册 — 长度质量守恒损失修复长rollout欠训练（进行中）
+
+### SG26A失败归因与候选发散
+
+- SG26A已把工程训练速度问题跨过：SNN train loss从`6.7142`降到`.05157`、test teacher NLL=`.74279`，但greedy edit仅`.66104`。按action拆分后，`inventory`占`40%` examples且5-token目标已`edit=1.0`，`move`同样占`40%`但目标均长`42.78` token、SNN edit仅`.41564`、room accuracy=`.03125`；全局room accuracy=`.025`。当前loss先对每例token取mean再对example取mean，使短inventory中每token权重约为长move的`42.78/5=8.56x`，这与长世界状态rollout的目标不一致。
+- 候选至少六路：①扩大三架构宽度/层数会把容量、速度与目标函数混在一起，顺延；②beam search可能抬edit但增加实时响应延迟且不修训练，淘汰；③增加epoch或SG25G time dilation在train loss已`.05`时只会加剧记忆，淘汰；④paired action contrastive针对sensitivity，但三架构sensitivity都已`1.0`，不对症；⑤并行prefix corruption/scheduled roll-in能治exposure bias，但先引入第二变量，作为本轮失败后的下一路线；⑥**长度质量守恒loss**不改模型/内核/图shape，直接恢复长目标token的训练质量，本轮primary。
+- 定义冻结族
+  `L_alpha = sum_i(sum_t CE_it / n_i^alpha) / sum_i(n_i^(1-alpha))`。
+  `alpha=1`精确等于SG26A per-example mean control，`alpha=0`等于标准valid-token mean，`.5`是平方根质量折中。只跑`alpha={1,.5,0}`，不连续扫参。
+
+### 防止已见test继续泄漏的选择协议
+
+- SG22R test在SG26A已被查看，SG26B runner禁止调用test teacher/generation；三个alpha仅用固定train训练和valid生成选择。valid action-majority由train majority构造，任务阈值仍为其edit+`.05`；候选须所有loss finite、valid NLL不劣alpha1 control `.10`、sensitivity`>=.5`，再按valid edit、room accuracy、较大alpha依次择优。
+- 每候选仍为B16、4 buckets、默认AdamW、100 data epochs=`2300 updates`；SNN T<=128走SG25F parallel、T160走SG25E serial，不截断。graph/eager覆盖四桶至少8 updates，10 epochs速度保留copy/padding/sync。
+- 选定alpha后，LSTM/Transformer在完全相同loss、schedule、optimizer预算下只做train/valid对照；SNN须保持valid NLL相对最佳ANN不劣`.10`、edit不劣`.05`，且valid edit自身超过majority `.05`。该结果只决定机制，不可称独立泛化确认。
+- 若alpha机制通过，下一步必须生成未见seed的SG26C fresh corpus做一次性test确认；若不通过，则转并行prefix corruption/self-roll-in，而不是依据SG22R test微调alpha。速度仍要求SNN aggregate examples/s、target tokens/s与per-example p50不慢于同损失ANN。
+
+---
+
+## 2026-07-19：E3-SG26A 结果 — 扩展真实语言任务上SNN速度与跨架构质量双胜，但所有模型仍未击败任务模板（混合/任务负面）
+
+- canonical artifact=`results/e3_scan/e3_sg26a_expanded_raw_language.json`，SHA-256=`DF6C0664603E876FC52E02C16932F86624A4AD9006CDBED73083B3B96036B98D`，runner SHA-256=`8CDDB3F7B71D4143F41345FC7E77EBCF1834D3AC09181F6D3BEF8958C85B271A`。AutoDL V100上`320/80/80` raw-language、4 buckets、三架构各`2300` updates；data、T160 fallback exact、四图capture、graph/eager equivalence、event、memory全部PASS。
+- SNN=`22530.57 examples/s`、LSTM=`20054.33`、Transformer=`12830.60`；SNN分别领先`12.35%/75.60%`，target throughput=`550238.66/489764.23/313347.41 token/s`，per-example p50=`.04005/.04350/.06742 ms`。SNN相对SG25F canonical加速`1.1191x`，四图allocated/peak仅为三图基线`1.1801x/1.2564x`，host API三者最大均=`9`，speed/event/memory PASS。
+- `317/320`例的SG25F parallel buckets均显著胜LSTM；仅3例T160 serial fallback为`3563.30 examples/s`，与LSTM=`3581.80`近似，但占比`.9375%`未拖垮aggregate。无需为了3例先做256-thread kernel。
+
+| model | test NLL | valid NLL | edit | feature F1 | room acc | sensitivity | train wall |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| SNN parallel | `.74279` | `.67179` | `.66104` | `.59833` | `.025` | `1.0` | `1.739 s` |
+| LSTM | `.69779` | `.67966` | `.63428` | `.60542` | `0` | `1.0` | `1.890 s` |
+| Transformer | `1.03299` | `1.07296` | `.61780` | `.60167` | `.025` | `1.0` | `2.672 s` |
+
+- SNN NLL相对最佳LSTM只差`.045 < .10`，edit反而高`.02676`，跨架构quality PASS；这是真实的阶段性SNN胜利，不再只是吞吐胜Transformer。但action-majority edit=`.65176`，冻结任务阈值=`.70176`；最佳SNN只提高`.00928`，还差`.04072`，task validity FAIL。
+- 失败集中于动态长输出：SNN `inventory edit=1.0`、`examine=.52480`均等于majority，`look=.42303`明显胜majority`.25300`，但占40%的`move=.41564`反而低于majority`.43496`；全局room accuracy也低于majority`.05`。训练loss已从`6.7142`到`.05157`，继续重复optimizer time没有依据。
+
+**决定：SG26A strict overall FAIL，但保留“扩展真实语言上SNN同时快于LSTM/Transformer且跨架构质量不劣”的成功子结论。** 下一步SG26B只用train/valid检验长度质量守恒loss，修复长move/world-state rollout欠训练；已见SG22R test不再用于选路，成功机制必须在fresh corpus确认后才能进入多模态闭环。
+
+---
+
+## 2026-07-19：E3-SG26A 预注册 — SG22R扩展raw-language三架构并行训练（进行中）
+
+### 从无效小任务迁移到独立扩展语料
+
+- 权威数据固定为SG22R seventh-fresh artifact SHA-256=`1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92`及`results/e3_scan/textworld_sg22r_l5`；raw counterfactual builder产生`320/80/80` examples、`160/40/40` action pairs，train/valid/test unique targets=`145/40/40`，test-in-train=`8/40=.20`，unknown ratio远低于`.10`。不得用SG24的`40/10/10` audit常数误判新数据。
+- SG22R action-majority test edit=`.65176386`、sensitivity=`1.0`，比SG24模板更强；任务有效性硬门冻结为最佳神经模型edit至少`.70176386`，SNN自身也须达到该值才称其解决任务。copy-observation edit=`.25717`仅作弱基线。
+- train按看结果前冻结bucket `(T cap,Q cap,count)=(64,27,129)/(96,55,116)/(128,71,72)/(160,71,3)`，B16、不丢样本、dummy/target mask与per-example mean loss沿SG25E。`317/320=99.06%`样本使用SG25F 128-thread parallel affine scan；仅T129–130的3例在T160图显式dispatch到SG25E serial native kernel，不截断、不改target，fallback比例与wall单列。
+- SG25G表明激进optimizer time dilation在40例上恢复edit却恶化valid/test NLL；SG26A primary回到默认`AdamW(lr=1e-3,betas=.9/.999,wd=.01)`，让扩大数据本身检验是否消除过拟合。不得根据SG26A test再挑TD倍率；gradient-coherence optimizer顺延为扩大语料仍出现优化时间冲突时的train-only方案。
+
+### 公平速度、质量与任务门
+
+- **CAPTURE/EQUIVALENCE**：SNN/LSTM/Transformer各4个bucket graph；同初始化前20 batch updates graph-vs-eager所有loss finite、mean gap`<=.01`、last`<=.02`、valid prediction disagreement`<=.01`。SNN T160 fallback另与独立serial direct输出核对。
+- **SPEED**：same V100、B16×10 data epochs、首20%updates排除，copy/replay/sync与所有padding计入。报告aggregate及四bucket wall；SNN mean effective examples/s、target tokens/s、per-example p50均须不慢于同轮LSTM/Transformer，且不得低于SG25F parallel canonical `20133.05 examples/s`的`.75x`（扩大Q/T允许25%预算）。
+- **QUALITY**：seed0×100 data epochs=`2300 updates`，三架构同默认optimizer。所有loss finite、ANN各自test NLL相对初始化下降`.10`；SNN test NLL相对最佳ANN不劣`.10`、edit相对最佳ANN不劣`.05`、paired sensitivity`>=.5`。
+- **TASK VALIDITY**：最佳神经edit和SNN edit都须`>=.70176386`，并分别比action-majority高至少`.05`；仅NLL好或仅sensitivity=1不能替代。另报告action-type、room/feature指标，保持SG24“模板未被击败即任务FAIL”的边界。
+- **MEMORY/EVENT**：显式throwaway四图预热后测resident；SNN host API不得多于ANN，4图allocated/peak均完整报告且不得超过SG25F canonical parallel B16三图的`1.50x`。T160 serial图的额外保存不能隐藏。
+
+strict overall要求data/provenance、capture/equivalence、speed、quality、task validity、event/memory全部PASS。若SNN与ANN都未胜模板，任务/模型容量不足；若ANN胜而SNN不胜，研究SNN表示；若SNN质量达标但速度因T160 fallback失败，再实现256-thread dispatch，而不是先为3个样本改全局kernel。
+
+---
+
+## 2026-07-19：E3-SG25G 结果 — time dilation恢复动作生成但导致NLL过拟合，常梯度压缩假设不足（混合/负面）
+
+- canonical artifact=`results/e3_scan/e3_sg25g_time_dilated_adam.json`，SHA-256=`79749885E5A11A0D1588C0AD169306A11C87F2E7085BCD15F637950E83C21E1E`。首个smoke把“进程首图private-pool初始化”混入primary memory，保留为`invalid_smoke_e3_sg25g_first_graph_pool_order.json`，SHA-256=`B4FD261958E805B318803BB201DE2FFF1A7D88007C23524B902999A71F904350`；显式throwaway预热后smoke SHA-256=`F6204B4012A7B80D48FFB45A938B5B552AD4475F92791B20C0E762A4B89077B7`，memory恢复为allocated=`1.0004x`、peak=`.9757x`。
+- formula audit PASS：常梯度`n=16,wd=0`的sequential/compressed参数绝对差=`1.11e-15`；`wd=.01`闭式残差=`1.20e-6`、relative=`9.73e-7`。primary `n_eff=40/3`常数严格为`lr=.0133333,beta1=.2454144,beta2=.9867486,wd=.00999938`；三架构graph equivalence、event、memory均PASS。
+- primary同轮速度继续由SNN领先：parallel SNN=`22660.49 examples/s`、LSTM=`19883.50`、Transformer=`13530.74`；SNN相对SG25F canonical=`1.1255x`，per-example p50=`.041848/.048282/.072480 ms`，speed gate PASS。
+
+| route | updates | test NLL | valid NLL | edit | sensitivity | wall |
+|---|---:|---:|---:|---:|---:|---:|
+| default batch（SG25F） | `300` | `2.09467` | `2.26` | `.47661` | `.4` | `.2192 s` |
+| time-dilated primary | `300` | `3.24174` | `3.53279` | `.63914` | `1.0` | `.2297 s` |
+| lr-only | `300` | `3.35114` | `3.66388` | `.63770` | `1.0` | `.2153 s` |
+| default step-matched | `4002` | `3.53179` | `3.68515` | `.61632` | `1.0` | `2.9179 s` |
+
+- TD确实恢复生成结构：edit超过SG25C下限`.60134`且sensitivity=1；相对TD LSTM edit=`.66136`只差`.02222`。但SNN test NLL=`3.24174 > 2.79575`，相对TD LSTM=`2.97807`差`.26367 > .10`，basic/cross quality FAIL。Transformer TD test NLL=`4.47954`也显示激进优化时间对小数据普遍过拟合。
+- lr-only与4002-step都复现“edit/sensitivity恢复、valid/test NLL恶化”，说明问题不只是moment beta；重复更多optimizer time会把40例train NLL压到`.05/.015`级，却损伤泛化。常梯度compressed step可在标量成立，但真实batch中不同example梯度与参数路径不可用一个mean gradient精确替代。
+
+**决定：SG25G strict overall FAIL。** 不在已看test的40例上扫中间`n_eff`；保留SG25F parallel backend与SG25G公式/负证据，下一步直接进入SG26A的SG22R `320/80/80` raw-language任务。若扩大数据仍需时间压缩，再用train-only per-example gradient coherence校准，而不是手调test Pareto。
+
+---
+
+## 2026-07-19：E3-SG25G 预注册 — time-dilated AdamW恢复batch训练的优化时间（进行中）
+
+### 由SG25F质量失败定位出的数学问题
+
+- SG25F B16×100 data epochs只有`3 updates/epoch ×100=300`个optimizer steps，而SG25C单样本基线是`40×100=4000`步；parallel/serial SNN的test NLL=`2.09467/2.09865`、edit都=`.47661`、sensitivity都=`.4`，100-step参数最大差仅`1.19e-7`。因此质量下降来自optimizer time缩短`4000/300=40/3`倍，不是parallel scan误差。
+- 候选发散：①训练`1334 epochs`凑约4000个batch steps会把每个样本重复13.34倍，只作step-matched控制；②只线性放大LR忽略Adam moment时间常数；③LARS/LAMB会引入新的optimizer族；④保存每样本梯度并虚拟执行13次Adam需要per-example VJP且梯度仍在旧参数处；⑤**把一个batch step视为`n_eff=40/3`个连续优化时间单位，同时缩放LR、moment decay和decoupled weight decay**，不增加forward/backward次数。本轮以⑤为primary，②和①为机制控制。
+- primary超参数在看结果前由公式唯一确定：`lr'=n_eff*1e-3=.0133333333`，`beta1'=.9^n_eff=.2454144474`，`beta2'=.999^n_eff=.9867485791`，`wd'=[1-(1-.001*.01)^n_eff]/lr'=.00999938336`，使batch级bias-correction时间为原始step的`n_eff`倍，且单个compressed step的decoupled decay精确等于`n_eff`个小步的乘积。
+
+### 冻结比较与硬门
+
+- **FORMULA AUDIT**：对常梯度标量、整数`n=16`，`wd=0`时compressed AdamW一步须与16个原始AdamW步的参数结果在`1e-7`内；`wd=.01`时报告仅由“中间梯度更新也被后续decay”产生的闭式残差，relative error须`<=2e-4`。fractional `40/3`常数与公式全部写入artifact。
+- **PRIMARY**：time-dilated AdamW应用于parallel SNN、LSTM、Transformer，三者同B16 bucket graphs、同100 data epochs、同per-example mean loss与clip=1；不允许只给SNN更激进optimizer。速度、NLL、edit、sensitivity和训练wall同轮比较。
+- **CONTROLS**：parallel SNN另跑`lr-only`（只令`lr'=n_eff*lr`，原betas/wd不变）和`step-matched`（原AdamW、B16×1334 epochs≈4002 steps）。controls不能替代primary gate，也不根据test挑winner；它们只判断失败来自moment时间、LR还是样本重复。
+- **SPEED/EQUIVALENCE**：三个primary mode各3图capture，前20 batch graph-vs-eager loss/prediction沿SG25F门；parallel SNN effective examples/s、target tokens/s和per-example p50仍须不慢于同optimizer LSTM/Transformer，并至少达到SG25F parallel canonical `20133.05 examples/s`的`.90x`，避免优化器数学恢复质量却摧毁吞吐。
+- **QUALITY**：primary SNN须重新通过SG25C seed0门（test NLL `<=2.79575`、edit `>=.60134`、sensitivity`>=.5`），相对primary最佳ANN的NLL不劣`.10`、edit不劣`.05`；ANN各自test NLL相对初始化下降`.10`。另要求所有loss finite，不能用低NLL掩盖生成动作失敏。
+- **MEMORY/EVENT**：primary SNN的graph host API不得多于SG25F parallel的`9`，常驻allocated/peak相对SG25F canonical parallel分别不超过`1.10x`；optimizer state仍为同尺寸AdamW，不应借额外per-example gradient buffer过门。
+- SG25G smoke显示“进程首个CUDA Graph”会承担一次性private-pool初始化，而SG25F canonical parallel是在serial图销毁后捕获；formal前冻结显式同形状throwaway parallel graph预热，随后销毁、`gc`与`empty_cache`，预热capture/memory单列。primary三架构都从该allocator稳态起跑；不得把throwaway wall计入resident速度，也不得隐藏其一次性成本。
+
+strict overall要求formula、三架构graph equivalence、吞吐、event/memory与primary quality全部PASS。若time-dilated质量恢复且ANN仍更优，转SNN表示/任务结构；若lr-only成功而moment dilation失败，保留更简单缩放；若只有step-matched成功，说明常梯度压缩假设不足，下一轮研究per-example gradient quadrature/virtual Adam而非继续抬LR。
+
+---
+
+## 2026-07-19：E3-SG25F 结果 — 时间维并行scan使SNN同轮胜LSTM且稳定，但B16优化步不足导致生成质量FAIL（混合）
+
+- canonical artifact=`results/e3_scan/e3_sg25f_parallel_affine_graph.json`，SHA-256=`E30FC0E557399A96F0BEEBCF956FB3EFFCA2A36CE97F008745DA1FAD40AD22BC`；parallel extension source SHA-256=`51E3C5333EDF6EA5604AAFECF2CD327A758CF7051F352D9DB7F28DB8855A0C81`，全新build目录cold compile/load=`89.444 s`。
+- 9个`B=1/4/16 × T=64/96/128`kernel cases全部PASS：raw最大差=`2.3842e-7`、drive grad=`8.5831e-6`、decay grad=`1.1635e-4`（在相对容差内），padding非零与spike disagreement均为0。四mode captured graph相对eager前20步mean/last loss gap与valid prediction disagreement均为0。
+- 100 batch updates的parallel-vs-serial short stability几乎逐位：mean loss gap=`6.4373e-8`、last20=`1.7881e-8`、max=`7.1526e-7`、prediction disagreement=0、final parameter max diff=`1.1921e-7`，stability gate PASS。与SG25C早期native serial的Adam分歧相比，本次block scan的误差没有累积成轨迹漂移。
+
+| mode | effective examples/s | per-example p50 | p95 | 100-epoch train wall |
+|---|---:|---:|---:|---:|
+| SNN serial | `18890.44` | `.049684 ms` | `.070581 ms` | `.2610 s` |
+| SNN parallel | `20133.05` | `.046614 ms` | `.060129 ms` | `.2192 s` |
+| LSTM | `18498.16` | `.052179 ms` | `.068225 ms` | `.2410 s` |
+| Transformer | `12251.66` | `.079572 ms` | `.100827 ms` | `.3423 s` |
+
+- parallel相对同轮serial SNN加速`1.06578x`，过冻结`1.05x`；mean throughput、target tokens/s和p50均胜同轮LSTM/Transformer，fair speed gate PASS。需保留跨run边界：parallel=`20133.05`仍低于SG25E canonical LSTM=`20942.16`约`3.87%`，故“稳健跨运行超过LSTM”尚未证明，只能称本冻结同轮胜出。
+- graph host API四路均为`9`；parallel child CUDA events=`104`、serial=`102`，host event gate PASS但child event略增。以SG25E canonical serial图池作固定memory分母，parallel allocated ratio=`.99959x`、peak ratio=`1.02490x`，memory PASS；同进程顺序敏感ratio未用于gate。
+
+| mode | test NLL | edit | sensitivity | quality |
+|---|---:|---:|---:|---|
+| SNN serial | `2.09865` | `.47661` | `.4` | FAIL |
+| SNN parallel | `2.09467` | `.47661` | `.4` | FAIL |
+| LSTM | `1.90369` | `.63820` | `1.0` | PASS |
+| Transformer | `2.64868` | `.44858` | `0` | ANN basic NLL PASS |
+
+- parallel与serial的生成指标完全相同、NLL仅差`.00398`，排除parallel数学重排为主要质量原因。SNN NLL本身优于SG25C旧值，但edit比冻结下限`.60134`低`.12473`、sensitivity低于`.5`；相对最佳ANN LSTM的NLL差`.19098`、edit差`.16159`，basic与cross-architecture quality均FAIL。B16每100 data epochs只有300次optimizer step，是原4000步的`1/13.33`。
+
+**决定：SG25F strict overall FAIL，但parallel affine scan作为当前最快且轨迹稳定的SNN训练backend保留。** 下一步SG25G不再改scan，而研究time-dilated AdamW，把batch带来的样本并行转化为等效optimizer时间；同时保留step-matched与LR-only控制。当前小任务仍未过SG24 task有效性门，任何局部速度胜利都不是最终世界模型结论。
+
+---
+
+## 2026-07-19：E3-SG25F 预注册 — block-parallel affine trace + reverse adjoint（进行中）
+
+### 为什么从serial persistent转向时间维数学并行
+
+- SG25E在`B=8`的SNN mean throughput=`12586.38 examples/s`已略高于LSTM=`12458.07`，在`B=16`的per-example p50也以`.045194 ms`略快于LSTM`.045420 ms`；最终只因mean/p95为`.04943/.06591 ms`级而输给LSTM约`3.4%`。这说明host launch与batch occupancy已基本解决，剩余差距集中在长bucket的serial time loop尾部。
+- 候选发散：①只增加batch会被当前每bucket仅12–14例限制；②跳过padding的length-aware serial只能省部分无效步且仍为`O(T)`深度；③融合LM head/loss是通用系统优化；④改变decay basis会改模型表达；⑤**在一个CUDA block内把每个time step写成仿射元组并作并行prefix/reverse-prefix**，保持方程与梯度语义且直接把依赖深度降为`O(log T)`。本轮选择⑤，length mask与packed segments留作其后扩展。
+- 不修改SG25C/SG25E canonical源文件；新建SG25F extension。每个`(batch,state)`对应一个128-thread block，thread对应time position；对E/I的`(a,b)`按`(a_r,b_r)∘(a_l,b_l)=(a_r a_l,a_r b_l+b_r)`做shared-memory inclusive scan。forward由prefix得到每时刻trace；backward把时间反向后对`adjoint_t=direct_t+d*adjoint_(t+1)`用同一monoid扫描，再block-reduce decay gradient。
+
+### 冻结正确性、速度与任务门
+
+- **KERNEL/GRADIENT**：相对SG25E serial batched reference，`B=1/4/16 × T=64/96/128`覆盖逐样本query与padding；raw/final forward `atol=2e-6,rtol=2e-5`，drive/decay/initial gradients `atol=3e-5,rtol=3e-4`，spike disagreement=0、padding raw=0、全finite。若shared scan重排越门，不以速度保留candidate。
+- **SHORT STABILITY**：同B16 bucket schedule、同初始化、同AdamW连续100 batch updates，parallel相对serial所有loss finite，mean loss gap `<=.02`、last-20 mean gap `<=.02`、valid token disagreement `<=.02`；parameter差只报告不作门，沿用SG25C对Adam近零梯度敏感性的结论。
+- **GRAPH EQUIVALENCE**：四个mode各自同初始化前20 batch updates，captured graph相对其eager路径所有loss finite、mean gap `<=.01`、last gap `<=.02`、valid token disagreement `<=.01`；parallel kernel在eager正确不代表graph capture自动正确。
+- **FAIR SPEED**：same V100、B16、三个相同bucket graph、10 data epochs、首20%排除；同轮比较serial SNN、parallel SNN、LSTM、Transformer，copy+replay+sync与padding全部计入。parallel SNN须比serial SNN mean effective examples/s至少快`1.05x`，且mean throughput、有效target tokens/s、per-example p50同时不慢于LSTM/Transformer；同时列出相对SG25E canonical LSTM=`20942.16 examples/s`。
+- **EVENT/MEMORY**：parallel完整update的host API不得多于serial graph，CUDA child-kernel events单列；3图常驻额外allocated与运行peak均不得超过serial `1.25x`，cold compile/capture/cold replay/break-even完整报告。
+- memory分母在formal前锁为SG25E canonical B16 serial capture：allocated=`18,768,384 B`、peak additional allocated=`24,057,856 B`。原因是CUDA Graph allocator会让同进程后捕获mode复用已释放private-pool块，直接用“本轮先serial后parallel”的live delta会混入顺序效应；同轮ratio仍报告为诊断，但不作gate。
+- **QUALITY**：只有kernel、stability与fair speed PASS才对parallel SNN、LSTM、Transformer用相同B16×100 data epochs训练；SNN沿SG25C seed0门并相对最佳ANN NLL不劣`.10`、edit不劣`.05`、sensitivity`>=.5`。serial SNN另跑同B16 quality control以区分batch优化失败和parallel数学重排失败；test不得用于选择scan实现。
+
+strict overall要求kernel、short stability、`>=1.05x` serial加速、胜最优ANN、event/memory及quality全部PASS。若kernel正确但速度不足，下一步才做projection/readout/loss fusion；若短轨迹FAIL但最终质量PASS，仍按strict FAIL并扩大seed；若parallel越过LSTM且质量保持，再带入扩展真实语料SG22R，而不在当前无效小任务上继续堆优化。
+
+---
+
+## 2026-07-19：E3-SG25E 结果 — batched SNN吞吐提高8.95x并在局部门反超LSTM，但最优mean仍低3.4%（混合/近临界负面）
+
+- canonical artifact=`results/e3_scan/e3_sg25e_bucketed_batch_graph.json`，SHA-256=`87B531B8355E0294D7BDD069886908C2E37B39698BB9DEE101BB988B0C202F73`；独立SG25E extension source SHA-256=`57E8A350DAEA65780C3E9B4BF793BE959F8CDE6EA0675A434A197CE618751D3F`，全新build目录cold compile/load=`92.048 s`。SG25C/SG25D canonical SHA均在runner中锁定，历史kernel源码未改写。
+- 原生`B×Q` query kernel的12个冻结case全部PASS：raw与drive gradient最大差=`0`，共享decay gradient最大差=`3.8147e-6`，padding raw非零数与spike disagreement均为0；三架构、五个batch size各3个bucket graph全部capture。selected B16前20 updates的graph-vs-eager mean/last loss gap和token disagreement三架构均为0。
+
+| batch | SNN effective examples/s | LSTM | Transformer | SNN/LSTM |
+|---:|---:|---:|---:|---:|
+| 1 | `2219.46` | `2254.02` | `1653.62` | `.9847x` |
+| 2 | `4471.24` | `4580.33` | `3411.90` | `.9762x` |
+| 4 | `7880.14` | `7968.78` | `5797.10` | `.9889x` |
+| 8 | `12586.38` | `12458.07` | `8539.99` | `1.0103x` |
+| 16 | `20230.17` | `20942.16` | `14373.74` | `.9660x` |
+
+- 三架构各自最佳均为B16。SNN相对SG25D exact-graph `2260.08 examples/s`加速`8.9511x`，远超冻结`1.5x`；并持续显著胜Transformer。B16 per-example p50 SNN=`.045194 ms`已小幅优于LSTM=`.045420 ms`，same-batch p50 gate PASS；但p95 SNN=`.065911 ms`慢于LSTM=`.063723 ms`，最终mean throughput低`3.40%`，optimized ANN gate与strict speed gate FAIL。B8的mean局部胜利不能替代“各自最优batch”比较。
+- selected B16 graph相对eager host API：SNN=`94 -> 9`（减少`90.43%`）、LSTM=`83 -> 9`（`89.16%`）、Transformer=`137 -> 9`（`93.43%`），launch gate PASS。SNN三图额外allocated=`17.899 MiB`、含模型total=`18.005 MiB`；同batch eager峰值增量=`4.501 MiB`，ratio=`3.9762x < 4x`，memory gate勉强PASS。图数从SG25D的35降至3，但B16保存的reverse-adjoint张量使SNN仍接近门限。
+- 预注册要求速度先PASS才跑质量；本轮quality未运行，artifact的quality FAIL仅表示前置条件未满足。当前小TextWorld任务仍受SG24模板基线有效性失败约束，不能因训练吞吐接近LSTM就称世界模型目标成立。
+
+**决定：SG25E strict overall FAIL，但batch occupancy与逐样本query extension作为工程基底保留。** 证据已把下一步从“泛化的batch优化”收敛到长bucket的时间依赖深度：SG25F实现block-parallel affine prefix/reverse-prefix，在完全相同B16图协议下争取至少5% serial加速并跨过LSTM；只有通过质量门后才进入扩展语料。
+
+---
+
+## 2026-07-19：E3-SG25E 预注册 — bucketed batched native query + CUDA Graph训练吞吐（进行中）
+
+### 从SG25D负面结果发散出的实现路线
+
+| 路线 | 优点 | 本轮决定 |
+|---|---|---|
+| 每batch取query位置并集 | 不改kernel | 淘汰：会让短target样本物化其他样本的无效query，且对已生成full sequence的ANN惩罚更小 |
+| 所有bucket都dense query | 图shape最简单 | 淘汰：把SG25C已经验证的sparse target监督退化为全位置readout，不能代表目标训练负载 |
+| gradient accumulation | 保持单样本kernel | 作为控制而非主线：它减少optimizer step但不并行time dynamics，不能回答GPU occupancy能否改变SNN/LSTM次序 |
+| segmented packed scan + reset flag | 理论上消除padding | 顺延SG25F：需要新的segment边界伴随与reset梯度证明，不能与本轮batch occupancy混在一次选择里 |
+| 独立`B×Q`逐样本query native extension | 每行只物化自己的target query，同时并行`B*S`线程 | **primary**：新建SG25E源文件，不改SG25C canonical kernel，保持历史source hash可重构 |
+
+### 冻结数据、batch和目标函数
+
+- 仅根据train输入长度在看速度前冻结三个bucket：`(T cap,Q cap,train count)=(64,6,14)/(96,41,14)/(128,65,12)`；example放入能容纳它的最小T cap。真实输入右侧padding、真实query按行升序放在前部，剩余query槽为`-1`且target mask关闭；dummy batch rows全部mask。所有padding计算和四路static buffer copy计入wall，不丢最后不足batch的样本。
+- batch sweep=`1/2/4/8/16`；每个batch size每种架构只保留3个bucket graph，不能把35个exact graphs的内存混入candidate。每epoch在bucket内用冻结seed shuffle，40个真实example都恰好出现一次；SNN/LSTM/Transformer使用完全相同batch成员、padded input、逐样本query与mask。
+- loss先对每个真实example的有效target token求mean，再对batch真实example求mean，避免长target因padding实现改变训练权重；dummy row权重为0。optimizer继续`AdamW(lr=1e-3,weight_decay=.01,fused=True,capturable=True)`与gradient clip=`1.0`，不做linear-LR scaling，不用质量结果反调batch size。
+- SNN新kernel按每个`(batch,state)`线程执行与SG25C相同的精确`O(T)`递推，只把本行valid query写出；ANN从full causal sequence按`B×Q` gather。padding发生在所有真实query之后，因此不影响这些因果位置的logit；仍把padding dynamics算进训练wall。
+
+### 等价、速度、显存与质量硬门
+
+- **KERNEL**：`B=1/2/4/8`、三个bucket及边界query覆盖；valid raw/final相对逐样本SG25C reference满足forward `atol=2e-6,rtol=2e-5`，drive/decay/initial gradients `atol=3e-5,rtol=3e-4`，padding raw精确为0、spike disagreement=0。source/load/compile wall与SG25C reference SHA同时入artifact。
+- **GRAPH EQUIVALENCE**：每个架构、每个batch size均成功capture 3个bucket；选定batch同初始化同前20个batch updates，graph相对eager所有loss finite、mean gap `<=.01`、last gap `<=.02`、valid token argmax disagreement `<=.01`。capture执行的更新必须原位恢复model与optimizer state。
+- **SPEED SWEEP**：same V100，每个batch size跑10个data epochs，首20% batch updates排除；报告step wall、按真实example归一wall、有效examples/s、input tokens/s、target tokens/s及padding利用率。每架构只按自身mean effective examples/s选最佳batch；质量/test不得参与选择。
+- **TRAINING SPEED**：SNN最佳effective examples/s须至少为SG25D exact-graph SNN `2260.08 examples/s`的`1.5x`，并同时不低于LSTM和Transformer各自最佳值；在SNN所选同一batch size上，SNN p50/real-example也不得慢于两种ANN。只胜同batch但输给ANN自选最佳batch，或只胜Transformer，都FAIL。
+- **LAUNCH/MEMORY**：按有效real example报告host launch+copy API；selected三架构graph相对同batch eager的host API均须减少`>=50%`，且graph API/real-example不得高于SG25D单样本基线`9`。selected SNN的3图常驻额外allocated不得超过同batch eager模型+optimizer运行峰值`4x`，并报告含模型total、peak reserved、capture/cold/break-even。batch带来的峰值不能用“每样本摊薄”隐藏。
+- **QUALITY**：只有kernel、graph equivalence与training speed全PASS才对三架构用各自速度选择的batch做seed0×100 data epochs真实语言训练。SNN须保持SG25C seed0门（test NLL不劣`.10`、edit不劣`.05`、sensitivity`>=.5`），且相对本轮最佳ANN的NLL不劣`.10`、edit不劣`.05`；ANN各自test NLL相对初始化至少下降`.10`。同时报告总训练wall，不能只比较吞吐不比较到达质量的成本。
+
+strict overall要求kernel、全部capture、selected graph equivalence、`1.5x`相对SG25D、SNN-vs各自最优ANN、同batch p50、launch/memory与quality全部PASS。若SNN随batch增长更快但仍输最优LSTM，保留occupancy scaling证据并转SG25F segmented packed persistent kernel；若batch已反超但质量失败，下一轮研究optimizer-step等价/学习率数学，而不以test调batch。
+
+---
+
+## 2026-07-19：E3-SG25D 结果 — CUDA Graph消除host launch后SNN快5.91x，但graphed LSTM仍快约10%（负面/工程子门成功）
+
+- canonical artifact=`results/e3_scan/e3_sg25d_cuda_graph_training.json`，SHA-256=`FCE3B99DF2996E2EF884108D0E93EE94BB416440A862DA5F2C936C81CD1BC595`；same AutoDL V100、FP32、40个真实TextWorld train examples、35个exact `(input length, query tuple)`图，三架构均使用`AdamW(fused=True,capturable=True)`，计时包含input/target D2D copy、graph replay与CUDA synchronize。
+- SNN/LSTM/Transformer的35图capture均成功；同初始化同schedule前20 updates相对eager的mean/last loss gap均为`0`、token argmax disagreement均为`0`、所有loss finite，capture/equivalence gates PASS。SNN capture=`3.2146 s`，cold first replay=`.5079 ms`，按mean wall节省量break-even约`1434.8 updates`。
+- CUDA Graph对三个架构都是显著的通用系统优化：SNN eager/graph p50=`2.5695/.4350 ms`，加速`5.9066x`；LSTM=`2.7983/.3992 ms`；Transformer=`4.6724/.6541 ms`。SNN host launch+copy API=`76 -> 9`（减少`88.16%`），LSTM=`58 -> 9`（`84.48%`），Transformer=`117 -> 9`（`92.31%`），launch gate PASS。
+
+| model | graph mean | graph p50 | graph p95 | mean examples/s |
+|---|---:|---:|---:|---:|
+| SNN RA0 + SG25C | `.4425 ms` | `.4350 ms` | `.5362 ms` | `2260.08` |
+| LSTM | `.4023 ms` | `.3992 ms` | `.4547 ms` | `2485.72` |
+| Transformer | `.6482 ms` | `.6541 ms` | `.7252 ms` | `1542.68` |
+
+- 消除Python/host launch后，SNN确实击败Transformer，但仍比同协议graphed LSTM的p50慢`.0359 ms`（约`8.99%`），mean throughput低`9.08%`；因此graphed ANN gate FAIL。不能拿SNN graph对eager LSTM的胜利替代这个公平对照，也不能把CUDA Graph的通用收益称为SNN架构收益。
+- 35个SNN图的常驻额外allocated=`33.583 MiB`，相对SNN eager模型+optimizer运行峰值增量`17.736 MiB`为`1.8935x < 4x`，含模型后的总增量=`33.697 MiB`，memory gate PASS。对应LSTM/Transformer图额外allocated约`17.328/17.357 MiB`；SNN native custom autograd保存量使图池成本约为ANN两倍，后续bucket数量必须受控。
+- 预注册要求只有公平速度与等价同时通过才跑seed0×100质量；本轮公平速度失败，故quality未运行，而不是质量已被证明失败。strict overall因graphed ANN gate失败而FAIL；artifact中的`quality_gate=FAIL`表示前置条件未满足，不能解释为训练质量实测失败。
+
+**决定：SG25D overall FAIL，但exact-shape CUDA Graph作为后续共同执行基线保留。** 下一步SG25E按预注册分支使用少量padding buckets与per-example query mask做真实batch训练：SNN、LSTM、Transformer必须使用相同batch、token padding和mask，报告每example及每有效token吞吐；只有SNN同batch击败graphed LSTM才算架构进展。图池数量需从35压到少量bucket，并把padding算力、构图成本和质量变化完整计入。
+
+---
+
+## 2026-07-19：E3-SG25D 预注册 — exact-shape CUDA Graph三架构公平加速（进行中）
+
+### 路线调整依据与冻结边界
+
+- SG25C单update profiler的self CUDA time约`.387 ms`，但正式wall=`3.020 ms`，candidate仍有`108`个CUDA events；瓶颈已从scan算术转到host launch。故原计划的segmented batch顺延为SG25E，本轮先验证不改batch/optimizer语义的CUDA Graph。
+- graph key严格为真实example的`(input length, query tuple)`；SG24 train共40例、35个exact shapes。每个key拥有静态input/target buffer和captured graph，模型参数与AdamW state在所有graph间共享；每次update先将当前example复制到对应静态buffer，再replay。不得按test合并shape或改padding。
+- SNN使用SG25C native core；LSTM、Transformer使用各自原core。三者均使用同一`capturable/fused AdamW`、CE、gradient clip、copy+replay+synchronize计时协议；不能只graph SNN再与eager ANN比较。
+- capture warmup/capture会执行更新，必须在全部graph建立后把初始model、optimizer tensor state原位恢复；若指针替换破坏graph或loss不复现，equivalence FAIL。capture/restore/cold first replay wall与graph memory单列，resident计时不含一次性capture，但计算break-even update数。
+
+### 等价、速度与质量硬门
+
+- **CAPTURE/EQUIVALENCE**：所有35个shape对每种架构均成功capture，无CPU fallback；同初始化、同前20个schedule，graph相对eager的mean loss gap `<=.01`、last loss gap `<=.02`、token argmax disagreement率`<=.01`，所有loss finite。SNN另要求native kernel等价引用SG25C canonical SHA不变。
+- **FAIR SPEED**：same V100，10 epochs=`400 examples`，首20%排除；计时包含static input/target copy、graph replay与CUDA synchronize。SNN graph相对SNN eager至少`1.5x`，且SNN graph p50/mean examples-per-second同时不慢于graph LSTM和graph Transformer；只击败eager LSTM不算PASS。
+- **LAUNCH/MEMORY**：graph replay CUDA event count相对各自eager减少`>=50%`；graph cache+static buffers+private pools后peak reserved/allocated完整报告。若SNN图缓存额外bytes超过eager模型+optimizer运行峰值`4x`，memory gate FAIL。35个shape导致的高固定成本不得隐藏。
+- profiler口径在formal前进一步冻结：CUDA Graph会在profiler中继续展开图内child kernel事件，但这些不是逐kernel的host launch；因此launch gate使用CPU侧`cudaLaunchKernel + cudaGraphLaunch + cudaMemcpyAsync` API数量，graph/eager同时报告该数和CUDA child-kernel event数。若只把child event重命名而host API未减少，launch gate仍FAIL。
+- **QUALITY**：若capture/equivalence与公平速度通过，运行seed0×100 epochs graph训练；SNN沿SG25C门（NLL不劣legacy seed0`.10`、edit不劣`.05`、sensitivity`>=.5`），LSTM/Transformer至少各自test NLL相对初始化下降`.10`。图执行不能只做benchmark而训练失效。
+- strict overall要求capture/equivalence、SNN-vs-eager加速、SNN-vs-graphed-ANN、公平event、memory与quality全部PASS。若graph对三者都有益但LSTM仍更快，结论是通用launch优化而非SNN优势；若35图capture/memory不可接受，SG25E改用少量padding bucket + per-example query mask，并将padding计算计入wall。
+
+---
+
+## 2026-07-19：E3-SG25C 结果 — native fusion使RA0完整update快1.91x且质量保持，但仍慢于LSTM/短轨迹门FAIL（混合结果）
+
+- canonical artifact=`results/e3_scan/e3_sg25c_native_fused_scan_cuda.json`，SHA-256=`9657C17CA695FD3E4B310D2068D93EB231DBE1005B6360BFB84C99FD6A749F2B`；extension source SHA-256=`2B9EEFA443EADF0F524BAE375C02A37904B1D3B846302217C952CCDDF5533C1`。V100 `sm_70`首次cold NVCC compile/load=`91.56 s`，缓存后load=`.125 s`；编译wall未计入resident训练速度。
+- 首个smoke把tied `embedding.weight`的CUDA atomic scatter非确定性误归因于candidate：candidate-vs-legacy max grad diff=`.00684365`，但legacy-vs-legacy控制同样=`.00684365`，而core/event-projection梯度为`1e-7..1e-6`。该smoke保留为`invalid_smoke_e3_sg25c_embedding_atomic_control.json`，SHA-256=`07AE2E7ED7FE63C3ADCCC92848F9CDC7641984C0DE6827F721613C7F3A7EB648`；审计改为不得严于同设备legacy原子非确定性控制。
+- 首次formal又错误地要求short-stability通过才运行seed0 quality，违反预注册“speed通过即跑质量”的分流；保留`invalid_e3_sg25c_quality_skip_condition.json`，SHA-256=`910EFA4CE2967448246AD1025FC41C630E8CD4E5DE1F0DE1DDAF9890E5325D59`。修复只恢复质量运行条件，strict overall仍受stability FAIL约束，随后完整重跑canonical。
+
+### kernel等价、事件数与完整训练速度
+
+- `T=48/80/134/512`的raw/final、drive/decay/initial gradients全部过冻结门，spike disagreement=`0`；各case最大检查误差为`1.14e-5/5.72e-6/5.72e-6/5.72e-6`，均在gradient `3e-5/3e-4`内。真实example loss逐位相同、token prediction相同；除embedding atomic控制外所有参数grad直接过门。
+- 单个真实update profiler：legacy CUDA events=`242`、native=`108`，减少`55.37%`；CPU operator events=`1367 -> 713`。additional peak=`1,458,176 -> 1,441,792 B`，ratio=`.9888x`，event/memory gates PASS。
+- 同轮400-update稳态：legacy p50=`5.7553 ms`，native=`3.0199 ms`，speedup=`1.9058x`，超过`1.5x`冻结门；但相对SG24 LSTM `2.4326 ms`仍为`1.2415x`，ANN speed target FAIL。独立100-epoch quality run的native update p50=`3.2991 ms`，同样未追平LSTM。
+
+### 浮点轨迹分歧与最终任务质量必须分开
+
+- 100-step同schedule：mean loss gap=`.01463`过`.02`，但last-20 mean=`.05307`、最大=`.22772`，token disagreement=`71/2501=.02839`，均越过冻结`.02`门；final parameter max diff=`.09135`。因此short-stability gate FAIL，strict overall FAIL。
+- 然而独立seed0×100 epochs最终任务保持：test teacher NLL=`2.69575`，相对legacy seed0 `2.63643`只差`.05932 < .10`；greedy edit=`.65134`，相对`.65939`只差`.00805 < .05`；paired action sensitivity=`1.0`。seed0 quality gate PASS。这说明Adam早期路径不同没有在本seed摧毁最终任务，但单seed不能覆盖冻结stability失败，也不能替代三seed扩大任务。
+- native生成token p50=`.8787 ms`仍未改善SG24的cached one-step路径；本kernel专攻sparse-query训练，不应把训练fusion误称为实时响应已解决。
+
+**决定：SG25C strict overall FAIL；native fused kernel作为“kernel/quality/speed子门PASS、尚未胜过LSTM”的工程候选保留。** 它是目前raw-language路线最大的训练加速增量，但距离ANN替代仍差约24%单样本update，并且100-step稳定性需在更多seed/更大语料审计。下一步SG25D采用per-example query的segmented/padded batch：SNN、LSTM、Transformer使用相同batch与mask，比较每example/token训练吞吐；若native SNN只靠batch击败单样本LSTM而同batch LSTM仍更快，不算PASS。实时one-step另开fused cached-cell路线，不能用batch吞吐代替响应延迟。
+
+---
+
+## 2026-07-19：E3-SG25C 预注册 — native O(T) fused gated-trace + adjoint CUDA kernel（进行中）
+
+### 冻结数学与kernel边界
+
+- forward不再用`O(T log T)` Hillis-Steele树。每个`(batch,state-channel)` CUDA线程按时间执行精确递推`trace=d*previous+(1-d)*write`，在寄存器保留状态，只把query raw、final state及backward所需的`previous/write`写回；计算量为`O(B*S*T)`。
+- backward由同一线程reverse-time执行`adjoint_t=direct_t+d*adjoint_(t+1)`，直接产生四路drive gradient、decay gradient和initial-state gradient。event projection与LM readout仍由PyTorch/cuBLAS承担；本轮不把它们偷算成kernel内收益。
+- native extension只接受CUDA contiguous FP32、sorted shared query indices；任何dtype/device/shape不支持均fail-closed，不允许CPU fallback。编译wall、resident wall、source hash、NVCC/PyTorch/CUDA版本全部写入artifact；一次性编译wall不计resident speed，但单列报告。
+- SG25A的闭式cumsum不进入candidate；其negative artifact继续权威。SG25C比较对象为SG24/SG25A默认legacy RA0，同初始化、同数据、同loss、同AdamW。
+
+### 为什么不再要求Adam参数逐位同轨迹
+
+SG25A已实证：第一步loss可完全相同、完整gradient在冻结容差内，但接近零的embedding gradient换符号会被Adam归一化成约`1e-3`参数差。这说明“20步parameter max diff<=3e-4”不是浮点重排下的任务等价判据。SG25C在看结果前改冻为三层门，且不回写SG25A结论：
+
+1. **KERNEL/GRADIENT**：随机与真实shape的raw/final max abs `<=2e-6`、spike bit disagreement=`0`；drive/decay/initial gradient `atol=3e-5,rtol=3e-4`，normalized error另列。
+2. **SHORT OPTIMIZATION STABILITY**：同schedule 100 updates，所有loss finite；candidate/legacy loss曲线mean absolute gap `<=.02`、最后20步mean gap `<=.02`，token argmax disagreement率`<=.02`。记录参数差但不再用作gate。
+3. **INDEPENDENT TASK QUALITY**：只有speed gate先PASS才训练冻结SG24 seed0×100 epochs；candidate test teacher NLL相对legacy seed0=`2.63643`不劣`.10`，greedy edit相对`.65939`不劣`.05`，paired sensitivity保持`>=.5`。若seed0通过，再在扩大语料SG25B做三seed，不用SG24 test反调kernel。
+
+### 速度、事件数和内存硬门
+
+- same V100，真实SG24 40 train examples，10 epochs=`400 updates`，排除前20% warmup；每次计时前后CUDA synchronize。candidate完整`forward+CE+backward+clip+fused AdamW` p50须相对同轮legacy快`>=1.5x`，且`<=2.4326 ms`才同时过ANN speed target。
+- profiler使用同一个冻结example；candidate CUDA event count相对legacy至少减少`30%`。只减少Python operator而CUDA event不降，不能宣称fusion成立。
+- additional peak allocated相对legacy`<=1.25x`；保存`previous/write`的`O(TS)`是允许的，但不可漏报extension outputs或编译cache。
+- strict overall要求kernel/gradient、short stability、`>=1.5x`完整update、event reduction、memory全部PASS；ANN speed target与seed0 quality单列。若correct但不足`1.5x`，转“projection/readout/optimizer fusion或segmented batch”，不继续微调threads；若gradient FAIL，先修kernel，不运行质量；若编译失败，保留完整toolchain错误。
+
+---
+
+## 2026-07-19：E3-SG25A 结果 — 闭式block primitive快2-3x，但严格伴随/Adam轨迹与完整update速度FAIL（负面结果）
+
+- canonical artifact=`results/e3_scan/e3_sg25a_blocked_affine_scan_cuda.json`，SHA-256=`0EEFAEF6021189E15DCA7DE60F1ECB3CADF85519B0BC7C33A840C6568C1B9AC1`；首次formal把“无eligible block”错误地连带写成memory FAIL，原artifact保留为`invalid_e3_sg25a_no_selection_gate_semantics.json`，SHA-256=`B89A72EB2890705279C6E69E34A972EDE965CA5C818AC366DCD77E2D3CFB3A73`。修复只更正gate汇总，随后完整10/50/10-epoch协议重跑canonical。
+- 默认legacy的19项回归/候选新增测试全部PASS；候选完整core在`T=134`的sequence/state/input与全部参数gradient都过预注册`3e-5/3e-4`门，三种block的spike disagreement均为0。实现不是明显公式错误。
+- 但冻结primitive覆盖到`T=512`后，block `32/64/128`的reverse-adjoint最大绝对差分别为`1.264e-5/1.407e-5/1.144e-5`；虽小于`.2e-4`绝对上限且全finite，近零位置未过`atol=2e-6,rtol=2e-5`的allclose，故三者primitive gate均FAIL。forward trace最大差仅`2.98e-7/3.58e-7/4.17e-7`且阈值spike不变，说明失败集中在反向浮点重排。
+- 真实20-step AdamW trajectory中，三种block都出现相同的max loss diff=`9.680e-4`、final parameter max diff=`.019843`，spike disagreement仍为0。诊断显示第一步loss可完全相同，但极小embedding gradient在零附近换符号后被Adam归一化为约`1e-3`整步差，随后逐步累积；这是真实优化器敏感性，不以“数学上近似”等理由删除。
+
+| block | primitive forward+adjoint speedup范围 | real update p50 | vs legacy update | vs SG24 LSTM | extra peak ratio |
+|---:|---:|---:|---:|---:|---:|
+| 32 | `1.26-2.19x` | `5.0529 ms` | `1.077x` | `2.077x` | `1.00x` |
+| 64 | `1.92-2.69x` | `4.9807 ms` | `1.093x` | `2.048x` | `1.00x` |
+| 128 | `2.17-2.95x` | `4.9443 ms` | `1.101x` | `2.033x` | `1.00x` |
+
+- low-level算法确实减少了scan wall：例如`T=128` legacy forward+adjoint=`1.4226 ms`，block128=`.4828 ms`（`2.95x`）。但完整update的embedding/projection/loss/optimizer及剩余custom-autograd launches占主导，legacy=`5.4416 ms`，最快候选也只到`4.9443 ms`，远低于冻结`1.5x`加速门且仍约为LSTM两倍。
+- memory gate按真实数据为PASS：四路additional peak均=`1,457,664 B`。numerical、trajectory、mathematical acceleration、ANN speed target均FAIL；没有eligible block，不能挑最快block128进入主线。
+
+**决定：SG25A overall FAIL。** 稳定分块闭式公式保留为低层primitive研究结果，但不替换RA0权威实现。下一个加速实验转向SG25C native fused scan+adjoint：必须把event projection后的threshold/write、前向递推、query gather及反向adjoint/drive reduction合并，目标不是再省一次`cumsum`，而是消除SG24 profiler中完整update的数百个CUDA event。扩大语料的SG25B仍保留，但先避免用已知慢2x的backend把正式大语料训练wall放大。
+
+---
+
+## 2026-07-19：E3-SG25A 预注册 — 稳定分块闭式scan + reverse-adjoint CUDA加速（进行中）
+
+### 从SG24瓶颈发散出的候选
+
+| 路线 | 类型/机制 | 本轮处理 |
+|---|---|---|
+| stable blocked closed-form prefix | established linear-recurrence algebra：块内几何缩放+cumsum，块间只传播边界 | **primary**，先做严格等价与真实update wall |
+| geometric grouped-convolution / FFT | cross-domain analogy：把常数衰减递推写成因果卷积 | 保留secondary；短序列可能算术浪费大，不与primary混报 |
+| segmented packed associative scan | established parallel-scan方向：reset标志把变长example打包成一条monoid scan | SG25B扩大语料时测试batch吞吐，本轮不改变训练schedule |
+| `torch.compile` / CUDA Graph | established launch-amortization实现路线 | 只有数学candidate成立后独立测试；不能称为数学加速 |
+| Triton/CUDA fused scan+adjoint | established systems方向 | 若纯PyTorch闭式仍被launch主导则进入SG25C；需独立kernel correctness门 |
+| decay basis / rational state tying | speculative hypothesis：共享少量时间尺度以合并通道 | 会改变模型表达力，必须作为新架构，不允许用来通过本轮等价门 |
+
+选择primary的原因不是预看速度，而是它保持当前常数衰减SNN方程。对每个状态通道，`s_t=d s_(t-1)+(1-d)w_t`在长度`L`的块内改写为`p_t[s_0+cumsum((1-d)w_t/p_t)]`，`p_t=d^(t+1)`；反向伴随`a_t=g_t+d a_(t+1)`在reverse-time使用同一个块算子、injection scale=`1`。块长限制指数范围，避免全序列在`d≈.5,T=134+`时`1/p_t`溢出；块间传播精确的末状态，不截断历史。
+
+### 冻结实现、sweep与硬门
+
+- 默认RA0继续使用旧Hillis-Steele；新增显式`scan_math_mode=blocked_cumsum`，不得静默替换历史模型。候选block sizes=`32/64/128`，只按V100上冻结长度=`48/80/128/134/512`的完整forward+reverse与真实SG24 update p50选择；不能按valid/test质量选block。最大`128`在`d=.5`时会越过FP32稳定范围，若出现非有限值或误差越门必须原样FAIL，不能删除该点。
+- **PRIMITIVE FORWARD**：binary writes、initial state、初始decay grid及边界stress decay覆盖；候选trace/final相对legacy max abs `<=2e-5`、allclose `atol=2e-6,rtol=2e-5`，所有值有限。另报告bit-threshold disagreement；任何实际输出spike不同使该case FAIL。
+- **REVERSE/GRADIENT**：相同query impulses/final signal下，blocked adjoint相对legacy满足同一容差；完整`E3GatedTraceScanCore`的sequence/state及input/weight/bias/decay/initial gradients逐项过`atol=3e-5,rtol=3e-4`。不得只测forward。
+- **REAL UPDATE TRAJECTORY**：冻结SG24 train example，legacy/candidate同初始化、同loss；至少连续20个AdamW updates的每步loss差`<=2e-4`、最终参数max diff`<=3e-4`、spike输出无分歧。若微小浮点重排跨过阈值，trajectory门FAIL并保留。
+- **CUDA SPEED**：同V100/FP32/CUDA synchronize，warmup=`10`、repeats=`50`低层；真实update遍历冻结40例并排除首20%。candidate完整update p50至少比legacy RA0快`1.5x`才称数学加速；要解决SG24瓶颈，还另列相对canonical LSTM `2.4326 ms`，只有`<=2.4326 ms`才记`ann_speed_target=PASS`。
+- **MEMORY/LAUNCH**：记录peak allocated与profiler kernel/算子计数；内存不得超过legacy `1.25x`。速度门只看完整forward+loss+backward+optimizer step，不用单个cumsum microkernel替代训练结论。
+
+primary选择规则：先淘汰任何numerical/trajectory FAIL的block size，再从剩余候选按真实update p50最小选择；若全部FAIL，旧RA0保持权威；若等价PASS但`<1.5x`，数学路线记为correct-but-not-useful并转fused native scan。SG25A不重训看test质量，避免把加速器选择污染为test调参；选定backend后才在SG25B的扩大真实语料中重新做SNN/LSTM/Transformer质量比较。
+
+---
+
+## 2026-07-19：E3-SG24 结果 — RA0质量接近/局部优于LSTM，但任务有效性与CUDA实时速度FAIL（混合/负面结果）
+
+- canonical artifact=`results/e3_scan/e3_sg24_cuda_counterfactual_generation.json`，SHA-256=`D940421BD0AC9C07DEE623E93547EC3D17B025064E22EC26FE01A3E53F1C6067`；AutoDL V100/CUDA 12.1/PyTorch 2.3.0，seeds=`0/1/2`、100 epochs、五模型同进程，总wall=`630.55 s`。全局CUDA peak allocated/reserved=`26.63/48.23 MB`，backend/frozen-input/data gates全部PASS。
+- 三个seed的LSTM、Transformer和RA0 test teacher NLL都相对初始化下降远超`.10`，训练没有失效。mean teacher NLL：LSTM=`2.85595`、Transformer=`3.87722`、RA0=`2.86226`、BPTT=`2.77305`、AT1=`2.93153`；RA0只比最佳ANN LSTM高`.00631`，且与BPTT/AT1 gap=`.08921/.06927`，均过冻结质量子门。
+- mean greedy edit：LSTM=`.62051`、Transformer=`.44000`、RA0=`.65557`、BPTT=`.63122`、AT1=`.63831`。RA0比最佳ANN高`.03506`且paired action sensitivity=`1.0`；但强`action_majority`非神经模板基线=`.61158`，RA0只高`.04398 < .05`，最佳ANN只高`.00893 < .05`。因此task gate与quality gate按预注册同时FAIL；不能把“RA0赢了这些小ANN”误写为任务已有效，因为40个train例、21个unique target仍让模板检索过强。
+
+| model | teacher NLL | greedy edit | train update p50 | generated token p50范围 | prefill p50范围 | persistent state/cache max |
+|---|---:|---:|---:|---:|---:|---:|
+| SNN RA0 | `2.86226` | `.65557` | `5.2653 ms` | `.7193-.7320 ms` | `2.3751-2.4559 ms` | `248 B` |
+| SNN BPTT | `2.77305` | `.63122` | `13.0669 ms` | `.7204-.7353 ms` | `2.3833-2.4345 ms` | `248 B` |
+| SNN AT1 | `2.93153` | `.63831` | `26.3953 ms` | `.7236-.7294 ms` | `2.3411-2.4696 ms` | `248 B` |
+| LSTM | `2.85595` | `.62051` | `2.4326 ms` | `.4557-.4639 ms` | `.5845-.5876 ms` | `256 B` |
+| Transformer | `3.87722` | `.44000` | `3.8205 ms` | `1.1956-1.2224 ms` | `1.2552-1.2819 ms` | `25,088-31,488 B` |
+
+- **训练正结果与边界：**reverse-adjoint令RA0相对BPTT快`2.48x`、相对AT1快`5.01x`，同时将长期状态压到248B；这是同V100上的真实raw-language证据，不再是跨CPU/GPUwall。但RA0仍比LSTM慢`2.16x`、比Transformer慢`1.38x`，故speed gate FAIL。
+- **实时负结果：**RA0 cached token约为LSTM的`1.56x`，prefill约`4.1x`；三个seed均未过stream门。Transformer token最慢且KV cache比RA0大约`101-127x`，但这不补偿RA0对LSTM的明确失败。
+- smoke/formal均显示GPU利用率仅约`13-16%`、显存远未饱和；结合实现审计，前向与reverse-adjoint各自对长度50-134执行多轮Hillis-Steele `cat`，小batch被细粒度kernel launch主导。继续增加epoch不能解决该速度差。
+
+**决定：SG24 overall FAIL（raw-language相对质量与SNN内部训练加速成立，任务有效性/ANN速度/stream均失败）。** 下一步不在40例上刷分：先做SG25A“常数衰减递推的稳定分块闭式前缀和 + 反向伴随”CUDA数学加速，要求前向/梯度/训练轨迹对RA0等价且真实长度上显著减少launch/wall；随后SG25B换到SG22R的32/8/8独立games（预计320/80/80 counterfactual examples），重新建立能击败非神经模板的任务门，再做三架构同V100对照。
+
+---
+
+## 2026-07-19：E3-SG24 预注册 — 同一V100上的raw-language world transition三架构对照（进行中）
+
+### 任务与对照冻结
+
+- 任务不是synthetic分类：输入为真实TextWorld的归一化自然语言观察与候选动作，模型逐token自回归生成完整下一观察；train/valid/test按game seed隔离，词表只由train的prompt+target建立。冻结语料仍为`results/e2_world_model/textworld_l5`，三份`episodes.jsonl` SHA-256依次为`5938045CF8E93FB2E1863AEEFBE058E73E4EDE8E62CD887DB89C663D93444FD3`、`1437F6800372658FDF48DB2F27A1CE6C1308953CAFD9A3D85C3E3BDC6FD502D4`、`52D6A96C310A23395AAFB0999AAEB7CBF572C099C8EC88BC3550C96209EA6962`。
+- 完整沿用SG0模型与训练协议：`snn_bptt/snn_at1/snn_ra0/lstm/transformer`五模型、参数量相对spread `<=2%`、seeds=`0/1/2`、epochs=`100`、AdamW `lr=1e-3, weight_decay=.01`、gradient clip=`1`、最大生成80 tokens。SG0 runner SHA-256=`360054A294A8FFB4905EB819545749DD379905AA7CEEC2FB507B16F232266F30`；旧CPU artifact SHA-256=`734A095B984AAC495A06329565B59783116EEC421942640E269AAB60B0EFF05D`只作历史参照，不参与同卡速度PASS。
+- 正式设备冻结为AutoDL `Tesla V100-PCIE-32GB`、PyTorch `2.3.0+cu121`、`device=cuda:0`、FP32；五模型必须使用同一GPU、同一数据、同一训练schedule。每个计时区间已有CUDA synchronize；禁止用异步launch或本地CPU wall充当GPU完成时间。新增整轮wall与CUDA peak allocated/reserved，明确它是“五模型同进程”的全局峰值，不伪装成单模型显存。
+
+### 冻结硬门与解释边界
+
+- **DATA/TASK**：数据audit必须PASS；每个seed的LSTM和Transformer test teacher NLL均至少下降`.10`；两者最佳greedy edit必须高于copy/action-majority非神经基线至少`.05`。若任务门FAIL，说明当前40-train-example语料不足以支持有效生成比较，不能因为SNN相对数值好看就宣称胜出。
+- **QUALITY**：RA0每个seed test NLL至少下降`.10`；mean NLL不劣于最佳ANN `.25`，相对BPTT/AT1 NLL gap各`<=.10`；greedy edit不劣于最佳ANN `.10`、相对BPTT/AT1 gap各`<=.05`、高于非神经基线`.05`，paired action sensitivity `>=.50`。判据与旧SG0完全相同，不针对V100结果调阈值。
+- **TRAIN SPEED**：同V100稳态update p50中，RA0相对AT1和BPTT均至少`1.25x`，且RA0 `<=` LSTM。Transformer只报告，不要求RA0必须同时快于两种ANN才通过沿用门；结果另列五模型排序，防止门定义掩盖Transformer。
+- **REAL-TIME RESPONSE**：逐seed的RA0 cached generated-token p50/p95及prefill p50均不得慢于LSTM；同时完整报告Transformer token/prefill与各架构persistent state/cache bytes。速度、质量、状态大小不可跨seed挑最好组合。
+- overall仅在data/task/quality/speed/stream全PASS时PASS。无论结果如何，这只支持或否证“小规模raw-language action-conditioned world transition”的工程路线，不等同于大参数LLM、更不等同于多模态闭环世界模型。
+
+### 失败后的已冻结分流
+
+- 若CUDA算子或reverse-adjoint不支持，先修device-generic实现并以等价单测为门，禁止静默CPU fallback；若OOM则原样记录并缩模型只能作为新实验。
+- 若task gate继续FAIL，SG25扩大独立game数量与语言多样性，并预先生成固定train/valid/test corpus；不能在这40例上继续刷epoch或按test选词表。
+- 若质量PASS但RA0速度FAIL，优先做native/fused spike scan、kernel fusion或时间并行数学加速；若训练PASS但stream FAIL，单独优化cached one-step kernel，不把训练wall与实时响应混报。
+
+---
+
+## 2026-07-19：E3-SG23E 结果 — symbolic quotient严格恒等/大幅压缩，构建wall使e2e FAIL（混合/负面结果）
+
+- canonical artifact=`results/e3_scan/e3_sg23e_symbolic_quotient_cuda.json`，SHA-256=`697C154181F0E79B1E33E79F4F5EAFFD18B34C650D75C4D6E664071A2A468788`；同V100/FP64/16-thread/2+7协议，引用SG23C/SG23D canonical不变。
+- 四组`d/q/r`=`26612/1044/443`、`2064/333/184`、`3528/591/328`、`6480/1080/600`。所有列常幅值、`w`在`1/8`网格、GF(2) rank确定；整数`T`满足`B T-Z=0`，且`B H B^T-K=0`。不是`1e-13`近似，而是artifact逐元素零误差。
+- CPU/CUDA symbolic score最大差=`2.72e-14/7.33e-14/8.50e-14/8.56e-14`；原dual代数backward error=`2.81e-17/8.60e-25/2.53e-24/1.24e-24`；恢复的prediction-equivalent dual与原feature模型均过`1e-9`，real graph+constraint质量全部1。symbolic/backend/numerical/quality/memory门PASS。
+
+| scale | conservative full/symbolic memory | CPU/CUDA resident | symbolic e2e | 相对SG23D e2e | legacy score diff |
+|---:|---:|---:|---:|---:|---:|
+| 443 | `.465x` | `.00521/.00260 s` | `1.076 s` | `.293x` | `3.64e-14` |
+| 1024 | `9.34x` | `.00580/.00121 s` | `.312 s` | `.632x` | `2.25e-6` |
+| 2048 | `11.95x` | `.00551/.00200 s` | `.579 s` | `.830x` | `3.11e-6` |
+| 4096 | `14.13x` | `.08072/.00425 s` | `1.895 s` | `.487x` | `2.38e-6` |
+
+- **数学/solver正结果：**4096 CUDA identifiable solve相对CPU同公式快`18.98x`，保守计入`B/T/H/system/original-feature model`后内存仍降`14.13x`；消去数学零空间后small system稳定，证明SG23C低秩失败不是“核没有低维结构”。
+- **工程负结果：**4096 feature build=`.965 s`、symbolic build=`.922 s`（其中support grouping=`.748 s`），远大于`.0043 s` solve；e2e=`1.895 s`，比SG23D `.923 s`慢约2.05倍。real满秩且需保留原feature部署模型，内存反而为full dense的`2.15x`，不适合当前443任务。
+- **旧trajectory仍FAIL：**stress相对病态dense CPU轨迹保持`2.25e-6..3.11e-6`，尽管kernel严格相同、backward与CPU/CUDA一致。该门继续使strict overall FAIL；不再尝试为复现某个BLAS舍入路径牺牲稳定symbolic解。
+
+**决定：SG23E overall/engineering_substrate均FAIL（symbolic/numerical/memory子路线PASS，legacy/e2e speed FAIL）。** 保留SG23D phase blocks作为当前规模工程候选、SG23C hybrid作为旧trajectory权威路径、SG23E作为可缓存/离线编译后的压缩候选；不再在synthetic scale优化builder。下一步立即进入同一V100 raw-language/action-conditioned真实任务，重跑SNN、LSTM、Transformer训练/响应/显存/质量，防止数学microbenchmark替代世界模型证据。
+
+---
+
+## 2026-07-19：E3-SG23E 预注册 — symbolic support quotient + identifiable CUDA solve（进行中）
+
+### 冻结符号分解
+
+SG23D之后不再把`1e-13`的浮点低秩残差当“几乎exact”。先将显式feature列按训练行上的完全相同support分组：组`g`的原列幅值平方和记为`w_g`（严格投影到`1/8`网格），得到`K=Z diag(w) Z^T`，其中`Z`为binary。随后：
+
+1. 用GF(2) bitset Gaussian elimination按冻结列序选择独立列，得到`B=Z[:, pivots]`；
+2. 在CUDA FP64求`T=lstsq(B,Z)`后只允许舍入到小整数，必须逐元素验证`B T == Z`，否则symbolic gate FAIL；
+3. 定义`H=T diag(w) T^T`，要求`B H B^T`相对analytic kernel逐元素误差0且`H`正定；
+4. 在可辨识子空间求非奇异广义primal：`(H B^T D B + lambda I) beta = H B^T D Y`，score=`B beta`。另从`H c=beta`恢复prediction-equivalent dual系数供真实query/rollout审计。
+
+shape-only预检已冻结：real `d/q/r=26612/1044/443`，stress=`2064/333/184`、`3528/591/328`、`6480/1080/600`；real与1024的GF(2)秩等于SVD秩，`T`可零误差舍入为`0/±1/±2`，1024的`H` eigen range约`.5..114.27`。这只选择代数表示，未看formal wall/quality。1024单点也已观察到symbolic解相对旧dense trajectory约`2.25e-6`，因此旧门很可能继续FAIL，必须原样报告。
+
+### 冻结硬门与边界
+
+- 继续引用SG23C SHA=`17DDD84BCB1B010D13F19C567735BA9498534BE122B473E94407659FA6BA162B`和SG23D SHA=`88074887CF2999E02EA75D2D1F366EA1FD2723CE3DEE3C0514D555F317BF06F8`；同一real/stress、FP64、16 threads、2 warmups+7 repeats、V100环境。
+- **SYMBOLIC**：所有列常幅值；GF(2)消元确定；`B T-Z`整数误差=0；`w`位于`1/8`网格；`B H B^T-K` max error=0；`min eig(H)>0`。任何一步只近似相等都FAIL。
+- **NUMERICAL/BACKEND**：CUDA/CPU symbolic score max diff `<=1e-9`；原dual系统normalized backward error`<=1e-12`；CUDA solve tensor真在`cuda:0`。不得按旧dense score调rank、pivot或integer rounding。
+- **LEGACY**：相对旧CPU dense trajectory仍要求`<=1e-6`并单独决定strict overall；若FAIL，只能说明旧浮点轨迹未复现，不能否定symbolic恒等，也不能把engineering PASS改写成strict PASS。
+- **QUALITY/DEPLOYMENT**：real graph+constraint one/two-step全部1；恢复的dual/query表示必须与`B beta`训练score `<=1e-9`且真实rollout相同。报告原feature到group的映射、整数`T`、`H`、solver、model与构建峰值，不能只报`r×r`矩阵。
+- **SPEED/MEMORY**：最大scale保守按dense FP64 `B + H + system + solver/model`计数，仍须相对full dense kernel/system/factor `>=2x`；CUDA resident快于CPU同公式，且至少一个`n>=2048`的full e2e快于SG23D phase-block canonical。若symbolic build吃掉solve收益，保留为压缩模型但速度门FAIL。
+
+strict overall仍要求所有门；另列`engineering_substrate`。无论旧trajectory是否PASS，本轮结束后都进入同一V100 raw-language三架构真实对比，不再让synthetic scale无限推迟任务扩展；symbolic路线只作为SNN训练backend候选，而非世界模型完成声明。
+
+---
+
+## 2026-07-19：E3-SG23D 结果 — exact phase blocks工程PASS，strict CPU trajectory仍FAIL（混合/负面结果）
+
+### Canonical证据与严格零结构
+
+- canonical artifact=`results/e3_scan/e3_sg23d_phase_block_cuda.json`，SHA-256=`88074887CF2999E02EA75D2D1F366EA1FD2723CE3DEE3C0514D555F317BF06F8`；首次AND/OR decision实现错误artifact保留为`invalid_e3_sg23d_and_gate_semantics.json`，SHA-256=`5BE5236E3843B0638FF58193BB10D856F9CBB8BAB653A7C06A1405C1555EC6E3`。canonical重新执行完整2 warmups+7 repeats，不复用首跑wall。
+- real及全部stress的跨phase `max|K_ij|=0`；各block显式Gram相对analytic误差均在冻结门内。block sizes：real=`36/88/112/112/95`，1024=`840/184`，2048=`840/840/368`，4096=`840/840/840/840/736`。
+- 每个CUDA block真正在`cuda:0`做FP64 sparse Gram+weighted Cholesky；normalized backward error最大仅`6.52e-17`（real）/`5.01e-17`（stress），远低于`1e-12`。real graph+constraint下一阶19-channel/mask与teacher/self two-step继续全部1.0。
+
+### 规模收益与必须保留的速度边界
+
+| scale | CPU/GPU block resident | CUDA block e2e | full/block memory ratio | vs SG23C pure CUDA / hybrid pipeline |
+|---:|---:|---:|---:|---:|
+| 443 | `.01803/.00633 s` | `.3151 s` | `4.55x` | `.388x / 1.007x` |
+| 1024 | `.14346/.01121 s` | `.1969 s` | `1.42x` | `.936x / 2.86x` |
+| 2048 | `.31522/.02038 s` | `.4809 s` | `2.71x` | `.868x / 13.71x` |
+| 4096 | `.65747/.04241 s` | `.9232 s` | `4.99x` | `.945x / 23.32x` |
+
+- 4096相对同机CPU exact blocks快`15.50x`，逻辑dense kernel/system/factor内存降`4.99x`，完整e2e比SG23C hybrid exact的`2.081 s`再降到`.923 s`。structure/backward/quality/memory/speed均PASS，故`engineering_substrate=PASS`。
+- block不是所有尺度的GPU最速算子：相对SG23C pure dense CUDA resident在1024/2048/4096仍慢约`6.4%/15.2%/5.9%`；优势来自严格分块内存、CPU exact替代和hybrid pipeline，而不是击败cuSOLVER的大dense吞吐。real e2e只从SG23C hybrid`.3282 s`降到`.3151 s`，仍被Python feature build`.3061 s`主导。
+
+### 为什么strict overall仍然FAIL
+
+CUDA block相对旧dense CPU trajectory的score diff：real=`2.11e-15`，stress=`3.53e-6/4.17e-6/4.56e-6`；CPU block自身也会因Cholesky重排在病态系统产生同量级前向差异。它们的kernel零结构、backward error和离散prediction都正确，但没有满足历史`<=1e-6`轨迹复现门。
+
+**决定：SG23D strict overall FAIL，engineering_substrate PASS。** 这支持采用“phase-exact blocks + CUDA independent solve”作为规模训练候选，也证明SG23C hybrid exact仍是需要复现旧CPU数值轨迹时的权威路径；不能把工程PASS写成最终ANN替代。下一步SG23E只处理剩余的符号/数值quotient：从identical-support `Z diag(g) Z^T`构造categorical contrast basis，显式分离可辨识子空间和数学零空间；旧trajectory、backward error与真实任务门继续同时报告。之后转同一V100 raw-language LSTM/Transformer/SNN实任务对比。
+
+---
+
+## 2026-07-19：E3-SG23D 预注册 — exact phase blocks + CUDA independent solves（进行中）
+
+### 从SG23C失败继续发散，而非重复同一PCG
+
+**What if：**病态全系统的加速不应依赖近似低秩；冻结 spike kernel 已经包含严格 categorical zero，能否沿真正的零耦合 phase 分块，把一个 dense Cholesky 变成多个完全独立的小系统，在不改kernel/target/lambda的情况下同时减少平方内存与立方计算？
+
+| 路线 | 当前证据 | 本轮决定 |
+|---|---|---|
+| identical-support feature quotient | real/stress `d`预检压到`1044/333/591/1080`，Gram可逐元素重建 | 保留结构审计；其primal相对旧CPU score仍差`2.25e-6`，不作primary |
+| rational generalized primal `Z diag(g) Z^T` | `g`在`1/8`网格，kernel重建误差0 | 数学等价成立但同样未复现病态CPU trajectory，保留负结果 |
+| exact phase block diagonal | real跨phase kernel预检严格0，理论平方/立方收益明确 | **选择为primary**；直接验证CPU/CUDA独立块solve |
+| return×phase block | return factor为`1+equality`，跨return不为0 | 只可作preconditioner，禁止误称exact block |
+| long-double residual refinement | 1024上80-bit residual从约`4e-7`降到`2e-8..4e-8`后停滞 | 不继续堆迭代次数，不把诊断wall算加速 |
+| symbolic ANOVA/contrast quotient | 可望从公式层消去近零模态 | 若phase block仍卡strict trajectory，排到SG23E |
+
+### 冻结实现与双层判定
+
+- 数据、`lambda=1e-6`、19-channel target、real-443与stress=`1024/2048/4096`、SG22R provenance/graph/constraint全部不变；引用SG23C artifact SHA-256=`17DDD84BCB1B010D13F19C567735BA9498534BE122B473E94407659FA6BA162B`。
+- 分组键只能是train state公开的整数`phase`；先审计所有跨phase `max|K_ij|==0`。每个phase单独构造同一显式feature/Gram和weighted system，独立Cholesky后scatter回原prototype顺序；不得按wall或score合并/拆分block。
+- CPU与CUDA使用相同block顺序、FP64、2 warmups+7 repeats；记录每块大小、CSR/Gram/solve wall、cold/resident、transfer、peak bytes。CUDA每块算子必须真驻留`cuda:0`。real仍跑完整graph+constraint one/two-step质量。
+- **LEGACY TRAJECTORY（继续保留）**：block score相对SG23C/SG23 dense CPU trajectory max diff `<=1e-6`且prediction一致；这是历史严格门，FAIL就让SG23D strict overall FAIL，不得用新指标覆盖。
+- **MATHEMATICAL/BACKWARD**：cross-phase严格0；每块normalized backward error `||Au-b||inf/(||A||inf||u||inf+||b||inf)<=1e-12`；CPU/CUDA categorical prediction一致，real全部质量=1。这只判工程数学有效性。
+- **ACCELERATION**：最大scale的`sum block_n^2`相对`n^2` memory改善`>=2x`；至少一个`n>=2048` scale的CUDA block resident wall快于CPU同block且快于SG23C pure dense CUDA或hybrid exact对应solve-pipeline。full end-to-end另列，feature build不得隐藏。
+- strict overall要求legacy trajectory + mathematical/backward + quality + speed + memory全部PASS；另列`engineering_substrate`，允许在legacy trajectory FAIL时诚实表达“任务/残差/结构成立但未复现某个病态CPU浮点轨迹”。下一步只有两种：若strict PASS进入同V100 raw-language ANN比较；若仅engineering PASS，先做SG23E symbolic contrast quotient，并继续保留hybrid exact为权威严格路径。
+
+首次full运行得到完整raw metrics后，decision实现被发现把上文“快于SG23C pure CUDA **或** hybrid pipeline”误写成同时快于二者；首跑artifact SHA-256=`5BE5236E3843B0638FF58193BB10D856F9CBB8BAB653A7C06A1405C1555EC6E3`保留为invalid-decision证据。修复只把布尔`AND`恢复为预注册的`OR`，不改数据、计时、score、阈值或block；随后完整重跑canonical。
+
+---
+
+## 2026-07-19：E3-SG23C 结果 — AutoDL hybrid exact CUDA加速成立，pure-CUDA/低秩严格门 FAIL（混合/负面结果）
+
+### Canonical环境与证据
+
+- canonical artifact=`results/e3_scan/e3_sg23c_cuda_adaptive_krr.json`，SHA-256=`17DDD84BCB1B010D13F19C567735BA9498534BE122B473E94407659FA6BA162B`；source commit=`551bacc52920ae31ea37dc8b204e59cbcf255a5b`（其上叠加artifact内记录SHA的未提交SG23C源码）。正式协议=`real-443 + 1024/2048/4096`、FP64、16 CPU threads、2 warmups + 7 repetitions。
+- AutoDL=`Tesla V100-PCIE-32GB`、compute capability=`7.0`、driver=`535.54.03`、PyTorch=`2.3.0+cu121`、CUDA build=`12.1`。SG22R reference/cache SHA保持冻结，48个真实 `.z8` 继续经size/SHA/header provenance加载；graph/constraint/backend/feature-math均PASS。
+- real显式feature=`443×26612`、nnz=`54576`，stress的`(n,d,r)`依次为`(1024,2064,203)/(2048,3528,356)/(4096,6480,650)`；四组 full explicit Gram 相对 analytic kernel 最大误差均为0，hybrid grid projection实际改变量也均为0。
+
+### 三条backend/求解路线必须分开读
+
+| scale | pure CUDA score diff / resident speedup | hybrid score diff / solve-pipeline speedup / full-e2e speedup | effective-rank score diff / memory ratio |
+|---:|---:|---:|---:|
+| 443 | `2.11e-15 / 4.02x` | `0 / 1.55x / 1.008x` | `2.33e-15 / .65x` |
+| 1024 | `3.20e-6 / 14.21x` | `0 / 4.65x / 1.52x` | `2.28e-6 / 6.69x` |
+| 2048 | `4.65e-6 / 23.57x` | `0 / 1.49x / 1.20x` | `3.32e-6 / 8.16x` |
+| 4096 | `3.93e-6 / 32.23x` | `0 / 1.31x / 1.15x` | `2.41e-6 / 9.33x` |
+
+- **pure CUDA：速度PASS、严格数值FAIL。** real小系统可与CPU一致；从1024起，同一FP64 kernel的CUDA Cholesky/LU等受约`lambda=1e-6`条件数放大，score diff稳定越过`1e-6`。虽然resident最高快`32.23x`且离散prediction不变，不能据此越过冻结score门。
+- **hybrid exact：质量、精度、同机速度全部PASS。** GPU sparse Gram回传CPU后用同一FP64 Cholesky，四规模相对analytic score diff严格为0；real train/valid/test delta+mask、teacher/self two-step继续全部1.0。full end-to-end含Python feature build仍为`.328/.224/.687/2.081 s`，相对同机CPU约`1.008/1.52/1.20/1.15x`；真实443收益几乎被`.320 s` feature construction吃完，部署应优先批量/规模训练而非单请求GPU化。
+- **effective-rank：内存/solve速度PASS，严格score FAIL。** 稳定`L theta`和强制pivot对角修复了旧路线的NaN与`1/lambda`大数消减；CUDA rank solve相对CPU约快`2.64/4.34/4.63/6.78x`，最大规模logical memory改善`9.33x`。但stress虽kernel重建误差仅`1.2e-13..1.35e-13`，仍被小`lambda`放大为`2.28e-6..3.32e-6` score误差；landmark gamma升至`2.87e7..4.28e7`，显示近零pivot子空间仍数值病态。prediction/真实任务质量不变不能替代score门。
+
+**决定：SG23C overall FAIL（hybrid exact工程子路线PASS；pure-CUDA exactness、effective-rank exactness、scale-memory gate FAIL）。** 已证明“CUDA sparse Gram + CPU FP64 exact solve”是可复现的AutoDL加速边界，但尚未得到同时严格精确且亚二次内存的主路线。下一步SG23D不再堆同精度iterative refinement：优先把`1/8` categorical Gram写成整数/有理数quotient，显式消去feature线性依赖与近零数值模态，再做exact block/deflation；若不能在`1e-6` score门下保留`>=2x`内存收益，保留hybrid exact并把规模化门继续判负。完成该数学层后，再在同一V100上重跑真实raw-language LSTM/Transformer/SNN，避免跨硬件比较。
+
+---
+
+## 2026-07-19：E3-SG23C 预注册 — AutoDL CUDA exact adaptive primal/dual KRR（进行中）
+
+### 迁移、环境与不可混报边界
+
+- 后续正式规模实验迁移到 AutoDL 数据盘 `/root/autodl-tmp/vpsc`；当前冻结设备为 `Tesla V100-PCIE-32GB`、driver=`535.54.03`、CUDA runtime/compiler=`12.2/12.1`、PyTorch=`2.3.0+cu121`。项目使用隔离 venv `/root/autodl-tmp/envs/vpsc-cu121`，本地 Windows 只做编辑、轻量单测和结果镜像。
+- SG22R 的真实 TextWorld manifest 含旧 WSL 绝对路径；远端保持 manifest/summary/游戏 SHA 不变，将原始 `.z8` 复制到项目数据盘并建立兼容路径映射。不得改写冻结 JSON 来绕过 provenance；48 个 SG22R 游戏仍逐个校验 size、SHA 与 Z-machine v8 header。
+- SG23H/DirectML 结果保留为本地 backend 负证据，但其 wall 不与 CUDA wall 合并。SG22R 的 Ryzen CPU ANN `.59160 s` 也不作为本轮远端速度 PASS 证据；LSTM/Transformer 必须在同一 AutoDL 环境重跑后才能做新硬件上的架构比较。
+- CUDA 探针只用于选定实现：V100 原生支持 FP64，PyTorch 已验证 CSR/COO sparse-mm 与 FP64 Cholesky 真正在 `cuda:0` 返回。本轮正式 dtype 冻结为 FP64；FP32/混合精度若追加，只能作为独立吞吐候选，不能降低 `1e-6` score 门。
+
+### 数学路线：按较小维度精确切换
+
+显式 spike feature `X`、prototype count 对角阵 `D`、target `Y` 与 `lambda=1e-6` 全部沿用 SG23。对同一个 weighted KRR：
+
+- 当样本维 `n <= d`，走 exact dual：`(D^1/2 X X^T D^1/2 + lambda I)u=D^1/2Y`，部署系数 `alpha=D^1/2u`；
+- 当 feature 维 `d < n`，走 exact primal：`(X^T D X + lambda I)w=X^TDY`，训练 score=`Xw`；
+- route 只由 train shape 的 `argmin(n,d)` 决定，不看 valid/test、wall 或结果。该 Woodbury/primal-dual 恒等切换预期在 real-443 的 `n << d` 保留 dual，在 categorical stress 足够大、`d < n` 时避免 `n²/n³` 系统。
+
+正式运行前只做了 feature shape/capability 预检（未看质量、正式 wall）：stress `n=1024/2048/4096/8192/16384/32768` 的 `d=2064/3528/6480/12912/25632/50832`，`d/n` 始终 `>1`。因此“原始 vocabulary 维度最终小于样本维”的假设在当前生成器上被否证，raw primal 仍作为负对照，但不能成为 primary acceleration。
+
+Primary 在正式运行前改冻为 **exact effective-rank Woodbury**：用 deterministic pivoted Cholesky 得到 `K=LL^T`，只有 reconstruction max error `<=1e-10` 才称 exact；令 `B=D^1/2L`，直接求 `theta=(B^TB+lambda I)^-1B^TD^1/2Y`，score=`L theta`。查询模型由 pivot rows 解三角系统得到 landmark coefficients，使 `K(query,pivots) gamma=l_query theta`。禁止再用 `rhs/lambda - B correction/lambda` 重建 dual；该旧写法在 `lambda=1e-6` 下发生大数消减，正是此前 full-rank spectral route“残差近门但 score 偏差仍大”的待验证数值原因。CUDA 正式阶段要求 `B`、`r×r` system/Cholesky、`theta` 与 score 全部驻留 `cuda:0`；pivot/kernel-column 构建仍作为单列 CPU preprocessing wall，不伪装成 GPU。
+
+单次 smoke（非 canonical、未计入正式结论）进一步冻结了异构 fallback：real-443 的 pure-CUDA dense solve 相对 CPU score diff=`2.11e-15`、resident speedup=`3.12x`；stress-1024 虽然显式 GPU Gram 与 analytic Gram 逐元素误差=`0`，pure-CUDA Cholesky score diff仍=`3.20e-6`。追加 Cholesky/LU/QR/eigh 与“CPU FP64真残差 + CUDA factor correction”诊断均停在约 `2.6e-6..4.7e-6`，未过 `1e-6`，故不再把同精度迭代次数当作可调超参。
+
+正式新增 **hybrid exact** 候选：CSR/COO 与 sparse Gram 在 CUDA resident 执行，dense kernel 明确回传同机 CPU，再用同一 FP64 weighted Cholesky 语义求解。它必须单列 GPU Gram、device-to-host、CPU solve 与 total 的 7 次分布，并与同机 CPU 的 explicit-Gram+solve 比较；只有 total 更快才算异构加速。pure-CUDA 结果仍原样报告为 backend negative，不因 hybrid 通过而删除。hybrid 不满足 scale memory 门；只有 effective-rank route 同时过 score 门，SG23C overall 才能 PASS。
+
+CUDA sparse reduction 的加法次序还可能给 Gram 留下末位浮点尾数。由于冻结核严格是“整数 phase/suffix × `(8+overlap)/8` × 整数 return × 整数 plan”，所有元素先验位于 `1/8` 网格；hybrid 回传后允许按该公式做一次 deterministic grid projection，并记录 `max|K_raw-K_grid|`，要求 `<=1e-10`。超过该门说明不是舍入尾数，必须 FAIL；grid 规则不得用于任意连续 kernel。
+
+CUDA runner 分开报告：CPU feature construction、CSR host-to-device、GPU densification、cold first solve、预热后 resident median/p95、端到端 wall、峰值 allocated/reserved bytes；每个计时点先 synchronize，禁止把异步 launch 当完成。CPU 对照在同一 Xeon/相同 FP64/相同 route 上运行，不能引用本机 7950X wall。
+
+### 冻结任务、规模与硬门
+
+- 输入仍为 SG22R seventh reference SHA-256=`1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92`、cache SHA-256=`2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E`、real-443 与 deterministic stress=`1024/2048/4096`；显式 vocabulary 和 stress canonical SHA 必须进入 artifact。
+- **PROVENANCE/BACKEND**：远端三 split 游戏 provenance、graph/constraint audit 全 PASS；artifact 必须记录 hostname、GPU、compute capability、driver、CUDA、PyTorch、dtype，并证明所有正式 tensor 位于 `cuda:0`，不允许静默 CPU fallback。
+- **FEATURE MATH**：real 与各 stress audit 的 `max|XX^T-K|<=1e-10`；路线切换不改变 SG23 feature 公式。
+- **EXACTNESS**：adaptive CUDA train score 相对独立 FP64 dual reference max diff `<=1e-6`，离散 prediction 完全一致；real-443 的 train/valid/test 19-channel/mask 与 teacher/self two-step 继续全部 `1.0`。若 primal 数值残差通过但 score 超门，按负结果保留，不以“分类没变”替代精确门。
+- **ACCELERATION**：至少一个冻结 scale 上，CUDA resident exact-rank solve 相对同机 CPU 同公式 wall 改善 `>1x`；最大 scale 上，`L + r×r system + solver state` logical bytes 相对 dense dual kernel+system改善 `>=2x`。raw primal 因 shape 未切换不承担 PASS。含 factor build/传输的端到端若更慢，部署边界必须写为 resident/batch-only。
+- **REPETITION**：warmup=`2`、formal repetitions=`7`；cold 单次另列。任何 OOM/unsupported op/fallback 均 fail-closed 并保留错误。overall 只有 provenance/backend、feature math、exactness、real quality 与 acceleration 全过才 PASS。
+
+本轮只判定“SG23 exact solver 的 CUDA 工程与数学加速是否成立”，不据此宣称已在 LLM/多模态任务替代 ANN。若 PASS，下一步在同一 V100 上重跑 raw-language/action-conditioned LSTM、Transformer、SNN，并进入视觉/音频事件与闭环 rollout；若 exactness FAIL，先做 dual residual correction/deflation；若只有端到端 FAIL，保留 CPU feature encoding + GPU batch solve 的异构边界。
+
+---
+
+## 2026-07-19：E3-SG23H 结果 — RX 7800 XT batch算力可用，但严格数值backend FAIL（混合/负面结果）
+
+### 隔离环境与可复现产物
+
+- canonical artifact=`results/e3_scan/e3_sg23_backend_capability.json`，SHA-256=`E8596A0A91EF7B0F352BAA77B7492B5D2E3FFECBC2E856D67948D30ED9B4DF65`；protocol=`443/1024/2048/4096 × readout/Gram/matrix-free`、warmup=3、repetitions=7、CPU threads=4，另做`1/2/4/8/16` sweep。
+- `repo.anaconda.com`连续timeout使预注册的Python3.11 conda创建在环境求解前失败；未修改现有env，改用`D:\venvs\vpsc-directml`隔离venv。安装的最新wheel=`torch-directml 0.2.5.dev240914`实际固定`torch 2.4.1`、Python3.12；这与Microsoft页面仍写“up to 2.3.1”不一致，artifact记录实际解析版本。
+- DirectML枚举两个adapter，明确选择index0=`AMD Radeon RX 7800 XT`，device=`privateuseone:0`；vector add误差0。主WSL保持`torch 2.13.0+cpu/hip=null/device_count=0`，`rocminfo`仍只有7950X CPU、OpenCL devices=0，故`rocm_available=false`，没有把`/dev/dxg=yes`误计为GPU。
+
+### GPU速度从大批量开始成立，但FP32绝对误差越过冻结门
+
+| n | Gram resident / 含传输 speedup | Gram max abs error | matrix-free resident / 含传输 speedup | matrix-free max abs error |
+|---:|---:|---:|---:|---:|
+| 443 | `1.005× / .703×` | `1.221e-4` | `.811× / .704×` | `7.324e-4` |
+| 1024 | `2.244× / 2.074×` | `2.136e-4` | `1.604× / 1.123×` | `1.465e-3` |
+| 2048 | `2.987× / 2.962×` | `2.441e-4` | `3.747× / 2.646×` | `2.686e-3` |
+| 4096 | `3.649× / 3.181×` | `2.441e-4` | `5.861× / 4.267×` | `5.005e-3` |
+
+- **观察：**大于等于1024时，GPU resident和多数含传输路径都有真实加速；4096 matrix-free的收益最大。小任务443的matrix-free反而慢约23%，所以SG22R实时单请求不应搬到GPU。
+- **观察：**readout误差最大约`5.34e-5`可过`1e-4`，但Gram从443起已为`1.221e-4`，matrix-free更高；预注册要求所有FP32 add/matmul过`1e-4`，因此`fp32_correctness_gate=false`，不能按相对误差很小而事后放宽。
+- DirectML小型float64 matmul能返回`privateuseone:0`且误差0，但这不足以证明规模FP64吞吐；`torch.linalg.cholesky`明确警告`aten::linalg_cholesky_ex`不支持并回退CPU。当前GPU适合matmul/候选方向，不适合直接声称完整closed-form solve在GPU执行。
+
+### 多核不是单调收益
+
+4096 resident median：Gram从1线程`69.76 ms`降至2/4/8/16线程`36.53/25.15/15.44/11.83 ms`，16线程最佳、约`5.90×`；matrix-free则为`1.60/.93/2.86/1.89/1.39 ms`，2线程最佳，4线程因调度/形状反而最差。正式solver必须按算子和形状报告完整曲线，不能把单一thread count泛化为全流程最优。
+
+**决定：SG23H overall FAIL（adapter/speed PASS，strict FP32 correctness/ROCm FAIL）。** 保留DirectML作为`n>=1024`批量Gram/matrix-free研究backend，但不让它单独承担`1e-6` exact-SNN门；SG23先在CPU float64建立显式feature与exact PCG/online基准，再测试GPU FP32 matvec + CPU float64 residual correction。若精化后最终score仍不能到`1e-6`，GPU路径按负结果关闭；小流式推理继续CPU。
+
+---
+
+## 2026-07-19：E3-SG23 预注册 — explicit spike features + matrix-free/online/spectral solvers（进行中）
+
+### What-if 与候选数学路线
+
+**What if：**SG22R 的瓶颈不是 SNN 动力学本身，而是把有限离散 spike kernel 写成了样本空间稠密 Gram 矩阵；若把同一核严格展开为稀疏显式脉冲特征，是否能把训练改造成多核/GPU 擅长的 `X @ (X.T @ v)`、块更新和低秩求解，同时保持真实任务预测不变？
+
+| 路线 | 认识状态 | 最小决定性实验 | 主要风险 |
+|---|---|---|---|
+| 稀疏显式 primal / Woodbury | established direction | 构造有限 categorical feature map，要求 `XXᵀ` 与 SG19 kernel 逐元素等价 | feature vocabulary 随组合爆炸，`d>n` 时 primal 不占优 |
+| matrix-free PCG + block/Jacobi preconditioner | established direction | 不落盘 `n²` Gram，以显式特征 matvec 达到冻结残差和预测门 | `λ=1e-6`、重复状态导致条件数过高 |
+| block Cholesky / online Woodbury-RLS | established direction | 按 block 追加 prototype，最终 score/prediction 等价于 batch | 仍保留二次状态，长程更新累计数值误差 |
+| pivoted-Cholesky / Nyström | established direction | 固定 rank sweep，测真实 SG22R 质量、wall 和 bytes Pareto | 稀有离散边可能被低秩近似抹掉 |
+| CountSketch + LSQR/Kaczmarz | cross-domain analogy | hash 稀疏 spike features 后迭代求解，测碰撞与收敛 | 可解释 categorical binding 被 hash collision 破坏 |
+| temporal Toeplitz/FFT + parallel scan | cross-domain analogy | 在后续 raw event sequence 上把时间平移块变成卷积/扫描 | 当前 SG22R 是 prototype kernel，不具备足够长的 Toeplitz 轴 |
+
+本轮优先执行前四条；后两条保留到 raw-language/multimodal 序列阶段，不为了凑路线在当前短任务上制造无意义 FFT。用户已经授权“所有可能方法顺序实验”，因此无需再次等待选型。
+
+### 冻结数据、公式与压力规模
+
+- 真实任务权威输入固定为 SG22R seventh corpus/cache、SG19 `plan_edge_kernel`、`lambda=1e-6`、graph/plan constraint 与 canonical artifact SHA-256=`1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92`；不得看 test 改 feature map、阈值或 rank 选择规则。
+- 显式 feature map 必须从实际导入的SG15 strict kernel机械展开：四个嵌套 `phase×suffix` component，乘 `1+mask-overlap/8`、`1+return-equality`、`1+plan-current-equality+plan-next-equality`；不同乘积项使用互斥 namespace，非零值只允许 `1` 与 `1/sqrt(8)`。最初草案误写为“suffix加独立phase”并被预实验Gram单测否证，正式运行前已修正，未查看任何SG23质量结果。
+- `real-443` 用冻结 unique prototypes 和真实 19-channel target 证明数学/质量；规模压力集为 deterministic distribution-shaped categorical states，`n=1024/2048/4096`，只用于 wall/memory/伸缩，不得作为任务质量或泛化证据。生成器、seed 和 canonical SHA 必须进 artifact。
+- CPU 固定 Ryzen 9 7950X，正式比较 sweep=`1/2/4/8/16` intra-op threads、每点至少 5 次中位数；GPU 仅在 SG23H capability PASS 后加入，分别报告 device-resident 与 host-to-device end-to-end，不得混报。
+
+### 冻结硬门
+
+- **FEATURE MATH**：real train 及至少一个 stress scale 的 `max|XXᵀ-K|<=1e-10`（float64 CPU）；显式 map 生成确定且无 hash collision。
+- **EXACT SOLVER**：real-443 上 PCG、online block 和 exact feature route 相对 dense weighted Cholesky 的 train/test score max diff `<=1e-6`、19-bit/mask prediction 完全一致；带 SG22 graph+constraint 的 one/two-step质量继续为 `1.0`。
+- **ITERATIVE**：PCG relative residual `<=1e-8`、预注册最大迭代 `min(4n,4096)`；若未收敛按负结果记录，不放宽阈值。比较 none/Jacobi/return-phase block preconditioner，但只按 train system condition proxy 和迭代数选择，不看 test。
+- **APPROXIMATE**：Nyström ranks=`32/64/128/256`，landmark 规则冻结为 deterministic farthest-residual/pivoted diagonal；只有真实 mask exact/two-step均=`1.0`且 score/prediction 门过，才能参与速度 Pareto。近似失败不影响 exact route 判定。
+- **SCALE/SPEED**：real 部署训练 wall（含 feature construction+solve）必须低于 SG22R 最快有效 LSTM `.59160 s`；在最大可完成 scale 上，至少一条 exact/matrix-free route 相对 dense Cholesky wall 或 peak logical bytes 改善 `>=2x`，否则规模化门 FAIL。线程/GPU只在相同 dtype、相同解精度下比较。
+- **STORAGE**：分别报告 CSR logical bytes、dense Gram bytes、solver state、coefficients 与 graph bytes；不能只报参数而漏掉 prototype/feature vocabulary/preconditioner。
+
+若显式 map 数学不等价，停止所有速度结论并修公式；若等价但 PCG 失败，保留 direct/online 并转 MINRES/deflation；若低秩质量失败，保留为负结果；若 GPU 只在大矩阵 resident 路径有利，则采用 CPU 小流式 + GPU 批量训练的异构边界，不把传输成本藏掉。
+
+---
+
+## 2026-07-19：E3-SG23H 预注册 — multicore / RX 7800 XT backend capability gate（进行中）
+
+### 初始事实与外部支持边界
+
+- 本机只读探针：Ryzen 9 7950X=`16C/32T`，Windows RX 7800 XT driver=`32.0.31007.5012`；WSL Ubuntu 24.04.3、kernel=`6.6.87.2`、`/dev/dxg`存在，但当前 PyTorch=`2.13.0+cpu`、`USE_ROCM=OFF`、`torch.cuda.is_available=false`，`rocminfo`仅CPU agent、`clinfo`设备数0。因此“硬件存在”不等于当前 runner 已用GPU。
+- AMD 官方 [ROCm 7.2 WSL support matrix](https://rocm.docs.amd.com/projects/radeon-ryzen/en/docs-7.2/docs/compatibility/compatibilityrad/wsl/wsl_compatibility.html)列出 RX 7800 XT，并冻结 production PyTorch=`2.9.1`、ROCm=`7.2`、Adrenalin=`26.1.1 for WSL2`；这支持“可建独立 ROCm 环境”，不证明当前环境兼容。
+- Microsoft 官方 [PyTorch with DirectML](https://learn.microsoft.com/en-us/windows/ai/directml/pytorch-windows)支持 DX12 Windows GPU，但 `torch-directml`最多映射 PyTorch `2.3.1`；[DirectML repository](https://github.com/microsoft/DirectML)已进入 maintenance mode。故 DirectML 只作隔离能力/算子实验，不作为长期唯一后端承诺。
+
+### 隔离实验与硬门
+
+- 不改主 `.venv-wsl`。Windows 建独立 conda env `vpsc-directml`（Python 3.11），记录 lock/version；ROCm 若需要 root、Windows driver替换或重启，本轮不静默修改系统，先生成明确的安装缺口。
+- 同一 capability runner 测 FP32 add、elementwise、matmul、Gram、batched matvec、Cholesky；每项记录 device、correctness、warning/error、warmup、resident p50/p95 与含 transfer p50/p95。CPU sweep使用同尺寸与固定随机输入。
+- **BACKEND AVAILABLE**：设备能创建且报告实际 adapter，FP32 add/matmul相对CPU max error `<=1e-4`，重复输出稳定；不支持算子必须 fail-closed 或明确CPU fallback，不能静默算作GPU。
+- **USEFUL SPEED**：至少在一个 SG23 scale 的 device-resident matmul/Gram/PCG primitive 上快于最佳匹配CPU；若含传输后变慢，部署决定必须保留“仅批量训练”边界。
+- **ROCm**：只有 `rocminfo`出现 gfx1101 GPU agent、PyTorch HIP非空且真实tensor运行成功才判可用；`/dev/dxg`单独不计。
+- **MULTICORE**：即使GPU失败，也必须完成CPU `1/2/4/8/16`线程曲线；线程越多反而变慢是有效负结果，不得只挑单次最快值。
+
+---
+
 ## 2026-07-19：E3-SG22R 结果 — seventh-fresh constrained matched confirmation（独立PASS）
 
 ### 第七轮数据、公式和graph均独立成立

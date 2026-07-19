@@ -1,0 +1,5084 @@
+{
+  "configuration": {
+    "architecture_scope": [
+      "snn_bptt",
+      "snn_at1",
+      "snn_ra0",
+      "lstm",
+      "transformer"
+    ],
+    "comparison_backend": "same_v100_cuda_fp32",
+    "corpus_dir": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5",
+    "d_model": 32,
+    "epochs": 2,
+    "gradient_clip": 1.0,
+    "gradient_foreach": true,
+    "learning_rate": 0.001,
+    "max_generation_tokens": 32,
+    "optimizer_fused": true,
+    "parent_protocol": "E3-SG0",
+    "required_device": "cuda:0",
+    "seeds": [
+      0
+    ],
+    "state_dim": 31,
+    "state_reset_per_example": true,
+    "target_truncation": false,
+    "threads": null,
+    "vocabulary_source": "normalized_train_prompt_and_target_only",
+    "weight_decay": 0.01
+  },
+  "dataset": {
+    "audit": {
+      "baselines": {
+        "action_majority": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.6666666666666667,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 1.0,
+              "lcs_f1": 0.6666666666666666,
+              "mean_generated_length": 6.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.6666666666666666
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.21052631578947367,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.3188405797101449,
+              "mean_generated_length": 38.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.43478260869565216
+            },
+            "move": {
+              "edit_similarity": 0.30965909090909094,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.3333333333333333,
+              "lcs_f1": 0.40430813116723097,
+              "mean_generated_length": 42.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.4594101719835575
+            }
+          },
+          "edit_similarity": 0.6115829346092504,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.6333333333333333,
+          "lcs_f1": 0.6602739771045736,
+          "mean_generated_length": 23.2,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 1.0,
+          "paired_different_target_count": 5,
+          "records": null,
+          "room_accuracy": 0.0,
+          "token_f1": 0.693908996329655
+        },
+        "copy_observation": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.05714285714285716,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.5,
+              "lcs_f1": 0.0975609756097561,
+              "mean_generated_length": 35.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.14634146341463414
+            },
+            "inventory": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 50.25,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 0.0992092621716483
+            },
+            "look": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 1,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 31.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 1.0,
+              "token_f1": 1.0
+            },
+            "move": {
+              "edit_similarity": 0.34862012987012986,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.08333333333333333,
+              "lcs_f1": 0.44964836763338567,
+              "mean_generated_length": 51.25,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.5076684588343265
+            }
+          },
+          "edit_similarity": 0.2673938695712889,
+          "eos_rate": 1.0,
+          "exact": 0.1,
+          "example_count": 10,
+          "feature_f1": 0.18333333333333332,
+          "lcs_f1": 0.3292991494829892,
+          "mean_generated_length": 47.2,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": null,
+          "room_accuracy": 0.2,
+          "token_f1": 0.35738523474385336
+        }
+      },
+      "normalization": {
+        "collapse_internal_whitespace": true,
+        "drop_prefix_before_first_room_header": true,
+        "remove_empty_lines": true,
+        "remove_hud_lines_starting_with_prompt": true,
+        "target_truncation": false
+      },
+      "passed": true,
+      "splits": {
+        "test": {
+          "action_types": {
+            "examine": 1,
+            "inventory": 4,
+            "look": 1,
+            "move": 4
+          },
+          "example_count": 10,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 134,
+            "mean": 84.5,
+            "min": 47,
+            "p50": 77.5,
+            "p95": 125.89999999999998
+          },
+          "pair_count": 5,
+          "prompt_length": {
+            "max": 78,
+            "mean": 58.7,
+            "min": 42,
+            "p50": 59.5,
+            "p95": 77.55000000000001
+          },
+          "prompt_unknown_count": 32,
+          "target_length_with_eos": {
+            "max": 67,
+            "mean": 26.8,
+            "min": 6,
+            "p50": 19.5,
+            "p95": 62.49999999999999
+          },
+          "target_token_count_without_eos": 258,
+          "target_unknown_count": 17,
+          "target_unknown_ratio": 0.06589147286821706,
+          "unique_target_count": 6
+        },
+        "train": {
+          "action_types": {
+            "examine": 4,
+            "inventory": 16,
+            "look": 4,
+            "move": 16
+          },
+          "example_count": 40,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 123,
+            "mean": 80.5,
+            "min": 51,
+            "p50": 80.5,
+            "p95": 114.1
+          },
+          "pair_count": 20,
+          "prompt_length": {
+            "max": 76,
+            "mean": 56.2,
+            "min": 46,
+            "p50": 55.0,
+            "p95": 67.39999999999998
+          },
+          "prompt_unknown_count": 0,
+          "target_length_with_eos": {
+            "max": 65,
+            "mean": 25.3,
+            "min": 6,
+            "p50": 22.0,
+            "p95": 57.0
+          },
+          "target_token_count_without_eos": 972,
+          "target_unknown_count": 0,
+          "target_unknown_ratio": 0.0,
+          "unique_target_count": 21
+        },
+        "valid": {
+          "action_types": {
+            "examine": 1,
+            "inventory": 4,
+            "look": 1,
+            "move": 4
+          },
+          "example_count": 10,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 119,
+            "mean": 85.8,
+            "min": 56,
+            "p50": 86.0,
+            "p95": 117.65
+          },
+          "pair_count": 5,
+          "prompt_length": {
+            "max": 76,
+            "mean": 58.5,
+            "min": 51,
+            "p50": 54.5,
+            "p95": 75.55
+          },
+          "prompt_unknown_count": 26,
+          "target_length_with_eos": {
+            "max": 65,
+            "mean": 28.3,
+            "min": 6,
+            "p50": 26.0,
+            "p95": 57.79999999999998
+          },
+          "target_token_count_without_eos": 273,
+          "target_unknown_count": 21,
+          "target_unknown_ratio": 0.07692307692307693,
+          "unique_target_count": 6
+        }
+      },
+      "target_overlap": {
+        "test_in_train": 1,
+        "valid_in_train": 1,
+        "valid_test": 1
+      }
+    },
+    "corpus_provenance": {
+      "corpus_fingerprint_sha256": "10e4599b792fe59c7af779bb38c010a44692410dbde76fd9d87f290ac54e7e34",
+      "episode_channel": "<|episode|>",
+      "format": "textworld-token-events-v1",
+      "splits": {
+        "test": {
+          "episode_count": 1,
+          "physical_line_count": 40,
+          "source_bytes": 10102,
+          "source_path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/token_events.txt",
+          "source_sha256": "0cbf64747f11ad0d2c97801ced80c05191b3bd0d9b6fe6de37e04c196b4bc7b5",
+          "split": "test",
+          "token_count": 2783
+        },
+        "train": {
+          "episode_count": 4,
+          "physical_line_count": 160,
+          "source_bytes": 39429,
+          "source_path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/token_events.txt",
+          "source_sha256": "b6ccecf4e606766353256a9d7afc8be0a437172a2064695cb0f1d62e1fcb76f9",
+          "split": "train",
+          "token_count": 10983
+        },
+        "valid": {
+          "episode_count": 1,
+          "physical_line_count": 40,
+          "source_bytes": 9936,
+          "source_path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/token_events.txt",
+          "source_sha256": "4cc26e49e90e669b2fa9fa60c851ada400fe582f62172c5f4382ffa1faae0097",
+          "split": "valid",
+          "token_count": 2751
+        }
+      },
+      "tokenizer": {
+        "kind": "regex-word-punct",
+        "line_boundary_token": "<eos>",
+        "lowercase": false,
+        "pattern": "\\w+(?:['\u2019]\\w+)*|[^\\w\\s]",
+        "unicode": true
+      },
+      "vocabulary": {
+        "actual_size": 344,
+        "built_from": "train_only",
+        "fingerprint_sha256": "631125281cb4c16fad7fbb94a0658c851996e410bb386b77f3a9f708de90992d"
+      },
+      "vocabulary_fingerprint": "631125281cb4c16fad7fbb94a0658c851996e410bb386b77f3a9f708de90992d",
+      "vocabulary_size": 344
+    },
+    "generation_vocabulary": {
+      "fingerprint": "dd3e51c6deb5b1aede57b71b9d9745f390a301ba4b7ccd3a66a237f066717364",
+      "size": 183,
+      "source_fields": [
+        "normalized_prompt",
+        "normalized_target"
+      ],
+      "source_split": "train",
+      "tokenizer": {
+        "kind": "regex-word-punct",
+        "line_boundary_token": "<eos>",
+        "lowercase": false,
+        "pattern": "\\w+(?:['\u2019]\\w+)*|[^\\w\\s]",
+        "unicode": true
+      }
+    },
+    "manifest_provenance": {
+      "cross_split_seed_disjoint": true,
+      "fingerprint_sha256": "59bcfea05a55aefd48e7b9c4ee9ef5bac89639a57ff33725768406259f9e4e8b",
+      "frozen_seeds": {
+        "test": [
+          20260723
+        ],
+        "train": [
+          20260718,
+          20260719,
+          20260720,
+          20260721
+        ],
+        "valid": [
+          20260722
+        ]
+      },
+      "splits": {
+        "test": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/episodes.jsonl",
+              "sha256": "52d6a96c310a23395aafb0999aaeb7cbf572c099c8ec88bc3550c96209ea6962",
+              "size_bytes": 13712
+            },
+            "manifest": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/manifest.json",
+              "sha256": "8811930c54bd9c67708465200e6355e807accf9711dc8a99ddab59af72726b42",
+              "size_bytes": 590
+            },
+            "token_events": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/token_events.txt",
+              "sha256": "0cbf64747f11ad0d2c97801ced80c05191b3bd0d9b6fe6de37e04c196b4bc7b5",
+              "size_bytes": 10102
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 1,
+          "event_episode_count": 1,
+          "game_count": 1,
+          "games": [
+            {
+              "path": "/root/autodl-tmp/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260723.z8",
+              "seed": 20260723,
+              "sha256": "c769a6df8555222e1a40bf81e0a603c927c04cafc52d02bd6e3e04b454a5f41f",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260723
+          ],
+          "sha256": "8811930c54bd9c67708465200e6355e807accf9711dc8a99ddab59af72726b42",
+          "size_bytes": 590,
+          "summary_path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/summary.json",
+          "summary_sha256": "e59176f93e39c07afb44df042773331705899e58cf4b36535064756e6a94aa2c",
+          "textworld_version": "1.7.0",
+          "verified": true
+        },
+        "train": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/episodes.jsonl",
+              "sha256": "5938045cf8e93fb2e1863aeefbe058e73e4ede8e62cd887db89c663d93444fd3",
+              "size_bytes": 53426
+            },
+            "manifest": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/manifest.json",
+              "sha256": "f000c67e649f16724c633a2989d7ad4f4cc3e4fd5daa9ccbe9ec225877cf3ecd",
+              "size_bytes": 1765
+            },
+            "token_events": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/token_events.txt",
+              "sha256": "b6ccecf4e606766353256a9d7afc8be0a437172a2064695cb0f1d62e1fcb76f9",
+              "size_bytes": 39429
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 4,
+          "event_episode_count": 4,
+          "game_count": 4,
+          "games": [
+            {
+              "path": "/root/autodl-tmp/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260718.z8",
+              "seed": 20260718,
+              "sha256": "93e02d9fcd540040d29f52160c2046c09b4ad9d546f4c9b4924b4853745f06a4",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/root/autodl-tmp/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260719.z8",
+              "seed": 20260719,
+              "sha256": "e82ccfbd3125953edd87d5ebe38ce8d27a9ac4f0691bdb848cf8ebb691152a4a",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/root/autodl-tmp/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260720.z8",
+              "seed": 20260720,
+              "sha256": "3e58ba40fa1ded963f9e1670d826fa4dc722b2121e1a23c2136507086f2f0f3b",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/root/autodl-tmp/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260721.z8",
+              "seed": 20260721,
+              "sha256": "eadfa27eb15f99cc702acd46773df9a24c6a291c79ce253071d097ea9d9e734d",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260718,
+            20260719,
+            20260720,
+            20260721
+          ],
+          "sha256": "f000c67e649f16724c633a2989d7ad4f4cc3e4fd5daa9ccbe9ec225877cf3ecd",
+          "size_bytes": 1765,
+          "summary_path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/summary.json",
+          "summary_sha256": "fb6dd94482c60b718e7a4ebe1d5beced84401c6a9f40012a27011ee36783d4ad",
+          "textworld_version": "1.7.0",
+          "verified": true
+        },
+        "valid": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/episodes.jsonl",
+              "sha256": "1437f6800372658fdf48db2f27a1ce6c1308953cafd9a3d85c3e3bdc6fd502d4",
+              "size_bytes": 13425
+            },
+            "manifest": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/manifest.json",
+              "sha256": "af18f13a798fcf9461e549dc7340c930de61e68c46acf7ff6880700fb48684b7",
+              "size_bytes": 592
+            },
+            "token_events": {
+              "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/token_events.txt",
+              "sha256": "4cc26e49e90e669b2fa9fa60c851ada400fe582f62172c5f4382ffa1faae0097",
+              "size_bytes": 9936
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 1,
+          "event_episode_count": 1,
+          "game_count": 1,
+          "games": [
+            {
+              "path": "/root/autodl-tmp/vpsc/data/e2_world_model/textworld/games_l5/tw_coin_collector_l005_s0020260722.z8",
+              "seed": 20260722,
+              "sha256": "ef387f610e4e053fc5e64e9886216ccf5260c9665f4fc71dcf89cb97ceeef488",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260722
+          ],
+          "sha256": "af18f13a798fcf9461e549dc7340c930de61e68c46acf7ff6880700fb48684b7",
+          "size_bytes": 592,
+          "summary_path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/summary.json",
+          "summary_sha256": "7b640857e66f6f7533d5ef1c145d1f1d699cc9242d90eea743337622e1c11f3a",
+          "textworld_version": "1.7.0",
+          "verified": true
+        }
+      },
+      "textworld_version": "1.7.0",
+      "verified": true
+    },
+    "synthetic": false
+  },
+  "decision": {
+    "backend_gate": "PASS",
+    "data_gate": "PASS",
+    "frozen_input_gate": "PASS",
+    "next_route": "formal_sg0",
+    "overall": "SMOKE",
+    "quality_gate": "SMOKE",
+    "sg0_architecture_gates_overall": "SMOKE",
+    "speed_gate": "SMOKE",
+    "stream_gate": "SMOKE",
+    "task_gate": "SMOKE"
+  },
+  "environment": {
+    "cpu_model": "Intel(R) Xeon(R) Gold 6130 CPU @ 2.10GHz",
+    "cuda_available": true,
+    "cuda_device_name": "Tesla V100-PCIE-32GB",
+    "cuda_version": "12.1",
+    "device": "cuda",
+    "git_commit": "551bacc52920ae31ea37dc8b204e59cbcf255a5b",
+    "git_executable": "git",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M experiments/e3_sg21_episodic_edge_graph.py",
+      "?? experiments/e3_sg23_backend_capability.py",
+      "?? experiments/e3_sg23_spike_feature_solvers.py",
+      "?? experiments/e3_sg23c_cuda_adaptive_krr.py",
+      "?? experiments/e3_sg23d_phase_block_cuda.py",
+      "?? experiments/e3_sg23e_symbolic_quotient_cuda.py",
+      "?? experiments/e3_sg24_cuda_counterfactual_generation.py",
+      "?? results/e3_scan/e3_sg23c_cuda_adaptive_krr.json",
+      "?? results/e3_scan/e3_sg23d_phase_block_cuda.json",
+      "?? results/e3_scan/e3_sg23e_symbolic_quotient_cuda.json",
+      "?? results/e3_scan/invalid_e3_sg23d_and_gate_semantics.json",
+      "?? results/e3_scan/smoke_e3_sg23c_cuda_adaptive_krr.json",
+      "?? results/e3_scan/smoke_e3_sg23d_phase_block_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg23e_symbolic_quotient_cuda.json",
+      "?? tests/test_e3_sg23_backend_capability.py",
+      "?? tests/test_e3_sg23_spike_feature_solvers.py",
+      "?? tests/test_e3_sg23c_cuda_adaptive_krr.py",
+      "?? tests/test_e3_sg23d_phase_block_cuda.py",
+      "?? tests/test_e3_sg23e_symbolic_quotient_cuda.py",
+      "?? tests/test_e3_sg24_cuda_counterfactual_generation.py"
+    ],
+    "logical_cpu_count": 52,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-5.4.0-149-generic-x86_64-with-glibc2.35",
+    "python": "3.12.3",
+    "torch": "2.3.0+cu121",
+    "torch_interop_threads": 52
+  },
+  "experiment": "E3-SG24 same-V100 raw-language action-conditioned world transition",
+  "formal": false,
+  "generated_at_utc": "2026-07-19T12:06:41.491758+00:00",
+  "runtime_audit": {
+    "cuda_allocated_end_bytes": 17039360,
+    "cuda_allocated_start_bytes": 0,
+    "cuda_compute_capability": [
+      7,
+      0
+    ],
+    "cuda_device_name": "Tesla V100-PCIE-32GB",
+    "cuda_peak_allocated_bytes": 26632704,
+    "cuda_peak_reserved_bytes": 48234496,
+    "cuda_peak_scope": "all_five_models_in_one_process",
+    "cuda_reserved_end_bytes": 48234496,
+    "cuda_reserved_start_bytes": 0,
+    "total_wall_seconds": 8.400197305
+  },
+  "schema_version": 2,
+  "seeds": [
+    {
+      "generation": {
+        "lstm": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.16666666666666663,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.18181818181818182,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.1818181818181818
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.09677419354838712,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.16666666666666666,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.16666666666666666
+            },
+            "move": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.0992092621716483
+            }
+          },
+          "edit_similarity": 0.44857561793045664,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.4,
+          "lcs_f1": 0.47453218971714417,
+          "mean_generated_length": 5.0,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": [
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:0:0",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "look",
+              "action_type": "look",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:0:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "go east",
+              "action_type": "move",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:1:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:1:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.04166666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:2:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.07547169811320754,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:south",
+                "room:cookhouse"
+              ],
+              "target_length": 48.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Cookhouse",
+                "=",
+                "-",
+                "You've",
+                "entered",
+                "a",
+                "cookhouse",
+                ".",
+                "You",
+                "begin",
+                "to",
+                "take",
+                "stock",
+                "of",
+                "what's",
+                "in",
+                "the",
+                "room",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "east",
+                ".",
+                "There",
+                "is",
+                "an",
+                "exit",
+                "to",
+                "the",
+                "south",
+                ".",
+                "Don't",
+                "worry",
+                ",",
+                "it",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.07547169811320754
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:2:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go west",
+              "action_type": "move",
+              "edit_similarity": 0.0535714285714286,
+              "exact": 0.0,
+              "example_id": "test:20260723:3:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.09836065573770492,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:north",
+                "room:bedchamber"
+              ],
+              "target_length": 56.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Bedchamber",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "typical",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "<unk>",
+                "is",
+                "to",
+                "<unk>",
+                ",",
+                "you're",
+                "in",
+                "a",
+                "bedchamber",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "east",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "north",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.0983606557377049
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:3:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "examine coin",
+              "action_type": "examine",
+              "edit_similarity": 0.16666666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.18181818181818182,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "object:coin"
+              ],
+              "target_length": 6.0,
+              "target_tokens": [
+                "The",
+                "coin",
+                "is",
+                "<unk>",
+                "looking",
+                "."
+              ],
+              "token_f1": 0.1818181818181818
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.030303030303030276,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.056338028169014086,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:south",
+                "direction:west",
+                "room:<unk>"
+              ],
+              "target_length": 66.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "<unk>",
+                "=",
+                "-",
+                "You've",
+                "just",
+                "<unk>",
+                "up",
+                "in",
+                "an",
+                "<unk>",
+                ".",
+                "The",
+                "room",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                ",",
+                "as",
+                "<unk>",
+                "it",
+                "were",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "the",
+                "<unk>",
+                "<unk>",
+                "in",
+                "the",
+                "<unk>",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "south",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unblocked",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "west",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.05633802816901409
+            }
+          ],
+          "room_accuracy": 0.0,
+          "timing": {
+            "generated_token": {
+              "count": 50,
+              "mean_ms": 0.49023066,
+              "p50_ms": 0.4707575,
+              "p95_ms": 0.6830585499999997,
+              "p99_ms": 0.73829891,
+              "tokens_per_second_at_p50": 2124.235938885732
+            },
+            "prefill": {
+              "count": 10,
+              "mean_ms": 0.6098166,
+              "p50_ms": 0.6004944999999999,
+              "p95_ms": 0.6955608999999998,
+              "p99_ms": 0.74007058,
+              "tokens_per_second_at_p50": 1665.2941867077884
+            },
+            "state_bytes_max": 256,
+            "state_bytes_mean": 256.0
+          },
+          "token_f1": 0.47453218971714417
+        },
+        "snn_at1": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.16666666666666663,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.18181818181818182,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.1818181818181818
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.09677419354838712,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.16666666666666666,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.16666666666666666
+            },
+            "move": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.0992092621716483
+            }
+          },
+          "edit_similarity": 0.44857561793045664,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.4,
+          "lcs_f1": 0.47453218971714417,
+          "mean_generated_length": 5.0,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": [
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:0:0",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "look",
+              "action_type": "look",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:0:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "go east",
+              "action_type": "move",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:1:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:1:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.04166666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:2:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.07547169811320754,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:south",
+                "room:cookhouse"
+              ],
+              "target_length": 48.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Cookhouse",
+                "=",
+                "-",
+                "You've",
+                "entered",
+                "a",
+                "cookhouse",
+                ".",
+                "You",
+                "begin",
+                "to",
+                "take",
+                "stock",
+                "of",
+                "what's",
+                "in",
+                "the",
+                "room",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "east",
+                ".",
+                "There",
+                "is",
+                "an",
+                "exit",
+                "to",
+                "the",
+                "south",
+                ".",
+                "Don't",
+                "worry",
+                ",",
+                "it",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.07547169811320754
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:2:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go west",
+              "action_type": "move",
+              "edit_similarity": 0.0535714285714286,
+              "exact": 0.0,
+              "example_id": "test:20260723:3:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.09836065573770492,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:north",
+                "room:bedchamber"
+              ],
+              "target_length": 56.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Bedchamber",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "typical",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "<unk>",
+                "is",
+                "to",
+                "<unk>",
+                ",",
+                "you're",
+                "in",
+                "a",
+                "bedchamber",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "east",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "north",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.0983606557377049
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:3:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "examine coin",
+              "action_type": "examine",
+              "edit_similarity": 0.16666666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.18181818181818182,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "object:coin"
+              ],
+              "target_length": 6.0,
+              "target_tokens": [
+                "The",
+                "coin",
+                "is",
+                "<unk>",
+                "looking",
+                "."
+              ],
+              "token_f1": 0.1818181818181818
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.030303030303030276,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.056338028169014086,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:south",
+                "direction:west",
+                "room:<unk>"
+              ],
+              "target_length": 66.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "<unk>",
+                "=",
+                "-",
+                "You've",
+                "just",
+                "<unk>",
+                "up",
+                "in",
+                "an",
+                "<unk>",
+                ".",
+                "The",
+                "room",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                ",",
+                "as",
+                "<unk>",
+                "it",
+                "were",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "the",
+                "<unk>",
+                "<unk>",
+                "in",
+                "the",
+                "<unk>",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "south",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unblocked",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "west",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.05633802816901409
+            }
+          ],
+          "room_accuracy": 0.0,
+          "timing": {
+            "generated_token": {
+              "count": 50,
+              "mean_ms": 0.75351428,
+              "p50_ms": 0.7413544999999999,
+              "p95_ms": 0.8209412999999999,
+              "p99_ms": 0.9020578699999999,
+              "tokens_per_second_at_p50": 1348.8823498070087
+            },
+            "prefill": {
+              "count": 10,
+              "mean_ms": 2.4186758999999998,
+              "p50_ms": 2.384286,
+              "p95_ms": 2.5636444000000003,
+              "p99_ms": 2.56394248,
+              "tokens_per_second_at_p50": 419.4127717899615
+            },
+            "state_bytes_max": 248,
+            "state_bytes_mean": 248.0
+          },
+          "token_f1": 0.47453218971714417
+        },
+        "snn_bptt": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.16666666666666663,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.18181818181818182,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.1818181818181818
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.09677419354838712,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.16666666666666666,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.16666666666666666
+            },
+            "move": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.0992092621716483
+            }
+          },
+          "edit_similarity": 0.44857561793045664,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.4,
+          "lcs_f1": 0.47453218971714417,
+          "mean_generated_length": 5.0,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": [
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:0:0",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "look",
+              "action_type": "look",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:0:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "go east",
+              "action_type": "move",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:1:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:1:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.04166666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:2:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.07547169811320754,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:south",
+                "room:cookhouse"
+              ],
+              "target_length": 48.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Cookhouse",
+                "=",
+                "-",
+                "You've",
+                "entered",
+                "a",
+                "cookhouse",
+                ".",
+                "You",
+                "begin",
+                "to",
+                "take",
+                "stock",
+                "of",
+                "what's",
+                "in",
+                "the",
+                "room",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "east",
+                ".",
+                "There",
+                "is",
+                "an",
+                "exit",
+                "to",
+                "the",
+                "south",
+                ".",
+                "Don't",
+                "worry",
+                ",",
+                "it",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.07547169811320754
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:2:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go west",
+              "action_type": "move",
+              "edit_similarity": 0.0535714285714286,
+              "exact": 0.0,
+              "example_id": "test:20260723:3:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.09836065573770492,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:north",
+                "room:bedchamber"
+              ],
+              "target_length": 56.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Bedchamber",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "typical",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "<unk>",
+                "is",
+                "to",
+                "<unk>",
+                ",",
+                "you're",
+                "in",
+                "a",
+                "bedchamber",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "east",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "north",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.0983606557377049
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:3:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "examine coin",
+              "action_type": "examine",
+              "edit_similarity": 0.16666666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.18181818181818182,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "object:coin"
+              ],
+              "target_length": 6.0,
+              "target_tokens": [
+                "The",
+                "coin",
+                "is",
+                "<unk>",
+                "looking",
+                "."
+              ],
+              "token_f1": 0.1818181818181818
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.030303030303030276,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.056338028169014086,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:south",
+                "direction:west",
+                "room:<unk>"
+              ],
+              "target_length": 66.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "<unk>",
+                "=",
+                "-",
+                "You've",
+                "just",
+                "<unk>",
+                "up",
+                "in",
+                "an",
+                "<unk>",
+                ".",
+                "The",
+                "room",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                ",",
+                "as",
+                "<unk>",
+                "it",
+                "were",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "the",
+                "<unk>",
+                "<unk>",
+                "in",
+                "the",
+                "<unk>",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "south",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unblocked",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "west",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.05633802816901409
+            }
+          ],
+          "room_accuracy": 0.0,
+          "timing": {
+            "generated_token": {
+              "count": 50,
+              "mean_ms": 1.05064126,
+              "p50_ms": 0.749637,
+              "p95_ms": 0.8629461499999997,
+              "p99_ms": 8.233643719999971,
+              "tokens_per_second_at_p50": 1333.9789791592464
+            },
+            "prefill": {
+              "count": 10,
+              "mean_ms": 2.7709093,
+              "p50_ms": 2.4862805,
+              "p95_ms": 4.299526849999997,
+              "p99_ms": 5.427164570000001,
+              "tokens_per_second_at_p50": 402.2072328524477
+            },
+            "state_bytes_max": 248,
+            "state_bytes_mean": 248.0
+          },
+          "token_f1": 0.47453218971714417
+        },
+        "snn_ra0": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.16666666666666663,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.18181818181818182,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.1818181818181818
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.09677419354838712,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.16666666666666666,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.16666666666666666
+            },
+            "move": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.0992092621716483
+            }
+          },
+          "edit_similarity": 0.44857561793045664,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.4,
+          "lcs_f1": 0.47453218971714417,
+          "mean_generated_length": 5.0,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": [
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:0:0",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "look",
+              "action_type": "look",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:0:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "go east",
+              "action_type": "move",
+              "edit_similarity": 0.09677419354838712,
+              "exact": 0.0,
+              "example_id": "test:20260723:1:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.16666666666666666,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.16666666666666666
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:1:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.04166666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:2:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.07547169811320754,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:south",
+                "room:cookhouse"
+              ],
+              "target_length": 48.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Cookhouse",
+                "=",
+                "-",
+                "You've",
+                "entered",
+                "a",
+                "cookhouse",
+                ".",
+                "You",
+                "begin",
+                "to",
+                "take",
+                "stock",
+                "of",
+                "what's",
+                "in",
+                "the",
+                "room",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "east",
+                ".",
+                "There",
+                "is",
+                "an",
+                "exit",
+                "to",
+                "the",
+                "south",
+                ".",
+                "Don't",
+                "worry",
+                ",",
+                "it",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.07547169811320754
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:2:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "go west",
+              "action_type": "move",
+              "edit_similarity": 0.0535714285714286,
+              "exact": 0.0,
+              "example_id": "test:20260723:3:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.09836065573770492,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:east",
+                "direction:north",
+                "room:bedchamber"
+              ],
+              "target_length": 56.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Bedchamber",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "typical",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "<unk>",
+                "is",
+                "to",
+                "<unk>",
+                ",",
+                "you're",
+                "in",
+                "a",
+                "bedchamber",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "east",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "north",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.0983606557377049
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 1.0,
+              "exact": 1.0,
+              "example_id": "test:20260723:3:1",
+              "feature_f1": 1.0,
+              "generated_length": 5.0,
+              "lcs_f1": 1.0,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 1.0
+            },
+            {
+              "action": "examine coin",
+              "action_type": "examine",
+              "edit_similarity": 0.16666666666666663,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:0",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.18181818181818182,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "object:coin"
+              ],
+              "target_length": 6.0,
+              "target_tokens": [
+                "The",
+                "coin",
+                "is",
+                "<unk>",
+                "looking",
+                "."
+              ],
+              "token_f1": 0.1818181818181818
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.030303030303030276,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:1",
+              "feature_f1": 0.0,
+              "generated_length": 5.0,
+              "lcs_f1": 0.056338028169014086,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [
+                "inventory:empty"
+              ],
+              "prediction_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 1.0,
+              "target_features": [
+                "direction:south",
+                "direction:west",
+                "room:<unk>"
+              ],
+              "target_length": 66.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "<unk>",
+                "=",
+                "-",
+                "You've",
+                "just",
+                "<unk>",
+                "up",
+                "in",
+                "an",
+                "<unk>",
+                ".",
+                "The",
+                "room",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                ",",
+                "as",
+                "<unk>",
+                "it",
+                "were",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "the",
+                "<unk>",
+                "<unk>",
+                "in",
+                "the",
+                "<unk>",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "south",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unblocked",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "west",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.05633802816901409
+            }
+          ],
+          "room_accuracy": 0.0,
+          "timing": {
+            "generated_token": {
+              "count": 50,
+              "mean_ms": 0.7676456,
+              "p50_ms": 0.7490085,
+              "p95_ms": 0.9195317999999999,
+              "p99_ms": 0.9478310699999999,
+              "tokens_per_second_at_p50": 1335.0983333299957
+            },
+            "prefill": {
+              "count": 10,
+              "mean_ms": 2.5217293,
+              "p50_ms": 2.4510285,
+              "p95_ms": 3.031450099999999,
+              "p99_ms": 3.33413162,
+              "tokens_per_second_at_p50": 407.9919919331823
+            },
+            "state_bytes_max": 248,
+            "state_bytes_mean": 248.0
+          },
+          "token_f1": 0.47453218971714417
+        },
+        "transformer": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.03125,
+              "eos_rate": 0.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.05263157894736842,
+              "mean_generated_length": 32.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.05263157894736842
+            },
+            "inventory": {
+              "edit_similarity": 0.0625,
+              "eos_rate": 0.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.10810810810810811,
+              "mean_generated_length": 32.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 0.10810810810810811
+            },
+            "look": {
+              "edit_similarity": 0.09375,
+              "eos_rate": 0.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.12698412698412698,
+              "mean_generated_length": 32.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.19047619047619047
+            },
+            "move": {
+              "edit_similarity": 0.0839082792207792,
+              "eos_rate": 0.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.11806328592042878,
+              "mean_generated_length": 32.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.16006751185322615
+            }
+          },
+          "edit_similarity": 0.07106331168831168,
+          "eos_rate": 0.0,
+          "exact": 0.0,
+          "example_count": 10,
+          "feature_f1": 0.0,
+          "lcs_f1": 0.1084301282045643,
+          "mean_generated_length": 32.0,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.6,
+          "paired_different_target_count": 5,
+          "records": [
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 0.0625,
+              "exact": 0.0,
+              "example_id": "test:20260723:0:0",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.10810810810810811,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 0.10810810810810811
+            },
+            {
+              "action": "look",
+              "action_type": "look",
+              "edit_similarity": 0.09375,
+              "exact": 0.0,
+              "example_id": "test:20260723:0:1",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.12698412698412698,
+              "pair_id": "test:20260723:0",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.19047619047619047
+            },
+            {
+              "action": "go east",
+              "action_type": "move",
+              "edit_similarity": 0.09375,
+              "exact": 0.0,
+              "example_id": "test:20260723:1:0",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.12698412698412698,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "direction:west",
+                "room:spare room"
+              ],
+              "target_length": 31.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Spare",
+                "Room",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "spare",
+                "room",
+                ".",
+                "A",
+                "standard",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "west",
+                "."
+              ],
+              "token_f1": 0.15873015873015875
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 0.0625,
+              "exact": 0.0,
+              "example_id": "test:20260723:1:1",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.10810810810810811,
+              "pair_id": "test:20260723:1",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 0.10810810810810811
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.125,
+              "exact": 0.0,
+              "example_id": "test:20260723:2:0",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.15,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "direction:east",
+                "direction:south",
+                "room:cookhouse"
+              ],
+              "target_length": 48.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Cookhouse",
+                "=",
+                "-",
+                "You've",
+                "entered",
+                "a",
+                "cookhouse",
+                ".",
+                "You",
+                "begin",
+                "to",
+                "take",
+                "stock",
+                "of",
+                "what's",
+                "in",
+                "the",
+                "room",
+                ".",
+                "You",
+                "need",
+                "an",
+                "unguarded",
+                "exit",
+                "?",
+                "You",
+                "should",
+                "try",
+                "going",
+                "east",
+                ".",
+                "There",
+                "is",
+                "an",
+                "exit",
+                "to",
+                "the",
+                "south",
+                ".",
+                "Don't",
+                "worry",
+                ",",
+                "it",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.2
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 0.0625,
+              "exact": 0.0,
+              "example_id": "test:20260723:2:1",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.10810810810810811,
+              "pair_id": "test:20260723:2",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 0.10810810810810811
+            },
+            {
+              "action": "go west",
+              "action_type": "move",
+              "edit_similarity": 0.0714285714285714,
+              "exact": 0.0,
+              "example_id": "test:20260723:3:0",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.11363636363636363,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "direction:east",
+                "direction:north",
+                "room:bedchamber"
+              ],
+              "target_length": 56.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "Bedchamber",
+                "=",
+                "-",
+                "You",
+                "are",
+                "in",
+                "a",
+                "typical",
+                "kind",
+                "of",
+                "place",
+                ".",
+                "<unk>",
+                "is",
+                "to",
+                "<unk>",
+                ",",
+                "you're",
+                "in",
+                "a",
+                "bedchamber",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "east",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "north",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.1590909090909091
+            },
+            {
+              "action": "inventory",
+              "action_type": "inventory",
+              "edit_similarity": 0.0625,
+              "exact": 0.0,
+              "example_id": "test:20260723:3:1",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.10810810810810811,
+              "pair_id": "test:20260723:3",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "inventory:empty"
+              ],
+              "target_length": 5.0,
+              "target_tokens": [
+                "You",
+                "are",
+                "carrying",
+                "nothing",
+                "."
+              ],
+              "token_f1": 0.10810810810810811
+            },
+            {
+              "action": "examine coin",
+              "action_type": "examine",
+              "edit_similarity": 0.03125,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:0",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.05263157894736842,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": NaN,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "object:coin"
+              ],
+              "target_length": 6.0,
+              "target_tokens": [
+                "The",
+                "coin",
+                "is",
+                "<unk>",
+                "looking",
+                "."
+              ],
+              "token_f1": 0.05263157894736842
+            },
+            {
+              "action": "go north",
+              "action_type": "move",
+              "edit_similarity": 0.045454545454545414,
+              "exact": 0.0,
+              "example_id": "test:20260723:4:1",
+              "feature_f1": 0.0,
+              "generated_length": 32.0,
+              "lcs_f1": 0.08163265306122448,
+              "pair_id": "test:20260723:4",
+              "prediction_features": [],
+              "prediction_tokens": [
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                "You",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                ".",
+                "."
+              ],
+              "room_accuracy": 0.0,
+              "stopped_on_eos": 0.0,
+              "target_features": [
+                "direction:south",
+                "direction:west",
+                "room:<unk>"
+              ],
+              "target_length": 66.0,
+              "target_tokens": [
+                "-",
+                "=",
+                "<unk>",
+                "=",
+                "-",
+                "You've",
+                "just",
+                "<unk>",
+                "up",
+                "in",
+                "an",
+                "<unk>",
+                ".",
+                "The",
+                "room",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                ",",
+                "as",
+                "<unk>",
+                "it",
+                "were",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "<unk>",
+                "the",
+                "<unk>",
+                "<unk>",
+                "in",
+                "the",
+                "<unk>",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "south",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unblocked",
+                ".",
+                "You",
+                "don't",
+                "like",
+                "doors",
+                "?",
+                "Why",
+                "not",
+                "try",
+                "going",
+                "west",
+                ",",
+                "that",
+                "entranceway",
+                "is",
+                "unguarded",
+                "."
+              ],
+              "token_f1": 0.12244897959183672
+            }
+          ],
+          "room_accuracy": 0.0,
+          "timing": {
+            "generated_token": {
+              "count": 320,
+              "mean_ms": 1.2443670718750002,
+              "p50_ms": 1.2103345,
+              "p95_ms": 1.46526255,
+              "p99_ms": 1.7282232300000002,
+              "tokens_per_second_at_p50": 826.2178761325897
+            },
+            "prefill": {
+              "count": 10,
+              "mean_ms": 1.4087444,
+              "p50_ms": 1.3355975,
+              "p95_ms": 1.7888558999999993,
+              "p99_ms": 2.02989678,
+              "tokens_per_second_at_p50": 748.7285653050413
+            },
+            "state_bytes_max": 28160,
+            "state_bytes_mean": 23219.2
+          },
+          "token_f1": 0.13158102492688958
+        }
+      },
+      "parameter_counts": {
+        "lstm": {
+          "core": 8448,
+          "total": 14551
+        },
+        "snn_at1": {
+          "core": 8402,
+          "total": 14505
+        },
+        "snn_bptt": {
+          "core": 8402,
+          "total": 14505
+        },
+        "snn_ra0": {
+          "core": 8402,
+          "total": 14505
+        },
+        "transformer": {
+          "core": 8608,
+          "total": 14711
+        }
+      },
+      "parameter_relative_spread": 0.01415282300726878,
+      "post_teacher": {
+        "lstm": {
+          "test": {
+            "accuracy": 0.22761194029850745,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.2857142857142857,
+                "nll": 4.460016523088727,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.5285211404164631,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.21875,
+                "nll": 3.960071086883545,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.13658536585365855,
+                "nll": 4.390920871641578,
+                "target_count": 205
+              }
+            },
+            "nll": 4.084946554098556,
+            "ppl": 59.43876090819255,
+            "target_count": 268
+          },
+          "train": {
+            "accuracy": 0.23221343873517786,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.1724137931034483,
+                "nll": 4.257240163868871,
+                "target_count": 29
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.5287638107935588,
+                "target_count": 96
+              },
+              "look": {
+                "accuracy": 0.14619883040935672,
+                "nll": 4.084896600734421,
+                "target_count": 171
+              },
+              "move": {
+                "accuracy": 0.15223463687150837,
+                "nll": 4.081583886173185,
+                "target_count": 716
+              }
+            },
+            "nll": 3.8450125215553013,
+            "ppl": 46.759269846029746,
+            "target_count": 1012
+          },
+          "valid": {
+            "accuracy": 0.2049469964664311,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.09090909090909091,
+                "nll": 5.026182694868608,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.528645356496175,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.10204081632653061,
+                "nll": 4.894107740752551,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.1407035175879397,
+                "nll": 4.27792573094967,
+                "target_count": 199
+              }
+            },
+            "nll": 4.180544162386298,
+            "ppl": 65.40143253226263,
+            "target_count": 283
+          }
+        },
+        "snn_at1": {
+          "test": {
+            "accuracy": 0.22388059701492538,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.14285714285714285,
+                "nll": 4.696436200823102,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.2196764747301738,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.21875,
+                "nll": 3.9260048866271973,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.13658536585365855,
+                "nll": 4.182727646246189,
+                "target_count": 205
+              }
+            },
+            "nll": 3.9001440770590485,
+            "ppl": 49.409567377884656,
+            "target_count": 268
+          },
+          "train": {
+            "accuracy": 0.2707509881422925,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.20689655172413793,
+                "nll": 4.146026150933627,
+                "target_count": 29
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.190284455815951,
+                "target_count": 96
+              },
+              "look": {
+                "accuracy": 0.1871345029239766,
+                "nll": 3.859372635333859,
+                "target_count": 171
+              },
+              "move": {
+                "accuracy": 0.19553072625698323,
+                "nll": 3.8735386193131602,
+                "target_count": 716
+              }
+            },
+            "nll": 3.6244154527724497,
+            "ppl": 37.50279459647826,
+            "target_count": 1012
+          },
+          "valid": {
+            "accuracy": 0.22614840989399293,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.09090909090909091,
+                "nll": 4.834995963356712,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.2149503231048584,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.14285714285714285,
+                "nll": 4.551103241589605,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.16080402010050251,
+                "nll": 4.135188040421836,
+                "target_count": 199
+              }
+            },
+            "nll": 3.9867499725557467,
+            "ppl": 53.879494662581656,
+            "target_count": 283
+          }
+        },
+        "snn_bptt": {
+          "test": {
+            "accuracy": 0.22388059701492538,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.14285714285714285,
+                "nll": 4.696436200823102,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.2196763753890991,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.21875,
+                "nll": 3.9260048866271973,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.13658536585365855,
+                "nll": 4.182727571813071,
+                "target_count": 205
+              }
+            },
+            "nll": 3.9001440112270527,
+            "ppl": 49.409564125154326,
+            "target_count": 268
+          },
+          "train": {
+            "accuracy": 0.2707509881422925,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.20689655172413793,
+                "nll": 4.146026282474913,
+                "target_count": 29
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.1902845054864883,
+                "target_count": 96
+              },
+              "look": {
+                "accuracy": 0.1871345029239766,
+                "nll": 3.859372635333859,
+                "target_count": 171
+              },
+              "move": {
+                "accuracy": 0.19553072625698323,
+                "nll": 3.8735385553796866,
+                "target_count": 716
+              }
+            },
+            "nll": 3.6244154160201787,
+            "ppl": 37.502793218165415,
+            "target_count": 1012
+          },
+          "valid": {
+            "accuracy": 0.22614840989399293,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.09090909090909091,
+                "nll": 4.834995963356712,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.2149504621823628,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.14285714285714285,
+                "nll": 4.551103241589605,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.16080402010050251,
+                "nll": 4.135187887067172,
+                "target_count": 199
+              }
+            },
+            "nll": 3.9867498765143403,
+            "ppl": 53.879489487919464,
+            "target_count": 283
+          }
+        },
+        "snn_ra0": {
+          "test": {
+            "accuracy": 0.22388059701492538,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.14285714285714285,
+                "nll": 4.696436200823102,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.219676434993744,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.21875,
+                "nll": 3.9260048866271973,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.13658536585365855,
+                "nll": 4.1827274229468365,
+                "target_count": 205
+              }
+            },
+            "nll": 3.900143902693222,
+            "ppl": 49.409558762545345,
+            "target_count": 268
+          },
+          "train": {
+            "accuracy": 0.2707509881422925,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.20689655172413793,
+                "nll": 4.146026085162985,
+                "target_count": 29
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.190284455815951,
+                "target_count": 96
+              },
+              "look": {
+                "accuracy": 0.1871345029239766,
+                "nll": 3.859372635333859,
+                "target_count": 171
+              },
+              "move": {
+                "accuracy": 0.19553072625698323,
+                "nll": 3.8735386725910548,
+                "target_count": 716
+              }
+            },
+            "nll": 3.624415488582355,
+            "ppl": 37.502795939449804,
+            "target_count": 1012
+          },
+          "valid": {
+            "accuracy": 0.22614840989399293,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.09090909090909091,
+                "nll": 4.834995963356712,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "nll": 1.2149503231048584,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.14285714285714285,
+                "nll": 4.551103552993463,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.16080402010050251,
+                "nll": 4.135188117099168,
+                "target_count": 199
+              }
+            },
+            "nll": 3.986750080391712,
+            "ppl": 53.8795004727293,
+            "target_count": 283
+          }
+        },
+        "transformer": {
+          "test": {
+            "accuracy": 0.08955223880597014,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 4.587897164481027,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 0.2916666666666667,
+                "nll": 2.814194599787394,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0625,
+                "nll": 4.431638240814209,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.07317073170731707,
+                "nll": 4.6688833841463415,
+                "target_count": 205
+              }
+            },
+            "nll": 4.472348761202684,
+            "ppl": 87.56214424351941,
+            "target_count": 268
+          },
+          "train": {
+            "accuracy": 0.09881422924901186,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.06896551724137931,
+                "nll": 4.669641428980334,
+                "target_count": 29
+              },
+              "inventory": {
+                "accuracy": 0.3125,
+                "nll": 2.7675912777582803,
+                "target_count": 96
+              },
+              "look": {
+                "accuracy": 0.08771929824561403,
+                "nll": 4.470960828993055,
+                "target_count": 171
+              },
+              "move": {
+                "accuracy": 0.07402234636871509,
+                "nll": 4.50689034488614,
+                "target_count": 716
+              }
+            },
+            "nll": 4.340490269566713,
+            "ppl": 76.74515593075236,
+            "target_count": 1012
+          },
+          "valid": {
+            "accuracy": 0.08833922261484099,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.418738278475675,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 0.2916666666666667,
+                "nll": 2.8107833862304688,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.061224489795918366,
+                "nll": 4.877646932796556,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.07537688442211055,
+                "nll": 4.619172599447433,
+                "target_count": 199
+              }
+            },
+            "nll": 4.541643001165491,
+            "ppl": 93.8448607394986,
+            "target_count": 283
+          }
+        }
+      },
+      "pre_teacher": {
+        "lstm": {
+          "test": {
+            "accuracy": 0.007462686567164179,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.383514949253628,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 5.771550337473552,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.03125,
+                "nll": 5.695032119750977,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.004878048780487805,
+                "nll": 5.728922848585175,
+                "target_count": 205
+              }
+            },
+            "nll": 5.719671733343779,
+            "ppl": 304.8048492637113,
+            "target_count": 268
+          },
+          "valid": {
+            "accuracy": 0.0,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.233945673162287,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 5.771831671396892,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 5.739731769172513,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.0,
+                "nll": 5.650362407741834,
+                "target_count": 199
+              }
+            },
+            "nll": 5.659951725612681,
+            "ppl": 287.1347809658479,
+            "target_count": 283
+          }
+        },
+        "snn_at1": {
+          "test": {
+            "accuracy": 0.007462686567164179,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.815898895263672,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 6.095336437225342,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 6.139926433563232,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.00975609756097561,
+                "nll": 5.7930068597560975,
+                "target_count": 205
+              }
+            },
+            "nll": 5.862102309269692,
+            "ppl": 351.462250230905,
+            "target_count": 268
+          },
+          "valid": {
+            "accuracy": 0.007067137809187279,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.595026189630682,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 6.1185652414957685,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 5.671376131018814,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.010050251256281407,
+                "nll": 5.753288384058966,
+                "target_count": 199
+              }
+            },
+            "nll": 5.763931705757923,
+            "ppl": 318.5985052221436,
+            "target_count": 283
+          }
+        },
+        "snn_bptt": {
+          "test": {
+            "accuracy": 0.007462686567164179,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.815898895263672,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 6.095336437225342,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 6.139926433563232,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.00975609756097561,
+                "nll": 5.7930068597560975,
+                "target_count": 205
+              }
+            },
+            "nll": 5.862102309269692,
+            "ppl": 351.462250230905,
+            "target_count": 268
+          },
+          "valid": {
+            "accuracy": 0.007067137809187279,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.595026189630682,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 6.1185652414957685,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 5.671376131018814,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.010050251256281407,
+                "nll": 5.753288384058966,
+                "target_count": 199
+              }
+            },
+            "nll": 5.763931705757923,
+            "ppl": 318.5985052221436,
+            "target_count": 283
+          }
+        },
+        "snn_ra0": {
+          "test": {
+            "accuracy": 0.007462686567164179,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.815898895263672,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 6.095336437225342,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 6.139926433563232,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.00975609756097561,
+                "nll": 5.7930068597560975,
+                "target_count": 205
+              }
+            },
+            "nll": 5.862102309269692,
+            "ppl": 351.462250230905,
+            "target_count": 268
+          },
+          "valid": {
+            "accuracy": 0.007067137809187279,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.595026189630682,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 6.1185652414957685,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 5.671376131018814,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.010050251256281407,
+                "nll": 5.753288384058966,
+                "target_count": 199
+              }
+            },
+            "nll": 5.763931705757923,
+            "ppl": 318.5985052221436,
+            "target_count": 283
+          }
+        },
+        "transformer": {
+          "test": {
+            "accuracy": 0.0,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.4785886492047995,
+                "target_count": 7
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 5.302304903666179,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.0,
+                "nll": 5.823709487915039,
+                "target_count": 32
+              },
+              "move": {
+                "accuracy": 0.0,
+                "nll": 5.66793555282965,
+                "target_count": 205
+              }
+            },
+            "nll": 5.648846754387243,
+            "ppl": 283.96379691589647,
+            "target_count": 268
+          },
+          "valid": {
+            "accuracy": 0.007067137809187279,
+            "action_types": {
+              "examine": {
+                "accuracy": 0.0,
+                "nll": 5.472518227317116,
+                "target_count": 11
+              },
+              "inventory": {
+                "accuracy": 0.0,
+                "nll": 5.474525133768718,
+                "target_count": 24
+              },
+              "look": {
+                "accuracy": 0.02040816326530612,
+                "nll": 5.429337482063138,
+                "target_count": 49
+              },
+              "move": {
+                "accuracy": 0.005025125628140704,
+                "nll": 5.595863227269159,
+                "target_count": 199
+              }
+            },
+            "nll": 5.551945662751215,
+            "ppl": 257.73854065215,
+            "target_count": 283
+          }
+        }
+      },
+      "seed": 0,
+      "training": {
+        "lstm": {
+          "elapsed_seconds": 0.286672774,
+          "epoch_records": [
+            {
+              "epoch": 1,
+              "last_gradient_norm": 2.817870616912842,
+              "target_count": 1012,
+              "target_nll": 5.012256617602623
+            },
+            {
+              "epoch": 2,
+              "last_gradient_norm": 2.7699778079986572,
+              "target_count": 1012,
+              "target_nll": 4.16651904535859
+            }
+          ],
+          "epochs": 2,
+          "input_tokens": 6440,
+          "loss_first": 5.751099109649658,
+          "loss_last": 1.5537447929382324,
+          "loss_last_epoch": 4.16651904535859,
+          "target_tokens": 2024,
+          "timing": {
+            "count": 64,
+            "input_tokens_per_second_total": 22464.637677800543,
+            "mean_ms": 2.4230721875,
+            "p50_ms": 2.420388,
+            "p95_ms": 2.5417476999999997,
+            "target_tokens_per_second_total": 7060.314698737313,
+            "tokens_per_second_at_p50": 413.15689881126497,
+            "warmup_updates_excluded": 16
+          },
+          "updates": 80
+        },
+        "snn_at1": {
+          "elapsed_seconds": 2.09478853,
+          "epoch_records": [
+            {
+              "epoch": 1,
+              "last_gradient_norm": 3.9732470512390137,
+              "target_count": 1012,
+              "target_nll": 4.850631155044193
+            },
+            {
+              "epoch": 2,
+              "last_gradient_norm": 5.561940670013428,
+              "target_count": 1012,
+              "target_nll": 3.9633235804177085
+            }
+          ],
+          "epochs": 2,
+          "input_tokens": 6440,
+          "loss_first": 6.067870616912842,
+          "loss_last": 1.1517783403396606,
+          "loss_last_epoch": 3.9633235804177085,
+          "target_tokens": 2024,
+          "timing": {
+            "count": 64,
+            "input_tokens_per_second_total": 3074.2960006564476,
+            "mean_ms": 24.94240228125,
+            "p50_ms": 12.6911875,
+            "p95_ms": 47.99304995,
+            "target_tokens_per_second_total": 966.2073144920265,
+            "tokens_per_second_at_p50": 78.79483302882413,
+            "warmup_updates_excluded": 16
+          },
+          "updates": 80
+        },
+        "snn_bptt": {
+          "elapsed_seconds": 1.34826534,
+          "epoch_records": [
+            {
+              "epoch": 1,
+              "last_gradient_norm": 3.9732468128204346,
+              "target_count": 1012,
+              "target_nll": 4.85063114326462
+            },
+            {
+              "epoch": 2,
+              "last_gradient_norm": 5.5619401931762695,
+              "target_count": 1012,
+              "target_nll": 3.9633234522559424
+            }
+          ],
+          "epochs": 2,
+          "input_tokens": 6440,
+          "loss_first": 6.067870616912842,
+          "loss_last": 1.1517781019210815,
+          "loss_last_epoch": 3.9633234522559424,
+          "target_tokens": 2024,
+          "timing": {
+            "count": 64,
+            "input_tokens_per_second_total": 4776.50786454245,
+            "mean_ms": 13.13506003125,
+            "p50_ms": 12.5921865,
+            "p95_ms": 19.285387999999998,
+            "target_tokens_per_second_total": 1501.1881859990556,
+            "tokens_per_second_at_p50": 79.41432570110044,
+            "warmup_updates_excluded": 16
+          },
+          "updates": 80
+        },
+        "snn_ra0": {
+          "elapsed_seconds": 0.44960781,
+          "epoch_records": [
+            {
+              "epoch": 1,
+              "last_gradient_norm": 3.9732468128204346,
+              "target_count": 1012,
+              "target_nll": 4.850631098973421
+            },
+            {
+              "epoch": 2,
+              "last_gradient_norm": 5.561940670013428,
+              "target_count": 1012,
+              "target_nll": 3.963323483354018
+            }
+          ],
+          "epochs": 2,
+          "input_tokens": 6440,
+          "loss_first": 6.067870616912842,
+          "loss_last": 1.1517783403396606,
+          "loss_last_epoch": 3.963323483354018,
+          "target_tokens": 2024,
+          "timing": {
+            "count": 64,
+            "input_tokens_per_second_total": 14323.594601259261,
+            "mean_ms": 5.32284315625,
+            "p50_ms": 5.2448915,
+            "p95_ms": 5.438955249999999,
+            "target_tokens_per_second_total": 4501.701160395768,
+            "tokens_per_second_at_p50": 190.6617134024603,
+            "warmup_updates_excluded": 16
+          },
+          "updates": 80
+        },
+        "transformer": {
+          "elapsed_seconds": 0.348413391,
+          "epoch_records": [
+            {
+              "epoch": 1,
+              "last_gradient_norm": 2.3323237895965576,
+              "target_count": 1012,
+              "target_nll": 5.035182298878907
+            },
+            {
+              "epoch": 2,
+              "last_gradient_norm": 2.022437334060669,
+              "target_count": 1012,
+              "target_nll": 4.478011401745642
+            }
+          ],
+          "epochs": 2,
+          "input_tokens": 6440,
+          "loss_first": 5.3801093101501465,
+          "loss_last": 2.7455360889434814,
+          "loss_last_epoch": 4.478011401745642,
+          "target_tokens": 2024,
+          "timing": {
+            "count": 64,
+            "input_tokens_per_second_total": 18483.790136527787,
+            "mean_ms": 3.9281984375,
+            "p50_ms": 3.848161,
+            "p95_ms": 4.023794199999999,
+            "target_tokens_per_second_total": 5809.191185765876,
+            "tokens_per_second_at_p50": 259.86438717091096,
+            "warmup_updates_excluded": 16
+          },
+          "updates": 80
+        }
+      }
+    }
+  ],
+  "source_provenance": {
+    "frozen_inputs": {
+      "base_runner": {
+        "actual_sha256": "360054a294a8ffb4905eb819545749dd379905aa7ceec2fb507b16f232266f30",
+        "expected_sha256": "360054a294a8ffb4905eb819545749dd379905aa7ceec2fb507b16f232266f30",
+        "passed": true,
+        "path": "/root/autodl-tmp/vpsc/experiments/e3_sg0_counterfactual_generation.py"
+      },
+      "corpus": {
+        "test/episodes.jsonl": {
+          "actual_sha256": "52d6a96c310a23395aafb0999aaeb7cbf572c099c8ec88bc3550c96209ea6962",
+          "expected_sha256": "52d6a96c310a23395aafb0999aaeb7cbf572c099c8ec88bc3550c96209ea6962",
+          "passed": true,
+          "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/test/episodes.jsonl"
+        },
+        "train/episodes.jsonl": {
+          "actual_sha256": "5938045cf8e93fb2e1863aeefbe058e73e4ede8e62cd887db89c663d93444fd3",
+          "expected_sha256": "5938045cf8e93fb2e1863aeefbe058e73e4ede8e62cd887db89c663d93444fd3",
+          "passed": true,
+          "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/train/episodes.jsonl"
+        },
+        "valid/episodes.jsonl": {
+          "actual_sha256": "1437f6800372658fdf48db2f27a1ce6c1308953cafd9a3d85c3e3bdc6fd502d4",
+          "expected_sha256": "1437f6800372658fdf48db2f27a1ce6c1308953cafd9a3d85c3e3bdc6fd502d4",
+          "passed": true,
+          "path": "/root/autodl-tmp/vpsc/results/e2_world_model/textworld_l5/valid/episodes.jsonl"
+        }
+      },
+      "parent_cpu_artifact": {
+        "actual_sha256": "734a095b984aac495a06329565b59783116eec421942640e269aab60b0eff05d",
+        "expected_sha256": "734a095b984aac495a06329565b59783116eec421942640e269aab60b0eff05d",
+        "gate": false,
+        "passed": true,
+        "path": "/root/autodl-tmp/vpsc/results/e3_scan/e3_sg0_counterfactual_generation.json"
+      },
+      "passed": true
+    },
+    "wrapper": {
+      "path": "/root/autodl-tmp/vpsc/experiments/e3_sg24_cuda_counterfactual_generation.py",
+      "sha256": "312df00f087cf76f85dbfe00781f5f7339f6c97eb3f826f392f9f068d28f54ed"
+    }
+  }
+}

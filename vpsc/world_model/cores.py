@@ -46,6 +46,7 @@ E2ExecutionMode = Literal["reference", "fused"]
 E3ExecutionMode = Literal["serial", "scan"]
 E3EligibilityForwardMode = Literal["segment", "scan_aligned"]
 E3EligibilityBackwardMode = Literal["forward_eligibility", "reverse_adjoint"]
+E3ScanMathMode = Literal["hillis_steele", "blocked_cumsum", "cuda_fused"]
 E3FixedPointMode = Literal["serial", "fixed_point"]
 E3OscillatorMode = Literal["serial", "scan"]
 
@@ -1889,6 +1890,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         surrogate_scale: float,
         scan_aligned: bool,
         reverse_adjoint: bool,
+        blocked_scan_size: int,
     ) -> Tuple[Tensor, Tensor, Tensor]:
         ctx.set_materialize_grads(False)
         time_steps = x.shape[1]
@@ -1989,11 +1991,21 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
             write_pair = torch.cat((write_e, write_i), dim=-1)
             decay_pair = torch.cat((decay_e, decay_i), dim=0)
             initial_pair = torch.cat((initial_e, initial_i), dim=-1)
-            aligned_pair = E3GatedTraceScanCore._constant_affine_prefix_scan(
-                write_pair,
-                decay_pair,
-                initial_pair,
-            )
+            if blocked_scan_size > 0:
+                aligned_pair = (
+                    E3GatedTraceScanCore._blocked_constant_affine_prefix_scan(
+                        write_pair,
+                        decay_pair,
+                        initial_pair,
+                        block_size=blocked_scan_size,
+                    )
+                )
+            else:
+                aligned_pair = E3GatedTraceScanCore._constant_affine_prefix_scan(
+                    write_pair,
+                    decay_pair,
+                    initial_pair,
+                )
             query_trace_pair = aligned_pair.index_select(1, query_indices).clone()
             query_trace_e, query_trace_i = query_trace_pair.chunk(2, dim=-1)
             final_pair = aligned_pair[:, -1].clone()
@@ -2051,6 +2063,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         )
         ctx.input_requires_grad = bool(ctx.needs_input_grad[0])
         ctx.reverse_adjoint = bool(reverse_adjoint)
+        ctx.blocked_scan_size = int(blocked_scan_size)
         ctx.query_positions = query_positions
         ctx.query_indices = query_indices
         ctx.time_steps = int(time_steps)
@@ -2187,6 +2200,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         None,
         None,
         None,
+        None,
     ]:
         saved = ctx.saved_tensors
         if ctx.reverse_adjoint:
@@ -2268,19 +2282,31 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
                 )
                 direct.index_copy_(1, ctx.query_indices, impulses)
                 direct[:, -1] += final_pair
-                prefix = direct.flip(1)
-                retention = torch.cumprod(
-                    decay.unsqueeze(0).expand(ctx.time_steps, -1), dim=0
-                )
-                offset = 1
-                while offset < ctx.time_steps:
-                    composed = prefix[:, offset:] + retention[offset - 1].view(
-                        1, 1, -1
-                    ) * prefix[:, :-offset]
-                    prefix = torch.cat(
-                        (prefix[:, :offset], composed), dim=1
+                reversed_direct = direct.flip(1)
+                if ctx.blocked_scan_size > 0:
+                    prefix = (
+                        E3GatedTraceScanCore._blocked_constant_affine_prefix_scan(
+                            reversed_direct,
+                            decay,
+                            torch.zeros_like(reversed_direct[:, 0]),
+                            block_size=ctx.blocked_scan_size,
+                            injection_scale=torch.ones_like(decay),
+                        )
                     )
-                    offset *= 2
+                else:
+                    prefix = reversed_direct
+                    retention = torch.cumprod(
+                        decay.unsqueeze(0).expand(ctx.time_steps, -1), dim=0
+                    )
+                    offset = 1
+                    while offset < ctx.time_steps:
+                        composed = prefix[:, offset:] + retention[
+                            offset - 1
+                        ].view(1, 1, -1) * prefix[:, :-offset]
+                        prefix = torch.cat(
+                            (prefix[:, :offset], composed), dim=1
+                        )
+                        offset *= 2
                 return prefix.flip(1)
 
             adjoint_pair = parallel_reverse_adjoint(learning_pair, decay_pair)
@@ -2319,6 +2345,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
                 grad_decay_logits,
                 grad_initial_e,
                 grad_initial_i,
+                None,
                 None,
                 None,
                 None,
@@ -2421,6 +2448,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
             grad_decay_logits,
             grad_initial_e,
             grad_initial_i,
+            None,
             None,
             None,
             None,
@@ -2656,6 +2684,8 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         execution_mode: E3ExecutionMode = "scan",
         eligibility_forward_mode: E3EligibilityForwardMode = "segment",
         eligibility_backward_mode: E3EligibilityBackwardMode = "forward_eligibility",
+        scan_math_mode: E3ScanMathMode = "hillis_steele",
+        scan_block_size: int = 64,
     ) -> None:
         super().__init__(input_dim=input_dim, output_dim=hidden_dim)
         state_dim = hidden_dim if state_dim is None else state_dim
@@ -2683,6 +2713,17 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
                 "eligibility_backward_mode must be 'forward_eligibility' "
                 "or 'reverse_adjoint'"
             )
+        if scan_math_mode not in (
+            "hillis_steele",
+            "blocked_cumsum",
+            "cuda_fused",
+        ):
+            raise ValueError(
+                "scan_math_mode must be 'hillis_steele', 'blocked_cumsum', "
+                "or 'cuda_fused'"
+            )
+        if scan_block_size <= 0:
+            raise ValueError("scan_block_size must be positive")
 
         self.hidden_dim = int(hidden_dim)
         self.state_dim = int(state_dim)
@@ -2697,6 +2738,8 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         self.eligibility_backward_mode: E3EligibilityBackwardMode = (
             eligibility_backward_mode
         )
+        self.scan_math_mode: E3ScanMathMode = scan_math_mode
+        self.scan_block_size = int(scan_block_size)
 
         self.input_event_projection = nn.Linear(input_dim, 4 * self.state_dim)
         self.decay_logits = nn.Parameter(torch.empty(2, self.state_dim))
@@ -2952,6 +2995,71 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         return prefix + retention.unsqueeze(0) * initial.unsqueeze(1)
 
     @staticmethod
+    def _blocked_constant_affine_prefix_scan(
+        write: Tensor,
+        decay: Tensor,
+        initial: Tensor,
+        *,
+        block_size: int,
+        injection_scale: Optional[Tensor] = None,
+    ) -> Tensor:
+        """Evaluate a constant affine recurrence with stable block cumsums.
+
+        The block-local closed form uses bounded geometric exponents, while
+        exact block-end states carry all preceding history into the next block.
+        ``injection_scale`` is ``1 - decay`` for the forward trace and one for
+        the reverse-time adjoint recurrence.
+        """
+
+        if write.ndim != 3:
+            raise ValueError("write must be shaped [batch, time, state]")
+        if block_size <= 0:
+            raise ValueError("block_size must be positive")
+        time_steps = write.shape[1]
+        if time_steps <= 0:
+            raise ValueError("time dimension must be positive")
+        if decay.ndim != 1 or decay.shape[0] != write.shape[-1]:
+            raise ValueError("decay must match the write state dimension")
+        if initial.shape != (write.shape[0], write.shape[-1]):
+            raise ValueError("initial must be shaped [batch, state]")
+
+        block_count = (time_steps + block_size - 1) // block_size
+        padded_steps = block_count * block_size
+        padding = padded_steps - time_steps
+        padded = F.pad(write, (0, 0, 0, padding)) if padding else write
+        blocks = padded.reshape(
+            write.shape[0], block_count, block_size, write.shape[-1]
+        )
+        exponents = torch.arange(
+            1,
+            block_size + 1,
+            device=write.device,
+            dtype=decay.dtype,
+        ).unsqueeze(1)
+        powers = decay.unsqueeze(0).pow(exponents)
+        scale = 1.0 - decay if injection_scale is None else injection_scale
+        scaled = scale.view(1, 1, 1, -1) * blocks / powers.view(
+            1, 1, block_size, -1
+        )
+        local = powers.view(1, 1, block_size, -1) * torch.cumsum(
+            scaled, dim=2
+        )
+
+        starts = [initial]
+        running = initial
+        block_retention = powers[-1].unsqueeze(0)
+        for index in range(block_count - 1):
+            running = block_retention * running + local[:, index, -1]
+            starts.append(running)
+        block_starts = torch.stack(starts, dim=1)
+        states = local + powers.view(1, 1, block_size, -1) * block_starts.unsqueeze(
+            2
+        )
+        return states.reshape(write.shape[0], padded_steps, write.shape[-1])[
+            :, :time_steps
+        ]
+
+    @staticmethod
     def _serial_trace(write: Tensor, decay: Tensor, initial: Tensor) -> Tensor:
         state = initial
         traces = []
@@ -2965,6 +3073,13 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
     def _trace(self, write: Tensor, decay: Tensor, initial: Tensor) -> Tensor:
         if self.execution_mode == "serial":
             return self._serial_trace(write, decay, initial)
+        if self.scan_math_mode == "blocked_cumsum":
+            return self._blocked_constant_affine_prefix_scan(
+                write,
+                decay,
+                initial,
+                block_size=self.scan_block_size,
+            )
         coefficient = decay.view(1, 1, -1).expand_as(write)
         bias = (1.0 - coefficient) * write
         return self._affine_prefix_scan(coefficient, bias, initial)
@@ -3016,6 +3131,33 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         elif not _unchecked:
             self._validate_state(state, batch_size)
         layer = state.layers[0]
+        if self.scan_math_mode == "cuda_fused":
+            if self.eligibility_backward_mode != "reverse_adjoint":
+                raise ValueError("cuda_fused requires reverse_adjoint mode")
+            from vpsc.world_model.fused_gated_trace_cuda import fused_gated_trace
+
+            drives = F.linear(
+                x,
+                self.input_event_projection.weight,
+                self.input_event_projection.bias,
+            )
+            decay_e, decay_i = self.decays()
+            raw, final_e, final_i = fused_gated_trace(
+                drives,
+                indices,
+                torch.stack((decay_e, decay_i), dim=0),
+                layer.excitatory,
+                layer.inhibitory,
+                spike_threshold=self.spike_threshold,
+                surrogate_scale=self.surrogate_scale,
+            )
+            sequence = self.output_projection(self.output_norm(raw))
+            next_state = E3ScanState(
+                layers=(E3LayerState(excitatory=final_e, inhibitory=final_i),)
+            )
+            if detach_state:
+                next_state = detach_core_state(next_state)
+            return CoreOutput(sequence=sequence, state=next_state)
         raw, final_e, final_i = _GatedTraceMultiQueryEligibility.apply(
             x,
             indices,
@@ -3030,6 +3172,7 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
             self.surrogate_scale,
             self.eligibility_forward_mode == "scan_aligned",
             self.eligibility_backward_mode == "reverse_adjoint",
+            self.scan_block_size if self.scan_math_mode == "blocked_cumsum" else 0,
         )
         sequence = self.output_projection(self.output_norm(raw))
         next_state = E3ScanState(

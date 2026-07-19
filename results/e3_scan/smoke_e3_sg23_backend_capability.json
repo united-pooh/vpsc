@@ -1,0 +1,476 @@
+{
+  "comparison": {
+    "any_full_transfer_speedup": true,
+    "any_resident_speedup": true,
+    "by_size": {
+      "1024": {
+        "gram": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 1.4961070292795262,
+          "cpu_over_directml_resident_speedup": 1.7419110212335691
+        },
+        "matrix_free_normal": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.764535557099838,
+          "cpu_over_directml_resident_speedup": 1.5729788388497015
+        },
+        "readout": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.6790291791655303,
+          "cpu_over_directml_resident_speedup": 0.6497627520759194
+        }
+      },
+      "443": {
+        "gram": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.29241110914558643,
+          "cpu_over_directml_resident_speedup": 0.716945107398568
+        },
+        "matrix_free_normal": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.675925925925926,
+          "cpu_over_directml_resident_speedup": 0.6636729637658718
+        },
+        "readout": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.7952697708795269,
+          "cpu_over_directml_resident_speedup": 0.2633893919793014
+        }
+      }
+    }
+  },
+  "cpu": {
+    "cholesky_fp32": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "cpu",
+      "silent_or_warned_cpu_fallback": true,
+      "supported": true,
+      "warnings": []
+    },
+    "device": "cpu",
+    "float64_matmul": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "cpu",
+      "supported": true,
+      "warnings": []
+    },
+    "label": "cpu-4-threads",
+    "sizes": {
+      "1024": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0017394,
+            "median_seconds": 0.0013643,
+            "minimum_seconds": 0.0013566,
+            "p95_seconds": 0.0017394,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            1024,
+            1024
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0014043,
+            "median_seconds": 0.0013782,
+            "minimum_seconds": 0.0013242,
+            "p95_seconds": 0.0014043,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0006655,
+            "median_seconds": 0.0006601,
+            "minimum_seconds": 0.000574,
+            "p95_seconds": 0.0006655,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0006195,
+            "median_seconds": 0.0005798,
+            "minimum_seconds": 0.0005417,
+            "p95_seconds": 0.0006195,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0003686,
+            "median_seconds": 0.000249,
+            "minimum_seconds": 0.0002448,
+            "p95_seconds": 0.0003686,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0002266,
+            "median_seconds": 0.0002191,
+            "minimum_seconds": 0.0002185,
+            "p95_seconds": 0.0002266,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "443": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0004491,
+            "median_seconds": 0.0003306,
+            "minimum_seconds": 0.0003085,
+            "p95_seconds": 0.0004491,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            443,
+            443
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0003316,
+            "median_seconds": 0.0003004,
+            "minimum_seconds": 0.0002799,
+            "p95_seconds": 0.0003316,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0004431,
+            "median_seconds": 0.0002482,
+            "minimum_seconds": 0.0002256,
+            "p95_seconds": 0.0004431,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0002244,
+            "median_seconds": 0.0002143,
+            "minimum_seconds": 0.0002086,
+            "p95_seconds": 0.0002244,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0022215,
+            "median_seconds": 0.0002152,
+            "minimum_seconds": 0.0001205,
+            "p95_seconds": 0.0022215,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0001739,
+            "median_seconds": 0.0001018,
+            "minimum_seconds": 9.92e-05,
+            "p95_seconds": 0.0001739,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        }
+      }
+    },
+    "vector_add": {
+      "full_input_output_transfer": {
+        "maximum_seconds": 0.0007491,
+        "median_seconds": 0.0002445,
+        "minimum_seconds": 0.0001823,
+        "p95_seconds": 0.0007491,
+        "sample_count": 3
+      },
+      "max_abs_error_vs_cpu": 0.0,
+      "name": "vector_add",
+      "output_device": "cpu",
+      "output_shape": [
+        1000000
+      ],
+      "resident_scalar_sync": {
+        "maximum_seconds": 5.68e-05,
+        "median_seconds": 3.38e-05,
+        "minimum_seconds": 3.32e-05,
+        "p95_seconds": 5.68e-05,
+        "sample_count": 3
+      },
+      "supported": true,
+      "warnings": []
+    }
+  },
+  "decision": {
+    "adapter_gate": true,
+    "backend_available": false,
+    "deployment_boundary": "cpu_multicore_only_until_backend_changes",
+    "fp32_correctness_gate": false,
+    "overall": "FAIL",
+    "useful_device_resident_speed_gate": true,
+    "useful_full_transfer_speed_gate": true
+  },
+  "directml": {
+    "cholesky_fp32": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "privateuseone:0",
+      "silent_or_warned_cpu_fallback": true,
+      "supported": true,
+      "warnings": [
+        "The operator 'aten::linalg_cholesky_ex.L' is not currently supported on the DML backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at C:\\__w\\1\\s\\pytorch-directml-plugin\\torch_directml\\csrc\\dml\\dml_cpu_fallback.cpp:17.)"
+      ]
+    },
+    "device": "privateuseone:0",
+    "float64_matmul": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "privateuseone:0",
+      "supported": true,
+      "warnings": []
+    },
+    "label": "directml-adapter-0",
+    "sizes": {
+      "1024": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0011405,
+            "median_seconds": 0.0009119,
+            "minimum_seconds": 0.0007727,
+            "p95_seconds": 0.0011405,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.000213623046875,
+          "name": "gram",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            1024,
+            1024
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0007974,
+            "median_seconds": 0.0007912,
+            "minimum_seconds": 0.0007392,
+            "p95_seconds": 0.0007974,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0011339,
+            "median_seconds": 0.0008634,
+            "minimum_seconds": 0.0004577,
+            "p95_seconds": 0.0011339,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.00146484375,
+          "name": "matrix_free_normal",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0003919,
+            "median_seconds": 0.0003686,
+            "minimum_seconds": 0.0002175,
+            "p95_seconds": 0.0003919,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0003836,
+            "median_seconds": 0.0003667,
+            "minimum_seconds": 0.0002955,
+            "p95_seconds": 0.0003836,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 4.9591064453125e-05,
+          "name": "readout",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004774,
+            "median_seconds": 0.0003372,
+            "minimum_seconds": 0.0002058,
+            "p95_seconds": 0.0004774,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "443": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0034547,
+            "median_seconds": 0.0011306,
+            "minimum_seconds": 0.0004002,
+            "p95_seconds": 0.0034547,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.0001220703125,
+          "name": "gram",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            443,
+            443
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004216,
+            "median_seconds": 0.000419,
+            "minimum_seconds": 0.0003274,
+            "p95_seconds": 0.0004216,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0003809,
+            "median_seconds": 0.0003672,
+            "minimum_seconds": 0.000324,
+            "p95_seconds": 0.0003809,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 0.000732421875,
+          "name": "matrix_free_normal",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0003601,
+            "median_seconds": 0.0003229,
+            "minimum_seconds": 0.0002956,
+            "p95_seconds": 0.0003601,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.002683,
+            "median_seconds": 0.0002706,
+            "minimum_seconds": 0.0002541,
+            "p95_seconds": 0.002683,
+            "sample_count": 3
+          },
+          "max_abs_error_vs_cpu": 3.0517578125e-05,
+          "name": "readout",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004935,
+            "median_seconds": 0.0003865,
+            "minimum_seconds": 0.000276,
+            "p95_seconds": 0.0004935,
+            "sample_count": 3
+          },
+          "supported": true,
+          "warnings": []
+        }
+      }
+    },
+    "vector_add": {
+      "full_input_output_transfer": {
+        "maximum_seconds": 0.0070103,
+        "median_seconds": 0.0014853,
+        "minimum_seconds": 0.0009938,
+        "p95_seconds": 0.0070103,
+        "sample_count": 3
+      },
+      "max_abs_error_vs_cpu": 0.0,
+      "name": "vector_add",
+      "output_device": "privateuseone:0",
+      "output_shape": [
+        1000000
+      ],
+      "resident_scalar_sync": {
+        "maximum_seconds": 0.0007508,
+        "median_seconds": 0.000629,
+        "minimum_seconds": 0.0006273,
+        "p95_seconds": 0.0007508,
+        "sample_count": 3
+      },
+      "supported": true,
+      "warnings": []
+    }
+  },
+  "environment": {
+    "directml_adapter_names": [
+      "AMD Radeon RX 7800 XT",
+      "AMD Radeon(TM) Graphics"
+    ],
+    "logical_cpu_count": 32,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+    "python_executable": "D:\\venvs\\vpsc-directml\\Scripts\\python.exe",
+    "selected_adapter_index": 0,
+    "torch": "2.4.1+cpu",
+    "torch_directml": "0.2.5.dev240914",
+    "torch_intraop_threads": 4
+  },
+  "experiment": "E3-SG23H multicore and DirectML backend capability",
+  "protocol": {
+    "correctness_abs_tolerance": 0.0001,
+    "cpu_threads": 4,
+    "feature_width": 256,
+    "output_width": 19,
+    "repetitions": 3,
+    "seed": 230719,
+    "sizes": [
+      443,
+      1024
+    ],
+    "warmups": 1
+  },
+  "protocol_sha256": "1964DD1DF51B413330526746F45036DF6C86DF0BE2D0C38FC202F3116B3B369B"
+}

@@ -1,0 +1,2304 @@
+{
+  "configuration": {
+    "device": "cuda:0",
+    "dtype": "float32",
+    "forward_atol": 2e-06,
+    "forward_rtol": 2e-05,
+    "gradient_atol": 3e-05,
+    "gradient_rtol": 0.0003,
+    "lengths": [
+      48,
+      80,
+      134,
+      512
+    ],
+    "quality_epochs": 100,
+    "stability_updates": 100,
+    "update_epochs": 10
+  },
+  "decision": {
+    "additional_peak_to_legacy_ratio": 0.9887640449438202,
+    "ann_speed_target": "FAIL",
+    "event_reduction": 0.5537190082644627,
+    "event_reduction_gate": "PASS",
+    "fused_to_sg24_lstm_ratio": 1.241454270249323,
+    "fused_update_p50_ms": 3.0199179999999997,
+    "kernel_gradient_gate": "PASS",
+    "legacy_update_p50_ms": 5.7552945,
+    "memory_gate": "PASS",
+    "next_route": "segmented_batch_or_projection_fusion",
+    "overall": "FAIL",
+    "seed0_quality_gate": "PASS",
+    "short_stability_gate": "FAIL",
+    "speed_gate": "PASS",
+    "update_speedup": 1.9057784019301187
+  },
+  "environment": {
+    "cpu_model": "Intel(R) Xeon(R) Gold 6130 CPU @ 2.10GHz",
+    "cuda_available": true,
+    "cuda_compute_capability": [
+      7,
+      0
+    ],
+    "cuda_device_name": "Tesla V100-PCIE-32GB",
+    "cuda_version": "12.1",
+    "device": "cuda:0",
+    "git_commit": "551bacc52920ae31ea37dc8b204e59cbcf255a5b",
+    "git_executable": "git",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M experiments/e3_sg21_episodic_edge_graph.py",
+      " M vpsc/world_model/cores.py",
+      "?? experiments/e3_sg23_backend_capability.py",
+      "?? experiments/e3_sg23_spike_feature_solvers.py",
+      "?? experiments/e3_sg23c_cuda_adaptive_krr.py",
+      "?? experiments/e3_sg23d_phase_block_cuda.py",
+      "?? experiments/e3_sg23e_symbolic_quotient_cuda.py",
+      "?? experiments/e3_sg24_cuda_counterfactual_generation.py",
+      "?? experiments/e3_sg25a_blocked_affine_scan_cuda.py",
+      "?? experiments/e3_sg25c_native_fused_scan_cuda.py",
+      "?? results/e3_scan/e3_sg23c_cuda_adaptive_krr.json",
+      "?? results/e3_scan/e3_sg23d_phase_block_cuda.json",
+      "?? results/e3_scan/e3_sg23e_symbolic_quotient_cuda.json",
+      "?? results/e3_scan/e3_sg24_cuda_counterfactual_generation.json",
+      "?? results/e3_scan/e3_sg25a_blocked_affine_scan_cuda.json",
+      "?? results/e3_scan/e3_sg25c_native_fused_scan_cuda.json",
+      "?? results/e3_scan/invalid_e3_sg23d_and_gate_semantics.json",
+      "?? results/e3_scan/invalid_e3_sg25a_no_selection_gate_semantics.json",
+      "?? results/e3_scan/invalid_e3_sg25c_quality_skip_condition.json",
+      "?? results/e3_scan/invalid_smoke_e3_sg25c_embedding_atomic_control.json",
+      "?? results/e3_scan/smoke_e3_sg23c_cuda_adaptive_krr.json",
+      "?? results/e3_scan/smoke_e3_sg23d_phase_block_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg23e_symbolic_quotient_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg24_cuda_counterfactual_generation.json",
+      "?? results/e3_scan/smoke_e3_sg25a_blocked_affine_scan_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg25c_native_fused_scan_cuda.json",
+      "?? tests/test_e3_sg23_backend_capability.py",
+      "?? tests/test_e3_sg23_spike_feature_solvers.py",
+      "?? tests/test_e3_sg23c_cuda_adaptive_krr.py",
+      "?? tests/test_e3_sg23d_phase_block_cuda.py",
+      "?? tests/test_e3_sg23e_symbolic_quotient_cuda.py",
+      "?? tests/test_e3_sg24_cuda_counterfactual_generation.py",
+      "?? tests/test_e3_sg25a_blocked_affine_scan_cuda.py",
+      "?? tests/test_e3_sg25c_native_fused_scan_cuda.py",
+      "?? vpsc/cuda/",
+      "?? vpsc/world_model/fused_gated_trace_cuda.py"
+    ],
+    "logical_cpu_count": 52,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-5.4.0-149-generic-x86_64-with-glibc2.35",
+    "python": "3.12.3",
+    "torch": "2.3.0+cu121",
+    "torch_interop_threads": 52
+  },
+  "experiment": "E3-SG25C native O(T) fused gated-trace CUDA",
+  "extension": {
+    "build_directory": "/root/autodl-tmp/torch_extensions/sg25c",
+    "cuda": "12.1",
+    "extension_name": "vpsc_sg25c_2b9eefa443ea",
+    "load_compile_seconds": 0.124748673,
+    "source_sha256": "2b9eefa443eadf0f524bae375c02a37904b1d3b846302217c952ccdddf5533c1",
+    "sources": [
+      "/root/autodl-tmp/vpsc/vpsc/cuda/sg25c_gated_trace.cpp",
+      "/root/autodl-tmp/vpsc/vpsc/cuda/sg25c_gated_trace_kernel.cu"
+    ],
+    "torch": "2.3.0+cu121"
+  },
+  "formal": true,
+  "generated_at_utc": "2026-07-19T13:04:42.621615+00:00",
+  "kernel_equivalence": {
+    "passed": true,
+    "records": [
+      {
+        "checks": {
+          "decay_gradient": {
+            "max_abs": 5.960464477539062e-07,
+            "normalized_error": 3.165242468596156e-07,
+            "passed": true
+          },
+          "drive_gradient": {
+            "max_abs": 1.1444091796875e-05,
+            "normalized_error": 4.308382476623971e-07,
+            "passed": true
+          },
+          "final_e": {
+            "max_abs": 1.1920928955078125e-07,
+            "passed": true
+          },
+          "final_i": {
+            "max_abs": 5.960464477539063e-08,
+            "passed": true
+          },
+          "initial_e_gradient": {
+            "max_abs": 9.5367431640625e-07,
+            "normalized_error": 1.6400241416053766e-07,
+            "passed": true
+          },
+          "initial_i_gradient": {
+            "max_abs": 7.62939453125e-06,
+            "normalized_error": 2.4661824885370324e-07,
+            "passed": true
+          },
+          "raw": {
+            "max_abs": 1.1920928955078125e-07,
+            "passed": true
+          }
+        },
+        "length": 48,
+        "passed": true,
+        "query_count": 25,
+        "spike_disagreements": 0
+      },
+      {
+        "checks": {
+          "decay_gradient": {
+            "max_abs": 4.291534423828125e-06,
+            "normalized_error": 6.462547803010541e-07,
+            "passed": true
+          },
+          "drive_gradient": {
+            "max_abs": 2.384185791015625e-06,
+            "normalized_error": 2.0931788057129284e-07,
+            "passed": true
+          },
+          "final_e": {
+            "max_abs": 1.7881393432617188e-07,
+            "passed": true
+          },
+          "final_i": {
+            "max_abs": 5.960464477539063e-08,
+            "passed": true
+          },
+          "initial_e_gradient": {
+            "max_abs": 5.7220458984375e-06,
+            "normalized_error": 4.7601516702737615e-07,
+            "passed": true
+          },
+          "initial_i_gradient": {
+            "max_abs": 3.814697265625e-06,
+            "normalized_error": 2.3854192428741904e-07,
+            "passed": true
+          },
+          "raw": {
+            "max_abs": 2.384185791015625e-07,
+            "passed": true
+          }
+        },
+        "length": 80,
+        "passed": true,
+        "query_count": 25,
+        "spike_disagreements": 0
+      },
+      {
+        "checks": {
+          "decay_gradient": {
+            "max_abs": 8.344650268554688e-07,
+            "normalized_error": 4.025651139179784e-07,
+            "passed": true
+          },
+          "drive_gradient": {
+            "max_abs": 5.7220458984375e-06,
+            "normalized_error": 2.4515854108360115e-07,
+            "passed": true
+          },
+          "final_e": {
+            "max_abs": 1.043081283569336e-07,
+            "passed": true
+          },
+          "final_i": {
+            "max_abs": 1.1920928955078125e-07,
+            "passed": true
+          },
+          "initial_e_gradient": {
+            "max_abs": 3.814697265625e-06,
+            "normalized_error": 3.849700847472999e-07,
+            "passed": true
+          },
+          "initial_i_gradient": {
+            "max_abs": 1.6093254089355469e-06,
+            "normalized_error": 1.42546363803183e-07,
+            "passed": true
+          },
+          "raw": {
+            "max_abs": 1.1920928955078125e-07,
+            "passed": true
+          }
+        },
+        "length": 134,
+        "passed": true,
+        "query_count": 25,
+        "spike_disagreements": 0
+      },
+      {
+        "checks": {
+          "decay_gradient": {
+            "max_abs": 4.76837158203125e-06,
+            "normalized_error": 1.279748519321795e-06,
+            "passed": true
+          },
+          "drive_gradient": {
+            "max_abs": 5.7220458984375e-06,
+            "normalized_error": 2.6525817401364726e-07,
+            "passed": true
+          },
+          "final_e": {
+            "max_abs": 1.1920928955078125e-07,
+            "passed": true
+          },
+          "final_i": {
+            "max_abs": 1.1920928955078125e-07,
+            "passed": true
+          },
+          "initial_e_gradient": {
+            "max_abs": 4.76837158203125e-07,
+            "normalized_error": 1.3288424215725706e-07,
+            "passed": true
+          },
+          "initial_i_gradient": {
+            "max_abs": 3.814697265625e-06,
+            "normalized_error": 5.779644852962222e-07,
+            "passed": true
+          },
+          "raw": {
+            "max_abs": 2.384185791015625e-07,
+            "passed": true
+          }
+        },
+        "length": 512,
+        "passed": true,
+        "query_count": 25,
+        "spike_disagreements": 0
+      }
+    ]
+  },
+  "profiler": {
+    "cuda_fused": {
+      "cpu_operator_event_count": 713,
+      "cuda_event_count": 108,
+      "status": "PASS",
+      "unique_cuda_event_names": 46
+    },
+    "legacy": {
+      "cpu_operator_event_count": 1367,
+      "cuda_event_count": 242,
+      "status": "PASS",
+      "unique_cuda_event_names": 66
+    }
+  },
+  "provenance": {
+    "core_source_sha256": "93160fa5992f82c67541ed407486291be94b8e1b251959ee92ff938fb2e3aab6",
+    "data_audit": {
+      "baselines": {
+        "action_majority": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.6666666666666667,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 1.0,
+              "lcs_f1": 0.6666666666666666,
+              "mean_generated_length": 6.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.6666666666666666
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.21052631578947367,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.3188405797101449,
+              "mean_generated_length": 38.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.43478260869565216
+            },
+            "move": {
+              "edit_similarity": 0.30965909090909094,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.3333333333333333,
+              "lcs_f1": 0.40430813116723097,
+              "mean_generated_length": 42.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.4594101719835575
+            }
+          },
+          "edit_similarity": 0.6115829346092504,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.6333333333333333,
+          "lcs_f1": 0.6602739771045736,
+          "mean_generated_length": 23.2,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 1.0,
+          "paired_different_target_count": 5,
+          "records": null,
+          "room_accuracy": 0.0,
+          "token_f1": 0.693908996329655
+        },
+        "copy_observation": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.05714285714285716,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.5,
+              "lcs_f1": 0.0975609756097561,
+              "mean_generated_length": 35.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.14634146341463414
+            },
+            "inventory": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 50.25,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 0.0992092621716483
+            },
+            "look": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 1,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 31.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 1.0,
+              "token_f1": 1.0
+            },
+            "move": {
+              "edit_similarity": 0.34862012987012986,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.08333333333333333,
+              "lcs_f1": 0.44964836763338567,
+              "mean_generated_length": 51.25,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.5076684588343265
+            }
+          },
+          "edit_similarity": 0.2673938695712889,
+          "eos_rate": 1.0,
+          "exact": 0.1,
+          "example_count": 10,
+          "feature_f1": 0.18333333333333332,
+          "lcs_f1": 0.3292991494829892,
+          "mean_generated_length": 47.2,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": null,
+          "room_accuracy": 0.2,
+          "token_f1": 0.35738523474385336
+        }
+      },
+      "normalization": {
+        "collapse_internal_whitespace": true,
+        "drop_prefix_before_first_room_header": true,
+        "remove_empty_lines": true,
+        "remove_hud_lines_starting_with_prompt": true,
+        "target_truncation": false
+      },
+      "passed": true,
+      "splits": {
+        "test": {
+          "action_types": {
+            "examine": 1,
+            "inventory": 4,
+            "look": 1,
+            "move": 4
+          },
+          "example_count": 10,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 134,
+            "mean": 84.5,
+            "min": 47,
+            "p50": 77.5,
+            "p95": 125.89999999999998
+          },
+          "pair_count": 5,
+          "prompt_length": {
+            "max": 78,
+            "mean": 58.7,
+            "min": 42,
+            "p50": 59.5,
+            "p95": 77.55000000000001
+          },
+          "prompt_unknown_count": 32,
+          "target_length_with_eos": {
+            "max": 67,
+            "mean": 26.8,
+            "min": 6,
+            "p50": 19.5,
+            "p95": 62.49999999999999
+          },
+          "target_token_count_without_eos": 258,
+          "target_unknown_count": 17,
+          "target_unknown_ratio": 0.06589147286821706,
+          "unique_target_count": 6
+        },
+        "train": {
+          "action_types": {
+            "examine": 4,
+            "inventory": 16,
+            "look": 4,
+            "move": 16
+          },
+          "example_count": 40,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 123,
+            "mean": 80.5,
+            "min": 51,
+            "p50": 80.5,
+            "p95": 114.1
+          },
+          "pair_count": 20,
+          "prompt_length": {
+            "max": 76,
+            "mean": 56.2,
+            "min": 46,
+            "p50": 55.0,
+            "p95": 67.39999999999998
+          },
+          "prompt_unknown_count": 0,
+          "target_length_with_eos": {
+            "max": 65,
+            "mean": 25.3,
+            "min": 6,
+            "p50": 22.0,
+            "p95": 57.0
+          },
+          "target_token_count_without_eos": 972,
+          "target_unknown_count": 0,
+          "target_unknown_ratio": 0.0,
+          "unique_target_count": 21
+        },
+        "valid": {
+          "action_types": {
+            "examine": 1,
+            "inventory": 4,
+            "look": 1,
+            "move": 4
+          },
+          "example_count": 10,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 119,
+            "mean": 85.8,
+            "min": 56,
+            "p50": 86.0,
+            "p95": 117.65
+          },
+          "pair_count": 5,
+          "prompt_length": {
+            "max": 76,
+            "mean": 58.5,
+            "min": 51,
+            "p50": 54.5,
+            "p95": 75.55
+          },
+          "prompt_unknown_count": 26,
+          "target_length_with_eos": {
+            "max": 65,
+            "mean": 28.3,
+            "min": 6,
+            "p50": 26.0,
+            "p95": 57.79999999999998
+          },
+          "target_token_count_without_eos": 273,
+          "target_unknown_count": 21,
+          "target_unknown_ratio": 0.07692307692307693,
+          "unique_target_count": 6
+        }
+      },
+      "target_overlap": {
+        "test_in_train": 1,
+        "valid_in_train": 1,
+        "valid_test": 1
+      }
+    },
+    "extension_python_sha256": "ce902c36ee20314dc7f1a2bb98bf31860be3a38d8e2c5ad48f15586b8357482a",
+    "runner_sha256": "3c607ca6f9af4754579a421af4fe8c38125247790858da69c70d62a0f0756ed8",
+    "sg24_reference": "/root/autodl-tmp/vpsc/results/e3_scan/e3_sg24_cuda_counterfactual_generation.json",
+    "sg24_reference_sha256": "d940421bd0ac9c07dee623e93547ec3d17b025064e22ec26fe01a3e53f1c6067"
+  },
+  "real_core_equivalence": {
+    "fused_loss": 6.116076946258545,
+    "gradients": {
+      "core.decay_logits": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 1.4901161193847656e-08,
+        "normalized_error": 4.0689628885998684e-07,
+        "passed": true
+      },
+      "core.input_event_projection.bias": {
+        "atomic_nondeterminism_control_pass": false,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 5.513429641723633e-07,
+        "normalized_error": 3.449933380455763e-07,
+        "passed": true
+      },
+      "core.input_event_projection.weight": {
+        "atomic_nondeterminism_control_pass": false,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 1.043081283569336e-07,
+        "normalized_error": 3.2426474932946065e-07,
+        "passed": true
+      },
+      "core.output_norm.bias": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 1.4901161193847656e-08,
+        "normalized_error": 1.4376676318045037e-07,
+        "passed": true
+      },
+      "core.output_norm.weight": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 2.2351741790771484e-08,
+        "normalized_error": 1.5803911250547246e-07,
+        "passed": true
+      },
+      "core.output_projection.bias": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 4.470348358154297e-08,
+        "normalized_error": 1.2090213670501908e-07,
+        "passed": true
+      },
+      "core.output_projection.weight": {
+        "atomic_nondeterminism_control_pass": false,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 1.1920928955078125e-07,
+        "normalized_error": 1.1469170560409665e-07,
+        "passed": true
+      },
+      "embedding.weight": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": false,
+        "legacy_control_max_abs": 0.006843653041869402,
+        "legacy_control_normalized_error": 0.006374293421488264,
+        "max_abs": 0.006843652576208115,
+        "normalized_error": 0.006374293421488264,
+        "passed": true
+      },
+      "lm_head.bias": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 5.587935447692871e-09,
+        "normalized_error": 3.432544842595257e-08,
+        "passed": true
+      },
+      "output_norm.bias": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 1.4901161193847656e-08,
+        "normalized_error": 8.641258466082993e-08,
+        "passed": true
+      },
+      "output_norm.weight": {
+        "atomic_nondeterminism_control_pass": true,
+        "direct_tolerance_pass": true,
+        "legacy_control_max_abs": 0.0,
+        "legacy_control_normalized_error": 0.0,
+        "max_abs": 1.862645149230957e-08,
+        "normalized_error": 1.4200041991061858e-07,
+        "passed": true
+      }
+    },
+    "legacy_control_loss": 6.116076946258545,
+    "legacy_control_prediction_disagreements": 0,
+    "legacy_loss": 6.116076946258545,
+    "loss_abs": 0.0,
+    "passed": true,
+    "prediction_disagreements": 0
+  },
+  "real_update_benchmark": {
+    "records": {
+      "cuda_fused": {
+        "additional_peak_to_legacy_ratio": 0.9887640449438202,
+        "cuda_additional_peak_bytes": 1441792,
+        "cuda_allocated_start_bytes": 17099776,
+        "cuda_peak_allocated_bytes": 18541568,
+        "epochs": 10,
+        "loss_first": 6.0364089012146,
+        "loss_last": 1.3684306144714355,
+        "timing": {
+          "count": 320,
+          "mean_ms": 3.025240621875,
+          "p50_ms": 3.0199179999999997,
+          "p95_ms": 3.1096646,
+          "tokens_per_second_at_p50": 331.13481889243354
+        },
+        "updates": 400,
+        "versus_legacy_speedup": 1.9057784019301187,
+        "versus_sg24_lstm_ratio": 1.241454270249323,
+        "warmup_updates_excluded": 80
+      },
+      "legacy": {
+        "cuda_additional_peak_bytes": 1458176,
+        "cuda_allocated_start_bytes": 17099264,
+        "cuda_peak_allocated_bytes": 18557440,
+        "epochs": 10,
+        "loss_first": 6.0364089012146,
+        "loss_last": 1.368430733680725,
+        "timing": {
+          "count": 320,
+          "mean_ms": 5.80804608125,
+          "p50_ms": 5.7552945,
+          "p95_ms": 6.267259350000002,
+          "tokens_per_second_at_p50": 173.75305468729707
+        },
+        "updates": 400,
+        "warmup_updates_excluded": 80
+      }
+    }
+  },
+  "schema_version": 1,
+  "seed0_quality": {
+    "epochs": 100,
+    "generation": {
+      "action_types": {
+        "examine": {
+          "edit_similarity": 0.6666666666666667,
+          "eos_rate": 1.0,
+          "exact": 0.0,
+          "example_count": 1,
+          "feature_f1": 1.0,
+          "lcs_f1": 0.6666666666666666,
+          "mean_generated_length": 6.0,
+          "mean_target_length": 6.0,
+          "room_accuracy": null,
+          "token_f1": 0.6666666666666666
+        },
+        "inventory": {
+          "edit_similarity": 1.0,
+          "eos_rate": 1.0,
+          "exact": 1.0,
+          "example_count": 4,
+          "feature_f1": 1.0,
+          "lcs_f1": 1.0,
+          "mean_generated_length": 5.0,
+          "mean_target_length": 5.0,
+          "room_accuracy": null,
+          "token_f1": 1.0
+        },
+        "look": {
+          "edit_similarity": 0.5526315789473684,
+          "eos_rate": 1.0,
+          "exact": 0.0,
+          "example_count": 1,
+          "feature_f1": 0.0,
+          "lcs_f1": 0.6086956521739131,
+          "mean_generated_length": 38.0,
+          "mean_target_length": 31.0,
+          "room_accuracy": 0.0,
+          "token_f1": 0.6086956521739131
+        },
+        "move": {
+          "edit_similarity": 0.32352415666094914,
+          "eos_rate": 1.0,
+          "exact": 0.0,
+          "example_count": 4,
+          "feature_f1": 0.22619047619047622,
+          "lcs_f1": 0.44459545499069447,
+          "mean_generated_length": 46.25,
+          "mean_target_length": 50.25,
+          "room_accuracy": 0.0,
+          "token_f1": 0.5017237941312288
+        }
+      },
+      "edit_similarity": 0.6513394872257832,
+      "eos_rate": 1.0,
+      "exact": 0.4,
+      "example_count": 10,
+      "feature_f1": 0.5904761904761905,
+      "lcs_f1": 0.7053744138803357,
+      "mean_generated_length": 24.9,
+      "mean_target_length": 25.8,
+      "paired_action_sensitivity": 1.0,
+      "paired_different_target_count": 5,
+      "records": [
+        {
+          "action": "inventory",
+          "action_type": "inventory",
+          "edit_similarity": 1.0,
+          "exact": 1.0,
+          "example_id": "test:20260723:0:0",
+          "feature_f1": 1.0,
+          "generated_length": 5.0,
+          "lcs_f1": 1.0,
+          "pair_id": "test:20260723:0",
+          "prediction_features": [
+            "inventory:empty"
+          ],
+          "prediction_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "room_accuracy": NaN,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "inventory:empty"
+          ],
+          "target_length": 5.0,
+          "target_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "token_f1": 1.0
+        },
+        {
+          "action": "look",
+          "action_type": "look",
+          "edit_similarity": 0.5526315789473684,
+          "exact": 0.0,
+          "example_id": "test:20260723:0:1",
+          "feature_f1": 0.0,
+          "generated_length": 38.0,
+          "lcs_f1": 0.6086956521739131,
+          "pair_id": "test:20260723:0",
+          "prediction_features": [
+            "direction:south",
+            "room:steam room"
+          ],
+          "prediction_tokens": [
+            "-",
+            "=",
+            "Steam",
+            "Room",
+            "=",
+            "-",
+            "You",
+            "arrive",
+            "in",
+            "a",
+            "steam",
+            "room",
+            ".",
+            "I",
+            "guess",
+            "you",
+            "better",
+            "just",
+            "go",
+            "and",
+            "list",
+            "everything",
+            "you",
+            "see",
+            "here",
+            ".",
+            "You",
+            "need",
+            "an",
+            "unblocked",
+            "exit",
+            "?",
+            "You",
+            "should",
+            "try",
+            "going",
+            "south",
+            "."
+          ],
+          "room_accuracy": 0.0,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "direction:west",
+            "room:spare room"
+          ],
+          "target_length": 31.0,
+          "target_tokens": [
+            "-",
+            "=",
+            "Spare",
+            "Room",
+            "=",
+            "-",
+            "You",
+            "are",
+            "in",
+            "a",
+            "spare",
+            "room",
+            ".",
+            "A",
+            "standard",
+            "kind",
+            "of",
+            "place",
+            ".",
+            "You",
+            "need",
+            "an",
+            "unguarded",
+            "exit",
+            "?",
+            "You",
+            "should",
+            "try",
+            "going",
+            "west",
+            "."
+          ],
+          "token_f1": 0.6086956521739131
+        },
+        {
+          "action": "go east",
+          "action_type": "move",
+          "edit_similarity": 0.3584905660377359,
+          "exact": 0.0,
+          "example_id": "test:20260723:1:0",
+          "feature_f1": 0.3333333333333333,
+          "generated_length": 53.0,
+          "lcs_f1": 0.5,
+          "pair_id": "test:20260723:1",
+          "prediction_features": [
+            "direction:east",
+            "direction:south",
+            "direction:west",
+            "room:workshop"
+          ],
+          "prediction_tokens": [
+            "-",
+            "=",
+            "Workshop",
+            "=",
+            "-",
+            "You",
+            "are",
+            "in",
+            "a",
+            "workshop",
+            ".",
+            "A",
+            "normal",
+            "kind",
+            "of",
+            "place",
+            ".",
+            "There",
+            "is",
+            "an",
+            "exit",
+            "to",
+            "the",
+            "east",
+            ".",
+            "Don't",
+            "worry",
+            ",",
+            "it",
+            "is",
+            "unguarded",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "south",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unblocked",
+            ".",
+            "exit",
+            "to",
+            "the",
+            "west",
+            "."
+          ],
+          "room_accuracy": 0.0,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "direction:west",
+            "room:spare room"
+          ],
+          "target_length": 31.0,
+          "target_tokens": [
+            "-",
+            "=",
+            "Spare",
+            "Room",
+            "=",
+            "-",
+            "You",
+            "are",
+            "in",
+            "a",
+            "spare",
+            "room",
+            ".",
+            "A",
+            "standard",
+            "kind",
+            "of",
+            "place",
+            ".",
+            "You",
+            "need",
+            "an",
+            "unguarded",
+            "exit",
+            "?",
+            "You",
+            "should",
+            "try",
+            "going",
+            "west",
+            "."
+          ],
+          "token_f1": 0.5476190476190477
+        },
+        {
+          "action": "inventory",
+          "action_type": "inventory",
+          "edit_similarity": 1.0,
+          "exact": 1.0,
+          "example_id": "test:20260723:1:1",
+          "feature_f1": 1.0,
+          "generated_length": 5.0,
+          "lcs_f1": 1.0,
+          "pair_id": "test:20260723:1",
+          "prediction_features": [
+            "inventory:empty"
+          ],
+          "prediction_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "room_accuracy": NaN,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "inventory:empty"
+          ],
+          "target_length": 5.0,
+          "target_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "token_f1": 1.0
+        },
+        {
+          "action": "go north",
+          "action_type": "move",
+          "edit_similarity": 0.16666666666666663,
+          "exact": 0.0,
+          "example_id": "test:20260723:2:0",
+          "feature_f1": 0.0,
+          "generated_length": 48.0,
+          "lcs_f1": 0.3333333333333333,
+          "pair_id": "test:20260723:2",
+          "prediction_features": [
+            "direction:west",
+            "room:bedchamber"
+          ],
+          "prediction_tokens": [
+            "-",
+            "=",
+            "Bedchamber",
+            "=",
+            "-",
+            "You",
+            "find",
+            "yourself",
+            "in",
+            "a",
+            "bedchamber",
+            ".",
+            "A",
+            "standard",
+            "one",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "west",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unguarded",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "west",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unblocked",
+            "."
+          ],
+          "room_accuracy": 0.0,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "direction:east",
+            "direction:south",
+            "room:cookhouse"
+          ],
+          "target_length": 48.0,
+          "target_tokens": [
+            "-",
+            "=",
+            "Cookhouse",
+            "=",
+            "-",
+            "You've",
+            "entered",
+            "a",
+            "cookhouse",
+            ".",
+            "You",
+            "begin",
+            "to",
+            "take",
+            "stock",
+            "of",
+            "what's",
+            "in",
+            "the",
+            "room",
+            ".",
+            "You",
+            "need",
+            "an",
+            "unguarded",
+            "exit",
+            "?",
+            "You",
+            "should",
+            "try",
+            "going",
+            "east",
+            ".",
+            "There",
+            "is",
+            "an",
+            "exit",
+            "to",
+            "the",
+            "south",
+            ".",
+            "Don't",
+            "worry",
+            ",",
+            "it",
+            "is",
+            "unguarded",
+            "."
+          ],
+          "token_f1": 0.4166666666666667
+        },
+        {
+          "action": "inventory",
+          "action_type": "inventory",
+          "edit_similarity": 1.0,
+          "exact": 1.0,
+          "example_id": "test:20260723:2:1",
+          "feature_f1": 1.0,
+          "generated_length": 5.0,
+          "lcs_f1": 1.0,
+          "pair_id": "test:20260723:2",
+          "prediction_features": [
+            "inventory:empty"
+          ],
+          "prediction_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "room_accuracy": NaN,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "inventory:empty"
+          ],
+          "target_length": 5.0,
+          "target_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "token_f1": 1.0
+        },
+        {
+          "action": "go west",
+          "action_type": "move",
+          "edit_similarity": 0.375,
+          "exact": 0.0,
+          "example_id": "test:20260723:3:0",
+          "feature_f1": 0.0,
+          "generated_length": 27.0,
+          "lcs_f1": 0.5060240963855421,
+          "pair_id": "test:20260723:3",
+          "prediction_features": [
+            "direction:west",
+            "room:cookery"
+          ],
+          "prediction_tokens": [
+            "-",
+            "=",
+            "Cookery",
+            "=",
+            "-",
+            "You're",
+            "now",
+            "in",
+            "a",
+            "cookery",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "west",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unblocked",
+            "."
+          ],
+          "room_accuracy": 0.0,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "direction:east",
+            "direction:north",
+            "room:bedchamber"
+          ],
+          "target_length": 56.0,
+          "target_tokens": [
+            "-",
+            "=",
+            "Bedchamber",
+            "=",
+            "-",
+            "You",
+            "are",
+            "in",
+            "a",
+            "typical",
+            "kind",
+            "of",
+            "place",
+            ".",
+            "<unk>",
+            "is",
+            "to",
+            "<unk>",
+            ",",
+            "you're",
+            "in",
+            "a",
+            "bedchamber",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "east",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unguarded",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "north",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unguarded",
+            "."
+          ],
+          "token_f1": 0.5060240963855422
+        },
+        {
+          "action": "inventory",
+          "action_type": "inventory",
+          "edit_similarity": 1.0,
+          "exact": 1.0,
+          "example_id": "test:20260723:3:1",
+          "feature_f1": 1.0,
+          "generated_length": 5.0,
+          "lcs_f1": 1.0,
+          "pair_id": "test:20260723:3",
+          "prediction_features": [
+            "inventory:empty"
+          ],
+          "prediction_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "room_accuracy": NaN,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "inventory:empty"
+          ],
+          "target_length": 5.0,
+          "target_tokens": [
+            "You",
+            "are",
+            "carrying",
+            "nothing",
+            "."
+          ],
+          "token_f1": 1.0
+        },
+        {
+          "action": "examine coin",
+          "action_type": "examine",
+          "edit_similarity": 0.6666666666666667,
+          "exact": 0.0,
+          "example_id": "test:20260723:4:0",
+          "feature_f1": 1.0,
+          "generated_length": 6.0,
+          "lcs_f1": 0.6666666666666666,
+          "pair_id": "test:20260723:4",
+          "prediction_features": [
+            "object:coin"
+          ],
+          "prediction_tokens": [
+            "The",
+            "coin",
+            "is",
+            "brand",
+            "new",
+            "."
+          ],
+          "room_accuracy": NaN,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "object:coin"
+          ],
+          "target_length": 6.0,
+          "target_tokens": [
+            "The",
+            "coin",
+            "is",
+            "<unk>",
+            "looking",
+            "."
+          ],
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "action": "go north",
+          "action_type": "move",
+          "edit_similarity": 0.3939393939393939,
+          "exact": 0.0,
+          "example_id": "test:20260723:4:1",
+          "feature_f1": 0.5714285714285715,
+          "generated_length": 57.0,
+          "lcs_f1": 0.43902439024390244,
+          "pair_id": "test:20260723:4",
+          "prediction_features": [
+            "direction:east",
+            "direction:south",
+            "direction:west",
+            "room:bedchamber"
+          ],
+          "prediction_tokens": [
+            "-",
+            "=",
+            "Bedchamber",
+            "=",
+            "-",
+            "You",
+            "are",
+            "in",
+            "a",
+            "workshop",
+            ".",
+            "An",
+            "ordinary",
+            "kind",
+            "of",
+            "place",
+            ".",
+            "There",
+            "is",
+            "an",
+            "unblocked",
+            "exit",
+            "to",
+            "the",
+            "east",
+            ".",
+            "There",
+            "is",
+            "an",
+            "exit",
+            "to",
+            "the",
+            "south",
+            ".",
+            "Don't",
+            "worry",
+            ",",
+            "it",
+            "is",
+            "unguarded",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "west",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unblocked",
+            "."
+          ],
+          "room_accuracy": 0.0,
+          "stopped_on_eos": 1.0,
+          "target_features": [
+            "direction:south",
+            "direction:west",
+            "room:<unk>"
+          ],
+          "target_length": 66.0,
+          "target_tokens": [
+            "-",
+            "=",
+            "<unk>",
+            "=",
+            "-",
+            "You've",
+            "just",
+            "<unk>",
+            "up",
+            "in",
+            "an",
+            "<unk>",
+            ".",
+            "The",
+            "room",
+            "<unk>",
+            "<unk>",
+            "<unk>",
+            ",",
+            "as",
+            "<unk>",
+            "it",
+            "were",
+            "<unk>",
+            "<unk>",
+            "<unk>",
+            "<unk>",
+            "the",
+            "<unk>",
+            "<unk>",
+            "in",
+            "the",
+            "<unk>",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "south",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unblocked",
+            ".",
+            "You",
+            "don't",
+            "like",
+            "doors",
+            "?",
+            "Why",
+            "not",
+            "try",
+            "going",
+            "west",
+            ",",
+            "that",
+            "entranceway",
+            "is",
+            "unguarded",
+            "."
+          ],
+          "token_f1": 0.5365853658536586
+        }
+      ],
+      "room_accuracy": 0.0,
+      "timing": {
+        "generated_token": {
+          "count": 249,
+          "mean_ms": 0.9180084578313252,
+          "p50_ms": 0.878655,
+          "p95_ms": 0.9403739999999999,
+          "p99_ms": 0.9578872,
+          "tokens_per_second_at_p50": 1138.1031235240225
+        },
+        "prefill": {
+          "count": 10,
+          "mean_ms": 2.9264896,
+          "p50_ms": 2.81518,
+          "p95_ms": 3.20857365,
+          "p99_ms": 3.25619553,
+          "tokens_per_second_at_p50": 355.21707315340404
+        },
+        "state_bytes_max": 248,
+        "state_bytes_mean": 248.0
+      },
+      "token_f1": 0.7282257495365495
+    },
+    "passed": true,
+    "reference": {
+      "legacy_seed0_edit_similarity": 0.65938995215311,
+      "legacy_seed0_test_nll": 2.63643016959482
+    },
+    "seed": 0,
+    "teacher": {
+      "test": {
+        "accuracy": 0.667910447761194,
+        "action_types": {
+          "examine": {
+            "accuracy": 0.5714285714285714,
+            "nll": 6.640415736607143,
+            "target_count": 7
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "nll": 0.00020181470608804375,
+            "target_count": 24
+          },
+          "look": {
+            "accuracy": 0.6875,
+            "nll": 2.0491509437561035,
+            "target_count": 32
+          },
+          "move": {
+            "accuracy": 0.6292682926829268,
+            "nll": 2.977567849508146,
+            "target_count": 205
+          }
+        },
+        "nll": 2.6957537054423932,
+        "ppl": 14.816681959705791,
+        "target_count": 268
+      },
+      "train": {
+        "accuracy": 0.9683794466403162,
+        "action_types": {
+          "examine": {
+            "accuracy": 1.0,
+            "nll": 0.00960077088454674,
+            "target_count": 29
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "nll": 0.0002046238666177184,
+            "target_count": 96
+          },
+          "look": {
+            "accuracy": 0.9766081871345029,
+            "nll": 0.07377336736310992,
+            "target_count": 171
+          },
+          "move": {
+            "accuracy": 0.9608938547486033,
+            "nll": 0.11804234914939497,
+            "target_count": 716
+          }
+        },
+        "nll": 0.09627631823804916,
+        "ppl": 1.1010632658253798,
+        "target_count": 1012
+      },
+      "valid": {
+        "accuracy": 0.6607773851590106,
+        "action_types": {
+          "examine": {
+            "accuracy": 0.36363636363636365,
+            "nll": 5.71788926558061,
+            "target_count": 11
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "nll": 0.00021456411923281848,
+            "target_count": 24
+          },
+          "look": {
+            "accuracy": 0.42857142857142855,
+            "nll": 6.513379155373086,
+            "target_count": 49
+          },
+          "move": {
+            "accuracy": 0.6934673366834171,
+            "nll": 2.40950702303019,
+            "target_count": 199
+          }
+        },
+        "nll": 3.0443441966662097,
+        "ppl": 20.996257271362385,
+        "target_count": 283
+      }
+    },
+    "training": {
+      "elapsed_seconds": 14.319897353,
+      "epoch_records": [
+        {
+          "epoch": 1,
+          "last_gradient_norm": 3.9732468128204346,
+          "target_count": 1012,
+          "target_nll": 4.850631097559872
+        },
+        {
+          "epoch": 2,
+          "last_gradient_norm": 5.5619401931762695,
+          "target_count": 1012,
+          "target_nll": 3.9633235163368257
+        },
+        {
+          "epoch": 3,
+          "last_gradient_norm": 6.211676597595215,
+          "target_count": 1012,
+          "target_nll": 3.47420919129971
+        },
+        {
+          "epoch": 4,
+          "last_gradient_norm": 3.761333465576172,
+          "target_count": 1012,
+          "target_nll": 3.0598071331209815
+        },
+        {
+          "epoch": 5,
+          "last_gradient_norm": 12.55912971496582,
+          "target_count": 1012,
+          "target_nll": 2.7251241515453155
+        },
+        {
+          "epoch": 6,
+          "last_gradient_norm": 10.319541931152344,
+          "target_count": 1012,
+          "target_nll": 2.476176382936979
+        },
+        {
+          "epoch": 7,
+          "last_gradient_norm": 5.844407081604004,
+          "target_count": 1012,
+          "target_nll": 2.238907279122783
+        },
+        {
+          "epoch": 8,
+          "last_gradient_norm": 0.4783252477645874,
+          "target_count": 1012,
+          "target_nll": 2.0650150998764243
+        },
+        {
+          "epoch": 9,
+          "last_gradient_norm": 5.755931377410889,
+          "target_count": 1012,
+          "target_nll": 1.8931563310840502
+        },
+        {
+          "epoch": 10,
+          "last_gradient_norm": 3.7445497512817383,
+          "target_count": 1012,
+          "target_nll": 1.7295888624514781
+        },
+        {
+          "epoch": 11,
+          "last_gradient_norm": 0.2969250977039337,
+          "target_count": 1012,
+          "target_nll": 1.576848957047102
+        },
+        {
+          "epoch": 12,
+          "last_gradient_norm": 1.9094754457473755,
+          "target_count": 1012,
+          "target_nll": 1.4490889814155905
+        },
+        {
+          "epoch": 13,
+          "last_gradient_norm": 4.01923942565918,
+          "target_count": 1012,
+          "target_nll": 1.3179357270820604
+        },
+        {
+          "epoch": 14,
+          "last_gradient_norm": 6.020820617675781,
+          "target_count": 1012,
+          "target_nll": 1.2618587896791047
+        },
+        {
+          "epoch": 15,
+          "last_gradient_norm": 4.025789737701416,
+          "target_count": 1012,
+          "target_nll": 1.1526822955439626
+        },
+        {
+          "epoch": 16,
+          "last_gradient_norm": 3.5246546268463135,
+          "target_count": 1012,
+          "target_nll": 1.06008470868655
+        },
+        {
+          "epoch": 17,
+          "last_gradient_norm": 4.281766891479492,
+          "target_count": 1012,
+          "target_nll": 1.0033875596948822
+        },
+        {
+          "epoch": 18,
+          "last_gradient_norm": 1.168992042541504,
+          "target_count": 1012,
+          "target_nll": 0.9591920807278483
+        },
+        {
+          "epoch": 19,
+          "last_gradient_norm": 2.8107845783233643,
+          "target_count": 1012,
+          "target_nll": 0.8673608354320418
+        },
+        {
+          "epoch": 20,
+          "last_gradient_norm": 14.442758560180664,
+          "target_count": 1012,
+          "target_nll": 0.8132510743570504
+        },
+        {
+          "epoch": 21,
+          "last_gradient_norm": 3.0771422386169434,
+          "target_count": 1012,
+          "target_nll": 0.7771361741240104
+        },
+        {
+          "epoch": 22,
+          "last_gradient_norm": 0.09443399310112,
+          "target_count": 1012,
+          "target_nll": 0.7125024705920037
+        },
+        {
+          "epoch": 23,
+          "last_gradient_norm": 9.573281288146973,
+          "target_count": 1012,
+          "target_nll": 0.6760461649925562
+        },
+        {
+          "epoch": 24,
+          "last_gradient_norm": 0.0557606965303421,
+          "target_count": 1012,
+          "target_nll": 0.6314565064640911
+        },
+        {
+          "epoch": 25,
+          "last_gradient_norm": 4.460935592651367,
+          "target_count": 1012,
+          "target_nll": 0.6067367865528687
+        },
+        {
+          "epoch": 26,
+          "last_gradient_norm": 0.08316019922494888,
+          "target_count": 1012,
+          "target_nll": 0.5834531611705424
+        },
+        {
+          "epoch": 27,
+          "last_gradient_norm": 3.54587984085083,
+          "target_count": 1012,
+          "target_nll": 0.6062922898239158
+        },
+        {
+          "epoch": 28,
+          "last_gradient_norm": 7.545499801635742,
+          "target_count": 1012,
+          "target_nll": 0.5640161357571098
+        },
+        {
+          "epoch": 29,
+          "last_gradient_norm": 8.94472599029541,
+          "target_count": 1012,
+          "target_nll": 0.541462576393178
+        },
+        {
+          "epoch": 30,
+          "last_gradient_norm": 0.1128796711564064,
+          "target_count": 1012,
+          "target_nll": 0.5209554331963827
+        },
+        {
+          "epoch": 31,
+          "last_gradient_norm": 0.16028420627117157,
+          "target_count": 1012,
+          "target_nll": 0.4792764532012154
+        },
+        {
+          "epoch": 32,
+          "last_gradient_norm": 2.690951347351074,
+          "target_count": 1012,
+          "target_nll": 0.4602438083140312
+        },
+        {
+          "epoch": 33,
+          "last_gradient_norm": 0.1776404082775116,
+          "target_count": 1012,
+          "target_nll": 0.4628939547340419
+        },
+        {
+          "epoch": 34,
+          "last_gradient_norm": 4.590358257293701,
+          "target_count": 1012,
+          "target_nll": 0.45806097241372545
+        },
+        {
+          "epoch": 35,
+          "last_gradient_norm": 2.7683491706848145,
+          "target_count": 1012,
+          "target_nll": 0.4071418095723792
+        },
+        {
+          "epoch": 36,
+          "last_gradient_norm": 0.03899185359477997,
+          "target_count": 1012,
+          "target_nll": 0.4076226426639572
+        },
+        {
+          "epoch": 37,
+          "last_gradient_norm": 10.586686134338379,
+          "target_count": 1012,
+          "target_nll": 0.3954867775052263
+        },
+        {
+          "epoch": 38,
+          "last_gradient_norm": 8.156327247619629,
+          "target_count": 1012,
+          "target_nll": 0.39381855555357714
+        },
+        {
+          "epoch": 39,
+          "last_gradient_norm": 4.239029407501221,
+          "target_count": 1012,
+          "target_nll": 0.38090507966558734
+        },
+        {
+          "epoch": 40,
+          "last_gradient_norm": 3.945768117904663,
+          "target_count": 1012,
+          "target_nll": 0.36232970667756326
+        },
+        {
+          "epoch": 41,
+          "last_gradient_norm": 0.04086289554834366,
+          "target_count": 1012,
+          "target_nll": 0.3559651673758097
+        },
+        {
+          "epoch": 42,
+          "last_gradient_norm": 3.7884132862091064,
+          "target_count": 1012,
+          "target_nll": 0.3387940749806709
+        },
+        {
+          "epoch": 43,
+          "last_gradient_norm": 3.394907236099243,
+          "target_count": 1012,
+          "target_nll": 0.3289426299110662
+        },
+        {
+          "epoch": 44,
+          "last_gradient_norm": 1.63645601272583,
+          "target_count": 1012,
+          "target_nll": 0.3297269568741648
+        },
+        {
+          "epoch": 45,
+          "last_gradient_norm": 0.017829958349466324,
+          "target_count": 1012,
+          "target_nll": 0.2872652302007467
+        },
+        {
+          "epoch": 46,
+          "last_gradient_norm": 3.325026273727417,
+          "target_count": 1012,
+          "target_nll": 0.2936403260480248
+        },
+        {
+          "epoch": 47,
+          "last_gradient_norm": 1.5804963111877441,
+          "target_count": 1012,
+          "target_nll": 0.28159152939312876
+        },
+        {
+          "epoch": 48,
+          "last_gradient_norm": 2.7692172527313232,
+          "target_count": 1012,
+          "target_nll": 0.29360654766247113
+        },
+        {
+          "epoch": 49,
+          "last_gradient_norm": 3.0631651878356934,
+          "target_count": 1012,
+          "target_nll": 0.26165765692310117
+        },
+        {
+          "epoch": 50,
+          "last_gradient_norm": 0.03171268105506897,
+          "target_count": 1012,
+          "target_nll": 0.2490232978935267
+        },
+        {
+          "epoch": 51,
+          "last_gradient_norm": 3.305574655532837,
+          "target_count": 1012,
+          "target_nll": 0.26485329618572356
+        },
+        {
+          "epoch": 52,
+          "last_gradient_norm": 3.6969399452209473,
+          "target_count": 1012,
+          "target_nll": 0.23832371245562137
+        },
+        {
+          "epoch": 53,
+          "last_gradient_norm": 2.5871007442474365,
+          "target_count": 1012,
+          "target_nll": 0.235314305166101
+        },
+        {
+          "epoch": 54,
+          "last_gradient_norm": 0.020810410380363464,
+          "target_count": 1012,
+          "target_nll": 0.2490916137824322
+        },
+        {
+          "epoch": 55,
+          "last_gradient_norm": 2.9228742122650146,
+          "target_count": 1012,
+          "target_nll": 0.24016468941943586
+        },
+        {
+          "epoch": 56,
+          "last_gradient_norm": 0.0914013609290123,
+          "target_count": 1012,
+          "target_nll": 0.24467845286847517
+        },
+        {
+          "epoch": 57,
+          "last_gradient_norm": 1.6547404527664185,
+          "target_count": 1012,
+          "target_nll": 0.23644089437064092
+        },
+        {
+          "epoch": 58,
+          "last_gradient_norm": 0.0074813286773860455,
+          "target_count": 1012,
+          "target_nll": 0.21603605437820425
+        },
+        {
+          "epoch": 59,
+          "last_gradient_norm": 1.7935795783996582,
+          "target_count": 1012,
+          "target_nll": 0.20647921002692665
+        },
+        {
+          "epoch": 60,
+          "last_gradient_norm": 0.013311744667589664,
+          "target_count": 1012,
+          "target_nll": 0.1958963509693672
+        },
+        {
+          "epoch": 61,
+          "last_gradient_norm": 2.1863150596618652,
+          "target_count": 1012,
+          "target_nll": 0.19550683986319214
+        },
+        {
+          "epoch": 62,
+          "last_gradient_norm": 4.404782772064209,
+          "target_count": 1012,
+          "target_nll": 0.21346277131822344
+        },
+        {
+          "epoch": 63,
+          "last_gradient_norm": 3.295889139175415,
+          "target_count": 1012,
+          "target_nll": 0.20900285424207468
+        },
+        {
+          "epoch": 64,
+          "last_gradient_norm": 1.99412202835083,
+          "target_count": 1012,
+          "target_nll": 0.20185054987920917
+        },
+        {
+          "epoch": 65,
+          "last_gradient_norm": 1.0292730331420898,
+          "target_count": 1012,
+          "target_nll": 0.20186709681979753
+        },
+        {
+          "epoch": 66,
+          "last_gradient_norm": 0.017306987196207047,
+          "target_count": 1012,
+          "target_nll": 0.19916941931673346
+        },
+        {
+          "epoch": 67,
+          "last_gradient_norm": 3.514526844024658,
+          "target_count": 1012,
+          "target_nll": 0.1995047587883121
+        },
+        {
+          "epoch": 68,
+          "last_gradient_norm": 0.017158202826976776,
+          "target_count": 1012,
+          "target_nll": 0.1759694063498051
+        },
+        {
+          "epoch": 69,
+          "last_gradient_norm": 0.006074347998946905,
+          "target_count": 1012,
+          "target_nll": 0.16743252954913743
+        },
+        {
+          "epoch": 70,
+          "last_gradient_norm": 1.4662578105926514,
+          "target_count": 1012,
+          "target_nll": 0.15940432503691546
+        },
+        {
+          "epoch": 71,
+          "last_gradient_norm": 3.625105381011963,
+          "target_count": 1012,
+          "target_nll": 0.1783275375421768
+        },
+        {
+          "epoch": 72,
+          "last_gradient_norm": 1.7777215242385864,
+          "target_count": 1012,
+          "target_nll": 0.16218111886842
+        },
+        {
+          "epoch": 73,
+          "last_gradient_norm": 1.5428754091262817,
+          "target_count": 1012,
+          "target_nll": 0.15201340332435648
+        },
+        {
+          "epoch": 74,
+          "last_gradient_norm": 4.0735087394714355,
+          "target_count": 1012,
+          "target_nll": 0.16583886849672097
+        },
+        {
+          "epoch": 75,
+          "last_gradient_norm": 0.04112676531076431,
+          "target_count": 1012,
+          "target_nll": 0.14676055618819597
+        },
+        {
+          "epoch": 76,
+          "last_gradient_norm": 2.930880546569824,
+          "target_count": 1012,
+          "target_nll": 0.15240463778368413
+        },
+        {
+          "epoch": 77,
+          "last_gradient_norm": 2.7483701705932617,
+          "target_count": 1012,
+          "target_nll": 0.1599952915743552
+        },
+        {
+          "epoch": 78,
+          "last_gradient_norm": 3.0095458030700684,
+          "target_count": 1012,
+          "target_nll": 0.1412097451776559
+        },
+        {
+          "epoch": 79,
+          "last_gradient_norm": 0.023858068510890007,
+          "target_count": 1012,
+          "target_nll": 0.15018328073154535
+        },
+        {
+          "epoch": 80,
+          "last_gradient_norm": 0.011993546970188618,
+          "target_count": 1012,
+          "target_nll": 0.1365303068303065
+        },
+        {
+          "epoch": 81,
+          "last_gradient_norm": 0.011988978832960129,
+          "target_count": 1012,
+          "target_nll": 0.14655749916658425
+        },
+        {
+          "epoch": 82,
+          "last_gradient_norm": 0.009364147670567036,
+          "target_count": 1012,
+          "target_nll": 0.13375607514473828
+        },
+        {
+          "epoch": 83,
+          "last_gradient_norm": 0.01051187701523304,
+          "target_count": 1012,
+          "target_nll": 0.14483792169492718
+        },
+        {
+          "epoch": 84,
+          "last_gradient_norm": 0.02371743693947792,
+          "target_count": 1012,
+          "target_nll": 0.13511326524676118
+        },
+        {
+          "epoch": 85,
+          "last_gradient_norm": 6.926938533782959,
+          "target_count": 1012,
+          "target_nll": 0.15166650731991374
+        },
+        {
+          "epoch": 86,
+          "last_gradient_norm": 0.055318232625722885,
+          "target_count": 1012,
+          "target_nll": 0.12365466066181009
+        },
+        {
+          "epoch": 87,
+          "last_gradient_norm": 0.007047285791486502,
+          "target_count": 1012,
+          "target_nll": 0.13205621392086972
+        },
+        {
+          "epoch": 88,
+          "last_gradient_norm": 2.136026620864868,
+          "target_count": 1012,
+          "target_nll": 0.11055009279167106
+        },
+        {
+          "epoch": 89,
+          "last_gradient_norm": 1.516129970550537,
+          "target_count": 1012,
+          "target_nll": 0.14578854027190988
+        },
+        {
+          "epoch": 90,
+          "last_gradient_norm": 0.015401358716189861,
+          "target_count": 1012,
+          "target_nll": 0.1352208557693065
+        },
+        {
+          "epoch": 91,
+          "last_gradient_norm": 0.009971337392926216,
+          "target_count": 1012,
+          "target_nll": 0.12784878229520208
+        },
+        {
+          "epoch": 92,
+          "last_gradient_norm": 8.346793174743652,
+          "target_count": 1012,
+          "target_nll": 0.11413727616146702
+        },
+        {
+          "epoch": 93,
+          "last_gradient_norm": 0.02834414318203926,
+          "target_count": 1012,
+          "target_nll": 0.11897901195329957
+        },
+        {
+          "epoch": 94,
+          "last_gradient_norm": 0.017172278836369514,
+          "target_count": 1012,
+          "target_nll": 0.11069708537019209
+        },
+        {
+          "epoch": 95,
+          "last_gradient_norm": 1.5767301321029663,
+          "target_count": 1012,
+          "target_nll": 0.12308225980909217
+        },
+        {
+          "epoch": 96,
+          "last_gradient_norm": 0.016783298924565315,
+          "target_count": 1012,
+          "target_nll": 0.10573104174469522
+        },
+        {
+          "epoch": 97,
+          "last_gradient_norm": 0.013049967586994171,
+          "target_count": 1012,
+          "target_nll": 0.09924752895575992
+        },
+        {
+          "epoch": 98,
+          "last_gradient_norm": 3.1101691722869873,
+          "target_count": 1012,
+          "target_nll": 0.10320384106425667
+        },
+        {
+          "epoch": 99,
+          "last_gradient_norm": 1.1245828866958618,
+          "target_count": 1012,
+          "target_nll": 0.10266816976751726
+        },
+        {
+          "epoch": 100,
+          "last_gradient_norm": 0.010970978997647762,
+          "target_count": 1012,
+          "target_nll": 0.09420177551700086
+        }
+      ],
+      "epochs": 100,
+      "input_tokens": 322000,
+      "loss_first": 6.06787109375,
+      "loss_last": 0.0002737981849350035,
+      "loss_last_epoch": 0.09420177551700086,
+      "target_tokens": 101200,
+      "timing": {
+        "count": 3200,
+        "input_tokens_per_second_total": 22486.194702543828,
+        "mean_ms": 3.3699358821875,
+        "p50_ms": 3.2991260000000002,
+        "p95_ms": 3.748912349999999,
+        "target_tokens_per_second_total": 7067.089763656632,
+        "tokens_per_second_at_p50": 303.1105814085306,
+        "warmup_updates_excluded": 800
+      },
+      "updates": 4000
+    }
+  },
+  "short_optimization_stability": {
+    "final_parameter_max_abs": 0.09134609252214432,
+    "last_20_mean_loss_abs_gap": 0.053065308928489686,
+    "loss_first": {
+      "fused": 6.082192897796631,
+      "legacy": 6.082192897796631
+    },
+    "loss_last": {
+      "fused": 3.9478111267089844,
+      "legacy": 3.9620635509490967
+    },
+    "maximum_loss_abs_gap": 0.227716326713562,
+    "mean_loss_abs_gap": 0.01463014304637909,
+    "passed": false,
+    "prediction_count": 2501,
+    "prediction_disagreement_rate": 0.028388644542183126,
+    "prediction_disagreements": 71,
+    "updates": 100
+  }
+}

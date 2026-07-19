@@ -1,0 +1,2251 @@
+{
+  "data": {
+    "ambiguous_unique_keys": 0,
+    "constraint_audit_pass": true,
+    "graph_audit_pass": true,
+    "train_examples": 640,
+    "unique_prototypes": 443
+  },
+  "decision": {
+    "exact_solver_gate": true,
+    "feature_math_gate": true,
+    "next_route": "sg23_solver_failure_diagnostic",
+    "overall": "FAIL",
+    "passing_nystrom_ranks": [
+      128,
+      256
+    ],
+    "real_quality_gate": true,
+    "real_training_speed_gate": true,
+    "scale_speed_or_memory_gate": false
+  },
+  "experiment": "E3-SG23 explicit spike features and scalable solvers",
+  "protocol": {
+    "exact_score_tolerance": 1e-06,
+    "feature_gram_tolerance": 1e-10,
+    "nystrom_ranks": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "online_block_size": 64,
+    "pcg_relative_tolerance": 1e-08,
+    "stress_sizes": [
+      1024
+    ],
+    "thread_sweep": [
+      4
+    ],
+    "threads": 4
+  },
+  "real_443": {
+    "common_encoding_compression_graph_seconds": 0.11906656000000002,
+    "dense": {
+      "dense_kernel_logical_bytes": 1569992,
+      "factor_logical_bytes": 1569992,
+      "kernel_seconds": 0.012219887,
+      "solve_seconds": 0.018161377,
+      "total_seconds": 0.030381263999999998
+    },
+    "exact_quality": {
+      "perfect_quality": true,
+      "rollout": {
+        "first_all_admissible": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 160,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "first_next_affordance": {
+          "bit_accuracy": 1.0,
+          "by_action": {
+            "examine coin": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go east": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go north": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go south": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go west": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "look": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "take coin": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            }
+          },
+          "exact_mask_accuracy": 1.0,
+          "example_count": 160
+        },
+        "first_projection_kind_counts": {
+          "known_edge_projection": 32,
+          "plan_path_constraint": 32,
+          "stationary_hold": 88,
+          "terminal": 8
+        },
+        "first_routing_accuracy": 1.0,
+        "premature_stop_first_branch_count": 0,
+        "second_projection_kind_counts": {
+          "known_edge_projection": 160,
+          "plan_path_constraint": 88,
+          "stationary_hold": 336,
+          "terminal": 32
+        },
+        "self_error_records_first_100": [],
+        "self_minus_teacher_exact": 0.0,
+        "self_pair_timing": {
+          "max_ms": 4.505766,
+          "mean_ms": 0.3430662792207792,
+          "min_ms": 0.256658,
+          "p50_ms": 0.30805950000000004,
+          "p95_ms": 0.41162525,
+          "p99_ms": 0.4623631500000001,
+          "sample_count": 616
+        },
+        "self_rollout_second": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 616,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "teacher_forced_second": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 616,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "teacher_pair_timing": {
+          "max_ms": 4.485557,
+          "mean_ms": 0.3443855081168831,
+          "min_ms": 0.256899,
+          "p50_ms": 0.30536050000000003,
+          "p95_ms": 0.42409474999999996,
+          "p99_ms": 0.5544642500000008,
+          "sample_count": 616
+        }
+      },
+      "split_metrics": {
+        "test": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          }
+        },
+        "train": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 640,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 640
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 128,
+            "plan_path_constraint": 128,
+            "stationary_hold": 352,
+            "terminal": 32
+          }
+        },
+        "valid": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          }
+        }
+      }
+    },
+    "feature_map": {
+      "build_seconds": 0.217509913,
+      "explicit_gram_seconds": 0.112329053,
+      "feature_count": 26612,
+      "gram_max_abs_error": 0.0,
+      "logical_csr_bytes": 876768,
+      "nnz": 54576,
+      "vocabulary_sha256": "65B6FDAD7431DA118ACE673DEE0B79C9A8D0164BF4C8AC2ADC601E8F6B600C70"
+    },
+    "nystrom": {
+      "128": {
+        "deployment_logical_bytes": 11776,
+        "perfect_quality": true,
+        "pivot_build_seconds": 0.005366215,
+        "rank": 128,
+        "rollout": {
+          "first_all_admissible": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "first_next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "first_projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          },
+          "first_routing_accuracy": 1.0,
+          "premature_stop_first_branch_count": 0,
+          "second_projection_kind_counts": {
+            "known_edge_projection": 160,
+            "plan_path_constraint": 88,
+            "stationary_hold": 336,
+            "terminal": 32
+          },
+          "self_error_records_first_100": [],
+          "self_minus_teacher_exact": 0.0,
+          "self_pair_timing": {
+            "max_ms": 0.501342,
+            "mean_ms": 0.2871350227272727,
+            "min_ms": 0.240758,
+            "p50_ms": 0.27403500000000003,
+            "p95_ms": 0.36551025,
+            "p99_ms": 0.4453805000000006,
+            "sample_count": 616
+          },
+          "self_rollout_second": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 616,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "teacher_forced_second": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 616,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "teacher_pair_timing": {
+            "max_ms": 0.7265600000000001,
+            "mean_ms": 0.28784619155844154,
+            "min_ms": 0.239825,
+            "p50_ms": 0.272322,
+            "p95_ms": 0.37922375,
+            "p99_ms": 0.46317135000000015,
+            "sample_count": 616
+          }
+        },
+        "score_max_abs_difference_vs_exact": {
+          "test": 1.724137808977734,
+          "train": 1.724137808977734,
+          "valid": 1.5999999314248827
+        },
+        "solve": {
+          "rank": 128,
+          "small_system_logical_bytes": 131072,
+          "solve_seconds": 0.000652068
+        },
+        "split_metrics": {
+          "test": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 1.0,
+                "reward": 1.0,
+                "room_relation": 1.0
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 1.0,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 1.0,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 1.0
+                }
+              },
+              "exact_vector_accuracy": 1.0,
+              "example_count": 160,
+              "macro_channel_accuracy": 1.0,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          },
+          "train": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 1.0,
+                "reward": 1.0,
+                "room_relation": 1.0
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 1.0,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 1.0,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 1.0
+                }
+              },
+              "exact_vector_accuracy": 1.0,
+              "example_count": 640,
+              "macro_channel_accuracy": 1.0,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 640
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 128,
+              "plan_path_constraint": 128,
+              "stationary_hold": 352,
+              "terminal": 32
+            }
+          },
+          "valid": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 1.0,
+                "reward": 1.0,
+                "room_relation": 1.0
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 1.0,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 1.0,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 1.0
+                }
+              },
+              "exact_vector_accuracy": 1.0,
+              "example_count": 160,
+              "macro_channel_accuracy": 1.0,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          }
+        }
+      },
+      "256": {
+        "deployment_logical_bytes": 23552,
+        "perfect_quality": true,
+        "pivot_build_seconds": 0.010718364,
+        "rank": 256,
+        "rollout": {
+          "first_all_admissible": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "first_next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "first_projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          },
+          "first_routing_accuracy": 1.0,
+          "premature_stop_first_branch_count": 0,
+          "second_projection_kind_counts": {
+            "known_edge_projection": 160,
+            "plan_path_constraint": 88,
+            "stationary_hold": 336,
+            "terminal": 32
+          },
+          "self_error_records_first_100": [],
+          "self_minus_teacher_exact": 0.0,
+          "self_pair_timing": {
+            "max_ms": 0.720177,
+            "mean_ms": 0.3040853133116883,
+            "min_ms": 0.244064,
+            "p50_ms": 0.2868395,
+            "p95_ms": 0.4195635,
+            "p99_ms": 0.661205700000002,
+            "sample_count": 616
+          },
+          "self_rollout_second": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 616,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "teacher_forced_second": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 616,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "teacher_pair_timing": {
+            "max_ms": 57.266915,
+            "mean_ms": 0.3988148441558441,
+            "min_ms": 0.24545699999999998,
+            "p50_ms": 0.28639349999999997,
+            "p95_ms": 0.42337875,
+            "p99_ms": 0.6857223000000006,
+            "sample_count": 616
+          }
+        },
+        "score_max_abs_difference_vs_exact": {
+          "test": 1.724137808977734,
+          "train": 1.724137808977734,
+          "valid": 1.5999999314248827
+        },
+        "solve": {
+          "rank": 256,
+          "small_system_logical_bytes": 524288,
+          "solve_seconds": 0.001835554
+        },
+        "split_metrics": {
+          "test": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 1.0,
+                "reward": 1.0,
+                "room_relation": 1.0
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 1.0,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 1.0,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 1.0
+                }
+              },
+              "exact_vector_accuracy": 1.0,
+              "example_count": 160,
+              "macro_channel_accuracy": 1.0,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          },
+          "train": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 1.0,
+                "reward": 1.0,
+                "room_relation": 1.0
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 1.0,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 1.0,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 1.0
+                }
+              },
+              "exact_vector_accuracy": 1.0,
+              "example_count": 640,
+              "macro_channel_accuracy": 1.0,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 640
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 128,
+              "plan_path_constraint": 128,
+              "stationary_hold": 352,
+              "terminal": 32
+            }
+          },
+          "valid": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 1.0,
+                "reward": 1.0,
+                "room_relation": 1.0
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 1.0,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 1.0,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 1.0
+                }
+              },
+              "exact_vector_accuracy": 1.0,
+              "example_count": 160,
+              "macro_channel_accuracy": 1.0,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          }
+        }
+      },
+      "32": {
+        "deployment_logical_bytes": 2944,
+        "perfect_quality": false,
+        "pivot_build_seconds": 0.00243936,
+        "rank": 32,
+        "rollout": {
+          "evaluation_error": {
+            "message": "teacher/self graph projection kind diverged",
+            "type": "AssertionError"
+          }
+        },
+        "score_max_abs_difference_vs_exact": {
+          "test": 1.5064008856048197,
+          "train": 1.643945141070343,
+          "valid": 1.6135850414360637
+        },
+        "solve": {
+          "rank": 32,
+          "small_system_logical_bytes": 8192,
+          "solve_seconds": 0.007267358
+        },
+        "split_metrics": {
+          "test": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 0.9,
+                "reward": 1.0,
+                "room_relation": 0.8625
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 0.7142857142857143,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 0.5625,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 0.8
+                }
+              },
+              "exact_vector_accuracy": 0.8125,
+              "example_count": 160,
+              "macro_channel_accuracy": 0.940625,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          },
+          "train": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 0.9,
+                "reward": 1.0,
+                "room_relation": 0.8625
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 0.7142857142857143,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 0.5625,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 0.8
+                }
+              },
+              "exact_vector_accuracy": 0.8125,
+              "example_count": 640,
+              "macro_channel_accuracy": 0.940625,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 640
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 128,
+              "plan_path_constraint": 128,
+              "stationary_hold": 352,
+              "terminal": 32
+            }
+          },
+          "valid": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 0.9,
+                "reward": 1.0,
+                "room_relation": 0.875
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 0.7142857142857143,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 0.625,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 0.8
+                }
+              },
+              "exact_vector_accuracy": 0.825,
+              "example_count": 160,
+              "macro_channel_accuracy": 0.94375,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          }
+        }
+      },
+      "64": {
+        "deployment_logical_bytes": 5888,
+        "perfect_quality": false,
+        "pivot_build_seconds": 0.003364947,
+        "rank": 64,
+        "rollout": {
+          "evaluation_error": {
+            "message": "teacher/self graph projection kind diverged",
+            "type": "AssertionError"
+          }
+        },
+        "score_max_abs_difference_vs_exact": {
+          "test": 1.5218626094672785,
+          "train": 1.7073835106600237,
+          "valid": 1.6810592611993633
+        },
+        "solve": {
+          "rank": 64,
+          "small_system_logical_bytes": 32768,
+          "solve_seconds": 0.000453952
+        },
+        "split_metrics": {
+          "test": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 0.9,
+                "reward": 1.0,
+                "room_relation": 0.9
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 0.7142857142857143,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 0.75,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 0.8
+                }
+              },
+              "exact_vector_accuracy": 0.85,
+              "example_count": 160,
+              "macro_channel_accuracy": 0.95,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          },
+          "train": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 0.9,
+                "reward": 1.0,
+                "room_relation": 0.9
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 0.7142857142857143,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 0.75,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 0.8
+                }
+              },
+              "exact_vector_accuracy": 0.85,
+              "example_count": 640,
+              "macro_channel_accuracy": 0.95,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 640
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 128,
+              "plan_path_constraint": 128,
+              "stationary_hold": 352,
+              "terminal": 32
+            }
+          },
+          "valid": {
+            "delta": {
+              "channel_accuracy": {
+                "done": 1.0,
+                "move_exit_count_after": 0.9,
+                "reward": 1.0,
+                "room_relation": 0.9
+              },
+              "class_recall": {
+                "done": {
+                  "<continue>": 1.0,
+                  "<done>": 1.0
+                },
+                "move_exit_count_after": {
+                  "<exit_count_0>": 1.0,
+                  "<exit_count_1>": 0.7142857142857143,
+                  "<exit_count_2>": 1.0
+                },
+                "reward": {
+                  "<reward_positive>": 1.0,
+                  "<reward_zero>": 1.0
+                },
+                "room_relation": {
+                  "<room_no_observation>": 1.0,
+                  "<room_novel>": 0.75,
+                  "<room_previous>": 1.0,
+                  "<room_same>": 0.8
+                }
+              },
+              "exact_vector_accuracy": 0.85,
+              "example_count": 160,
+              "macro_channel_accuracy": 0.95,
+              "missing_prediction_count": 0
+            },
+            "next_affordance": {
+              "bit_accuracy": 1.0,
+              "by_action": {
+                "examine coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go east": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go north": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go south": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "go west": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "inventory": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "look": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                },
+                "take coin": {
+                  "accuracy": 1.0,
+                  "negative_recall": 1.0,
+                  "positive_recall": 1.0
+                }
+              },
+              "exact_mask_accuracy": 1.0,
+              "example_count": 160
+            },
+            "projection_kind_counts": {
+              "known_edge_projection": 32,
+              "plan_path_constraint": 32,
+              "stationary_hold": 88,
+              "terminal": 8
+            }
+          }
+        }
+      }
+    },
+    "online_block_cholesky": {
+      "block_count": 7,
+      "block_size": 64,
+      "coefficient_max_abs_difference": 1.6436504934880247e-16,
+      "factor_logical_bytes": 1569992,
+      "factor_update_seconds": 0.002241717,
+      "final_solve_seconds": 0.000433002,
+      "kernel_seconds": 0.002927662,
+      "prediction_equivalent": true,
+      "total_seconds": 0.005602381,
+      "train_score_max_abs_difference": 1.3322676295501878e-15
+    },
+    "pcg": {
+      "jacobi": {
+        "coefficient_max_abs_difference": 9.218604142199882e-09,
+        "converged": true,
+        "final_max_relative_residual": 8.912570735625192e-09,
+        "initial_max_relative_residual": 1.0,
+        "iterations": 65,
+        "maximum_iterations": 1772,
+        "preconditioner": {
+          "logical_bytes": 3544,
+          "maximum_diagonal": 165.000001,
+          "minimum_diagonal": 33.000001,
+          "name": "jacobi",
+          "setup_seconds": 4.048e-06
+        },
+        "prediction_equivalent": true,
+        "relative_tolerance": 1e-08,
+        "solve_seconds": 0.086603645,
+        "solver_state_logical_bytes": 340224,
+        "total_seconds": 0.08660769300000001,
+        "train_score_max_abs_difference": 5.001260983128475e-08
+      },
+      "none": {
+        "coefficient_max_abs_difference": 9.01415304378761e-09,
+        "converged": true,
+        "final_max_relative_residual": 9.026072527769073e-09,
+        "initial_max_relative_residual": 1.0,
+        "iterations": 98,
+        "maximum_iterations": 1772,
+        "preconditioner": {
+          "logical_bytes": 0,
+          "name": "none",
+          "setup_seconds": 0.0
+        },
+        "prediction_equivalent": true,
+        "relative_tolerance": 1e-08,
+        "solve_seconds": 0.140074991,
+        "solver_state_logical_bytes": 336680,
+        "total_seconds": 0.140074991,
+        "train_score_max_abs_difference": 4.898556260624076e-08
+      },
+      "return_phase_block": {
+        "coefficient_max_abs_difference": 1.7815006605331751e-09,
+        "converged": true,
+        "final_max_relative_residual": 9.304496657589538e-09,
+        "initial_max_relative_residual": 1.0,
+        "iterations": 8,
+        "maximum_iterations": 1772,
+        "preconditioner": {
+          "constructed_without_full_system": false,
+          "group_count": 9,
+          "kernel_seconds_within_setup": 0.0,
+          "logical_bytes": 223624,
+          "maximum_group_size": 84,
+          "name": "return_phase_block",
+          "setup_seconds": 0.001035776
+        },
+        "prediction_equivalent": true,
+        "relative_tolerance": 1e-08,
+        "solve_seconds": 0.014229749,
+        "solver_state_logical_bytes": 560304,
+        "total_seconds": 0.015265525,
+        "train_score_max_abs_difference": 6.18097827365105e-08
+      }
+    },
+    "pivoted_cholesky": {
+      "checkpoint_seconds": {
+        "32": 0.00243936,
+        "64": 0.003364947,
+        "128": 0.005366215,
+        "256": 0.010718364
+      },
+      "effective_rank": 256,
+      "maximum_residual_diagonal": 22.70332280019272,
+      "pivots_sha256": "E6078E587C7D5B60249D7EE7E044006C63FD2BB00509305807C5BD9D3C14AE10",
+      "reconstruction_max_abs_error_at_effective_rank": 22.703322800192716,
+      "requested_maximum_rank": 256
+    },
+    "selected_pcg": "return_phase_block",
+    "selected_pcg_deployment_training_seconds": 0.35184199800000004
+  },
+  "references": {
+    "cache_sha256": "2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E",
+    "sg22r_sha256": "1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92"
+  },
+  "stress": {
+    "1024": {
+      "dense": {
+        "dense_kernel_logical_bytes": 8388608,
+        "factor_logical_bytes": 8388608,
+        "kernel_seconds": 0.040307805,
+        "solve_seconds": 0.006687513,
+        "total_seconds": 0.046995318
+      },
+      "exactness": {
+        "prediction_equivalent": true,
+        "train_score_max_abs_difference": 2.6659690774977207e-06
+      },
+      "feature_map": {
+        "audit_gram_max_abs_error": 0.0,
+        "audit_row_count": 192,
+        "build_seconds": 0.093807953,
+        "feature_count": 2064,
+        "logical_csr_bytes": 1926664,
+        "nnz": 119904,
+        "vocabulary_sha256": "4C3246768FF93C7C8852FB18868E2AA9966ECC1934F1BC7D2CD9CD00E7E694DA"
+      },
+      "generation": {
+        "canonical_sha256": "1A9039E07625A5AB19C96D0D8332567C76ED874666101302D397E80424736879",
+        "mask_support_count": 14,
+        "row_count": 1024,
+        "support_capacity": 4200000,
+        "unique_state_count": 1024
+      },
+      "memory": {
+        "dense_kernel_plus_system_bytes": 16777216,
+        "dense_over_matrix_free_ratio": 6.183790031757077,
+        "matrix_free_feature_plus_solver_bytes": 2713096
+      },
+      "pcg": {
+        "jacobi": {
+          "converged": false,
+          "final_max_relative_residual": 5.3204179055510534e-08,
+          "initial_max_relative_residual": 1.0,
+          "iterations": 4096,
+          "maximum_iterations": 4096,
+          "preconditioner": {
+            "logical_bytes": 8192,
+            "maximum_diagonal": 180.000001,
+            "minimum_diagonal": 33.000001,
+            "name": "jacobi",
+            "setup_seconds": 3.407e-06
+          },
+          "prediction_equivalent": true,
+          "relative_tolerance": 1e-08,
+          "solve_seconds": 9.078379713,
+          "solver_state_logical_bytes": 786432,
+          "total_seconds": 9.07838312,
+          "train_score_max_abs_difference": 2.6659690774977207e-06
+        },
+        "return_phase_block": {
+          "converged": false,
+          "final_max_relative_residual": 3.461168128516317e-07,
+          "initial_max_relative_residual": 1.0,
+          "iterations": 4096,
+          "maximum_iterations": 4096,
+          "preconditioner": {
+            "constructed_without_full_system": true,
+            "group_count": 4,
+            "kernel_seconds_within_setup": 0.002165809,
+            "logical_bytes": 2957824,
+            "maximum_group_size": 420,
+            "name": "return_phase_block",
+            "setup_seconds": 0.003622573
+          },
+          "prediction_equivalent": true,
+          "relative_tolerance": 1e-08,
+          "solve_seconds": 13.585196017,
+          "solver_state_logical_bytes": 3736064,
+          "total_seconds": 13.588818589999999,
+          "train_score_max_abs_difference": 3.5737029975280166e-06
+        }
+      },
+      "primal_pcg": {
+        "converged": true,
+        "feature_weight_logical_bytes": 313728,
+        "final_max_relative_residual": 9.953337266632113e-09,
+        "iterations": 363,
+        "maximum_diagonal": 1170.0000009999999,
+        "maximum_iterations": 4096,
+        "minimum_diagonal": 0.12500099999999997,
+        "prediction_equivalent": true,
+        "relative_tolerance": 1e-08,
+        "residual_replacement_count": 0,
+        "solve_seconds": 0.672806734,
+        "solver_state_logical_bytes": 1585152,
+        "total_seconds": 0.672806734,
+        "train_score_max_abs_difference": 2.5989075527754757e-06
+      },
+      "selected_exact_route": null,
+      "selected_pcg": null,
+      "spectral_iterative_refinement": {
+        "converged": false,
+        "effective_rank": 202,
+        "final_max_relative_residual": 2.434323066924345e-07,
+        "maximum_refinements": 8,
+        "preconditioner": {
+          "effective_rank": 202,
+          "fixed_iterative_refinement_steps": 0,
+          "inverse_implementation": "implicit_householder_qr_subspace_plus_lambda_complement",
+          "kernel_column_seconds": 0.024504175000000003,
+          "logical_bytes": 1982832,
+          "maximum_abs_r_diagonal": 70.59463551929828,
+          "maximum_residual_diagonal": 7.383786605295045e-15,
+          "minimum_abs_r_diagonal": 3.0310869223826945e-07,
+          "pivots_sha256": "6CE7932962B9BA4B5BB9EEDFC975916A8451109D2528E22C77EECB9957AF838B",
+          "requested_rank": 256,
+          "setup_seconds": 0.045378365
+        },
+        "prediction_equivalent": true,
+        "rank": 256,
+        "refinements": 8,
+        "relative_residual_history": [
+          1.563701650438871e-06,
+          2.946377665851421e-07,
+          4.848518522374179e-07,
+          3.2198557034737166e-07,
+          1.7794237060721543e-07,
+          1.9915627573690287e-07,
+          1.6591382209277714e-07,
+          3.47730384537164e-07,
+          2.434323066924345e-07
+        ],
+        "relative_tolerance": 1e-08,
+        "solve_seconds": 0.024975867,
+        "solver_state_logical_bytes": 2605424,
+        "total_seconds": 0.07035423199999999,
+        "train_score_max_abs_difference": 3.2834068406373262e-06
+      },
+      "wall_speedup_dense_over_pcg": 0.005176617617785666
+    }
+  }
+}

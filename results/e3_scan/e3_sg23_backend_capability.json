@@ -1,0 +1,1246 @@
+{
+  "comparison": {
+    "any_full_transfer_speedup": true,
+    "any_resident_speedup": true,
+    "by_size": {
+      "1024": {
+        "gram": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 2.073830500062042,
+          "cpu_over_directml_resident_speedup": 2.2437158469945353
+        },
+        "matrix_free_normal": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 1.1229217261348778,
+          "cpu_over_directml_resident_speedup": 1.6042935886277925
+        },
+        "readout": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.5839900456242223,
+          "cpu_over_directml_resident_speedup": 0.6434918975431261
+        }
+      },
+      "2048": {
+        "gram": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 2.962493932842077,
+          "cpu_over_directml_resident_speedup": 2.9866773373505318
+        },
+        "matrix_free_normal": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 2.6455772718114043,
+          "cpu_over_directml_resident_speedup": 3.7473622508792497
+        },
+        "readout": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 1.1148394042705903,
+          "cpu_over_directml_resident_speedup": 1.9722222222222223
+        }
+      },
+      "4096": {
+        "gram": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 3.180963558195514,
+          "cpu_over_directml_resident_speedup": 3.648746996223824
+        },
+        "matrix_free_normal": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 4.2671223872748785,
+          "cpu_over_directml_resident_speedup": 5.8613522156235724
+        },
+        "readout": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 2.0474727300660622,
+          "cpu_over_directml_resident_speedup": 1.9725085910652922
+        }
+      },
+      "443": {
+        "gram": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.7032128514056225,
+          "cpu_over_directml_resident_speedup": 1.0054161915621436
+        },
+        "matrix_free_normal": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.7036852589641434,
+          "cpu_over_directml_resident_speedup": 0.8107476635514018
+        },
+        "readout": {
+          "comparable": true,
+          "cpu_over_directml_full_transfer_speedup": 0.37369727047146406,
+          "cpu_over_directml_resident_speedup": 0.4474487570867859
+        }
+      }
+    }
+  },
+  "cpu": {
+    "cholesky_fp32": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "cpu",
+      "silent_or_warned_cpu_fallback": true,
+      "supported": true,
+      "warnings": []
+    },
+    "device": "cpu",
+    "float64_matmul": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "cpu",
+      "supported": true,
+      "warnings": []
+    },
+    "label": "cpu-4-threads",
+    "sizes": {
+      "1024": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0019823,
+            "median_seconds": 0.0016713,
+            "minimum_seconds": 0.0014213,
+            "p95_seconds": 0.0019823,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            1024,
+            1024
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.001845,
+            "median_seconds": 0.0016424,
+            "minimum_seconds": 0.0015349,
+            "p95_seconds": 0.001845,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0006495,
+            "median_seconds": 0.0006011,
+            "minimum_seconds": 0.0005713,
+            "p95_seconds": 0.0006495,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0006124,
+            "median_seconds": 0.000553,
+            "minimum_seconds": 0.0004887,
+            "p95_seconds": 0.0006124,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0003406,
+            "median_seconds": 0.0002816,
+            "minimum_seconds": 0.0002729,
+            "p95_seconds": 0.0003406,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.000272,
+            "median_seconds": 0.0002462,
+            "minimum_seconds": 0.0002254,
+            "p95_seconds": 0.000272,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "2048": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.008067,
+            "median_seconds": 0.0067139,
+            "minimum_seconds": 0.0059994,
+            "p95_seconds": 0.008067,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            2048,
+            2048
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0066631,
+            "median_seconds": 0.0063443,
+            "minimum_seconds": 0.0055355,
+            "p95_seconds": 0.0066631,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0014799,
+            "median_seconds": 0.001313,
+            "minimum_seconds": 0.0011565,
+            "p95_seconds": 0.0014799,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            2048,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0013728,
+            "median_seconds": 0.0012786,
+            "minimum_seconds": 0.0011817,
+            "p95_seconds": 0.0013728,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0006478,
+            "median_seconds": 0.0006213,
+            "minimum_seconds": 0.0005894,
+            "p95_seconds": 0.0006478,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            2048,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004445,
+            "median_seconds": 0.0004402,
+            "minimum_seconds": 0.0004337,
+            "p95_seconds": 0.0004445,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "4096": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0373164,
+            "median_seconds": 0.026562,
+            "minimum_seconds": 0.0253331,
+            "p95_seconds": 0.0373164,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0336835,
+            "median_seconds": 0.026572,
+            "minimum_seconds": 0.0248501,
+            "p95_seconds": 0.0336835,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0039529,
+            "median_seconds": 0.003246,
+            "minimum_seconds": 0.0026736,
+            "p95_seconds": 0.0039529,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0026833,
+            "median_seconds": 0.0025661,
+            "minimum_seconds": 0.0024206,
+            "p95_seconds": 0.0026833,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0013948,
+            "median_seconds": 0.0013327,
+            "minimum_seconds": 0.0011426,
+            "p95_seconds": 0.0013948,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0009019,
+            "median_seconds": 0.000861,
+            "minimum_seconds": 0.0008506,
+            "p95_seconds": 0.0009019,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "443": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0004553,
+            "median_seconds": 0.0003502,
+            "minimum_seconds": 0.000328,
+            "p95_seconds": 0.0004553,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            443,
+            443
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0003823,
+            "median_seconds": 0.0003527,
+            "minimum_seconds": 0.0003315,
+            "p95_seconds": 0.0003823,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0005417,
+            "median_seconds": 0.0002826,
+            "minimum_seconds": 0.0002682,
+            "p95_seconds": 0.0005417,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.000259,
+            "median_seconds": 0.0002082,
+            "minimum_seconds": 0.0002032,
+            "p95_seconds": 0.000259,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0025688,
+            "median_seconds": 0.0001506,
+            "minimum_seconds": 0.0001305,
+            "p95_seconds": 0.0025688,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0001066,
+            "median_seconds": 0.0001026,
+            "minimum_seconds": 0.0001003,
+            "p95_seconds": 0.0001066,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      }
+    },
+    "vector_add": {
+      "full_input_output_transfer": {
+        "maximum_seconds": 0.00056,
+        "median_seconds": 0.0003667,
+        "minimum_seconds": 0.0001568,
+        "p95_seconds": 0.00056,
+        "sample_count": 7
+      },
+      "max_abs_error_vs_cpu": 0.0,
+      "name": "vector_add",
+      "output_device": "cpu",
+      "output_shape": [
+        1000000
+      ],
+      "resident_scalar_sync": {
+        "maximum_seconds": 4.98e-05,
+        "median_seconds": 4.84e-05,
+        "minimum_seconds": 4.57e-05,
+        "p95_seconds": 4.98e-05,
+        "sample_count": 7
+      },
+      "supported": true,
+      "warnings": []
+    }
+  },
+  "cpu_thread_sweep": {
+    "results": {
+      "1": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0753295,
+            "median_seconds": 0.0688064,
+            "minimum_seconds": 0.0679276,
+            "p95_seconds": 0.0753295,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0736319,
+            "median_seconds": 0.0697594,
+            "minimum_seconds": 0.0677024,
+            "p95_seconds": 0.0736319,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0023821,
+            "median_seconds": 0.0020189,
+            "minimum_seconds": 0.0018428,
+            "p95_seconds": 0.0023821,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0018127,
+            "median_seconds": 0.0016006,
+            "minimum_seconds": 0.0015452,
+            "p95_seconds": 0.0018127,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0014397,
+            "median_seconds": 0.00131,
+            "minimum_seconds": 0.0009781,
+            "p95_seconds": 0.0014397,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0009573,
+            "median_seconds": 0.0008082,
+            "minimum_seconds": 0.0007329,
+            "p95_seconds": 0.0009573,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "16": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0127394,
+            "median_seconds": 0.0125049,
+            "minimum_seconds": 0.0121624,
+            "p95_seconds": 0.0127394,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0122497,
+            "median_seconds": 0.011834,
+            "minimum_seconds": 0.0113135,
+            "p95_seconds": 0.0122497,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0017986,
+            "median_seconds": 0.0016851,
+            "minimum_seconds": 0.0015213,
+            "p95_seconds": 0.0017986,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0015666,
+            "median_seconds": 0.0013865,
+            "minimum_seconds": 0.0012643,
+            "p95_seconds": 0.0015666,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0017043,
+            "median_seconds": 0.0007195,
+            "minimum_seconds": 0.0006766,
+            "p95_seconds": 0.0017043,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.000882,
+            "median_seconds": 0.0006323,
+            "minimum_seconds": 0.0004267,
+            "p95_seconds": 0.000882,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "2": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.038727,
+            "median_seconds": 0.0370597,
+            "minimum_seconds": 0.0351367,
+            "p95_seconds": 0.038727,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0390233,
+            "median_seconds": 0.0365273,
+            "minimum_seconds": 0.0350013,
+            "p95_seconds": 0.0390233,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0016638,
+            "median_seconds": 0.0012052,
+            "minimum_seconds": 0.0009843,
+            "p95_seconds": 0.0016638,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.001113,
+            "median_seconds": 0.000934,
+            "minimum_seconds": 0.0009016,
+            "p95_seconds": 0.001113,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0007385,
+            "median_seconds": 0.0006394,
+            "minimum_seconds": 0.0005488,
+            "p95_seconds": 0.0007385,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004765,
+            "median_seconds": 0.0004352,
+            "minimum_seconds": 0.0003858,
+            "p95_seconds": 0.0004765,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "4": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0284829,
+            "median_seconds": 0.0259601,
+            "minimum_seconds": 0.0251153,
+            "p95_seconds": 0.0284829,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0265421,
+            "median_seconds": 0.0251498,
+            "minimum_seconds": 0.0242273,
+            "p95_seconds": 0.0265421,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0029174,
+            "median_seconds": 0.0027763,
+            "minimum_seconds": 0.0026891,
+            "p95_seconds": 0.0029174,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0032652,
+            "median_seconds": 0.0028637,
+            "minimum_seconds": 0.0026017,
+            "p95_seconds": 0.0032652,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0013216,
+            "median_seconds": 0.0011666,
+            "minimum_seconds": 0.0009993,
+            "p95_seconds": 0.0013216,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0013897,
+            "median_seconds": 0.0008855,
+            "minimum_seconds": 0.0008492,
+            "p95_seconds": 0.0013897,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "8": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0173289,
+            "median_seconds": 0.0152351,
+            "minimum_seconds": 0.0139514,
+            "p95_seconds": 0.0173289,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "gram",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0181438,
+            "median_seconds": 0.0154385,
+            "minimum_seconds": 0.0118327,
+            "p95_seconds": 0.0181438,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0023444,
+            "median_seconds": 0.0020434,
+            "minimum_seconds": 0.0017988,
+            "p95_seconds": 0.0023444,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "matrix_free_normal",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0025628,
+            "median_seconds": 0.0018856,
+            "minimum_seconds": 0.0015359,
+            "p95_seconds": 0.0025628,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0010578,
+            "median_seconds": 0.0009086,
+            "minimum_seconds": 0.000779,
+            "p95_seconds": 0.0010578,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0,
+          "name": "readout",
+          "output_device": "cpu",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0007685,
+            "median_seconds": 0.0006722,
+            "minimum_seconds": 0.000619,
+            "p95_seconds": 0.0007685,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      }
+    },
+    "size": 4096,
+    "thread_counts": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ]
+  },
+  "decision": {
+    "adapter_gate": true,
+    "backend_available": false,
+    "deployment_boundary": "cpu_multicore_only_until_backend_changes",
+    "fp32_correctness_gate": false,
+    "overall": "FAIL",
+    "rocm_available": false,
+    "useful_device_resident_speed_gate": true,
+    "useful_full_transfer_speed_gate": true
+  },
+  "directml": {
+    "cholesky_fp32": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "privateuseone:0",
+      "silent_or_warned_cpu_fallback": true,
+      "supported": true,
+      "warnings": [
+        "The operator 'aten::linalg_cholesky_ex.L' is not currently supported on the DML backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at C:\\__w\\1\\s\\pytorch-directml-plugin\\torch_directml\\csrc\\dml\\dml_cpu_fallback.cpp:17.)"
+      ]
+    },
+    "device": "privateuseone:0",
+    "float64_matmul": {
+      "max_abs_error_vs_cpu": 0.0,
+      "output_device": "privateuseone:0",
+      "supported": true,
+      "warnings": []
+    },
+    "label": "directml-adapter-0",
+    "sizes": {
+      "1024": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0010074,
+            "median_seconds": 0.0008059,
+            "minimum_seconds": 0.000715,
+            "p95_seconds": 0.0010074,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.000213623046875,
+          "name": "gram",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            1024,
+            1024
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0014473,
+            "median_seconds": 0.000732,
+            "minimum_seconds": 0.0006201,
+            "p95_seconds": 0.0014473,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0012428,
+            "median_seconds": 0.0005353,
+            "minimum_seconds": 0.0004182,
+            "p95_seconds": 0.0012428,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.00146484375,
+          "name": "matrix_free_normal",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004523,
+            "median_seconds": 0.0003447,
+            "minimum_seconds": 0.0001915,
+            "p95_seconds": 0.0004523,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0010018,
+            "median_seconds": 0.0004822,
+            "minimum_seconds": 0.0003507,
+            "p95_seconds": 0.0010018,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 4.9591064453125e-05,
+          "name": "readout",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            1024,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.000903,
+            "median_seconds": 0.0003826,
+            "minimum_seconds": 0.0002047,
+            "p95_seconds": 0.000903,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "2048": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0032567,
+            "median_seconds": 0.0022663,
+            "minimum_seconds": 0.0021001,
+            "p95_seconds": 0.0032567,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.000244140625,
+          "name": "gram",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            2048,
+            2048
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0026673,
+            "median_seconds": 0.0021242,
+            "minimum_seconds": 0.0019828,
+            "p95_seconds": 0.0026673,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0016931,
+            "median_seconds": 0.0004963,
+            "minimum_seconds": 0.0003636,
+            "p95_seconds": 0.0016931,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.002685546875,
+          "name": "matrix_free_normal",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            2048,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0004454,
+            "median_seconds": 0.0003412,
+            "minimum_seconds": 0.0002727,
+            "p95_seconds": 0.0004454,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0013924,
+            "median_seconds": 0.0005573,
+            "minimum_seconds": 0.0004447,
+            "p95_seconds": 0.0013924,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 3.4332275390625e-05,
+          "name": "readout",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            2048,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0003573,
+            "median_seconds": 0.0002232,
+            "minimum_seconds": 0.0001841,
+            "p95_seconds": 0.0003573,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "4096": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0094148,
+            "median_seconds": 0.0083503,
+            "minimum_seconds": 0.0080176,
+            "p95_seconds": 0.0094148,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.000244140625,
+          "name": "gram",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            4096,
+            4096
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.008544,
+            "median_seconds": 0.0072825,
+            "minimum_seconds": 0.0070694,
+            "p95_seconds": 0.008544,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0011473,
+            "median_seconds": 0.0007607,
+            "minimum_seconds": 0.0006194,
+            "p95_seconds": 0.0011473,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0050048828125,
+          "name": "matrix_free_normal",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0008213,
+            "median_seconds": 0.0004378,
+            "minimum_seconds": 0.0003366,
+            "p95_seconds": 0.0008213,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0009394,
+            "median_seconds": 0.0006509,
+            "minimum_seconds": 0.0005489,
+            "p95_seconds": 0.0009394,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 5.340576171875e-05,
+          "name": "readout",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            4096,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0008732,
+            "median_seconds": 0.0004365,
+            "minimum_seconds": 0.0002589,
+            "p95_seconds": 0.0008732,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      },
+      "443": {
+        "gram": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0042903,
+            "median_seconds": 0.000498,
+            "minimum_seconds": 0.0003673,
+            "p95_seconds": 0.0042903,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.0001220703125,
+          "name": "gram",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            443,
+            443
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.000496,
+            "median_seconds": 0.0003508,
+            "minimum_seconds": 0.0002819,
+            "p95_seconds": 0.000496,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "matrix_free_normal": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0011966,
+            "median_seconds": 0.0004016,
+            "minimum_seconds": 0.0002684,
+            "p95_seconds": 0.0011966,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 0.000732421875,
+          "name": "matrix_free_normal",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.000303,
+            "median_seconds": 0.0002568,
+            "minimum_seconds": 0.0001951,
+            "p95_seconds": 0.000303,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        },
+        "readout": {
+          "full_input_output_transfer": {
+            "maximum_seconds": 0.0026745,
+            "median_seconds": 0.000403,
+            "minimum_seconds": 0.0002872,
+            "p95_seconds": 0.0026745,
+            "sample_count": 7
+          },
+          "max_abs_error_vs_cpu": 3.0517578125e-05,
+          "name": "readout",
+          "output_device": "privateuseone:0",
+          "output_shape": [
+            443,
+            19
+          ],
+          "resident_scalar_sync": {
+            "maximum_seconds": 0.0009229,
+            "median_seconds": 0.0002293,
+            "minimum_seconds": 0.0001875,
+            "p95_seconds": 0.0009229,
+            "sample_count": 7
+          },
+          "supported": true,
+          "warnings": []
+        }
+      }
+    },
+    "vector_add": {
+      "full_input_output_transfer": {
+        "maximum_seconds": 0.0014038,
+        "median_seconds": 0.0012173,
+        "minimum_seconds": 0.0010555,
+        "p95_seconds": 0.0014038,
+        "sample_count": 7
+      },
+      "max_abs_error_vs_cpu": 0.0,
+      "name": "vector_add",
+      "output_device": "privateuseone:0",
+      "output_shape": [
+        1000000
+      ],
+      "resident_scalar_sync": {
+        "maximum_seconds": 0.0010989,
+        "median_seconds": 0.0005962,
+        "minimum_seconds": 0.000538,
+        "p95_seconds": 0.0010989,
+        "sample_count": 7
+      },
+      "supported": true,
+      "warnings": []
+    }
+  },
+  "environment": {
+    "directml_adapter_names": [
+      "AMD Radeon RX 7800 XT",
+      "AMD Radeon(TM) Graphics"
+    ],
+    "logical_cpu_count": 32,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+    "python_executable": "D:\\venvs\\vpsc-directml\\Scripts\\python.exe",
+    "selected_adapter_index": 0,
+    "torch": "2.4.1+cpu",
+    "torch_directml": "0.2.5.dev240914",
+    "torch_intraop_threads": 4
+  },
+  "experiment": "E3-SG23H multicore and DirectML backend capability",
+  "protocol": {
+    "correctness_abs_tolerance": 0.0001,
+    "cpu_thread_sweep": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "cpu_threads": 4,
+    "feature_width": 256,
+    "output_width": 19,
+    "repetitions": 7,
+    "seed": 230719,
+    "sizes": [
+      443,
+      1024,
+      2048,
+      4096
+    ],
+    "warmups": 3
+  },
+  "protocol_sha256": "8EE308356461256EFAEC775B0101A7871225EC1EC78BE8B1C5B748B96FAC9643",
+  "wsl_rocm": {
+    "opencl": {
+      "available": true,
+      "return_code": 0,
+      "stderr": "",
+      "stdout": "Number of devices:\t\t\t\t 0"
+    },
+    "runtime": {
+      "available": true,
+      "return_code": 0,
+      "stderr": "",
+      "stdout": "kernel=6.6.87.2-microsoft-standard-WSL2\ndxg=yes\n  Name:                    AMD Ryzen 9 7950X 16-Core Processor\n  Marketing Name:          AMD Ryzen 9 7950X 16-Core Processor\n  Vendor Name:             CPU"
+    },
+    "torch": {
+      "available": true,
+      "return_code": 0,
+      "stderr": "",
+      "stdout": "{\"torch\": \"2.13.0+cpu\", \"hip\": null, \"cuda_available\": false, \"device_count\": 0}"
+    },
+    "usable_rocm_pytorch_gpu": false
+  }
+}
