@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 from datetime import datetime, timezone
 import gc
 import hashlib
@@ -11,7 +12,7 @@ import math
 from pathlib import Path
 import sys
 import time
-from typing import Any, Dict, Mapping, Sequence, Tuple
+from typing import Any, Dict, Iterator, Mapping, Sequence, Tuple
 
 import torch
 
@@ -32,6 +33,10 @@ from experiments import e3_sg25f_parallel_affine_graph as sg25f  # noqa: E402
 from experiments import e3_sg26a_expanded_raw_language as sg26a  # noqa: E402
 from experiments import e3_sg26b_length_mass_objective as sg26b  # noqa: E402
 from experiments import e3_tw0_sparse_event_lm as tw0  # noqa: E402
+from vpsc.world_model.triton_fused_gated_trace import (  # noqa: E402
+    backend_audit as triton_fused_backend_audit,
+    triton_fused_gated_trace,
+)
 
 
 RATES = (0.0, 0.25, 0.5, 1.0)
@@ -47,6 +52,21 @@ EXPECTED_SG26B_SHA256 = (
 SG26B_SNN_ALPHA0_VALID_NLL = 0.6596352211074806
 SG26B_SNN_ALPHA0_VALID_EDIT = 0.6196577924715371
 SG25F_PARALLEL_EXAMPLES_PER_SECOND = 20133.046722635696
+
+
+@contextmanager
+def _local_rocm_triton_backend() -> Iterator[None]:
+    """Install the four-bucket fused Triton route without CUDA extensions."""
+
+    original_buckets = sg25e.BUCKET_CAPACITIES
+    original_parallel_kernel = sg25f.fused_parallel_gated_trace
+    sg25e.BUCKET_CAPACITIES = sg26a.BUCKET_CAPACITIES
+    sg25f.fused_parallel_gated_trace = triton_fused_gated_trace
+    try:
+        yield
+    finally:
+        sg25f.fused_parallel_gated_trace = original_parallel_kernel
+        sg25e.BUCKET_CAPACITIES = original_buckets
 
 
 def _sha256(path: Path) -> str:
@@ -105,6 +125,127 @@ def _clone_batch(batch: sg25e.DeviceBatch) -> sg25e.DeviceBatch:
         target_token_count=batch.target_token_count,
         example_indices=batch.example_indices,
     )
+
+
+class EagerTrainer:
+    """Shape-cached eager trainer used when HIP Graph capture is unavailable."""
+
+    def __init__(
+        self,
+        mode: str,
+        model: Any,
+        batches: Sequence[sg25e.DeviceBatch],
+        *,
+        device: torch.device,
+    ) -> None:
+        self.mode = mode
+        self.model = model
+        self.device = device
+        self.optimizer = sg25f._optimizer(model)
+        self.parameters = tuple(
+            parameter for parameter in model.parameters() if parameter.requires_grad
+        )
+        self._parameter_baseline = tuple(
+            parameter.detach().clone() for parameter in self.parameters
+        )
+        representatives: Dict[Tuple[int, int, int], sg25e.DeviceBatch] = {}
+        for batch in batches:
+            representatives.setdefault(batch.key, _clone_batch(batch))
+        if len(representatives) != len(sg25e.BUCKET_CAPACITIES):
+            raise AssertionError("eager trainer requires every frozen bucket")
+        self.entries = representatives
+        allocated_before = torch.cuda.memory_allocated(device)
+        reserved_before = torch.cuda.memory_reserved(device)
+        torch.cuda.reset_peak_memory_stats(device)
+        started = time.perf_counter_ns()
+
+        first = next(iter(self.entries.values()))
+        sg25f._step_body(mode, model, self.optimizer, first)
+        _sync(device)
+        with torch.no_grad():
+            for parameter, baseline in zip(
+                self.parameters, self._parameter_baseline
+            ):
+                parameter.copy_(baseline)
+            for state in self.optimizer.state.values():
+                for value in state.values():
+                    if isinstance(value, torch.Tensor):
+                        value.zero_()
+        self.optimizer.zero_grad(set_to_none=False)
+        self._optimizer_baseline = sg25f._tensor_state_snapshot(self.optimizer)
+        self.reset()
+        for entry in self.entries.values():
+            sg25f._step_body(mode, model, self.optimizer, entry)
+            _sync(device)
+            self.reset()
+        self.capture_audit = {
+            "execution_mode": "uniform_eager",
+            "graph_capture_attempted": False,
+            "graph_capture_disabled_reason": (
+                "HIP error 900: hipBLASLt operation not permitted during stream capture"
+            ),
+            "shape_count": len(self.entries),
+            "keys": tuple(tuple(key) for key in sorted(self.entries)),
+            "warmup_seconds": (time.perf_counter_ns() - started) / 1e9,
+            "allocated_before_bytes": allocated_before,
+            "allocated_after_bytes": torch.cuda.memory_allocated(device),
+            "allocated_delta_bytes": max(
+                0, torch.cuda.memory_allocated(device) - allocated_before
+            ),
+            "reserved_before_bytes": reserved_before,
+            "reserved_after_bytes": torch.cuda.memory_reserved(device),
+            "reserved_delta_bytes": max(
+                0, torch.cuda.memory_reserved(device) - reserved_before
+            ),
+            "peak_allocated_bytes": torch.cuda.max_memory_allocated(device),
+            "peak_reserved_bytes": torch.cuda.max_memory_reserved(device),
+        }
+
+    def reset(self) -> None:
+        _sync(self.device)
+        with torch.no_grad():
+            for parameter, baseline in zip(
+                self.parameters, self._parameter_baseline
+            ):
+                parameter.copy_(baseline)
+            for parameter_index, parameter in enumerate(self.parameters):
+                for name, baseline in self._optimizer_baseline[
+                    parameter_index
+                ].items():
+                    self.optimizer.state[parameter][name].copy_(baseline)
+        self.optimizer.zero_grad(set_to_none=False)
+        _sync(self.device)
+
+    def replay(
+        self, batch: sg25e.DeviceBatch, *, timed: bool, inspect: bool
+    ) -> Dict[str, Any]:
+        entry = self.entries[batch.key]
+        if timed:
+            _sync(self.device)
+            started = time.perf_counter_ns()
+        entry.input_ids.copy_(batch.input_ids)
+        entry.query_indices.copy_(batch.query_indices)
+        entry.gather_indices.copy_(batch.gather_indices)
+        entry.targets.copy_(batch.targets)
+        entry.token_mask.copy_(batch.token_mask)
+        entry.example_mask.copy_(batch.example_mask)
+        loss, logits = sg25f._step_body(
+            self.mode, self.model, self.optimizer, entry
+        )
+        _sync(self.device)
+        result: Dict[str, Any] = {
+            "wall_ms": (
+                (time.perf_counter_ns() - started) / 1e6 if timed else None
+            )
+        }
+        if inspect:
+            result.update(
+                {
+                    "loss": float(loss.item()),
+                    "predictions": logits.detach().argmax(dim=-1).clone(),
+                }
+            )
+        return result
 
 
 def collect_rollin_predictions(
@@ -415,9 +556,8 @@ def run_rate_sweep(
     torch.cuda.empty_cache()
     with sg26b._patched_loss(0.0):
         model = sg25f._build_mode_model(mode, vocabulary, device=device)
-        trainer = sg25f.GraphTrainer(
-            mode, model, quality_batches, device=device
-        )
+        trainer_class = EagerTrainer if torch.version.hip is not None else sg25f.GraphTrainer
+        trainer = trainer_class(mode, model, quality_batches, device=device)
         equivalence = sg25f.graph_equivalence(
             mode,
             trainer,
@@ -552,9 +692,15 @@ def _decision(
     primary: Mapping[str, Mapping[str, Any]],
     *,
     quick: bool,
+    local_rocm: bool,
 ) -> Dict[str, Any]:
-    capture_pass = all(
+    execution_protocol_pass = all(
         record["capture"]["shape_count"] == len(sg26a.BUCKET_CAPACITIES)
+        and (
+            record["capture"].get("execution_mode") == "uniform_eager"
+            if local_rocm
+            else "execution_mode" not in record["capture"]
+        )
         for record in primary.values()
     )
     equivalence_pass = all(
@@ -572,8 +718,12 @@ def _decision(
         mode: record["benchmark"]["per_real_example_timing"]["p50_ms"]
         for mode, record in primary.items()
     }
+    legacy_floor_pass = bool(
+        local_rocm
+        or eps["snn_parallel"] >= 0.75 * SG25F_PARALLEL_EXAMPLES_PER_SECOND
+    )
     speed_pass = (
-        eps["snn_parallel"] >= 0.75 * SG25F_PARALLEL_EXAMPLES_PER_SECOND
+        legacy_floor_pass
         and eps["snn_parallel"] >= eps["lstm"]
         and eps["snn_parallel"] >= eps["transformer"]
         and target_tps["snn_parallel"] >= target_tps["lstm"]
@@ -630,7 +780,7 @@ def _decision(
     }
     infrastructure = {
         "data_gate": bool(data_audit["passed"]),
-        "capture_gate": capture_pass,
+        "capture_gate": execution_protocol_pass,
         "equivalence_gate": equivalence_pass,
         "test_isolation_gate": isolated,
         "corruption_gate": all(
@@ -647,6 +797,11 @@ def _decision(
         "effective_examples_per_second": eps,
         "effective_target_tokens_per_second": target_tps,
         "per_real_example_p50_ms": p50,
+        "legacy_v100_absolute_floor_applied": not local_rocm,
+        "legacy_v100_absolute_floor_pass": legacy_floor_pass,
+        "execution_protocol": (
+            "uniform_eager" if local_rocm else "cuda_graph"
+        ),
         "best_ann_valid_nll": best_ann_nll,
         "best_ann_valid_edit_similarity": best_ann_edit,
         "best_neural_valid_edit_similarity": best_neural_edit,
@@ -694,16 +849,33 @@ def _decision(
 
 def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
     if not torch.cuda.is_available():
-        raise RuntimeError("SG26C requires CUDA")
+        raise RuntimeError("SG26C requires a CUDA/HIP PyTorch device")
     device = torch.device("cuda:0")
-    if "V100" not in torch.cuda.get_device_name(device).upper():
-        raise AssertionError("SG26C requires the frozen V100 backend")
+    local_rocm = torch.version.hip is not None
+    device_name = torch.cuda.get_device_name(device)
+    if local_rocm:
+        if "7800 XT" not in device_name.upper():
+            raise AssertionError("local SG26C is frozen to the RX 7800 XT")
+        backend_context = _local_rocm_triton_backend
+        serial_extension: Mapping[str, Any] = {
+            "status": "not_loaded",
+            "reason": "ROCm run uses portable serial oracle only",
+        }
+        parallel_extension: Mapping[str, Any] = {
+            "status": "replaced",
+            "backend": "triton_fused_gated_trace",
+            **triton_fused_backend_audit(),
+        }
+    else:
+        if "V100" not in device_name.upper():
+            raise AssertionError("CUDA SG26C requires the frozen V100 backend")
+        backend_context = sg26a._expanded_backend
+        _, serial_extension = sg25f.load_serial_extension()
+        _, parallel_extension = sg25f.load_parallel_extension()
     reference = ROOT / "results/e3_scan/e3_sg26b_length_mass_objective.json"
     reference_sha = _sha256(reference)
     if reference_sha != EXPECTED_SG26B_SHA256:
         raise AssertionError("SG26C SG26B reference hash mismatch")
-    _, serial_extension = sg25f.load_serial_extension()
-    _, parallel_extension = sg25f.load_parallel_extension()
     corpus_root = args.corpus_dir.expanduser().resolve()
     manifest = tw0._manifest_provenance(
         corpus_root, expected_seeds_by_split=sg22r.EXPECTED_SEEDS
@@ -718,7 +890,7 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
     if not data_audit["passed"] or not bucket_audit["passed"]:
         raise AssertionError("SG26C data/bucket audit failed")
 
-    with sg26a._expanded_backend():
+    with backend_context():
         snn_sweep = run_rate_sweep(
             "snn_parallel",
             RATES,
@@ -754,6 +926,7 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         snn_sweep,
         primary,
         quick=args.quick,
+        local_rocm=local_rocm,
     )
     return {
         "schema_version": 1,
@@ -764,6 +937,9 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         "environment": {
             **_environment(device),
             "cuda_compute_capability": torch.cuda.get_device_capability(device),
+            "execution_backend": (
+                "rocm_triton_fused" if local_rocm else "cuda_extensions"
+            ),
         },
         "configuration": {
             "rates": RATES,
@@ -782,6 +958,7 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
             "model_test_teacher_calls": 0,
             "model_test_generation_calls": 0,
             "device": "cuda:0",
+            "hardware_frozen_to": device_name,
         },
         "provenance": {
             "sg26b_reference": str(reference),

@@ -4,6 +4,42 @@
 
 ---
 
+## 2026-07-20：停机检查点 — SG26C正式完成，训练速度PASS但self-roll-in任务FAIL
+
+### 当前要验证的东西
+
+1. **数学加速能否从primitive传递到真实模型训练**：SG27B的常decay结合扫描与全融合Triton，不仅要在gated-trace微基准快，还必须在同一真实raw-language任务、同一RX 7800 XT、同一训练协议中，让pure-SNN训练吞吐和端到端wall同时不慢于LSTM/Transformer。
+2. **质量瓶颈是否来自teacher-forcing exposure bias**：固定SG26B的token-mean loss，以snapshot self-roll-in rate`{0,.25,.5,1}`检验“训练后半程消费自身预测”能否让动态world-state rollout超过train action-majority，而不靠test选参。
+3. **工程边界是否真实可复现**：保留HIP Graph失败，三架构统一eager；SNN不能独占更优执行协议。所有test teacher/generation调用必须为0，primitive速度不能替代生成质量与room/transition任务门。
+
+### 正在实验验证到的位置（已安全暂停，无活跃训练进程）
+
+- SG26C formal已完整结束并落盘，不是中途样本：canonical artifact=`results/e3_scan/e3_sg26c_snapshot_self_rollin_rocm.json`，SHA-256=`B016736338134DD11475E3A310E6EC18E92E50B25FF1D0A2EEAF8A16D03B9965`；runner SHA-256=`B19BC889E3E8E3F39AF0DF3F8E98BB1F2D829E386FFAAF3B65F9388F99F6059D`。100 epochs=`50+50`、2300 updates、四bucket、四rate、同机三架构均完成；data/protocol/equivalence/test-isolation/corruption gates均PASS。
+- **模型级训练加速已通过。** SNN/LSTM/Transformer=`7840.44/1504.69/4714.70 examples/s`，target throughput=`191478/36747/115142 token/s`，per-real-example p50=`.1085/.5950/.1840 ms`。因此SNN同机吞吐为LSTM的`5.21x`、Transformer的`1.66x`；选中rate的optimizer wall=`4.665/21.470/6.792 s`，含一次真实snapshot roll-in的端到端wall=`9.996/26.064/11.147 s`，speed gate PASS。该结论来自完整模型更新而非SG27B微基准。
+- **self-roll-in机制不足。** SNN control rate0为valid NLL/edit/room=`.70141/.62654/0`；rate`.25`为`.77418/.64809/.05`，edit只增`.02155`且NLL恶化`.07276`；rate`.5`降至NLL/edit=`1.06856/.61995`，rate1降至`2.80223/.54061`。冻结选择取rate`.25`，但edit仍低于任务阈值`.67853`达`.03044`，selection/task FAIL。
+- 选中rate的SNN/LSTM/Transformer valid NLL=`.77418/.64984/1.15002`，edit=`.64809/.62761/.61851`；SNN edit最佳，但NLL比最佳LSTM差`.12433 > .10`，所以cross-architecture quality FAIL。SNN动态项虽有局部提升，`move edit=.38116`、`look=.45258`、room accuracy=`.05`，仍未形成可靠房间转移；`inventory edit=1.0`继续由静态模板主导。SG26C strict overall=`FAIL`。
+- 运行风险原样保留：完整HIP Graph capture因hipBLASLt error 900失败后已统一回退eager；Transformer提示AMD mem-efficient attention仍experimental；进程退出提示`SharedSignalPool, 793 Signals leaked`。三者未导致formal中断或非finite，但在ROCm WSL稳定性清单中保持开放。
+
+### 下一步要验证什么
+
+1. **SG28A factorized room-transition objective（primary）**：不再扫self-roll-in rate。把监督拆为`当前世界状态编码 + action条件 -> 下一room / exits / features / transition delta`的离散事件目标，再把语言重建作为辅助输出；核心时间动力学继续使用pure-SNN + fused Triton，不用LSTM/Transformer混入主模型。直接检验当前失败是否因为token CE被inventory/固定格式稀释，而不是SNN没有状态容量。
+2. **冻结判门**：只用train/valid选择目标权重；先要求move/look的room/transition指标和valid edit同时超过action-majority，SNN edit仍须`>=.67853`、room accuracy显著高于`.05`、NLL相对最佳同轮ANN不劣`.10`。速度继续要求SNN examples/s、target/state-events/s与p50不慢于两ANN，并单列结构化head与语言head成本。
+3. **若SG28A成功**：在fresh corpus一次性确认后，进入动作条件长rollout和闭环TextWorld，再扩展图像/音频事件流的多模态异步融合；同时把full-sequence prefill也接入Triton fused，逐步消除当前正常`model.forward`的PyTorch tree路径。
+4. **若SG28A失败**：停止在同一小模型上调loss/rate，转状态维度/多层纯SNN容量与局部学习规则；保持SG27B/SG26C已经验证的数学加速基底，不回退ANN hybrid作为最终架构。
+
+**暂停决定：** 当前没有正在运行或需要恢复的进程；下次从SG28A预注册与数据label audit开始，不重跑SG26C，也不依据已见valid继续调rate。
+
+---
+
+## 2026-07-20：E3-SG26C 本机执行修订 — HIP Graph失败，三架构统一eager（正式实验待跑）
+
+- 首次local quick按原V100协议真实尝试`torch.cuda.CUDAGraph`；进程在完整训练step的HIP stream capture中由hipBLASLt返回error `900: operation not permitted when stream is capturing`并exit 1，未生成结果artifact，同时报告`SharedSignalPool`泄漏1759 signals。负面证据固化为`results/e3_scan/invalid_e3_sg26c_rocm_hip_graph_capture.json`，SHA-256=`FAFCBDB2333073C1C67DE374B33E04BDF8C40D88956B5D4F236333EAB4F08B9D`。SG27B独立Triton forward/backward仍为44 tests与formal PASS，故该失败只否定当前完整模型HIP Graph组合，不否定scan数学或kernel正确性。
+- 按SG27A预注册fallback，local协议改为**三架构统一eager**：SNN、LSTM、Transformer都用同一B16四bucket、device-to-device static-buffer copy、完整forward/loss/backward、gradient clip、fused capturable AdamW和每步同步；每个shape先warmup。禁止让SNN用graph而ANN用eager或反向。V100历史绝对吞吐floor不再参与本机判门，只保留同一RX 7800 XT三架构examples/s、target tokens/s、p50比较；质量、self-roll-in、test隔离与任务阈值保持SG26C原预注册不变。
+- 修订后quick artifact=`results/e3_scan/smoke_e3_sg26c_snapshot_self_rollin_rocm.json`，SHA-256=`20FD3B334D883C928F90740D4214BEDD4A5B36652409551D2E66C7A71320BD7A`。四bucket eager-vs独立eager的8 updates loss gap与prediction disagreement均为0；SNN/LSTM/Transformer=`7183.09/1439.21/5376.63 examples/s`，target throughput=`173937/34850/130194 token/s`，per-example p50=`.1243/.5823/.1522 ms`。这只是2-epoch harness smoke，quality/selection/task不判；其320例SNN roll-in collection=`19.074 s`已计入端到端wall，证明runner没有隐藏顺序生成成本。
+- 正式参数仍为benchmark10 epochs、quality100 epochs=`50+50`、SNN rate`{0,.25,.5,1}`只用valid选择，再以选中rate同轮训练两ANN。local formal speed门要求SNN aggregate examples/s、target tokens/s均不低于两ANN且per-example p50不高于两ANN；overall仍要求data/protocol/equivalence/isolation/corruption/selection/speed/quality/task全部PASS。ROCm退出signal warning和Transformer experimental mem-efficient attention warning原样保留。
+
+---
+
 ## 2026-07-20：E3-SG27B 结果 — 全融合Triton门控轨迹覆盖T160并再次加速（阶段PASS）
 
 - canonical artifact=`results/e3_scan/e3_sg27b_rocm_triton_fused.json`，SHA-256=`510EDFCF1677F66D2D5186D43F06FD74A55D8F4F43EBA0E5F403E39EB6C429E6`；runner/fused源码SHA-256分别为`A19700F18F876D848E04F3637B231BC44F8317D8DCC83FA6FC0C9059869F4AE9`/`6CED69232C10D860300E8C0B2F61343F4A2D8CCE17C6FDD9771CA2687372F6C8`。环境仍为同一RX 7800 XT、ROCm 7.2、B16/S31、warmup5+30 repeats；进程退出继续出现`SharedSignalPool, 2 Signals leaked` warning，但运行与artifact成功完成。
