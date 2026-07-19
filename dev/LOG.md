@@ -4,6 +4,229 @@
 
 ---
 
+## 2026-07-19：E3-SG22R 结果 — seventh-fresh constrained matched confirmation（独立PASS）
+
+### 第七轮数据、公式和graph均独立成立
+
+- seventh corpus生成/采集wall=`233.3 s`；train三artifact与fifth/sixth逐字节一致，valid/test=`20270201..08/20270209..16`，与前两轮16+16个held-out game SHA零重叠，48/48 won、每局5 steps。
+- fresh cache=`results/e3_scan/e3_sg22r_fresh_exhaustive_tree_cache.json`，SHA-256=`2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E`，collection wall=`211.42 s`；records=`640/160/160`，tree=`8/40/160/616`、tree SHA-256=`48C0B8F0E6A2E7A47A5E8F9D2733AE37591988A5FFBA568C46B48C16A7098A27`，全部won/non-mutating。
+- graph四项no-leak审计PASS，snapshot SHA-256=`8BD9C2A33BBA805D4D009D232362E4D63E42EB3A078C1E0023F69DE61C640E51`；冻结constraint在new train/valid/test `128/32/32` plan moves再次零错。
+- canonical artifact=`results/e3_scan/e3_sg22r_seventh_fresh_confirmation.json`，SHA-256=`1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92`。
+
+### 相同输入、相同因果memory下质量打平，SNN训推更快
+
+- SNN seventh一阶delta/mask bit/mask exact=`1/1/1`，teacher/self 616/616与各channel=`1`；六个ANN seed的train validity全部PASS，且各自seventh mask exact/two-step也全部=`1/1`。matched-quality是真正打平，不是ANN训练失败。
+- SNN graph+closed-form训练=`.16884 s`；LSTM=`.59160-.69639 s`，相对最快仍快`3.50×`；Transformer=`1.13106-1.20917 s`，相对最快快`6.70×`。SNN combined=`40,945 bytes`，继续小于LSTM/Transformer=`46,857/49,289`。
+- 端到端SNN two-score p50/p95=`.3582/.5314 ms`；最快ANN p50为LSTM1 `.3874 ms`、最低ANN p95为Transformer0 `.5794 ms`，SNN仍分别约低`7.5%/8.3%`；六组逐项门全部PASS。优势不是数量级推理差距，但在相同graph/constraint下稳定存在。
+
+**决定：SG22R overall PASS。** 将“past-observation episodic edge spikes + public-plan topology constraints + SG19 weighted closed-form residual”设为当前**独立支持的typed-action、两步TextWorld SNN工程基底**：质量等于匹配LSTM/Transformer，训练/响应/存储更优。边界必须保留：第二步candidate仍由evaluator oracle提出，任务只有结构化语言计划与单一TextWorld模态，不足以宣称通用LLM、多模态世界模型或ANN完全替代。
+
+下一阶段SG23不再在该小任务叠规则：扩大prototype规模，测试显式稀疏primal、matrix-free PCG、online Woodbury/RLS、谱近似与多核/GPU backend；同时把raw objective/observation token及视觉/音频事件加入相同graph+residual框架，要求在真实多模态闭环上重新与ANN比较。
+
+---
+
+## 2026-07-19：E3-SG22R 预注册 — seventh-fresh constrained matched confirmation（进行中）
+
+- 新目录=`results/e3_scan/textworld_sg22r_l5`；train逐字节复用`20260801..32`，valid=`20270201..08`、test=`20270209..16`，与fifth/sixth game SHA必须零重叠。official level-5、stored counterfactual=2、fresh exhaustive/tree/graph全部重采。
+- 完全冻结SG22 shared constraint、SG19 SNN、16-slot LSTM/Transformer、三seed、50 epochs和所有门；引用SG22 mechanism SHA-256=`83754E7348B5605443124114C3F7F0AC73652477FCFFD3AB52F99B09FA7BB38D`，不得按seventh改公式或模型。
+- **INDEPENDENT QUALITY**：constraint公式在new train/valid/test plan moves必须零错；SNN与每个有效ANN seventh mask exact、teacher/self two-step均=1，SNN不得低于任一ANN。
+- **TRAIN/RESPONSE/STORAGE**：含共同graph/constraint的SNN训练、端到端p50/p95和bytes均继续优于每个ANN；若仅推理优势消失则不判PASS。
+- 若全部PASS，才把“episodic graph + plan topology constraints + closed-form residual”提升为独立支持的typed-action SNN engineering substrate；范围仍不越过TextWorld两步动力学。下一阶段进入更大prototype的显式primal/PCG/Woodbury多核/GPU实验与raw language/multimodal扩展。
+
+---
+
+## 2026-07-19：E3-SG22 结果 — plan-path topological mask constraints（observed机制PASS）
+
+- canonical artifact=`results/e3_scan/e3_sg22_plan_path_constraints.json`，SHA-256=`83754E7348B5605443124114C3F7F0AC73652477FCFFD3AB52F99B09FA7BB38D`；引用SG21R negative与同一fresh cache，未重选数据。
+- constraint audit在train/valid/test plan moves=`128/32/32`全部零错、零非plan触发；SNN sixth一阶mask bit/exact从`.9875/.95`升至`1/1`，teacher/self仍616/616全channel=1。
+- shared constraint后六个matched ANN的mask exact与two-step也全部=`1.0`，所以matched-quality不再依靠压低ANN；三架构质量严格打平。
+- SNN graph+fit=`.10706 s`，相对最快LSTM `.61893 s`快`5.78×`、相对最快Transformer `1.13283 s`快`10.58×`；combined bytes仍`40,945 < 46,857/49,289`。
+- 含constraint的SNN two-score p50/p95=`.3284/.4361 ms`；最接近LSTM=`.3990/.5169 ms`，六组response均PASS。零参数布尔投影没有吞掉实时优势。
+
+**决定：SG22在observed sixth上所有门PASS，但`independent_confirmation_required=true`，不升级最终结论。** 采用该约束进入上方SG22R seventh-fresh；若独立通过，再转大规模数学求解与多模态，而不是继续在已看sixth追加规则。
+
+---
+
+## 2026-07-19：E3-SG22 预注册 — plan-path topological mask constraints（进行中）
+
+### sixth误差的精确结构
+
+SG21R的8个SNN mask-exact错误全部属于32个`imagined_edge_residual`，且每例`candidate == plan_current`。逐bit审计显示：真实destination方向mask总是且仅是`inverse(candidate)`与`plan_next`（当next仍为move）；其余固定状态为`inventory=look=1`，当`plan_next=take coin`时再置`examine coin/take coin=1`。该公式在已看数据的train/valid/test plan-move=`128/32/32`上错误数均为0，因此是observed-sixth机制假设，不是独立证据。
+
+### 冻结约束与共享公平性
+
+- 对unknown move且`candidate == plan_current`，将8-bit next mask投影到：`move_bits={inverse(candidate)} ∪ ({plan_next} if move)`、`inventory/look=1`、`examine/take=1 iff plan_next=take coin`；同时由投影mask导出exit-count。known graph edge、stationary、terminal和非plan unknown edge保持SG21/learned residual。
+- 该投影只读公开objective编译出的plan tape、当前candidate与固定compass inverse map，不读walkthrough、environment clone、target或future observation。计算为常数规模布尔spike操作，无参数、无梯度、无训练wall。
+- SNN、LSTM、Transformer三者共同使用同一投影；ANN结构、seed、50-epoch预算和SG21R权重训练协议原样重跑。引用SG21R negative artifact SHA-256=`00D20C2F64AE51E4C4A9DDCCDF687C263D2559B8AF9822CE00CBEAD3BAC976F0`与fresh cache SHA-256=`304FE11435B46297DC6D27436486DE026E37CEC9E5B05D87357F49A60FFC7F46`。
+- **MECHANISM**：sixth test三架构每seed一阶delta=1、mask bit/exact=1；SNN teacher/self二步及各channel=1；投影命中数必须等于32 first plan edges，零非plan误触发。
+- **MATCHED**：SNN mask/two-step不得低于任一有效ANN；训练、端到端response、storage继续使用SG21R同门。约束计算必须不使SNN p95慢过最接近LSTM。
+- 若observed sixth全部PASS，立刻冻结runner并生成seventh valid/test独立确认；若仍有mask错，转显式高阶categorical primal feature；若约束PASS但速度margin消失，融合布尔投影到query编码并进入PCG/bitset kernel。
+- **What if：**对可由世界拓扑和目标语法严格推出的状态bit，最优“训练加速”是否就是不训练——用零参数spike约束把学习容量只留给不可推出的残差？
+
+---
+
+## 2026-07-19：E3-SG21R 结果 — sixth-fresh matched ANN graph confirmation（SNN独立质量PASS / matched质量FAIL）
+
+### fresh数据与公平输入成立
+
+- sixth corpus生成/采集wall=`233.7 s`；train manifest/episodes/token-events与fifth逐字节一致，valid/test=`20270101..08/20270109..16`，16个game SHA与fifth零重叠，48/48 won且每局5 steps。
+- fresh exhaustive/tree cache=`results/e3_scan/e3_sg21r_fresh_exhaustive_tree_cache.json`，SHA-256=`304FE11435B46297DC6D27436486DE026E37CEC9E5B05D87357F49A60FFC7F46`，首次采集wall=`221.26 s`；records=`640/160/160`，tree=`8 games/40 roots/160 first/616 second`，tree SHA-256=`389897013A5E17F31C364F499F4FE287A3D030B04FF9A58E38584F9885C308F6`，全部won/non-mutating。
+- graph snapshot四项审计全PASS，SHA-256=`FA904EFD20A31F7638538C5A7FB32E030BF2449799530EA9A3E193A4ED7686BE`。正式artifact=`results/e3_scan/e3_sg21r_sixth_fresh_matched_ann.json`，SHA-256=`00D20C2F64AE51E4C4A9DDCCDF687C263D2559B8AF9822CE00CBEAD3BAC976F0`。
+- 第一次formal在fresh cache完整落盘后、训练前因matched词表把`<event_go_east>`与raw `go east`混用而OOV fail-closed；只改为从冻结raw `action_order`构建feature vocabulary，单测通过后复用identity-matched cache。模型结构、seed、预算、目标和test均未改变。
+
+### SNN在独立sixth保持完整两步质量与训推优势
+
+- SNN sixth test一阶delta各channel=`1.0`，next-mask bit/exact=`.9875/.95`，恰过冻结state门；teacher/self 616/616、四channel、routing均=`1.0`，premature=0。SG21 observed机制得到独立复现。
+- graph+closed-form训练=`.11924 s`；matched ANN最短为LSTM seed2 `.57478 s`、Transformer最短=`1.12540 s`，SNN至少快`4.82×`，对Transformer约`9.44×+`。SNN combined=`40,945 bytes`，小于LSTM=`46,857`与Transformer=`49,289`（均含共同189-byte graph）。
+- 统一采用“feature encoding + model forward + graph projection”的端到端边界后，SNN two-score p50/p95=`.3783/.5096 ms`；六个ANN对照均更慢，最接近的LSTM seed0=`.4036/.5288 ms`。响应优势真实但p95余量仅约`3.6%`，不能描述成数量级推理领先。
+
+### matched质量否证了“已超过ANN”
+
+| seed/model | train 19-bit | sixth mask exact | self two-step exact |
+|---|---:|---:|---:|
+| LSTM 0 | 1.0000 | **1.0000** | 1.0000 |
+| LSTM 1 | 1.0000 | .9875 | .99675 |
+| LSTM 2 | 1.0000 | .96875 | .98377 |
+| Transformer 0 | .99794 | .94375 | 1.0000 |
+| Transformer 1 | .99836 | .9750 | 1.0000 |
+| Transformer 2 | 1.0000 | **1.0000** | 1.0000 |
+| **SNN** | exact closed form | **.9500** | **1.0000** |
+
+- 六个ANN都通过预注册train validity，故不是弱基线。SNN两步exact不低于任何ANN，但一阶next-mask exact低于LSTM0、LSTM1、LSTM2、Transformer1/2，matched-quality gate必须FAIL。
+- **观察：**graph后SNN train mask exact=1、valid/test=`.94375/.95`，错误只可能来自32个unknown/imagined move residual；known edge、stationary、terminal已由共同因果状态精确处理。
+- **解释：**当前SG19乘积/加和核对“未知move必有inverse exit、沿plan move必有next-plan affordance”这类离散约束编码不足；matched ANN能从16-slot交互中学到更多mask结构。速度、存储和两步成功不能覆盖这一质量差距。
+
+**决定：SG21R overall FAIL，不宣称SNN已超过或替代LSTM/Transformer。** 保留“episodic graph + residual”主线和独立两步成功；下一轮先预注册输出级topological mask constraints（unknown move强制inverse bit，candidate等于plan-current时强制plan-next bit），三架构共同使用；同时构建显式稀疏交互特征/闭式primal对照。若在已看sixth修复，必须再生成seventh fresh确认；若仍低于ANN，则用PCG/高阶categorical kernel提升unknown residual，而不是降低`.95`门。
+
+---
+
+## 2026-07-19：E3-SG21R 预注册 — sixth-fresh matched ANN graph confirmation（进行中）
+
+### 独立语料与冻结输入
+
+- 新目录冻结为`results/e3_scan/textworld_sg21r_l5`；train仍为`20260801..32`并要求manifest/episodes/token-events逐字节等于fifth，valid=`20270101..08`、test=`20270109..16`，这些seeds在SG21机制开发中未使用。official TextWorld 1.7 level-5、每step 2个stored counterfactual；另对三split采集all-admissible exhaustive cache，对test采集两层official clone tree。
+- SG21 graph/projection协议冻结为canonical SHA-256=`F1F319E420C3A892B0B66538FA1060BF02BD937BD0F98F2CE089C6D8343EA0C3`：只用past factual observations，known observed edge覆盖room/mask/exit，imagined inverse写入分支副本，stationary不覆盖learned exit。SNN继续同SG19 kernel/`λ`/threshold，不从sixth valid/test改动。
+
+### 同输入LSTM/Transformer，不复用action-only弱对照
+
+- 三模型都读取完全相同的16-slot离散状态：`phase + last3 padded actions + candidate + plan_current + plan_next + return bit + 8 affordance on/off tokens`；同一objective compiler、同一graph projection、同一19维delta+next-mask target。graph是共同的world-state组件，不只给SNN。
+- LSTM冻结为token embedding `d=32` + 单层LSTM `hidden=32` + linear-19；Transformer冻结为embedding/position `d=32` + 1层4-head encoder、FFN=64 + linear-19。三training seeds=`0,1,2`，50 epochs、batch=64、AdamW lr=`3e-3`、BCE-with-logits；不看valid/test调lr、宽度或epoch。
+- ANN有效性审计要求train 19-bit accuracy>=`.98`且delta exact>=`.95`；若未达到，只能报告优化失败并追加同预算诊断，不能当成SNN胜利。参数量、模型bytes、训练wall、单candidate和two-score p50/p95全部逐seed报告。
+
+### 独立硬门
+
+- **DATA/NO LEAK**：新valid/test game hashes与fifth无交集；48/48 won、5 steps；exhaustive=`640/160/160`、tree=`8 games/40 roots/160 first/616 second`；clone不污染live；graph snapshot四项审计全PASS。
+- **SNN QUALITY**：sixth test一阶delta各channel=1、mask bit>=`.98`且exact>=`.95`；teacher/self 616/616 exact和各channel=1、routing=1、premature=0。
+- **MATCHED QUALITY**：SNN一阶mask exact与两步exact都不得低于每个有效ANN seed；同时完整报告ANN是否也因共同graph达到1.0，不能把shared deterministic memory误算为SNN专属能力。
+- **TRAIN/RESPONSE/STORAGE**：4-thread资源匹配下，SNN closed-form+train graph wall必须低于每个有效ANN 50-epoch wall；含相同graph lookup的SNN two-score p50/p95必须低于每个ANN；combined SNN bytes<=最小ANN bytes。
+- 若全部PASS，SG21升级为独立支持的SNN engineering substrate，但范围仍是typed-action TextWorld two-step dynamics，不外推到通用LLM/多模态；若SNN fresh质量失败，回到graph identity/unknown residual；若ANN质量更高，优先提升SNN unknown residual；若速度失败，进入显式primal/PCG/Woodbury并行求解。
+- **What if：**当确定性episodic graph对三种架构完全共享后，闭式SNN residual还能否在不牺牲质量的前提下保留数量级训练优势和更低实时响应，而不是依赖输入不公平？
+
+---
+
+## 2026-07-19：E3-SG21 结果 — episodic edge spikes + causal output projection（observed机制PASS）
+
+### 无泄漏one-shot图把“已知事实”从统计学习中剥离
+
+- canonical artifact=`results/e3_scan/e3_sg21_episodic_edge_graph.json`，SHA-256=`F1F319E420C3A892B0B66538FA1060BF02BD937BD0F98F2CE089C6D8343EA0C3`；base仍是SG19 443-prototype additive kernel，graph只从每个root之前已发生的factual observations/moves构建。
+- 48 games共240 root snapshots：current mask逐条匹配SG18 exhaustive cache、所有edge binding step严格小于snapshot root、room提取零失败、edge conflict为0；canonical snapshot SHA-256=`74C671713BF1F0A48A90D2269A7A5F0D8BB0229B110B32738E8EF104C9BA208A`。
+- 每episode峰值仅5 nodes/8 directed edges，逻辑graph=`189 bytes`；base+graph=`40,945 bytes`。train graph one-pass binding=`.01466 s`，base closed-form fit=`.14905 s`，合计=`.16370 s`，仍低于每个50-epoch ANN训练wall。
+
+### 状态与两步动力学同时过硬门
+
+- fifth test一阶delta exact/各channel=`1.0`；graph投影后next-mask bit/exact从SG19 `.98594/.93125`升至`.99141/.9625`，首次跨过冻结`.95` exact world-state门。160 first candidates分为32 known-edge、32 imagined residual、88 stationary hold、8 terminal。
+- 616 second pairs中，teacher/self exact、四channel、routing全部=`1.0`，drop=0、premature=0、错误=0；second projection包含160 known-edge、88 imagined residual、336 stationary、32 terminal。graph覆盖了SG19的31个立即回边和2个更长已知边，同时保留未知边的闭式残差预测。
+- 含graph lookup与projection的two-score p50/p95=`.3175/.4473 ms`；仍快于三seed全部LSTM和Transformer对照。mechanism/state/training/response/storage/no-leak六门全部PASS。
+
+### 实现边界修正
+
+- 第一次烟测错误地用**imagined node的预测mask**反推stationary action exit；一个3-direction不可表示mask触发fail-closed，收紧后仍有2/616 exit错误。该无效artifact保留为`smoke_e3_sg21_invalid_imagined_exit_projection.json`，SHA-256=`30BB0689D8EF9D1E37D158B0B0DD2F0B126D4305B426B0707252C490310DA4DB`。
+- 预注册只授权已观测known destination mask覆盖exit；修复为stationary仅保持mask/current node，exit继续用SG19 learned head。修复后烟测与formal均616/616，未改kernel、数据、阈值或质量门。
+
+**决定：SG21在observed fifth games上机制PASS，采用“episodic spike facts + learned residual”作为当前SNN world-state主线；但不宣称独立泛化或替代ANN。** 下一步SG21R必须生成全新sixth valid/test games，重新做exhaustive tree/graph审计，并训练获得相同graph/mask输入的LSTM与Transformer；只有SNN质量不低于匹配ANN且训推速度继续领先，才升级证据等级。GPU仍未启用，硬件路线另行核验。
+
+---
+
+## 2026-07-19：E3-SG21 预注册 — episodic edge spikes + causal output projection（进行中）
+
+### SG20否证“全输出分块”，但支持“已知因果边与未知残差分治”
+
+SG19的33个错误中31个是立即逆向边，另2个发生在先沿已知边回到旧节点、再走该节点另一条已遍历边；SG20把所有heads按一位return状态隔离后，room没有提升、exit明显退化。故本轮不再改kernel相似度，而把世界模型分成两个**纯事件路径**：past observation已经确认的拓扑边由稀疏episodic graph精确回放，未知边仍用SG19 additive spike kernel预测。这里的graph是one-shot local binding，不是ANN hidden，也不需要梯度训练。
+
+### 冻结状态机与无泄漏边界
+
+- 每个episode从公开、已经发生的factual observations提取`room:*` spike ID；在root step `t`的snapshot只允许使用`<t`已执行move形成的`(source_room, action)->destination_room`边，以及截至`t`已经观测过的node affordance mask。snapshot不得读取future factual step、walkthrough或counterfactual target。
+- 真实move一旦观察到destination，就同时写入forward edge与compass inverse edge；这是同一已确认物理边的双向binding。对两步想象中的未知move，创建临时imagined node，mask来自SG19预测，并写入返回source的inverse edge；该临时写入只存在于分支副本。
+- known edge命中时，因果投影只覆盖`room_relation=previous`、destination affordance mask及由该mask精确导出的move-exit-count；reward/done仍由SG19学习头产生，避免SG20那种全输出隔离。`look/inventory/examine`不改变graph current node，terminal仍由learned done控制。
+- unknown edge完全保留SG19 prediction；因此本轮是可解释的residual world model，不把环境clone或第二步target喂给模型。SG17 evaluator仍只提出合法second candidates，任务边界仍是动力学组合、不是完整action proposal。
+
+### 冻结审计与硬门
+
+- 引用SG19 canonical SHA-256=`EA2C855CDC9ECA0D41B8345B3CF3918F4BD2BADCCCA0B35F17DFE1F104505C22`；同fifth corpus、同640 records/443 prototypes、同`λ=1e-6`重建SG19系数，不调kernel/threshold。
+- **NO LEAK**：48 games全部root snapshots的最大edge binding step必须`< root_step`；room提取唯一；snapshot current mask必须逐条等于SG18 exhaustive cache；graph lookup不读取tree target。
+- **MECHANISM**：teacher/self二步exact和四channel均必须=`1.0`，drop=0、routing=1、premature=0；SG19的31 immediate +2 longer previous errors全部归零。known-edge与imagined-inverse命中分列报告。
+- **STATE**：fresh fifth的一阶delta继续1.0；graph投影后的next-mask bit/exact不得低于SG19 `.9859375/.93125`，world overall仍要求exact>=`.95`。
+- **TRAIN/RESPONSE/STORAGE**：SG19 closed-form fit + 全train graph one-pass binding wall仍小于每个ANN 50-epoch wall；two-score含graph lookup后的p50/p95仍不慢于SG17全部ANN；报告每episode node/edge峰值和逻辑bytes，并要求峰值+base model<=最小ANN。
+- 若observed fifth mechanism PASS但world mask仍FAIL，先做raw observation/objective到affordance的显式稀疏特征，不降低`.95`门；只有全部门PASS才生成全新sixth games，并给LSTM/Transformer相同graph/mask输入做公平确认。若known edge仍错，否证当前room-ID/逆边契约并回到环境级graph identity审计。
+- **What if：**世界模型无需让一个连续hidden重新学习已经亲历的确定性边；能否把“记住事实”变成一次spike写入，把闭式统计学习只留给真正未知的转移，从而同时减少训练负担与多步幻觉？
+
+---
+
+## 2026-07-19：E3-SG20 结果 — strict return blocks + exact block solve（数学PASS / 机制FAIL）
+
+### 精确分块成立，但一位状态隔离切断了有用迁移
+
+- canonical artifact=`results/e3_scan/e3_sg20_strict_return_blocks.json`，SHA-256=`F1818E23B3512EE4841B0A168DB9C4DF668C2F8D84CFECE2260A6AB578D96685`；复用SG19同一fifth corpus、640 train/443 unique、同target/plan/mask/`λ`，没有重新采集或按test调参。
+- `return_edge=0/1`形成`346/97`两个prototype blocks；cross-block kernel最大绝对值严格为`0`，kernel最小特征值=`.5`。block-vs-dense coefficient/score最大差=`5.69e-16/1.55e-15`，weighted-vs-expanded score差=`2.00e-15`，两组离散prediction均完全等价，strict block math门PASS。
+- **观察：**一阶delta仍为1.0；next-mask bit从SG19 `.98594`微升到`.9875`、exact保持`.93125`，non-regression PASS但`.95` world-state门仍FAIL。
+- **观察：**teacher/self二步exact均从SG19 `.94643`降到`.92208`；room仍=`.94805`，exit却从`.99675`降到`.93506`。previous-target相关exact错误从33升至48，按current return bit分为`24/24`，没有满足预注册的`0/<=2`机制门。
+- **解释：**strict block确实让部分immediate-return room预测恢复，但把exit/mask以及“经已访问节点走另一条已知边”的正迁移也一起切断；一位`return_edge`不是充分拓扑状态。这个结果否证的是全输出共享的硬核隔离，不是否证稀疏因果状态本身。
+
+### 多核缩放是实测瓶颈，不假装GPU已经启用
+
+- 4-thread资源匹配的deployment training=`.15145 s`，two-score p50/p95=`.24684/.35149 ms`，仍快于SG17三seed全部LSTM/Transformer，training/response/storage PASS。
+- 精确block kernel+solve的7次中位数：1/2/4/8/16 threads=`3.181/2.176/1.981/2.185/3.542 ms`；4 threads最快、相对1 thread=`1.606×`，8 threads开始受小矩阵调度限制，16 threads反而=`.898×`。
+- 两个Python block workers、每个设置2 intra-op threads的中位数=`6.116 ms`，比单worker 4-thread慢约`3.09×`；当前`346×346 + 97×97`规模不值得任务级并行。保留分块代数用于未来大prototype并行，但当前默认仍为单worker/4 threads。
+- 当前PyTorch CPU构建无CUDA/HIP，正式artifact明确标记`CPU_ONLY_CURRENT_ENVIRONMENT`；没有把Windows可见GPU写成已使用证据。
+
+**决定：SG20 overall FAIL，不采用strict return block作为模型。** 回到SG19 additive kernel作为learned residual；SG21改用“观测校正的稀疏episodic edge graph + 输出级因果投影”：已实际 traversed 的room/action/destination/mask以one-shot spike binding写入图，已知边直接回放room/exit/mask，未知边才调用闭式kernel。这样不隔离所有heads，也能覆盖SG19的31个立即回边和2个长边；机制若在observed fifth PASS，必须用全新sixth games和同输入ANN做独立确认。训练扩展则继续排队测试显式primal/PCG/Woodbury，不能用本轮小矩阵多核负缩放推断大规模结论。
+
+---
+
+## 2026-07-19：E3-SG20 预注册 — strict return blocks + exact block solve（进行中）
+
+### 从SG19误差出发的六条数学路线
+
+本轮不从未核验论文结论外推，只使用SG19 canonical artifact的直接观测：33个二步错误全部目标为`room_previous`，其中31个满足`return_edge=1`、2个属于更长visited-edge；当前核的`(1+δ[return_q=return_p])`仍允许两个状态块互相贡献。候选路线如下，用户已授权沿所有相关数学路线继续实验，因此按信息增益与成本顺序推进，而非只保留最容易PASS的一条。
+
+| 路线 | 认识状态 | 一句话机制 | 最小决定性实验 | 主要失败模式 |
+|---|---|---|---|---|
+| A. strict categorical return block | Speculative new idea | 把回边/非回边设为正交spike state，以`δ[r_q=r_p]`完全切断跨状态负迁移 | 只换核、复用同一数据，31个immediate-return错误是否归零 | return bit不足以区分更长拓扑 |
+| B. exact independent block Cholesky | Established direction（代数恒等，本任务未验证） | block-diagonal PSD核可拆成两个更小的精确ridge系统并行求解 | 与dense strict solve系数/score逐点等价并计时 | 小样本下调度开销大于立方节省 |
+| C. sparse primal tensor map + Woodbury | Established direction（显式特征恒等，本任务未验证） | 将suffix、plan、mask、return离散核展开为稀疏张量特征，在较小维度求primal ridge | 对当前443 prototypes重建同预测并比较`d^3`/`n^3` | 交叉特征维数爆炸或映射不完全 |
+| D. matrix-free PCG + block preconditioner | Established direction（数值方法，本任务未验证） | 不物化`n×n`核，只做spike-kernel matvec并用return/phase块预条件 | 在放大prototype集上以冻结残差达到相同类别输出 | 条件数差导致迭代多、近阈值预测翻转 |
+| E. online rank-k Woodbury/RLS | Established direction（在线代数更新，本任务未验证） | 新事件只做低秩逆更新，避免每轮从头Cholesky | 按episode流式加入样本并对齐batch解 | 数值漂移和长期`O(n²)`状态增长 |
+| F. pivoted Cholesky/Nyström coreset | Established direction（低秩近似，本任务未验证） | 用谱枢轴保留少量spike prototypes以降低训练与推理 | 扫rank并冻结首个保持全部hard gates的最小rank | 稀有return/terminal事件首先被近似掉 |
+
+**推荐并选择A+B作为SG20 primary。** 它们直接由31个回边错误支持、无需新增输入或test调参，并可同时验证质量隔离与精确并行分块；C/D用于prototype扩展后的SG21/SG22，E用于实时在线世界模型，F只在精确路线达到质量门后测试。**What if：**把世界状态中的离散因果机制先正交分块，是否能让“去负迁移”和“降低立方求解成本”由同一个数学结构同时实现？
+
+### 冻结模型、求解与硬门
+
+- 数据、19维target、objective-only plan、`λ=1e-6`、443-style weighted unique sufficient statistics全部沿用SG19；引用SG19 artifact SHA-256=`EA2C855CDC9ECA0D41B8345B3CF3918F4BD2BADCCCA0B35F17DFE1F104505C22`，不重新采集、不看test选择权重。
+- primary核冻结为 `K20=K_affordance_phase_suffix · δ[return_q=return_p] · (1+δ[plan_current]+δ[plan_next])`。categorical equality为PSD，Hadamard乘积保持PSD；cross-return block必须逐元素严格为0。
+- weighted system按`return_edge∈{0,1}`拆成独立块求精确Cholesky，再scatter回prototype顺序。dense strict solve与expanded 640-example solve只作排除性等价审计；block-vs-dense score最大差`<=1e-9`、weighted-vs-expanded`<=1e-6`且全部离散prediction一致。
+- **MECHANISM**：31个`return_edge=1` previous-room错误必须降为0，总previous-room错误`<=2`；teacher/self exact均`>=.995`、drop`>=-.01`、各channel`>=.995`、routing=1、premature=0。
+- **STATE**：一阶delta exact/各channel保持1.0；next-mask不得低于SG19 bit/exact=`.9859375/.93125`，但world-model overall仍坚持exact-mask`>=.95`，不把“不退化”伪装成最终PASS。
+- **MATH/SPEED/STORAGE**：核PSD与三重等价审计通过；4-thread资源匹配的deployment train、two-score p50/p95、storage继续分别不差于SG17全部LSTM/Transformer基线。另做`1/2/4/8/16`线程审计，但不拿额外CPU资源冒充公平胜利。
+- 若A修复31例但overall只被mask/2个长边卡住，下一步加入visited-edge set与确定性mask state；若A仍有immediate-return错误，否证一位return状态，直接升级episodic graph；若分块求解慢，仅保留质量核并转C/D扩展规模。
+
+### 当前硬件边界
+
+- 主机为Ryzen 9 7950X（16C/32T）；WSL PyTorch=`2.13.0+cpu`，MKL/OpenMP、AVX512可用，formal仍固定4 intra-op threads以匹配既有ANN。
+- Windows可见RX 7800 XT，WSL也有`/dev/dxg`，但当前PyTorch为`USE_ROCM=OFF`，`rocminfo`只枚举CPU、`clinfo`报告0 devices；因此本轮GPU训练不可声称已启用。先做CPU多核缩放，同时单独核验DirectML/ROCm可用路径后再建立GPU公平基线。
+
+---
+
 ## 2026-07-19：E3-SG19 结果 — objective plan tape + visited-edge spikes（数学/速度PASS，状态/二步FAIL）
 
 ### 基准语义修复与证据链
