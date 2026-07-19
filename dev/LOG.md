@@ -4,7 +4,217 @@
 
 ---
 
-## 2026-07-19：E3-SG0 预注册 — action-conditioned counterfactual sequence generation（进行中）
+## 2026-07-19：E3-SG6 预注册 — compact TextWorld move state-delta（进行中）
+
+### surface energy 失败后的表征分解
+
+SG5 把双option降为单candidate后，五模型train/test仍精确`.5`，说明小模型无法从随机房间surface学出 action×outcome 交互。下一步按既定路线显式分离**可预测动力学状态**与**不可稳定建模的surface realization**：对真实hard move step，从 episode 事实审计 target是否等于上一已观察房间，构造 `previous move + candidate move → <previous_room>/<novel_room>`。
+
+- 标签由真实 `next_obs` 对 prior normalized observations 的成员关系生成，不由方向规则直接赋值；必须审计 counterfactual target恰为lag-1 previous room、factual target未在history出现。每step两个move action各一例，预期 counts=`192/24/24`、labels 1:1、step groups=`96/12/12`。
+- prompt只保留 `<bos> previous move:<action><eos> candidate move:<action><eos> next room relation:`，去掉随机surface；这不是最终LLM生成，而是可组合世界状态delta。输出仍是token CE，模型仍为纯SNN/LSTM/Transformer统一LM wrapper。
+- D32/state31五模型、50 epochs（9,600 updates/model）、3 seeds、B1、4线程、同AdamW/clip；参数spread目标<=3%（小词表使固定core差异占比上升，精确值在模型运行前审计）。
+- **TASK**：LSTM/Transformer每seed NLL改善>=.10，至少一个ANN mean accuracy>=.98、step consistency>=.95。**QUALITY**：RA0 accuracy>=bestANN-.02且>=.98、step>=.95，NLL<=bestANN+.05，与BPTT/AT1 accuracy gap<=.02/NLL gap<=.05。
+- **SPEED**：RA0对AT1/BPTT>=1.25x且<=LSTM；**RESPONSE**：完整compact prompt p50/p95<=LSTM。
+- **What if：**真正适合实时SNN世界模型的基底不是背诵surface，而是事件化delta；若RA0在真实TextWorld方向反转上达到ANN质量且训练接近ANN速度，就可把 room relation、reward/done、inventory、exit delta逐通道组合，再用条件surface模块生成语言。
+- 若质量过而速度失败，立即进入 native fused constant-scan/short-sequence dispatch；若ANN过而SNN失败，改 adaptive/multiscale spike；若全门通过，扩展多通道delta并接closed-loop candidate scoring。
+
+---
+
+## 2026-07-19：E3-SG5 结果 — hard move outcome compatibility energy（负面结果）
+
+### SG4 对称塌缩后的最小改写
+
+SG4 的 train/test accuracy都精确`.5`，target margin约`1e-7`，说明把同一candidate的两个长option交换后联合输出A/B，在当前小模型/全词表CE下形成了强对称塌缩；ANN同样失败，不能触发SNN associative-memory结论。SG5 保留同一hard factual-move vs reverse-move后果，但每次只输入**一个** candidate outcome，预测 `<compatible>` / `<incompatible>`：这是标准 energy-style action-outcome compatibility，可直接作为规划器候选打分。
+
+- 每个hard step产生4例：factual action×{factual正例, reverse负例}，reverse action×{reverse正例, factual负例}；两类action与两个完整房间surface相同频次，label严格1:1，不存在action type、outcome identity或位置捷径。
+- counts仍为`384/48/48`，candidate groups=`192/24/24`，每group一正一负；prompt=`full trajectory + current observation + candidate action + candidate next observation + compatibility:`，target单label，max<=448、held-out OOV<10%。
+- D32/state31五模型、20 epochs、seeds/优化器/4线程与SG4相同。指标为forced/open accuracy、target margin、candidate-pair consistency（同action正负均判对）、step consistency（四项全对）、NLL、update与response p50/p95。
+- **TASK**：两个ANN每seedNLL改善>=.10；至少一个ANN mean forced>=.90、candidate-pair consistency>=.80。**QUALITY**：RA0 forced>=bestANN-.03且>=.90、pair>=.80，NLL<=bestANN+.10，并与BPTT/AT1 accuracy gap<=.03、NLL gap<=.10。
+- **SPEED/RESPONSE** 原样：RA0对AT1/BPTT>=1.25x且<=LSTM；full-prompt p50/p95<=LSTM。DATA要求exact counts、label balance、每group正负完整、不同outcome、SHA链与OOV/长度全过。
+- **What if：**trace SNN并非缺少动作因果状态，而是SG4要求在一个hidden中同时保留并比较两段长surface；把世界模型写成可组合能量 `E(history, action, candidate_next)` 后，RA0能否在稀疏单label监督下达到ANN精度和实时速度？
+- 若ANN过门而SNN失败，进入spiking associative memory；若五模型仍随机，说明文本surface不是合适的最小因果表征，转显式state-delta；若全门通过，下一步用energy排序驱动真实closed-loop候选选择。
+
+### 正式前审计
+
+- vocabulary size=`300`、fingerprint=`43dbe84bfb295e0168bf166102e9fd1f035d280d2c6b6fe202887732a311025c`；prompt max train/valid/test=`306/301/303`，valid/test OOV=`.68%/1.67%`。
+- counts=`384/48/48`、candidate groups=`192/24/24`、step groups=`96/12/12`；test compatible/incompatible=`24/24`，每candidate一正一负、每step四组合完整，DATA PASS。
+- 2-epoch smoke五模型仍forced/open `.5`、pair/step consistency=0；只证明无显式泄漏和runner贯通，不改变20-epoch门。
+
+### 正式结果
+
+- 正式20 epochs wall time `253.2 s`；结果 SHA-256 `F081E8CEDFFD79E82504B4500ED415E709D40DA0100A5649E39E131702898300`。
+- 五模型 train/test forced accuracy均`.5`、candidate-pair/step consistency均0；mean NLL BPTT/AT1/RA0/LSTM/Transformer=`.7049/.7042/.7062/.6962/.7014`，margin约0。ANN TASK FAIL，surface energy没有学出交互。
+- RA0 update `1.3352 ms`，对AT1/BPTT=`1.353x/1.871x`，仍慢于LSTM `1.1447 ms`；response同样失败。DATA PASS，其余门与overall FAIL。
+
+**决定：**停止对原始房间surface做label包装，不进入SNN结构归因；按上方SG6抽取由真实历史验证的 compact move delta，先建立有效的动作动力学与工程速度基线。
+
+---
+
+## 2026-07-19：E3-SG4 结果 — hard move-pair counterfactual ranking（负面结果）
+
+### 从不可学surface复制到最小动作因果门
+
+SG0–SG3 已依次排除 target缺失、4-game样本不足和D32容量不足；即使D64 Transformer的edit升到`.6298`，ANN/SNN move room仍只有`.02–.06`。继续堆数据/容量没有新的因果信息。下一任务不退回 inventory shortcut，而在每个 factual move 与同一步真实 counterfactual reverse move 之间构造**同类型双房间候选**：输入完整history、candidate move action和两个真实 next observations，预测 `<option_a>` 或 `<option_b>`。
+
+- 只选择 factual action与一个counterfactual action都为move的步骤；两个option都是完整真实房间文本，候选action分别取两条move，每个候选再交换A/B顺序。因此每个world step产生4例，label与action/option位置严格平衡；模型不能靠“move选房间、inventory选carrying”过门。
+- train/valid/test预期 examples=`384/48/48`（32/4/4 games × 每game 3个hard steps ×4），semantic candidate groups=`192/24/24`；每group两种option order。target是一个label token，prompt保留full factual trajectory及两段完整surface，max<=512；train-only vocabulary，held-out prompt OOV<10%。
+- 非神经 position/random baseline固定`.5`；inverse-history oracle可达1.0，仅证明可识别性。神经模型必须在交换顺序后选择同一个semantic outcome，报告 forced-choice accuracy、open-vocab label accuracy、margin、swap consistency、NLL、update与整prompt response p50/p95。
+- 模型回到工程基线 `D32/state31`：BPTT/AT1/RA0/LSTM/1-layer Transformer，参数spread<=2%、seeds `{0,1,2}`、20 epochs（384×20=7,680 updates/model）、B1、4 CPU threads、同shuffle/AdamW/clip。唯一任务改变是生成→真实候选排序。
+- **H-SG4-DATA**：完整官方SHA链、exact counts/groups、label与每action A/B平衡、option不同、每group swap完整、prompt<=512、OOV<10%。
+- **H-SG4-TASK**：LSTM/Transformer每seed NLL改善>=.10；至少一个ANN mean forced accuracy>=.90且swap consistency>=.95。
+- **H-SG4-QUALITY**：RA0每seed NLL改善>=.10；mean NLL<=最佳ANN+.10、与BPTT/AT1 gap<=.10；forced accuracy>=最佳ANN-.03且>=.90、与BPTT/AT1 gap<=.03；swap consistency>=.95。
+- **H-SG4-SPEED**：RA0 update p50对AT1/BPTT>=1.25x且<=LSTM。**H-SG4-RESPONSE**：RA0 full-prompt p50/p95均<=LSTM。
+- **What if：**gated-trace SNN无法逐token复制300-token surface，却能否把history压缩成“上一动作方向/上一房间”状态，并以单个稀疏label监督达到ANN级因果选择？若能，下一步再把ranking score作为纯SNN生成/规划的训练信号；若ANN过门而SNN失败，进入spiking associative memory。
+- runner/产物固定为 `experiments/e3_sg4_move_pair_ranking.py` 与 `results/e3_scan/e3_sg4_move_pair_ranking.json`。
+
+### 正式前审计与 smoke
+
+- train-only vocabulary size=`301`、fingerprint=`dcf0d7070a97b93e33d39d6c792a97117f73b60e4fce9c790ee422def041e846`；prompt max train/valid/test=`347/356/358`，valid/test prompt OOV=`.64%/1.64%`。
+- counts=`384/48/48`、semantic groups=`192/24/24`；每group恰有A/B两种顺序，test label=`24/24`，无相同option，DATA PASS。
+- 2-epoch smoke 中五模型 forced/open accuracy均恰为`.5`、swap consistency=`0`：模型尚未学习且固定位置预测在swap后被正确惩罚，证明无position shortcut；只用于验证 runner，不改变20-epoch门。
+
+### 正式结果
+
+- 正式20 epochs wall time `245.9 s`；结果 SHA-256 `DACEE27E506CDFD8E58C35C61E9766EAC6965B7EEAF54C98AD6A6ECEAF0A5546`。
+- 五模型 train与test forced/open accuracy均精确`.5`、swap/group consistency均`0`；mean test NLL为 BPTT/AT1/RA0/LSTM/Transformer=`.7086/.7062/.7050/.7000/.7034`，target margin绝对值约`1e-7`。这不是过拟合，而是未打破A/B比较对称。
+- RA0 update `1.3463 ms`，对AT1/BPTT=`1.275x/1.858x`刚过相对门，但仍慢于LSTM `1.1515 ms`；response p50/p95也慢于LSTM。DATA PASS，TASK/QUALITY/SPEED/RESPONSE及overall FAIL。
+
+**决定：**SG4 不作为候选因果能力证据；ANN task gate失败，因此不归因SNN。按上方SG5把双option比较改写为单candidate energy compatibility，保持同样hard move数据和单label稀疏监督。
+
+---
+
+## 2026-07-19：E3-SG3 结果 — D64/state63 history-retrieval capacity gate（混合/负面结果）
+
+### SG2 后的最小结构判别
+
+SG2 把 move-copy train examples 从16增至128后，teacher NLL大幅改善，但 ANN move room仍只有`.0625`、RA0 `.0833`。Transformer代码审计已确认 sinusoidal position、global causal attention、512 cache均覆盖最长373-token input；下一项最小变量是**全模型共同扩容**，而不是只给ANN加层或给SNN外挂copy head。
+
+- 五模型统一从 `D32/state31` 扩到 `D64/state63`；Transformer仍1 layer/4 heads/MLP ratio2，LSTM hidden64，三种SNN core/embedding/output均64。SNN wrapper与core初值继续逐tensor共享；参数spread必须<=2%，否则实验INVALID。
+- 数据、32/4/4 game seeds、full trajectory prompt、319词train-only vocabulary、25 epochs、B1、model seeds `{0,1,2}`、4 CPU threads、优化器与所有 DATA/TASK/QUALITY/SPEED/STREAM门全部沿用SG2。唯一自变量是公平容量。
+- **What if：**history retrieval 的失败只是31维trace/32维hidden无法同时保留房间surface与动作链；翻倍到63/64后，RA0是否出现稳定的move room复制，并因更大矩阵更充分利用多核而缩小对fused LSTM的绝对速度差？
+- 若ANN move room>=.75而RA0<.50，直接支持 spiking associative memory；若全部仍失败，则完整自由生成不是当前最小可学因果门，转 paired candidate ranking 后再逐步恢复生成；若质量过而速度失败，进入 native fused/batched constant scan。
+- runner仍为泛化后的 `experiments/e3_sg1_history_generation.py`，正式产物固定 `results/e3_scan/e3_sg3_d64_history_generation.json`。
+
+### 正式结果
+
+- D64参数：三种SNN `54,065`、LSTM `54,143`、Transformer `54,463`，spread `.735%`。正式25 epochs wall time `342.6 s`；结果 SHA-256 `AF7D18B506A7CB033D883B7FEE2946DEB29A9A1662D937AD212F47A07B7D6F90`。
+
+| model | test NLL ↓ | edit ↑ | move room acc ↑ | update p50 ms ↓ |
+|---|---:|---:|---:|---:|
+| SNN-BPTT | 1.1269 | .6128 | .0417 | 2.7818 |
+| SNN-AT1 | 1.1440 | .5965 | .0417 | 3.9822 |
+| **SNN-RA0** | 1.1309 | .6013 | **.0625** | **1.5005** |
+| LSTM | **1.1059** | .5990 | .0208 | **1.3600** |
+| Transformer | 1.7088 | **.6298** | .0417 | 1.5817 |
+
+- **TASK/QUALITY FAIL**：Transformer edit已过 action-majority+.05，但最佳ANN move room仅`.0417<.75`；RA0 `.0625<.50`。D64没有形成稳定检索，不能靠edit过门。
+- **SPEED FAIL**：RA0对AT1/BPTT=`2.654x/1.854x`且快于Transformer；对LSTM差距由D32的21.1%缩至约10.3%，但仍未达到绝对门。
+- **STREAM FAIL**：RA0 token p50/p95继续快于LSTM；prefill `.629–.664 ms` vs LSTM `.413–.434 ms` 全seed失败。
+
+**决定：overall FAIL；停止继续扩games、epochs或hidden。** 容量扩大改善了Transformer surface edit与RA0相对速度，却没有解决动作条件room identity。按上方SG4把同一真实后果改成双候选因果排序，先建立ANN可学、无action-type捷径的最小门。
+
+---
+
+## 2026-07-19：E3-SG2 结果 — scaled official history generation（混合/负面结果）
+
+### 为什么先扩真实数据而不是立刻换动力学
+
+SG1 已证明 target 完整存在于 history，却仍只有 RA0 seed2 的1/4 move room偶然正确；LSTM/Transformer也为0。控制代码复核确认 Transformer 使用 unbounded sinusoidal position、global causal attention 与512-token cache，prompt不超过301，不存在截断/无位置编码缺陷。更直接的实验变量是：SG1 train只有4个game、16个 move-copy examples，全部模型 train NLL已接近0，跨game检索规律却没有足够重复。
+
+候选包括 D64容量、pointer/copy head、spiking associative memory、paired ranking、增加官方games。先选择**只增加真实官方games**，因为它不改变模型/目标/指标，能最干净地区分“样本不足”与“结构不能检索”。pointer head会提前引入ANN attention捷径；associative SNN应在ANN task gate有效后再比较。
+
+**What if：**把相同的 lag-1 known-edge 规律从16个扩到128个独立 procedural games 后，RA0 trace state是否会像Transformer/LSTM一样学出跨世界的 action-reversal retrieval，同时保留长上下文的并行训练优势？
+
+### 冻结数据、预算与门
+
+- 官方 TextWorld 1.7.0 `tw-coin_collector --level 5`，新目录不覆盖旧语料；train seeds=`20260801..20260832`（32 games），valid=`20260833..20260836`（4），test=`20260837..20260840`（4），严格按game seed隔离。每步仍取最多2个 `Environment.copy()` 真实 counterfactual，预期 examples=`320/40/40`、pairs=`160/20/20`、move=`128/16/16`；生成后必须由 manifest/game/episode/event SHA 与 exact counts自证，否则不训练。
+- prompt/target/normalization/history-rule与SG1完全相同；vocabulary只由新train history prompt+target构建。held-out move surface prior-history ratio必须100%，prompt<=384、target<=80、valid/test OOV<10%、test完整target overlap<=20%。
+- 模型仍为 `D=32,state=31` 的 BPTT/AT1/RA0/LSTM/1-layer Transformer，参数spread<=2%；seeds `{0,1,2}`、CPU4 threads、B1、同shuffle、AdamW/clip不变。训练改为25 epochs，即每模型8,000个真实update，是SG1 4,000的2倍但不是按数据量机械维持100 epochs。
+- TASK/QUALITY/SPEED/STREAM门原样沿用SG1，尤其 ANN mean move room>=.75、RA0>=.50；不因数据扩大降低门。若ANN过TASK而SNN失败，进入 spiking associative memory；若ANN仍失败，才预注册 D64全模型容量对照；若质量过而速度失败，转 native fused/batched scan。
+- 数据 runner 使用 `experiments/e2_textworld_dataset.py`；训练 runner复用泛化后的 `experiments/e3_sg1_history_generation.py`，正式结果固定为 `results/e3_scan/e3_sg2_scaled_history_generation.json`。
+
+### 正式前 DATA gate 修正（未发生模型更新）
+
+40个冻结seed生成后，首次 smoke 在 provenance通过、模型构建前 fail-closed：新train有一个 target（含EOS）长度`71`，仅违反从旧4-game语料外推的`<=70`经验上界；prompt max=`307`、valid/test OOV=`1.00%/1.19%`、held-out move history=`32/32`及其余门均通过。为避免删除长样本或重选seed造成挑数据偏差，正式前把 SG2 target 上界改为`80`，仍不截断；旧SG1的70门与结果不回写。新 task vocabulary size=`319`、fingerprint=`31c085a5d5cb207adb1eec87076cf5356371876c419dad51ca04c82beba55c08`。
+
+### 正式结果
+
+- 官方数据生成 wall time `387.4 s`；32/4/4 episodes 全部 `won=True/return=1.0`，steps=`160/20/20`、counterfactuals=`320/40/40`。summary SHA-256 train/valid/test=`2cdec296.../7ad27867.../13083785...`，runner随后再次验证完整 game/manifest/episode/event SHA链。
+- 正式命令为同一 runner 加冻结 seeds/counts、`--epochs 25 --threads 4 --seeds 0 1 2`；wall time `289.3 s`；结果 SHA-256 `0065E47EBF80861AA6CC918BDD645961998D9DA7DC22B722ED7DC5CC89D78354`。
+
+| model | test NLL ↓ | edit ↑ | move room acc ↑ | update p50 ms ↓ |
+|---|---:|---:|---:|---:|
+| SNN-BPTT | 1.1222 | .6114 | .0625 | 2.2564 |
+| SNN-AT1 | 1.1452 | **.6155** | .0208 | 3.4814 |
+| **SNN-RA0** | 1.1177 | .5998 | **.0833** | **1.2552** |
+| LSTM | **1.0661** | .6012 | .0625 | **1.0368** |
+| Transformer | 1.6055 | .6058 | 0 | 1.4372 |
+
+- **DATA PASS**：vocab319、prompt<=307、target<=71/修正门80、valid/test OOV=`1.00%/1.19%`、held-out move history=`32/32`。
+- **TASK FAIL**：最佳ANN edit `.6058` 刚低于 action-majority `.5580+.05=.6080`，更关键的 move room `.0625<.75`。
+- **QUALITY FAIL**：RA0 NLL与BPTT/AT1 gap仅`.0045/.0275`，edit gap也过门，paired=`1.0`；但 edit `.5998<.6080`、move room `.0833<.50`。room hits只在少数特定test examples/seeds出现，不稳定。
+- **SPEED FAIL**：RA0对AT1/BPTT=`2.774x/1.798x`且快于Transformer，但 `1.2552 ms` 比 LSTM `1.0368 ms` 慢约21.1%。
+- **STREAM FAIL**：RA0 token p50/p95持续快于LSTM；prefill三seed `.541–.585 ms` 均慢于LSTM `.384–.412 ms`。
+
+**决定：overall FAIL。** 数据扩大证明 RA0/BPTT/AT1 的 teacher质量与LSTM接近，并把 OOV降到约1%，但没有形成动作条件的历史surface复制；因此不继续加games或epochs。按上方SG3只做一次公平D64容量门，之后必须改变检索机制或任务形式。
+
+---
+
+## 2026-07-19：E3-SG1 结果 — history-conditioned known-edge generation（混合/负面结果）
+
+### SG0 失败后的可识别性审计
+
+SG0 的全部模型 room accuracy=0，但这可能来自 prompt 缺失世界历史，而非模型无法学习动作动力学。新增只读 runner `experiments/e3_sg1_history_identifiability.py`，逐条检查 counterfactual target room/surface 是否存在于 current observation 或同一真实 episode 的先前 factual observations；不读取游戏源码、未来 factual transition 或 counterfactual target 以外的信息。
+
+- 命令：`.venv-wsl/bin/python experiments/e3_sg1_history_identifiability.py --output results/e3_scan/e3_sg1_history_identifiability.json`；产物 SHA-256 `F2AE1D07817D1828D5DC4C5700CCDA28E81AAEEB2AD05AE71A5E8FDEB8478A14`。
+- train/valid/test counterfactual move 数为 `16/4/4`。target room 在 current observation 的可见数为 `0/0/0`；target room 与**完整规范化 surface**在 prior history 的出现数均为 `16/4/4`，且全部 history lag=`1`。held-out 合计即 current `0/8`、prior history `8/8`。
+- look target 也全部等于 current observation（`4/1/1`）。因此 SG0 single-observation identifiability FAIL，而 history-conditioned route PASS；这不是扩大训练集能单独修复的随机方差。
+
+### 路线选择与 What-if
+
+SG0 已比较 history generation、paired ranking、state delta、data scaling、byte representation、adaptive spike 与 native scan。审计把首选收敛为 **full factual trajectory generation**：它仍生成完整自然语言，不把任务降成分类；目标 move surface 已由历史给出，但模型必须根据 factual action chain 与 candidate reverse action检索正确 observation。
+
+**What if：**RA0 的并行正/反 scan 在 284–301 token prompt 上不仅扩大相对 AT1/BPTT 的训练优势，还能让 trace SNN 学会“动作反转→检索上一世界状态”；如果 Transformer 能复制而 SNN 不能，失败将直接支持 spiking associative memory / event-addressed retrieval，而不是继续调 optimizer。
+
+### 冻结数据与任务
+
+- prompt：`<bos> trajectory:`，依次加入每个 prior factual `observation:<text><eos> action:<actual><eos>`，再加入 `current observation:<text><eos> candidate action:<cf><eos> next observation:`；target仍为完整规范化 counterfactual `next_obs+<eos>`。只包含 candidate 时刻之前的 factual history，无未来或 target 泄漏。
+- normalized train-only vocabulary size=`186`、fingerprint=`2480444d34a970d03f8e0b1c59643b432012769f9362d9eda402943ec827c314`；valid/test target OOV仍为`7.69%/6.59%`。prompt max train/valid/test=`301/283/284`，input max test=`350`，target max<=67；held-out move target surface in history=`100%`。
+- 非神经诊断：action-majority edit `.6116`；确定性 history-rule（move取上一 observation、look取current、其余取train action-majority）edit `.9667`、exact `.9`、move room accuracy `1.0`。它是可识别性上界/机制诊断，不要求神经模型击败手写 oracle。
+- 模型与公平条件延续 SG0：SNN-BPTT、SNN-AT1、SNN-RA0、LSTM、1-layer Transformer；`D=32,state=31`、参数spread<=2%、100 epochs、B1、同seed shuffle、AdamW `1e-3/wd=.01`、clip1、seeds `{0,1,2}`、CPU4 threads、完整 target query、无截断。
+
+### 冻结门
+
+- **H-SG1-DATA**：原 manifest/game/event SHA通过；counts/pairs=`40/10/10`与`20/5/5`；prompt<=384、target<=70、valid/test target OOV<10%、format-only=0、test target overlap<=20%；held-out move>=8且 target surface prior-history ratio=`100%`。否则 INVALID。
+- **H-SG1-TASK**：LSTM/Transformer每seed teacher NLL改善>=`.10`；至少一个ANN的 mean edit>=action-majority+.05，并且 mean move room accuracy>=`.75`。它必须证明模型实际使用历史，而不是再次靠 inventory 过门。
+- **H-SG1-QUALITY**：RA0每seed NLL改善>=`.10`；mean NLL<=最佳ANN+.25，与BPTT/AT1 gap各<=.10；edit>=最佳ANN-.10、与BPTT/AT1 gap各<=.05且>=action-majority+.05；move room accuracy>=最佳ANN-.25且>=.50；paired sensitivity>=.50。
+- **H-SG1-SPEED**：RA0 update p50 对AT1/BPTT各>=1.25x且绝对<=LSTM。
+- **H-SG1-STREAM**：RA0 greedy token p50/p95与full-trajectory prefill p50每seed均<=LSTM；state bytes单列。
+- 2-epoch smoke 仅验证全链路：DATA PASS；RA0 update `1.20 ms` vs BPTT `2.14`、AT1 `4.89`、LSTM `1.05`，prefill `.46` vs LSTM `.62`；所有模型 move room仍为0，不能提前判质量。正式 runner/产物固定为 `experiments/e3_sg1_history_generation.py` 与 `results/e3_scan/e3_sg1_history_generation.json`。
+
+### 正式结果与判门
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_sg1_history_generation.py --device cpu --threads 4 --seeds 0 1 2 --epochs 100 --output results/e3_scan/e3_sg1_history_generation.json`；wall time `155.8 s`；SHA-256 `E17E6BB2FBB7AECE276025C4D0D3DD0D4294AA1327470F3258292CBB9A6E6FD6`。
+
+| model | test NLL ↓ | edit ↑ | move room acc ↑ | update p50 ms ↓ |
+|---|---:|---:|---:|---:|
+| SNN-BPTT | **2.7600** | **.5956** | 0 | 2.2115 |
+| SNN-AT1 | 2.7772 | .5700 | 0 | 4.6073 |
+| **SNN-RA0** | 2.8198 | .5663 | **.0833** | **1.2239** |
+| LSTM | 2.8427 | .5975 | 0 | **.9846** |
+| Transformer | 4.1869 | .4488 | 0 | 1.4304 |
+
+- **DATA PASS**：history identifiability与长度/OOV全过。
+- **TASK FAIL**：最佳ANN edit `.5975` 低于 `.6116+.05=.6616`，best ANN move room=`0<.75`；history存在不等于14K参数、16个move样本能学会检索。
+- **QUALITY FAIL**：RA0 NLL对BPTT/AT1 gap `.0597/.0425` 均过门、paired=`1.0`，但 edit `.5663` 未过非神经下限，move room `.0833<.50`。唯一正确room来自 seed2 对 `Cookhouse` 的1例，且其余surface仍错误，不能视为稳定机制。
+- **SPEED FAIL**：RA0对AT1/BPTT=`3.764x/1.807x`，也快于Transformer，但 `1.2239 ms` 比 LSTM `.9846 ms` 慢约24.3%。
+- **STREAM FAIL**：RA0 token p50/p95三seed均快于LSTM；full-history prefill seed0 `.492<.626 ms`，seed1/2 `.532/.553 > .341/.397 ms`。
+
+**决定：overall FAIL，不进入闭环。** SG1 排除了“目标不在输入”的SG0混淆，却暴露了第二个独立问题：极小数据下五模型都记忆训练文本而不学习历史检索。保留 RA0 的相对SNN加速和单例 room hit，但不把它解释成 associative memory 成功；按上方SG2预注册先扩官方真实games。
+
+---
+
+## 2026-07-19：E3-SG0 结果 — action-conditioned counterfactual sequence generation（混合/负面结果）
 
 ### 从 sparse-token 非劣到连续世界输出
 
@@ -50,6 +260,55 @@ RA0 已在 TW0 的 K16 teacher-forced token 上同时超过 AT1/BPTT/LSTM 训练
 首个2-epoch smoke 发现，直接复用 raw event vocabulary 会把 JSON 中的转义换行与相邻自然语言粘成 `nYou've` 一类 token，而 SG0 规范化后实际 token 是 `You've`；compact marker `next` 也因此成为40次伪 OOV。这不是模型误差，而是表示仪器不一致。该 smoke 只用于暴露 runner 问题，不参与任何正式判定或结果比较。
 
 正式运行前已在不改变 tokenizer、split、prompt、target、模型与冻结门的前提下修正为 normalized-train-only task vocabulary：只扫描40个 train examples 的 prompt+target 建表，得到 size `183`、fingerprint `dd3e51c6deb5b1aede57b71b9d9745f390a301ba4b7ccd3a66a237f066717364`；train prompt/target unknown均为0，valid/test target unknown为 `21/273` 与 `17/258`（`7.69%/6.59%`）。修正后2-epoch全链路 smoke 的 DATA gate PASS；正式100-epoch结果尚未运行，继续保持“进行中”。
+
+### 正式结果
+
+- 正式命令：`.venv-wsl/bin/python experiments/e3_sg0_counterfactual_generation.py --device cpu --threads 4 --seeds 0 1 2 --epochs 100 --output results/e3_scan/e3_sg0_counterfactual_generation.json`；wall time `143.8 s`；产物 SHA-256 `734A095B984AAC495A06329565B59783116EEC421942640E269AAB60B0EFF05D`。
+- 环境：commit `1ae35d22bdeb9ec4011a49446fafdf59fc6d3c8e`、PyTorch `2.13.0+cpu`、Ryzen 9 7950X、32 logical CPUs、4 intra-op threads、MKLDNN enabled；CUDA unavailable，因此只支持 CPU 多核结论。
+- 五模型参数为 SNN `14,505`、LSTM `14,551`、Transformer `14,711`，spread `1.415%`，通过2%公平门；三种 SNN wrapper/初值共享。
+
+三 seed mean：
+
+| model | test teacher NLL ↓ | greedy edit ↑ | update p50 ms ↓ |
+|---|---:|---:|---:|
+| SNN-BPTT | **2.7514** | .6324 | 1.8419 |
+| SNN-AT1 | 2.8801 | **.6465** | 4.4285 |
+| **SNN-RA0** | 2.8976 | .6257 | **1.1322** |
+| LSTM | 2.8544 | .6205 | **.7971** |
+| Transformer | 3.8830 | .4510 | 1.0669 |
+
+| 冻结门 | 判定 | 直接证据 |
+|---|---|---|
+| H-SG0-DATA | **PASS** | counts/pairs/长度/overlap均过门；valid/test target OOV=`7.69%/6.59%` |
+| H-SG0-TASK | **FAIL** | 两个ANN每seed teacher NLL均改善>.10，但最佳ANN edit `.6205` 未达到强非神经 baseline `.6116 + .05 = .6616` |
+| H-SG0-QUALITY | **FAIL** | RA0 对最佳ANN NLL仅差`.0432`且 edit 高`.0051`，但对BPTT NLL gap `.1462>.10`，并且只比非神经 baseline高`.0141<.05`；paired sensitivity=`1.0` |
+| H-SG0-SPEED | **FAIL** | RA0 对AT1/BPTT为 `3.911x/1.627x`，但 `1.1322 ms` 比 LSTM `.7971 ms` 慢约`1.42x` |
+| H-SG0-STREAM | **FAIL** | RA0 token p50/p95 三seed均快于LSTM；prefill仅seed0通过，seed1/2为`.464/.464 ms` vs LSTM `.197/.202 ms` |
+
+**overall FAIL。** 这是严格按预注册门判定，没有因三种 SNN 的 edit 均值高于 LSTM 而放宽任务有效性，也没有因 RA0 相对其他 SNN 很快而放宽 ANN 绝对速度门。
+
+### 观察、解释与任务可识别性
+
+- **观察：**全部模型 train NLL 已到约`.01–.10`，但 test NLL仍为`2.64–4.38`；所有模型 test room accuracy 都是`0`。除 Transformer seed2 外，greedy exact 都固定为`.4`，恰好对应4/10个恒定的 `inventory -> You are carrying nothing.` 样本。action-majority baseline也靠 inventory 得到 exact `.4`、edit `.6116`、paired sensitivity `1.0`。
+- **观察：**RA0 seed0的移动输出能生成语法与出口结构合理的完整房间描述，却把 `Cookhouse/Bedchamber/...` 预测成训练中其他房间；这不是 EOS 或句法崩溃，而是目标世界身份错误。
+- **解释：**当前 prompt 只有单个 current observation 与 candidate action。对 seed-disjoint 的未见 TextWorld 游戏，出口通常不暴露目标房间名称/描述；首次穿过一条边时，完整 next room surface form 并不能从输入唯一决定。40条训练样本又加剧记忆模板与过拟合，但单纯扩数据或增加 epoch 仍不能消除这部分条件熵。
+- **边界：**SG0 因 ANN 也未通过 H-TASK，应判“当前单观测 free-generation task 不足以决定模型优劣”，不能把 overall FAIL 解释成 SNN 动力学失败。反过来，RA0 质量接近/略高于ANN也不能宣称世界模型成功，因为 room identity 为0。
+
+### 失败后的路线比较与决定
+
+| 下一路线 / epistemic label | 修复对象 | 最小决定实验 | 主要风险 |
+|---|---|---|---|
+| **history-conditioned known-edge generation** / New task composition | 给完整已观察轨迹，只在目标房间/状态已被历史识别的边上测完整生成 | 先审计 target room 是否在历史出现，再做同五模型 generation | 需要探索/回访轨迹，现有 walkthrough 可能覆盖不足 |
+| paired counterfactual candidate ranking / Established contrastive task | 给两个真实候选 next state，测 action 与后果匹配 | pair accuracy + calibration + latency | 不是自由生成，只能作中间因果门 |
+| predictable state-delta generation / Established world-model decomposition | 只生成 reward/done/inventory/room-change/exit delta，把不可知 surface 单列 | delta exact/F1 + surface conditional NLL | 结构化目标可能弱化 LLM 生成要求 |
+| larger actual+counterfactual corpus / Established data scaling | 更多官方 game seeds，并加入 factual action→next_obs | learning curve与held-out动态macro | 若仍是首次未知房间，扩数据不能修复不可识别性 |
+| normalized UTF-8 byte generation / Established representation | 去掉6–8% OOV与 `<unk>` | 同任务 byte NLL/edit | 序列更长，且不解决未知房间身份 |
+| multiscale adaptive-spike dynamics / Established SNN direction | 增强时间尺度与条件记忆 | 在有效任务上比较 ALIF/multi-decay RA0 | 当前任务无效时先做会混淆归因 |
+| native fused/batched constant scan / Systems specialization | 消除 RA0 短序列 prefill/update dispatch | 同模型同权重 kernel benchmark | 只能修 SPEED，不能修 TASK |
+
+**What if：**把 next observation 显式分解为“由历史与动作决定的 state delta”和“首次发现时具有条件不确定性的 surface realization”，同一个纯 SNN 是否能对前者做严格实时确定预测、对后者维护分布，而不被迫背诵随机房间文案？
+
+**决定：**保留 RA0 exact reverse adjoint 为 SNN 默认训练数学；SG0 不进入 closed loop。先执行 **SG1 task-identifiability audit**，量化 move target room 对 current prompt、episode history 与 train vocabulary 的可见性；若存在足够 known-edge 样本，首选 history-conditioned generation，否则先用 paired ranking + predictable delta 建立有效因果门。同时把 native fused scan 保留为独立 SPEED 路线，但不让系统优化掩盖任务无效。
 
 ---
 
