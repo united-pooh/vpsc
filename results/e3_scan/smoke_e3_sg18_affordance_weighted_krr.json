@@ -1,0 +1,4559 @@
+{
+  "configuration": {
+    "action_order": [
+      "examine coin",
+      "go east",
+      "go north",
+      "go south",
+      "go west",
+      "inventory",
+      "look",
+      "take coin"
+    ],
+    "corpus_dir": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5",
+    "delay_order": 3,
+    "future_candidate_set_role": "SG17 evaluator oracle proposal only",
+    "kernel": "strict_phase_suffix_times_one_plus_affordance_bit_inner_product",
+    "ridge_lambda": 1e-06,
+    "threads": 4
+  },
+  "dataset": {
+    "base_action_alphabet": [
+      "<event_examine_coin>",
+      "<event_go_east>",
+      "<event_go_north>",
+      "<event_go_south>",
+      "<event_go_west>",
+      "<event_inventory>",
+      "<event_look>",
+      "<event_take_coin>"
+    ],
+    "base_audit": {
+      "channels": {
+        "done": [
+          "<continue>",
+          "<done>"
+        ],
+        "move_exit_count_after": [
+          "<exit_count_0>",
+          "<exit_count_1>",
+          "<exit_count_2>"
+        ],
+        "reward": [
+          "<reward_zero>",
+          "<reward_positive>"
+        ],
+        "room_relation": [
+          "<room_no_observation>",
+          "<room_novel>",
+          "<room_previous>",
+          "<room_same>"
+        ]
+      },
+      "expected_counts": {
+        "test": 120,
+        "train": 480,
+        "valid": 120
+      },
+      "expected_groups": {
+        "test": 40,
+        "train": 160,
+        "valid": 40
+      },
+      "expected_length_group_counts": {
+        "test": {
+          "2": 8,
+          "3": 8,
+          "4": 8,
+          "5": 8,
+          "6": 8
+        },
+        "train": {
+          "2": 32,
+          "3": 32,
+          "4": 32,
+          "5": 32,
+          "6": 32
+        },
+        "valid": {
+          "2": 8,
+          "3": 8,
+          "4": 8,
+          "5": 8,
+          "6": 8
+        }
+      },
+      "heldout_full_input_coverage": {
+        "test": {
+          "covered": 87,
+          "total": 120
+        },
+        "valid": {
+          "covered": 94,
+          "total": 120
+        }
+      },
+      "label_sources": {
+        "done": "recorded transition done",
+        "move_exit_count_after": "counterfactual admissible_actions_after or next factual step",
+        "reward": "recorded transition reward",
+        "room_relation": "normalized next_obs room vs current/prior rooms"
+      },
+      "passed": true,
+      "splits": {
+        "test": {
+          "ambiguous_input_count": 0,
+          "channel_label_counts": {
+            "done": {
+              "<continue>": 112,
+              "<done>": 8
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 8,
+              "<exit_count_1>": 40,
+              "<exit_count_2>": 72
+            },
+            "reward": {
+              "<reward_positive>": 8,
+              "<reward_zero>": 112
+            },
+            "room_relation": {
+              "<room_no_observation>": 48,
+              "<room_novel>": 32,
+              "<room_previous>": 32,
+              "<room_same>": 8
+            }
+          },
+          "exact_vector_count": 8,
+          "exact_vector_majority_accuracy": 0.2,
+          "example_count": 120,
+          "game_count": 8,
+          "groups_valid": true,
+          "length_group_counts": {
+            "2": 8,
+            "3": 8,
+            "4": 8,
+            "5": 8,
+            "6": 8
+          },
+          "passed": true,
+          "prompt_length": {
+            "max": 6,
+            "mean": 4.0,
+            "min": 2,
+            "p50": 4.0,
+            "p95": 6.0
+          },
+          "prompt_unknown_count": 0,
+          "step_group_count": 40
+        },
+        "train": {
+          "ambiguous_input_count": 0,
+          "channel_label_counts": {
+            "done": {
+              "<continue>": 448,
+              "<done>": 32
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 32,
+              "<exit_count_1>": 160,
+              "<exit_count_2>": 288
+            },
+            "reward": {
+              "<reward_positive>": 32,
+              "<reward_zero>": 448
+            },
+            "room_relation": {
+              "<room_no_observation>": 192,
+              "<room_novel>": 128,
+              "<room_previous>": 128,
+              "<room_same>": 32
+            }
+          },
+          "exact_vector_count": 8,
+          "exact_vector_majority_accuracy": 0.2,
+          "example_count": 480,
+          "game_count": 32,
+          "groups_valid": true,
+          "length_group_counts": {
+            "2": 32,
+            "3": 32,
+            "4": 32,
+            "5": 32,
+            "6": 32
+          },
+          "passed": true,
+          "prompt_length": {
+            "max": 6,
+            "mean": 4.0,
+            "min": 2,
+            "p50": 4.0,
+            "p95": 6.0
+          },
+          "prompt_unknown_count": 0,
+          "step_group_count": 160
+        },
+        "valid": {
+          "ambiguous_input_count": 0,
+          "channel_label_counts": {
+            "done": {
+              "<continue>": 112,
+              "<done>": 8
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 8,
+              "<exit_count_1>": 40,
+              "<exit_count_2>": 72
+            },
+            "reward": {
+              "<reward_positive>": 8,
+              "<reward_zero>": 112
+            },
+            "room_relation": {
+              "<room_no_observation>": 48,
+              "<room_novel>": 32,
+              "<room_previous>": 32,
+              "<room_same>": 8
+            }
+          },
+          "exact_vector_count": 8,
+          "exact_vector_majority_accuracy": 0.2,
+          "example_count": 120,
+          "game_count": 8,
+          "groups_valid": true,
+          "length_group_counts": {
+            "2": 8,
+            "3": 8,
+            "4": 8,
+            "5": 8,
+            "6": 8
+          },
+          "passed": true,
+          "prompt_length": {
+            "max": 6,
+            "mean": 4.0,
+            "min": 2,
+            "p50": 4.0,
+            "p95": 6.0
+          },
+          "prompt_unknown_count": 0,
+          "step_group_count": 40
+        }
+      },
+      "task": "multichannel action-conditioned real TextWorld event delta"
+    },
+    "base_vocabulary_fingerprint": "9d31551deae8300719634f1fc584b6ec508348c74b94efd3c456eb2096f1f749",
+    "exhaustive": {
+      "test": {
+        "all_counterfactuals_non_mutating": true,
+        "all_live_factual_won": true,
+        "canonical_sha256": "B0B58307FD02A3C70CAF8293F49404E0A0B71639CA50D5FB0365729A3AA0EECA",
+        "clone_timing": {
+          "max_ms": 204.07746,
+          "mean_ms": 124.49521815,
+          "min_ms": 111.12803,
+          "p50_ms": 121.021535,
+          "p95_ms": 129.33116170000008,
+          "p99_ms": 189.1282003399999,
+          "sample_count": 20
+        },
+        "game_count": 1,
+        "games": [
+          {
+            "counterfactuals_did_not_mutate_live": true,
+            "game_sha256": "C18D1BC44ECD6AAE1B8A7E65EA8B2A914754D5FF7AC05C63DF7077FE9EF95D5E",
+            "live_factual_won": true,
+            "record_count": 20,
+            "root_count": 5,
+            "seed": 20261209
+          }
+        ],
+        "record_count": 20,
+        "records": [
+          {
+            "candidate_action": "go west",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:0",
+            "next_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:0:go west",
+            "root_step": 0,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:0",
+            "next_mask": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:0:inventory",
+            "root_step": 0,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:0",
+            "next_mask": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:0:look",
+            "root_step": 0,
+            "target_indices": [
+              3,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:1",
+            "next_mask": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:1:go east",
+            "root_step": 1,
+            "target_indices": [
+              2,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go south",
+            "context_actions": [
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:1",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:1:go south",
+            "root_step": 1,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:1",
+            "next_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:1:inventory",
+            "root_step": 1,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:1",
+            "next_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:1:look",
+            "root_step": 1,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go north",
+            "context_actions": [
+              "go west",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:2",
+            "next_mask": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:2:go north",
+            "root_step": 2,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go west",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:2",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:2:go west",
+            "root_step": 2,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go west",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:2",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:2:inventory",
+            "root_step": 2,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go west",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:2",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:2:look",
+            "root_step": 2,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:3",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:3:go east",
+            "root_step": 3,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:3",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "test:20261209:3:go west",
+            "root_step": 3,
+            "target_indices": [
+              1,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:3",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:3:inventory",
+            "root_step": 3,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:3",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:3:look",
+            "root_step": 3,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "examine coin",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:4",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "test:20261209:4:examine coin",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:4",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "test:20261209:4:go east",
+            "root_step": 4,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:4",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "test:20261209:4:inventory",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:4",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "test:20261209:4:look",
+            "root_step": 4,
+            "target_indices": [
+              3,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "take coin",
+            "context_actions": [
+              "go west",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261209,
+            "group_id": "test:20261209:4",
+            "next_mask": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "record_id": "test:20261209:4:take coin",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              1,
+              1,
+              0
+            ]
+          }
+        ],
+        "root_count": 5,
+        "split": "test"
+      },
+      "train": {
+        "all_counterfactuals_non_mutating": true,
+        "all_live_factual_won": true,
+        "canonical_sha256": "84AAEE374827042B4552462510F701842050EA53B60899F4642B33B5F4704E7A",
+        "clone_timing": {
+          "max_ms": 173.77048,
+          "mean_ms": 114.41773565000001,
+          "min_ms": 102.629129,
+          "p50_ms": 112.57484600000001,
+          "p95_ms": 119.32514685000005,
+          "p99_ms": 162.88141336999993,
+          "sample_count": 20
+        },
+        "game_count": 1,
+        "games": [
+          {
+            "counterfactuals_did_not_mutate_live": true,
+            "game_sha256": "6D8203E3997F473B5F28D98A512A398C241DC60DFC7373CC3266858917308366",
+            "live_factual_won": true,
+            "record_count": 20,
+            "root_count": 5,
+            "seed": 20260801
+          }
+        ],
+        "record_count": 20,
+        "records": [
+          {
+            "candidate_action": "go east",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:0",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:0:go east",
+            "root_step": 0,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:0",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:0:inventory",
+            "root_step": 0,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:0",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:0:look",
+            "root_step": 0,
+            "target_indices": [
+              3,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go south",
+            "context_actions": [
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:1",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:1:go south",
+            "root_step": 1,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:1",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:1:go west",
+            "root_step": 1,
+            "target_indices": [
+              2,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:1",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:1:inventory",
+            "root_step": 1,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:1",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:1:look",
+            "root_step": 1,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go north",
+            "context_actions": [
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:2",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:2:go north",
+            "root_step": 2,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:2",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:2:go west",
+            "root_step": 2,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:2",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:2:inventory",
+            "root_step": 2,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:2",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:2:look",
+            "root_step": 2,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:3",
+            "next_mask": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:3:go east",
+            "root_step": 3,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:3",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "train:20260801:3:go west",
+            "root_step": 3,
+            "target_indices": [
+              1,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:3",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:3:inventory",
+            "root_step": 3,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:3",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:3:look",
+            "root_step": 3,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "examine coin",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:4",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "train:20260801:4:examine coin",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:4",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "train:20260801:4:go east",
+            "root_step": 4,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:4",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "train:20260801:4:inventory",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:4",
+            "next_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "train:20260801:4:look",
+            "root_step": 4,
+            "target_indices": [
+              3,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "take coin",
+            "context_actions": [
+              "go east",
+              "go south",
+              "go west",
+              "go west"
+            ],
+            "current_mask": [
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20260801,
+            "group_id": "train:20260801:4",
+            "next_mask": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "record_id": "train:20260801:4:take coin",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              1,
+              1,
+              0
+            ]
+          }
+        ],
+        "root_count": 5,
+        "split": "train"
+      },
+      "valid": {
+        "all_counterfactuals_non_mutating": true,
+        "all_live_factual_won": true,
+        "canonical_sha256": "BE0D6F5ED37D3836B866B51E86615C21F6D0A9E2BD510622C3BF13488CF54DBF",
+        "clone_timing": {
+          "max_ms": 183.653673,
+          "mean_ms": 118.21989845,
+          "min_ms": 103.763563,
+          "p50_ms": 117.447862,
+          "p95_ms": 125.44157560000004,
+          "p99_ms": 172.0112535199999,
+          "sample_count": 20
+        },
+        "game_count": 1,
+        "games": [
+          {
+            "counterfactuals_did_not_mutate_live": true,
+            "game_sha256": "99B3E31F2622C541475BA2145112143EA6CBD1C71E3E89487D5D00F571A0DBEC",
+            "live_factual_won": true,
+            "record_count": 20,
+            "root_count": 5,
+            "seed": 20261201
+          }
+        ],
+        "record_count": 20,
+        "records": [
+          {
+            "candidate_action": "go south",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:0",
+            "next_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:0:go south",
+            "root_step": 0,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:0",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:0:inventory",
+            "root_step": 0,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:0",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:0:look",
+            "root_step": 0,
+            "target_indices": [
+              3,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:1",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:1:go east",
+            "root_step": 1,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go north",
+            "context_actions": [
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:1",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:1:go north",
+            "root_step": 1,
+            "target_indices": [
+              2,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:1",
+            "next_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:1:inventory",
+            "root_step": 1,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go south"
+            ],
+            "current_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:1",
+            "next_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:1:look",
+            "root_step": 1,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go east",
+            "context_actions": [
+              "go south",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:2",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:2:go east",
+            "root_step": 2,
+            "target_indices": [
+              1,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go south",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:2",
+            "next_mask": [
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:2:go west",
+            "root_step": 2,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go south",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:2",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:2:inventory",
+            "root_step": 2,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go south",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:2",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:2:look",
+            "root_step": 2,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "go south",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:3",
+            "next_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "valid:20261201:3:go south",
+            "root_step": 3,
+            "target_indices": [
+              1,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go west",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:3",
+            "next_mask": [
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:3:go west",
+            "root_step": 3,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:3",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:3:inventory",
+            "root_step": 3,
+            "target_indices": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east"
+            ],
+            "current_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:3",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:3:look",
+            "root_step": 3,
+            "target_indices": [
+              3,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "examine coin",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:4",
+            "next_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "valid:20261201:4:examine coin",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "go north",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:4",
+            "next_mask": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "record_id": "valid:20261201:4:go north",
+            "root_step": 4,
+            "target_indices": [
+              2,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "candidate_action": "inventory",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:4",
+            "next_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "valid:20261201:4:inventory",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "look",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:4",
+            "next_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "record_id": "valid:20261201:4:look",
+            "root_step": 4,
+            "target_indices": [
+              3,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "candidate_action": "take coin",
+            "context_actions": [
+              "go south",
+              "go east",
+              "go east",
+              "go south"
+            ],
+            "current_mask": [
+              1,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "game_seed": 20261201,
+            "group_id": "valid:20261201:4",
+            "next_mask": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "record_id": "valid:20261201:4:take coin",
+            "root_step": 4,
+            "target_indices": [
+              0,
+              1,
+              1,
+              0
+            ]
+          }
+        ],
+        "root_count": 5,
+        "split": "valid"
+      }
+    },
+    "manifest_provenance": {
+      "cross_split_seed_disjoint": true,
+      "fingerprint_sha256": "452be635bd47624e482de8a882b82dc0d7e572d3463c75670e3c96c0fd2fc52f",
+      "frozen_seeds": {
+        "test": [
+          20260723
+        ],
+        "train": [
+          20260718,
+          20260719,
+          20260720,
+          20260721
+        ],
+        "valid": [
+          20260722
+        ]
+      },
+      "splits": {
+        "test": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/test/episodes.jsonl",
+              "sha256": "b3590229dc777879d9e63565a3ecdf326edc71a459cbcde8c43da4fabc46d761",
+              "size_bytes": 104799
+            },
+            "manifest": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/test/manifest.json",
+              "sha256": "7c87a8276a26916a1506ec6a19b6f2ce809e1397318267deff401d1c62fe8808",
+              "size_bytes": 3272
+            },
+            "token_events": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/test/token_events.txt",
+              "sha256": "cc9bc6e7e344cbd41f84c85e6ba2a9b6594be032299152864f55f1728988124c",
+              "size_bytes": 77491
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 8,
+          "event_episode_count": 8,
+          "game_count": 8,
+          "games": [
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261209.z8",
+              "seed": 20261209,
+              "sha256": "c18d1bc44ecd6aae1b8a7e65ea8b2a914754d5ff7ac05c63df7077fe9ef95d5e",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261210.z8",
+              "seed": 20261210,
+              "sha256": "992f5ae4b42007653755c4d2e64ab2ee60fc2f4b0d24cc4126089dd2251db1b9",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261211.z8",
+              "seed": 20261211,
+              "sha256": "71f3f13e1d535f319b4e72ac8b85fa814479a410a985e5a2a847b9304c8835bb",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261212.z8",
+              "seed": 20261212,
+              "sha256": "c98832b29567f87ef5a0767e002e9bdb0e419ced9900444f7f98127cbe0167d9",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261213.z8",
+              "seed": 20261213,
+              "sha256": "83e0bd21ad646b8ab87a65f7f269e6fed1e5a1868189cd0921ff4ab6a389d4a0",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261214.z8",
+              "seed": 20261214,
+              "sha256": "b8361c58576b0920a46749d9e4a1269c5a63209f8bcb913b7a8c24d55c0251e1",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261215.z8",
+              "seed": 20261215,
+              "sha256": "9c145f241ae68ab347e4b4f02434c7280c7fabc0b0de9313cbcffd06ade66a60",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261216.z8",
+              "seed": 20261216,
+              "sha256": "277cfd43102b85e402bf795e1e91c988e8d044943c2e54ca349a0b064c0f457a",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/test/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20261209,
+            20261210,
+            20261211,
+            20261212,
+            20261213,
+            20261214,
+            20261215,
+            20261216
+          ],
+          "sha256": "7c87a8276a26916a1506ec6a19b6f2ce809e1397318267deff401d1c62fe8808",
+          "size_bytes": 3272,
+          "summary_path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/test/summary.json",
+          "summary_sha256": "259bdbc1bd1683dafdf2c911e47e7993c99a2b90f404782a107fded32bea67d6",
+          "textworld_version": "1.7.0",
+          "verified": true
+        },
+        "train": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/train/episodes.jsonl",
+              "sha256": "2399f060aac410ce11216e059918fc3dbb6f00ea9c814a2e5140d654c4e6997d",
+              "size_bytes": 421524
+            },
+            "manifest": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/train/manifest.json",
+              "sha256": "31cca6b192ffd9c73c35401a51e781c6872e6a8bcaf51c1c415d38d228da0d48",
+              "size_bytes": 12521
+            },
+            "token_events": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/train/token_events.txt",
+              "sha256": "638e27d86e9b06332d804ee1fb10f7b70360a24cea3d869202d74fd734292c22",
+              "size_bytes": 311755
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 32,
+          "event_episode_count": 32,
+          "game_count": 32,
+          "games": [
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260801.z8",
+              "seed": 20260801,
+              "sha256": "6d8203e3997f473b5f28d98a512a398c241dc60dfc7373cc3266858917308366",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260802.z8",
+              "seed": 20260802,
+              "sha256": "e94674a002ad3c47d0286fd80000ba9200554bd0f928d90248c20d91508bac80",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260803.z8",
+              "seed": 20260803,
+              "sha256": "e23b2d7c212baf793da58f7c1484ab7fae138ca664be35a8c707d14da25c02f0",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260804.z8",
+              "seed": 20260804,
+              "sha256": "461ad355c4a0a9ade961d29a3ac3b48e98e1c52a3f62b8ef1c100ff6a0dc9d0d",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260805.z8",
+              "seed": 20260805,
+              "sha256": "59dd686571e4407c0a6634e60fea03974d6068ddffc2ad5b374825d1420422f9",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260806.z8",
+              "seed": 20260806,
+              "sha256": "4f9ae1865778549c281afe2beab061938c1979f04b5125ad34ffc5e76e6e0336",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260807.z8",
+              "seed": 20260807,
+              "sha256": "5954733f3f8236ef31c0b3dc37b081edeb7ca9a1381c41145ff5ae241dda819a",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260808.z8",
+              "seed": 20260808,
+              "sha256": "e816d7d824090f1fa558f81c41ca53a4f74be62868d78c601097cf141e8bfa4a",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260809.z8",
+              "seed": 20260809,
+              "sha256": "5a9a0a8126d0b1a329911e7f5c5e84750125c2d0ec5a7d20081dc26b08599669",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260810.z8",
+              "seed": 20260810,
+              "sha256": "e6fd37eb0e25a4ac4e8ddad089ee6f4eba01a2d238db9e949c6a9392863126e3",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260811.z8",
+              "seed": 20260811,
+              "sha256": "c958c8dc6fec36c249c932d4260bc01e28d1f5c4a4d5b8810f39dba16cfc4f82",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260812.z8",
+              "seed": 20260812,
+              "sha256": "d3870105e18119db0754e15d5e63f90324a2c112c512298a04d825fedb19f845",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260813.z8",
+              "seed": 20260813,
+              "sha256": "c055c777ec14c1daf284e3704550c944875e26335714b82709fb9bdd42db0c15",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260814.z8",
+              "seed": 20260814,
+              "sha256": "93643e1e8e92ba01f3917512f3142da81e415f6daf7d0226c0ae6500a5018059",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260815.z8",
+              "seed": 20260815,
+              "sha256": "e8a7a3b4b6512aa9aa86c3e5a3d9510f9a9aa617b6eb4f19516ea3da27121c6e",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260816.z8",
+              "seed": 20260816,
+              "sha256": "66be64d5b9f6481d5c7d00ed8e08e3b8b50b5dfa0fb2c8b3411c0443182b30e3",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260817.z8",
+              "seed": 20260817,
+              "sha256": "a81d75ce0a4b3e47e0a31afa0da68d8ee2a86933c1d7328a3d3d29d90108d457",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260818.z8",
+              "seed": 20260818,
+              "sha256": "6ae2e09e038ba7a188addd2ed9fc9d3700833350fcd1274594b67a1dd79bd1bd",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260819.z8",
+              "seed": 20260819,
+              "sha256": "6dfa16c39dd8e98553d0104c3cb102283bdbdad0e4cf9b7db53f5c3c58dbc0de",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260820.z8",
+              "seed": 20260820,
+              "sha256": "e9abef41dde824e6669b04cbad5cfa93539cf9afe60e274dfeb062f6a1d691e2",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260821.z8",
+              "seed": 20260821,
+              "sha256": "ec9e7e8fecf569baa2531aafdfa7fee68b096fda62a68884467222db5fd35e39",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260822.z8",
+              "seed": 20260822,
+              "sha256": "3289b01d5a8966172189f97d3ef09ea19b5a672761acd07c04b2b40cf89977f4",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260823.z8",
+              "seed": 20260823,
+              "sha256": "bfd65f4be3aeba44221a4253eb89bb8566c091e38650f1e1fcfa2ba4f6ade60c",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260824.z8",
+              "seed": 20260824,
+              "sha256": "00d26a35ff368ae1c1f7811a7c7e9ea7cb686ce8f12af0aa37d8bcc92289a461",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260825.z8",
+              "seed": 20260825,
+              "sha256": "428330a59dba43a25bce28fdb1a1bb5ec268d3b720af1c09cf552fa196d2010f",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260826.z8",
+              "seed": 20260826,
+              "sha256": "74376076c7d87c4c77072af8773e8baa7483d7d41fd698f56fd9e088b40b7b39",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260827.z8",
+              "seed": 20260827,
+              "sha256": "16aa67251aa949bf4d3f4f06404a76f3e30982cff4f4698d8f31e622da599f4c",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260828.z8",
+              "seed": 20260828,
+              "sha256": "5d03ba84b268f296816f5ccc205322f1e49a2f0584cc66a7775473c48e479749",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260829.z8",
+              "seed": 20260829,
+              "sha256": "3ec8f40038f59c79a3ac0502f8fa0c3424076bb0ae13f91823745b575edc30b2",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260830.z8",
+              "seed": 20260830,
+              "sha256": "a5fefb26e673c6bcacc1313339a36edca5e51490b5eb70d4fbc753b50f0bdd7a",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260831.z8",
+              "seed": 20260831,
+              "sha256": "42d1257491e3cb5217d5abb1fb164f50261c4908af58c8d822039a709f8ce46b",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020260832.z8",
+              "seed": 20260832,
+              "sha256": "458dd4a35440866cf6eb6ef1681bcbb8230a05580e4a6c5e0cdd36c8a0560344",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/train/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20260801,
+            20260802,
+            20260803,
+            20260804,
+            20260805,
+            20260806,
+            20260807,
+            20260808,
+            20260809,
+            20260810,
+            20260811,
+            20260812,
+            20260813,
+            20260814,
+            20260815,
+            20260816,
+            20260817,
+            20260818,
+            20260819,
+            20260820,
+            20260821,
+            20260822,
+            20260823,
+            20260824,
+            20260825,
+            20260826,
+            20260827,
+            20260828,
+            20260829,
+            20260830,
+            20260831,
+            20260832
+          ],
+          "sha256": "31cca6b192ffd9c73c35401a51e781c6872e6a8bcaf51c1c415d38d228da0d48",
+          "size_bytes": 12521,
+          "summary_path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/train/summary.json",
+          "summary_sha256": "31998ad534d172cafa254368cf3c6351c1941ddb5b3421941674658837c23c6a",
+          "textworld_version": "1.7.0",
+          "verified": true
+        },
+        "valid": {
+          "artifacts": {
+            "episodes_jsonl": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/valid/episodes.jsonl",
+              "sha256": "d3335689e1e84b450b100d7854cc8755b30c3b5976080a6a7d15ef55ee620d7c",
+              "size_bytes": 104513
+            },
+            "manifest": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/valid/manifest.json",
+              "sha256": "5aca0523b8da76c993633ceaae0a181b4746d02654a5d682c9b3e22a5c13d9e2",
+              "size_bytes": 3281
+            },
+            "token_events": {
+              "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/valid/token_events.txt",
+              "sha256": "1f194434a6ff31372f55d9e60a10efd56785658196254271e7d327d775346788",
+              "size_bytes": 77267
+            }
+          },
+          "challenge": "tw-coin_collector",
+          "counterfactual_limit": 2,
+          "episode_count": 8,
+          "event_episode_count": 8,
+          "game_count": 8,
+          "games": [
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261201.z8",
+              "seed": 20261201,
+              "sha256": "99b3e31f2622c541475ba2145112143ea6cbd1c71e3e89487d5d00f571a0dbec",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261202.z8",
+              "seed": 20261202,
+              "sha256": "deb68e52cfe94ef4978dc8370fe8468c54f9b33f505da58dd7c42669edd4b139",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261203.z8",
+              "seed": 20261203,
+              "sha256": "5661f525484578ef41a60332148c06747ace75f9fcc73334500f897edf7d914d",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261204.z8",
+              "seed": 20261204,
+              "sha256": "a180924d8639f66934eb9fe18f713fb6f069892bb675ca83ddf51c306d5e417c",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261205.z8",
+              "seed": 20261205,
+              "sha256": "d925857fdc05785d7b121cfaf12ec48d02214b36dd415b440458c9a93e27c36f",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261206.z8",
+              "seed": 20261206,
+              "sha256": "ece40cb2f124949e30dedc904f2372039731c3fdc65ff8584a360ef3ec58dd06",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261207.z8",
+              "seed": 20261207,
+              "sha256": "6c37ddbbc9c5ae1b2e2daf38d482af9721d21acc7796391e518ea31b99cc2bf7",
+              "size_bytes": 384000
+            },
+            {
+              "path": "/mnt/d/projects/vpsc/data/e3_scan/textworld/games_sg2_l5/tw_coin_collector_l005_s0020261208.z8",
+              "seed": 20261208,
+              "sha256": "ec4bd771e9d3831f9e96200816b3ed63a834a8a9c587d5ea0c2f4be4e4b67a33",
+              "size_bytes": 384000
+            }
+          ],
+          "level": 5,
+          "path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/valid/manifest.json",
+          "runner_schema_version": "vpsc.e2_textworld_dataset.v1",
+          "schema_version": "vpsc.textworld.coin_collector.v1",
+          "seeds": [
+            20261201,
+            20261202,
+            20261203,
+            20261204,
+            20261205,
+            20261206,
+            20261207,
+            20261208
+          ],
+          "sha256": "5aca0523b8da76c993633ceaae0a181b4746d02654a5d682c9b3e22a5c13d9e2",
+          "size_bytes": 3281,
+          "summary_path": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5/valid/summary.json",
+          "summary_sha256": "8fd616bf50856e9b742de0d7fca6b0e2f47990590ac8b9da1e7ec312a1444adf",
+          "textworld_version": "1.7.0",
+          "verified": true
+        }
+      },
+      "textworld_version": "1.7.0",
+      "verified": true
+    },
+    "synthetic": false
+  },
+  "decision": {
+    "data_gate": "SMOKE",
+    "next_route": "formal_sg18_affordance_weighted_krr",
+    "one_step_state_gate": "SMOKE",
+    "overall": "SMOKE",
+    "rollout_response_gate": "SMOKE",
+    "storage_gate": "SMOKE",
+    "training_speed_gate": "SMOKE",
+    "two_step_quality_gate": "SMOKE",
+    "weighted_math_gate": "SMOKE"
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "42cdfdbc1e30b0efc7227302ca81f833aea07e3d",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      "?? experiments/e3_sg10_multichannel_delta.py",
+      "?? experiments/e3_sg11_temporal_basis.py",
+      "?? experiments/e3_sg12_spike_delay_rls.py",
+      "?? experiments/e3_sg13_suffix_spike_kernel.py",
+      "?? experiments/e3_sg14_phase_bound_kernel.py",
+      "?? experiments/e3_sg15_phase_isolated_kernel.py",
+      "?? experiments/e3_sg16_closed_loop_planner.py",
+      "?? experiments/e3_sg17_two_step_rollout.py",
+      "?? experiments/e3_sg18_affordance_weighted_krr.py",
+      "?? experiments/e3_sg6_move_delta.py",
+      "?? experiments/e3_sg7_paired_binary_batch.py",
+      "?? experiments/e3_sg8_bilinear_closed_form.py",
+      "?? experiments/e3_sg9_atomic_event_stream.py",
+      "?? results/e3_scan/e3_sg10_multichannel_delta.json",
+      "?? results/e3_scan/e3_sg10r_fresh_game_baselines.json",
+      "?? results/e3_scan/e3_sg11_temporal_basis.json",
+      "?? results/e3_scan/e3_sg12_spike_delay_rls.json",
+      "?? results/e3_scan/e3_sg13_suffix_spike_kernel.json",
+      "?? results/e3_scan/e3_sg13r_fresh_games.json",
+      "?? results/e3_scan/e3_sg14_phase_bound_kernel.json",
+      "?? results/e3_scan/e3_sg14r_third_fresh_confirmation.json",
+      "?? results/e3_scan/e3_sg15_phase_isolated_kernel.json",
+      "?? results/e3_scan/e3_sg15r_fourth_fresh_confirmation.json",
+      "?? results/e3_scan/e3_sg16_closed_loop_planner.json",
+      "?? results/e3_scan/e3_sg16r_fifth_fresh_closed_loop_confirmation.json",
+      "?? results/e3_scan/e3_sg17_two_step_rollout.json",
+      "?? results/e3_scan/e3_sg17_two_step_rollout_invalid_terminal_label.json",
+      "?? results/e3_scan/e3_sg6_move_delta.json",
+      "?? results/e3_scan/e3_sg7_paired_binary_batch.json",
+      "?? results/e3_scan/e3_sg8_bilinear_closed_form.json",
+      "?? results/e3_scan/e3_sg9_atomic_event_stream.json",
+      "?? results/e3_scan/e3_sg9r_atomic_event_stream_replication.json",
+      "?? results/e3_scan/smoke_e3_sg16_closed_loop_planner.json",
+      "?? results/e3_scan/smoke_e3_sg17_two_step_rollout.json",
+      "?? results/e3_scan/textworld_sg13r_l5/",
+      "?? results/e3_scan/textworld_sg14r_l5/",
+      "?? results/e3_scan/textworld_sg15r_l5/",
+      "?? results/e3_scan/textworld_sg16r_l5/",
+      "?? tests/test_e3_sg10_multichannel_delta.py",
+      "?? tests/test_e3_sg11_temporal_basis.py",
+      "?? tests/test_e3_sg12_spike_delay_rls.py",
+      "?? tests/test_e3_sg13_suffix_spike_kernel.py",
+      "?? tests/test_e3_sg14_phase_bound_kernel.py",
+      "?? tests/test_e3_sg15_phase_isolated_kernel.py",
+      "?? tests/test_e3_sg16_closed_loop_planner.py",
+      "?? tests/test_e3_sg17_two_step_rollout.py",
+      "?? tests/test_e3_sg18_affordance_weighted_krr.py",
+      "?? tests/test_e3_sg6_move_delta.py",
+      "?? tests/test_e3_sg7_paired_binary_batch.py",
+      "?? tests/test_e3_sg8_bilinear_closed_form.py",
+      "?? tests/test_e3_sg9_atomic_event_stream.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "experiment": "E3-SG18 exhaustive affordance spikes with weighted unique KRR",
+  "formal": false,
+  "generated_at_utc": "2026-07-19T05:35:59.172963+00:00",
+  "logical_model_storage_bytes": 1780,
+  "references": {
+    "sg17_corrected_negative": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg17_two_step_rollout.json",
+      "sha256": "E46E5F24C3D57A40A3405D8BCFBF737A5223C151371FC235BC527DC2096CC7EF"
+    }
+  },
+  "research_hypothesis": {
+    "epistemic_status": "mechanism repair on observed fifth games",
+    "statement": "Sparse current/next affordance state plus exhaustive candidates repairs two-step branch composition without backpropagation.",
+    "what_if": "What if actionable world state is an explicit spike mask and duplicate experience can be compressed into exact weighted sufficient statistics?"
+  },
+  "schema_version": 1,
+  "split_metrics": {
+    "test": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9,
+          "reward": 1.0,
+          "room_relation": 0.9
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.8571428571428571,
+            "<exit_count_2>": 0.9166666666666666
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 0.75,
+            "<room_previous>": 0.75,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9,
+        "example_count": 20,
+        "macro_channel_accuracy": 0.95,
+        "mse": 0.2524540914520561,
+        "step_group_count": 5,
+        "step_group_exact_consistency": 0.6
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.89375,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.7,
+            "negative_recall": 0.75,
+            "positive_recall": 0.6666666666666666
+          },
+          "go north": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 0.95,
+            "negative_recall": 1.0,
+            "positive_recall": 0.75
+          },
+          "go west": {
+            "accuracy": 0.7,
+            "negative_recall": 0.6666666666666666,
+            "positive_recall": 0.7272727272727273
+          },
+          "inventory": {
+            "accuracy": 0.9,
+            "negative_recall": 1.0,
+            "positive_recall": 0.8947368421052632
+          },
+          "look": {
+            "accuracy": 0.9,
+            "negative_recall": 1.0,
+            "positive_recall": 0.8947368421052632
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.65,
+        "example_count": 20
+      }
+    },
+    "train": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 20,
+        "macro_channel_accuracy": 1.0,
+        "mse": 2.75424949610483e-14,
+        "step_group_count": 5,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 1.0,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go north": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go west": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 1.0,
+        "example_count": 20
+      }
+    },
+    "valid": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.65,
+          "reward": 1.0,
+          "room_relation": 0.6
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.7142857142857143,
+            "<exit_count_2>": 0.5833333333333334
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 0.0,
+            "<room_previous>": 0.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.6,
+        "example_count": 20,
+        "macro_channel_accuracy": 0.8125,
+        "mse": 0.6850984939169021,
+        "step_group_count": 5,
+        "step_group_exact_consistency": 0.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.65625,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 0.9,
+            "negative_recall": 0.9375,
+            "positive_recall": 0.75
+          },
+          "go east": {
+            "accuracy": 0.35,
+            "negative_recall": 0.4166666666666667,
+            "positive_recall": 0.25
+          },
+          "go north": {
+            "accuracy": 0.5,
+            "negative_recall": 0.8333333333333334,
+            "positive_recall": 0.0
+          },
+          "go south": {
+            "accuracy": 0.55,
+            "negative_recall": 0.8461538461538461,
+            "positive_recall": 0.0
+          },
+          "go west": {
+            "accuracy": 0.65,
+            "negative_recall": 0.75,
+            "positive_recall": 0.5
+          },
+          "inventory": {
+            "accuracy": 0.7,
+            "negative_recall": 1.0,
+            "positive_recall": 0.6842105263157895
+          },
+          "look": {
+            "accuracy": 0.7,
+            "negative_recall": 1.0,
+            "positive_recall": 0.6842105263157895
+          },
+          "take coin": {
+            "accuracy": 0.9,
+            "negative_recall": 0.9375,
+            "positive_recall": 0.75
+          }
+        },
+        "exact_mask_accuracy": 0.05,
+        "example_count": 20
+      }
+    }
+  },
+  "two_step_rollout": {
+    "evaluated_first_branch_count": 20,
+    "evaluated_second_pair_count": 77,
+    "first_all_admissible": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9,
+        "reward": 1.0,
+        "room_relation": 0.9
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.8571428571428571,
+          "<exit_count_2>": 0.9166666666666666
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 0.75,
+          "<room_previous>": 0.75,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9,
+      "example_count": 20,
+      "macro_channel_accuracy": 0.95,
+      "missing_prediction_count": 0
+    },
+    "first_next_affordance": {
+      "bit_accuracy": 0.89375,
+      "by_action": {
+        "0": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "1": {
+          "accuracy": 0.7,
+          "negative_recall": 0.75,
+          "positive_recall": 0.6666666666666666
+        },
+        "2": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "3": {
+          "accuracy": 0.95,
+          "negative_recall": 1.0,
+          "positive_recall": 0.75
+        },
+        "4": {
+          "accuracy": 0.7,
+          "negative_recall": 0.6666666666666666,
+          "positive_recall": 0.7272727272727273
+        },
+        "5": {
+          "accuracy": 0.9,
+          "negative_recall": 1.0,
+          "positive_recall": 0.8947368421052632
+        },
+        "6": {
+          "accuracy": 0.9,
+          "negative_recall": 1.0,
+          "positive_recall": 0.8947368421052632
+        },
+        "7": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        }
+      },
+      "exact_mask_accuracy": 0.65,
+      "example_count": 20
+    },
+    "first_routing_accuracy": 0.8947368421052632,
+    "premature_stop_first_branch_count": 0,
+    "self_error_records_first_100": [
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:go west:go east",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:go west:go south",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "target_indices": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:go west:inventory",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:go west:look",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:inventory:go west",
+        "predicted_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "target_indices": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": []
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:inventory:look",
+        "predicted_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "true_context": []
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:0:look:go west",
+        "predicted_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "self_context": [],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "target_indices": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": []
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:1:go east:go west",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": []
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:1:go east:inventory",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "true_context": []
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:1:go east:look",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "true_context": []
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:1:inventory:go east",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:1:inventory:look",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:1:look:go east",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:2:go north:go east",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:2:go north:go south",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:2:inventory:look",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west",
+          "go south"
+        ],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west",
+          "go south"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:3:go east:go west",
+        "predicted_first_next_mask": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west",
+          "go south"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:3:inventory:look",
+        "predicted_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west",
+          "go south",
+          "go west"
+        ],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west",
+          "go south",
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "pair_id": "20261209:4:examine coin:look",
+        "predicted_first_next_mask": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "self_context": [
+          "go west",
+          "go south",
+          "go west",
+          "go west"
+        ],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go west",
+          "go south",
+          "go west",
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "pair_id": "20261209:4:go east:go west",
+        "predicted_first_next_mask": [
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "self_context": [
+          "go west",
+          "go south",
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go west",
+          "go south",
+          "go west"
+        ]
+      },
+      {
+        "actual_first_next_mask": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "pair_id": "20261209:4:inventory:look",
+        "predicted_first_next_mask": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "self_context": [
+          "go west",
+          "go south",
+          "go west",
+          "go west"
+        ],
+        "self_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          3,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go west",
+          "go south",
+          "go west",
+          "go west"
+        ]
+      }
+    ],
+    "self_minus_teacher_exact": -0.06493506493506496,
+    "self_pair_timing": {
+      "max_ms": 3.072215,
+      "mean_ms": 0.383929987012987,
+      "min_ms": 0.17083500000000001,
+      "p50_ms": 0.2324,
+      "p95_ms": 0.9229190000000074,
+      "p99_ms": 3.0312494799999996,
+      "sample_count": 77
+    },
+    "self_rollout_second": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.8441558441558441,
+        "reward": 1.0,
+        "room_relation": 0.7922077922077922
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.7692307692307693,
+          "<exit_count_2>": 0.8723404255319149
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 0.7272727272727273,
+          "<room_previous>": 0.5,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.7272727272727273,
+      "example_count": 77,
+      "macro_channel_accuracy": 0.9090909090909091,
+      "missing_prediction_count": 0
+    },
+    "teacher_forced_second": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9090909090909091,
+        "reward": 1.0,
+        "room_relation": 0.7922077922077922
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.8461538461538461,
+          "<exit_count_2>": 0.9361702127659575
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 0.8181818181818182,
+          "<room_previous>": 0.46153846153846156,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.7922077922077922,
+      "example_count": 77,
+      "macro_channel_accuracy": 0.9253246753246753,
+      "missing_prediction_count": 0
+    },
+    "teacher_pair_timing": {
+      "max_ms": 3.136808,
+      "mean_ms": 0.389209038961039,
+      "min_ms": 0.169733,
+      "p50_ms": 0.233172,
+      "p95_ms": 0.9562442000000072,
+      "p99_ms": 3.0451063999999994,
+      "sample_count": 77
+    }
+  },
+  "weighted_unique_fit": {
+    "ambiguous_unique_key_count": 0,
+    "compression_ratio": 1.0,
+    "deployment_training_wall_seconds": 0.09278562700000001,
+    "expanded_equivalence_audit_seconds_excluded": 0.0055746,
+    "expanded_example_count": 20,
+    "expanded_prediction_equivalent": true,
+    "expanded_train_score_max_abs_difference": 0.0,
+    "kernel": "strict_phase_suffix_times_one_plus_affordance_bit_inner_product",
+    "ridge_lambda": 1e-06,
+    "single_pass_aggregation_seconds": 0.020419774,
+    "unique_kernel_seconds": 0.00853822,
+    "unique_prototype_count": 20,
+    "weighted_cholesky_solve_seconds": 0.013086892
+  }
+}

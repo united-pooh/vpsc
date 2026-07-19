@@ -1,0 +1,460 @@
+{
+  "configuration": {
+    "atol": 2e-06,
+    "batches": [
+      1,
+      8
+    ],
+    "d_model": 32,
+    "equivalence_steps": 512,
+    "measured_steps": 512,
+    "rtol": 1e-05,
+    "state_dim": 42,
+    "threads": [
+      1,
+      4,
+      16
+    ],
+    "warmup_steps": 64
+  },
+  "decision": {
+    "equivalence_gate": "PASS",
+    "overall": "PASS",
+    "realtime_gate": "PASS"
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "a8b0f3b2ba0d658d54ff75b99fe01184b5e31724",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M tests/test_e3_scan_core.py",
+      " M vpsc/world_model/cores.py",
+      "?? experiments/e3_ek0_compiled_streaming.py",
+      "?? experiments/e3_el0_terminal_eligibility.py",
+      "?? results/e3_scan/e3_ek0_compiled_streaming_smoke.json",
+      "?? results/e3_scan/e3_el0_terminal_eligibility.json"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "equivalence": {
+    "cases": [
+      {
+        "batch": 1,
+        "binary_spikes": true,
+        "bounded_residuals": true,
+        "compiled_vs_generic": {
+          "components": {
+            "sequence": {
+              "max_abs": 4.76837158203125e-07,
+              "passed": true
+            },
+            "spikes_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "spikes_i": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_i": {
+              "max_abs": 0.0,
+              "passed": true
+            }
+          },
+          "passed": true
+        },
+        "passed": true,
+        "tensor_eager_vs_generic": {
+          "components": {
+            "sequence": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "spikes_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "spikes_i": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_i": {
+              "max_abs": 0.0,
+              "passed": true
+            }
+          },
+          "passed": true
+        },
+        "time": 512
+      },
+      {
+        "batch": 8,
+        "binary_spikes": true,
+        "bounded_residuals": true,
+        "compiled_vs_generic": {
+          "components": {
+            "sequence": {
+              "max_abs": 1.430511474609375e-06,
+              "passed": true
+            },
+            "spikes_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "spikes_i": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_i": {
+              "max_abs": 0.0,
+              "passed": true
+            }
+          },
+          "passed": true
+        },
+        "passed": true,
+        "tensor_eager_vs_generic": {
+          "components": {
+            "sequence": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "spikes_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "spikes_i": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_e": {
+              "max_abs": 0.0,
+              "passed": true
+            },
+            "state_i": {
+              "max_abs": 0.0,
+              "passed": true
+            }
+          },
+          "passed": true
+        },
+        "time": 512
+      }
+    ],
+    "compile": [
+      {
+        "batch": 1,
+        "first_call_ms": 61229.77787,
+        "fullgraph": true,
+        "mode": "reduce-overhead",
+        "status": "PASS"
+      },
+      {
+        "batch": 8,
+        "first_call_ms": 1844.094548,
+        "fullgraph": true,
+        "mode": "reduce-overhead",
+        "status": "PASS"
+      }
+    ],
+    "passed": true
+  },
+  "experiment": "E3-EK0 exact compiled tensor streaming",
+  "formal": true,
+  "generated_at_utc": "2026-07-18T15:20:25.033019+00:00",
+  "schema_version": 1,
+  "streaming": {
+    "compile": [
+      {
+        "batch": 1,
+        "first_call_ms": 0.848541,
+        "fullgraph": true,
+        "mode": "reduce-overhead",
+        "status": "PASS",
+        "threads": 1
+      },
+      {
+        "batch": 8,
+        "first_call_ms": 1.05414,
+        "fullgraph": true,
+        "mode": "reduce-overhead",
+        "status": "PASS",
+        "threads": 1
+      },
+      {
+        "batch": 1,
+        "first_call_ms": 298.876509,
+        "fullgraph": true,
+        "mode": "reduce-overhead",
+        "status": "PASS",
+        "threads": 4
+      },
+      {
+        "batch": 8,
+        "first_call_ms": 451.929313,
+        "fullgraph": true,
+        "mode": "reduce-overhead",
+        "status": "PASS",
+        "threads": 4
+      },
+      {
+        "batch": 1,
+        "error": "Hard failure due to fullgraph=True",
+        "error_type": "FailOnRecompileLimitHit",
+        "first_call_ms": 18.438984,
+        "status": "FAIL",
+        "threads": 16
+      },
+      {
+        "batch": 8,
+        "error": "Hard failure due to fullgraph=True",
+        "error_type": "FailOnRecompileLimitHit",
+        "first_call_ms": 2.14437,
+        "status": "FAIL",
+        "threads": 16
+      }
+    ],
+    "passed": true,
+    "records": [
+      {
+        "batch": 1,
+        "compiled_to_lstm_p50_ratio": 0.9876015512214456,
+        "compiled_to_lstm_p95_ratio": 1.0132130562894714,
+        "generic_to_tensor_eager_p50_speedup": 1.9999816644969657,
+        "models": {
+          "ic0_generic": {
+            "count": 512,
+            "mean_ms": 0.111278666015625,
+            "p50_ms": 0.10907700000000001,
+            "p95_ms": 0.14674244999999997,
+            "p99_ms": 0.19062892999999997,
+            "parameters": 8516,
+            "state_bytes": 336,
+            "tokens_per_second_at_p50": 9167.835565701293
+          },
+          "ic0_tensor_compiled": {
+            "count": 512,
+            "mean_ms": 0.07374548828125,
+            "p50_ms": 0.069778,
+            "p95_ms": 0.09849895,
+            "p99_ms": 0.13490469,
+            "parameters": 8516,
+            "state_bytes": 336,
+            "tokens_per_second_at_p50": 14331.164550431367
+          },
+          "ic0_tensor_eager": {
+            "count": 512,
+            "mean_ms": 0.055712638671875,
+            "p50_ms": 0.054539,
+            "p95_ms": 0.08880489999999999,
+            "p99_ms": 0.12635389999999994,
+            "parameters": 8516,
+            "state_bytes": 336,
+            "tokens_per_second_at_p50": 18335.503034525755
+          },
+          "lstm_fused_eager": {
+            "count": 512,
+            "mean_ms": 0.073584041015625,
+            "p50_ms": 0.070654,
+            "p95_ms": 0.09721445,
+            "p99_ms": 0.12876580999999993,
+            "parameters": 8448,
+            "state_bytes": 256,
+            "tokens_per_second_at_p50": 14153.480340815808
+          }
+        },
+        "passed": false,
+        "tensor_eager_to_compiled_p50_speedup": 0.7816073834159762,
+        "threads": 1
+      },
+      {
+        "batch": 8,
+        "compiled_to_lstm_p50_ratio": 1.0691178469484846,
+        "compiled_to_lstm_p95_ratio": 1.1381948162538944,
+        "generic_to_tensor_eager_p50_speedup": 1.958674476554157,
+        "models": {
+          "ic0_generic": {
+            "count": 512,
+            "mean_ms": 0.1282728125,
+            "p50_ms": 0.12105,
+            "p95_ms": 0.16759249999999998,
+            "p99_ms": 0.2877249599999999,
+            "parameters": 8516,
+            "state_bytes": 2688,
+            "tokens_per_second_at_p50": 8261.049153242462
+          },
+          "ic0_tensor_compiled": {
+            "count": 512,
+            "mean_ms": 0.08198082421875,
+            "p50_ms": 0.078655,
+            "p95_ms": 0.1116074,
+            "p99_ms": 0.15193931,
+            "parameters": 8516,
+            "state_bytes": 2688,
+            "tokens_per_second_at_p50": 12713.749920539063
+          },
+          "ic0_tensor_eager": {
+            "count": 512,
+            "mean_ms": 0.064508861328125,
+            "p50_ms": 0.061801999999999996,
+            "p95_ms": 0.10207284999999999,
+            "p99_ms": 0.14359497999999998,
+            "parameters": 8516,
+            "state_bytes": 2688,
+            "tokens_per_second_at_p50": 16180.70612601534
+          },
+          "lstm_fused_eager": {
+            "count": 512,
+            "mean_ms": 0.07608784375,
+            "p50_ms": 0.07357,
+            "p95_ms": 0.09805649999999999,
+            "p99_ms": 0.13592078,
+            "parameters": 8448,
+            "state_bytes": 2048,
+            "tokens_per_second_at_p50": 13592.496941688189
+          }
+        },
+        "passed": false,
+        "tensor_eager_to_compiled_p50_speedup": 0.785735172589155,
+        "threads": 1
+      },
+      {
+        "batch": 1,
+        "compiled_to_lstm_p50_ratio": 0.8893455391529727,
+        "compiled_to_lstm_p95_ratio": 0.8618640807798141,
+        "generic_to_tensor_eager_p50_speedup": 1.9883477633477633,
+        "models": {
+          "ic0_generic": {
+            "count": 512,
+            "mean_ms": 0.1122668046875,
+            "p50_ms": 0.110234,
+            "p95_ms": 0.1492405,
+            "p99_ms": 0.16616808999999996,
+            "parameters": 8516,
+            "state_bytes": 336,
+            "tokens_per_second_at_p50": 9071.611299599035
+          },
+          "ic0_tensor_compiled": {
+            "count": 512,
+            "mean_ms": 0.068157263671875,
+            "p50_ms": 0.067082,
+            "p95_ms": 0.08771444999999999,
+            "p99_ms": 0.10231968,
+            "parameters": 8516,
+            "state_bytes": 336,
+            "tokens_per_second_at_p50": 14907.128588891208
+          },
+          "ic0_tensor_eager": {
+            "count": 512,
+            "mean_ms": 0.05450529296875,
+            "p50_ms": 0.05544,
+            "p95_ms": 0.07292699999999999,
+            "p99_ms": 0.09066447999999999,
+            "parameters": 8516,
+            "state_bytes": 336,
+            "tokens_per_second_at_p50": 18037.518037518035
+          },
+          "lstm_fused_eager": {
+            "count": 512,
+            "mean_ms": 0.07968503515625,
+            "p50_ms": 0.07542850000000001,
+            "p95_ms": 0.10177295,
+            "p99_ms": 0.17498364999999996,
+            "parameters": 8448,
+            "state_bytes": 256,
+            "tokens_per_second_at_p50": 13257.588312110141
+          }
+        },
+        "passed": true,
+        "tensor_eager_to_compiled_p50_speedup": 0.8264512089681286,
+        "threads": 4
+      },
+      {
+        "batch": 8,
+        "compiled_to_lstm_p50_ratio": 1.0655209039837223,
+        "compiled_to_lstm_p95_ratio": 1.2187437559519636,
+        "generic_to_tensor_eager_p50_speedup": 1.8598518200365077,
+        "models": {
+          "ic0_generic": {
+            "count": 512,
+            "mean_ms": 0.135801080078125,
+            "p50_ms": 0.129906,
+            "p95_ms": 0.18476529999999997,
+            "p99_ms": 0.28099788999999986,
+            "parameters": 8516,
+            "state_bytes": 2688,
+            "tokens_per_second_at_p50": 7697.8738472433915
+          },
+          "ic0_tensor_compiled": {
+            "count": 512,
+            "mean_ms": 0.08823487890625,
+            "p50_ms": 0.083263,
+            "p95_ms": 0.12778509999999996,
+            "p99_ms": 0.20483291999999995,
+            "parameters": 8516,
+            "state_bytes": 2688,
+            "tokens_per_second_at_p50": 12010.136555252633
+          },
+          "ic0_tensor_eager": {
+            "count": 512,
+            "mean_ms": 0.074218904296875,
+            "p50_ms": 0.0698475,
+            "p95_ms": 0.11211289999999999,
+            "p99_ms": 0.21634144999999969,
+            "parameters": 8516,
+            "state_bytes": 2688,
+            "tokens_per_second_at_p50": 14316.904685207057
+          },
+          "lstm_fused_eager": {
+            "count": 512,
+            "mean_ms": 0.081478763671875,
+            "p50_ms": 0.07814299999999999,
+            "p95_ms": 0.10484984999999998,
+            "p99_ms": 0.16944232999999967,
+            "parameters": 8448,
+            "state_bytes": 2048,
+            "tokens_per_second_at_p50": 12797.051559320735
+          }
+        },
+        "passed": false,
+        "tensor_eager_to_compiled_p50_speedup": 0.8388780130430084,
+        "threads": 4
+      },
+      {
+        "batch": 1,
+        "not_run": "fullgraph compilation failed",
+        "passed": false,
+        "threads": 16
+      },
+      {
+        "batch": 8,
+        "not_run": "fullgraph compilation failed",
+        "passed": false,
+        "threads": 16
+      }
+    ]
+  }
+}

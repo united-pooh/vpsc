@@ -44,6 +44,9 @@ FeedbackPolicy = Literal[
 ]
 E2ExecutionMode = Literal["reference", "fused"]
 E3ExecutionMode = Literal["serial", "scan"]
+E3EligibilityForwardMode = Literal["segment", "scan_aligned"]
+E3EligibilityBackwardMode = Literal["forward_eligibility", "reverse_adjoint"]
+E3ScanMathMode = Literal["hillis_steele", "blocked_cumsum", "cuda_fused"]
 E3FixedPointMode = Literal["serial", "fixed_point"]
 E3OscillatorMode = Literal["serial", "scan"]
 
@@ -106,6 +109,22 @@ class E3LayerTrace:
     inhibitory_spikes: Tensor
     excitatory_residuals: Tensor
     inhibitory_residuals: Tensor
+
+
+@dataclass
+class E3GatedTrace:
+    """Binary input/write events and slow traces for the AT0 core."""
+
+    excitatory_content: Tensor
+    inhibitory_content: Tensor
+    excitatory_gate: Tensor
+    inhibitory_gate: Tensor
+    excitatory_writes: Tensor
+    inhibitory_writes: Tensor
+    excitatory_spikes: Tensor
+    inhibitory_spikes: Tensor
+    excitatory_traces: Tensor
+    inhibitory_traces: Tensor
 
 
 @dataclass
@@ -1265,6 +1284,1180 @@ def _surrogate_step(value: Tensor, scale: float) -> Tensor:
     return _SurrogateStep.apply(value, scale)
 
 
+def _periodic_floor_derivative(value: Tensor, scale: float) -> Tensor:
+    """Derivative used by :class:`_PeriodicSurrogateFloor`."""
+
+    distance = (value - torch.round(value)).abs()
+    return scale / (1.0 + scale * distance).square()
+
+
+def _event_step_derivative(value: Tensor, scale: float) -> Tensor:
+    """Derivative used by :class:`_SurrogateStep`."""
+
+    return scale / (1.0 + scale * value.abs()).square()
+
+
+class _TerminalEligibilityScan(torch.autograd.Function):
+    """Exact terminal IC0 gradient factored through eligibility traces.
+
+    The forward is the same cumulative hard-reset equation used by
+    :class:`E3InputCodedScanCore`.  For a loss that observes only the terminal
+    spike/residual, the input projection gradient depends on two aggregated
+    eligibility tensors (through ``T`` and ``T-1``) rather than a temporal
+    autograd graph.  When the dense input itself requires a gradient, the
+    per-time event surrogate derivatives are additionally retained so the
+    exact input gradient can be reconstructed in one batched contraction.
+    """
+
+    @staticmethod
+    def forward(
+        ctx: Any,
+        x: Tensor,
+        weight_e: Tensor,
+        bias_e: Tensor,
+        weight_i: Tensor,
+        bias_i: Tensor,
+        initial_e: Tensor,
+        initial_i: Tensor,
+        base_charge: float,
+        event_charge: float,
+        surrogate_scale: float,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        ctx.set_materialize_grads(False)
+        time_steps = x.shape[1]
+        scale = float(surrogate_scale)
+
+        drive_e = F.linear(x, weight_e, bias_e)
+        drive_i = F.linear(x, weight_i, bias_i)
+        events_e = (drive_e >= 0.0).to(dtype=x.dtype)
+        events_i = (drive_i >= 0.0).to(dtype=x.dtype)
+        charge_e = float(base_charge) + float(event_charge) * events_e
+        charge_i = float(base_charge) + float(event_charge) * events_i
+
+        cumulative_e = initial_e.unsqueeze(1) + torch.cumsum(charge_e, dim=1)
+        cumulative_i = initial_i.unsqueeze(1) + torch.cumsum(charge_i, dim=1)
+        counts_e = torch.floor(cumulative_e)
+        counts_i = torch.floor(cumulative_i)
+        # Clone the terminal views before saving them.  Retaining a view here
+        # would pin the complete ``[B,T,H]`` cumulative storage and defeat the
+        # length-independent core-only eligibility memory bound.
+        terminal_q_e = cumulative_e[:, -1].clone()
+        terminal_q_i = cumulative_i[:, -1].clone()
+        terminal_count_e = counts_e[:, -1]
+        terminal_count_i = counts_i[:, -1]
+        if time_steps > 1:
+            previous_q_e = cumulative_e[:, -2].clone()
+            previous_q_i = cumulative_i[:, -2].clone()
+            previous_count_e = counts_e[:, -2]
+            previous_count_i = counts_i[:, -2]
+        else:
+            previous_q_e = torch.zeros_like(terminal_q_e)
+            previous_q_i = torch.zeros_like(terminal_q_i)
+            previous_count_e = torch.zeros_like(terminal_count_e)
+            previous_count_i = torch.zeros_like(terminal_count_i)
+
+        spike_e = terminal_count_e - previous_count_e
+        spike_i = terminal_count_i - previous_count_i
+        final_e = terminal_q_e - terminal_count_e
+        final_i = terminal_q_i - terminal_count_i
+        raw = torch.cat((spike_e, -spike_i, final_e, -final_i), dim=-1)
+
+        phi_e = _event_step_derivative(drive_e, scale)
+        phi_i = _event_step_derivative(drive_i, scale)
+        eligibility_e = torch.einsum("bth,btd->bhd", phi_e, x)
+        eligibility_i = torch.einsum("bth,btd->bhd", phi_i, x)
+        bias_eligibility_e = phi_e.sum(dim=1)
+        bias_eligibility_i = phi_i.sum(dim=1)
+        if time_steps > 1:
+            previous_eligibility_e = torch.einsum(
+                "bth,btd->bhd", phi_e[:, :-1], x[:, :-1]
+            )
+            previous_eligibility_i = torch.einsum(
+                "bth,btd->bhd", phi_i[:, :-1], x[:, :-1]
+            )
+            previous_bias_eligibility_e = phi_e[:, :-1].sum(dim=1)
+            previous_bias_eligibility_i = phi_i[:, :-1].sum(dim=1)
+        else:
+            previous_eligibility_e = torch.zeros_like(eligibility_e)
+            previous_eligibility_i = torch.zeros_like(eligibility_i)
+            previous_bias_eligibility_e = torch.zeros_like(bias_eligibility_e)
+            previous_bias_eligibility_i = torch.zeros_like(bias_eligibility_i)
+
+        saved = [
+            terminal_q_e,
+            previous_q_e,
+            terminal_q_i,
+            previous_q_i,
+            eligibility_e,
+            previous_eligibility_e,
+            eligibility_i,
+            previous_eligibility_i,
+            bias_eligibility_e,
+            previous_bias_eligibility_e,
+            bias_eligibility_i,
+            previous_bias_eligibility_i,
+            weight_e,
+            weight_i,
+        ]
+        ctx.input_requires_grad = bool(ctx.needs_input_grad[0])
+        if ctx.input_requires_grad:
+            saved.extend((phi_e, phi_i))
+        ctx.save_for_backward(*saved)
+        ctx.time_steps = int(time_steps)
+        ctx.event_charge = float(event_charge)
+        ctx.surrogate_scale = scale
+        return raw, final_e, final_i
+
+    @staticmethod
+    def backward(
+        ctx: Any,
+        grad_raw: Optional[Tensor],
+        grad_final_e: Optional[Tensor],
+        grad_final_i: Optional[Tensor],
+    ) -> Tuple[
+        Optional[Tensor],
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        None,
+        None,
+        None,
+    ]:
+        saved = ctx.saved_tensors
+        (
+            terminal_q_e,
+            previous_q_e,
+            terminal_q_i,
+            previous_q_i,
+            eligibility_e,
+            previous_eligibility_e,
+            eligibility_i,
+            previous_eligibility_i,
+            bias_eligibility_e,
+            previous_bias_eligibility_e,
+            bias_eligibility_i,
+            previous_bias_eligibility_i,
+            weight_e,
+            weight_i,
+        ) = saved[:14]
+        phi_e: Optional[Tensor] = None
+        phi_i: Optional[Tensor] = None
+        if ctx.input_requires_grad:
+            phi_e, phi_i = saved[14:16]
+
+        hidden = terminal_q_e.shape[-1]
+        zero = torch.zeros_like(terminal_q_e)
+        if grad_raw is None:
+            spike_signal_e = zero
+            spike_signal_i = zero
+            residual_signal_e = zero
+            residual_signal_i = zero
+        else:
+            spike_signal_e = grad_raw[:, :hidden]
+            spike_signal_i = -grad_raw[:, hidden : 2 * hidden]
+            residual_signal_e = grad_raw[:, 2 * hidden : 3 * hidden]
+            residual_signal_i = -grad_raw[:, 3 * hidden :]
+        if grad_final_e is not None:
+            residual_signal_e = residual_signal_e + grad_final_e
+        if grad_final_i is not None:
+            residual_signal_i = residual_signal_i + grad_final_i
+
+        scale = ctx.surrogate_scale
+        floor_e = _periodic_floor_derivative(terminal_q_e, scale)
+        floor_i = _periodic_floor_derivative(terminal_q_i, scale)
+        if ctx.time_steps > 1:
+            previous_floor_e = _periodic_floor_derivative(previous_q_e, scale)
+            previous_floor_i = _periodic_floor_derivative(previous_q_i, scale)
+        else:
+            previous_floor_e = zero
+            previous_floor_i = zero
+
+        terminal_signal_e = residual_signal_e + spike_signal_e * floor_e
+        terminal_signal_i = residual_signal_i + spike_signal_i * floor_i
+        previous_signal_e = spike_signal_e * previous_floor_e
+        previous_signal_i = spike_signal_i * previous_floor_i
+        event_charge = ctx.event_charge
+
+        grad_weight_e = event_charge * torch.sum(
+            terminal_signal_e.unsqueeze(-1) * eligibility_e
+            - previous_signal_e.unsqueeze(-1) * previous_eligibility_e,
+            dim=0,
+        )
+        grad_weight_i = event_charge * torch.sum(
+            terminal_signal_i.unsqueeze(-1) * eligibility_i
+            - previous_signal_i.unsqueeze(-1) * previous_eligibility_i,
+            dim=0,
+        )
+        grad_bias_e = event_charge * torch.sum(
+            terminal_signal_e * bias_eligibility_e
+            - previous_signal_e * previous_bias_eligibility_e,
+            dim=0,
+        )
+        grad_bias_i = event_charge * torch.sum(
+            terminal_signal_i * bias_eligibility_i
+            - previous_signal_i * previous_bias_eligibility_i,
+            dim=0,
+        )
+        grad_initial_e = terminal_signal_e - previous_signal_e
+        grad_initial_i = terminal_signal_i - previous_signal_i
+
+        grad_x: Optional[Tensor] = None
+        if ctx.input_requires_grad:
+            assert phi_e is not None and phi_i is not None
+            coefficient_e = terminal_signal_e.unsqueeze(1).expand(
+                -1, ctx.time_steps, -1
+            )
+            coefficient_i = terminal_signal_i.unsqueeze(1).expand(
+                -1, ctx.time_steps, -1
+            )
+            if ctx.time_steps > 1:
+                coefficient_e = coefficient_e.clone()
+                coefficient_i = coefficient_i.clone()
+                coefficient_e[:, :-1] -= previous_signal_e.unsqueeze(1)
+                coefficient_i[:, :-1] -= previous_signal_i.unsqueeze(1)
+            grad_drive_e = event_charge * phi_e * coefficient_e
+            grad_drive_i = event_charge * phi_i * coefficient_i
+            grad_x = torch.matmul(grad_drive_e, weight_e) + torch.matmul(
+                grad_drive_i, weight_i
+            )
+
+        return (
+            grad_x,
+            grad_weight_e,
+            grad_bias_e,
+            grad_weight_i,
+            grad_bias_i,
+            grad_initial_e,
+            grad_initial_i,
+            None,
+            None,
+            None,
+        )
+
+
+class _MultiQueryEligibilityScan(torch.autograd.Function):
+    """Exact IC0 gradient for a sparse, ordered set of query times.
+
+    The additive IC0 dynamics let every query gradient be contracted with a
+    prefix eligibility tensor.  Only ``K`` prefix snapshots are retained for
+    ``K`` query outputs, so the core-only backward storage is independent of
+    sequence length.  Dense input gradients still require the per-time event
+    derivatives and are deliberately accounted for separately.
+    """
+
+    @staticmethod
+    def forward(
+        ctx: Any,
+        x: Tensor,
+        query_indices: Tensor,
+        weight_e: Tensor,
+        bias_e: Tensor,
+        weight_i: Tensor,
+        bias_i: Tensor,
+        initial_e: Tensor,
+        initial_i: Tensor,
+        base_charge: float,
+        event_charge: float,
+        surrogate_scale: float,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        ctx.set_materialize_grads(False)
+        time_steps = x.shape[1]
+        scale = float(surrogate_scale)
+        query_positions = tuple(int(value) for value in query_indices.tolist())
+
+        drive_e = F.linear(x, weight_e, bias_e)
+        drive_i = F.linear(x, weight_i, bias_i)
+        events_e = (drive_e >= 0.0).to(dtype=x.dtype)
+        events_i = (drive_i >= 0.0).to(dtype=x.dtype)
+        charge_e = float(base_charge) + float(event_charge) * events_e
+        charge_i = float(base_charge) + float(event_charge) * events_i
+
+        cumulative_e = initial_e.unsqueeze(1) + torch.cumsum(charge_e, dim=1)
+        cumulative_i = initial_i.unsqueeze(1) + torch.cumsum(charge_i, dim=1)
+        counts_e = torch.floor(cumulative_e)
+        counts_i = torch.floor(cumulative_i)
+
+        query_q_e = cumulative_e.index_select(1, query_indices).clone()
+        query_q_i = cumulative_i.index_select(1, query_indices).clone()
+        query_count_e = counts_e.index_select(1, query_indices)
+        query_count_i = counts_i.index_select(1, query_indices)
+        previous_q_e = torch.zeros_like(query_q_e)
+        previous_q_i = torch.zeros_like(query_q_i)
+        previous_count_e = torch.zeros_like(query_count_e)
+        previous_count_i = torch.zeros_like(query_count_i)
+        positive_query = query_indices > 0
+        if bool(positive_query.any()):
+            target_columns = torch.nonzero(positive_query, as_tuple=False).squeeze(-1)
+            previous_indices = query_indices.index_select(0, target_columns) - 1
+            previous_q_e[:, target_columns] = cumulative_e.index_select(
+                1, previous_indices
+            )
+            previous_q_i[:, target_columns] = cumulative_i.index_select(
+                1, previous_indices
+            )
+            previous_count_e[:, target_columns] = counts_e.index_select(
+                1, previous_indices
+            )
+            previous_count_i[:, target_columns] = counts_i.index_select(
+                1, previous_indices
+            )
+
+        query_spike_e = query_count_e - previous_count_e
+        query_spike_i = query_count_i - previous_count_i
+        query_residual_e = query_q_e - query_count_e
+        query_residual_i = query_q_i - query_count_i
+        raw_queries = torch.cat(
+            (
+                query_spike_e,
+                -query_spike_i,
+                query_residual_e,
+                -query_residual_i,
+            ),
+            dim=-1,
+        )
+        final_e = cumulative_e[:, -1] - counts_e[:, -1]
+        final_i = cumulative_i[:, -1] - counts_i[:, -1]
+
+        phi_e = _event_step_derivative(drive_e, scale)
+        phi_i = _event_step_derivative(drive_i, scale)
+        batch_size, _, hidden = phi_e.shape
+        input_dim = x.shape[-1]
+        running_e = x.new_zeros(batch_size, hidden, input_dim)
+        running_i = x.new_zeros(batch_size, hidden, input_dim)
+        running_bias_e = x.new_zeros(batch_size, hidden)
+        running_bias_i = x.new_zeros(batch_size, hidden)
+        eligibility_e = []
+        eligibility_i = []
+        bias_eligibility_e = []
+        bias_eligibility_i = []
+        cursor = 0
+        for position in query_positions:
+            stop = position + 1
+            if stop > cursor:
+                running_e = running_e + torch.einsum(
+                    "bth,btd->bhd", phi_e[:, cursor:stop], x[:, cursor:stop]
+                )
+                running_i = running_i + torch.einsum(
+                    "bth,btd->bhd", phi_i[:, cursor:stop], x[:, cursor:stop]
+                )
+                running_bias_e = running_bias_e + phi_e[:, cursor:stop].sum(dim=1)
+                running_bias_i = running_bias_i + phi_i[:, cursor:stop].sum(dim=1)
+            eligibility_e.append(running_e.clone())
+            eligibility_i.append(running_i.clone())
+            bias_eligibility_e.append(running_bias_e.clone())
+            bias_eligibility_i.append(running_bias_i.clone())
+            cursor = stop
+        if cursor < time_steps:
+            running_e = running_e + torch.einsum(
+                "bth,btd->bhd", phi_e[:, cursor:], x[:, cursor:]
+            )
+            running_i = running_i + torch.einsum(
+                "bth,btd->bhd", phi_i[:, cursor:], x[:, cursor:]
+            )
+            running_bias_e = running_bias_e + phi_e[:, cursor:].sum(dim=1)
+            running_bias_i = running_bias_i + phi_i[:, cursor:].sum(dim=1)
+
+        query_phi_e = phi_e.index_select(1, query_indices).clone()
+        query_phi_i = phi_i.index_select(1, query_indices).clone()
+        query_x = x.index_select(1, query_indices).clone()
+        saved = [
+            query_q_e,
+            previous_q_e,
+            query_q_i,
+            previous_q_i,
+            torch.stack(eligibility_e, dim=1),
+            torch.stack(eligibility_i, dim=1),
+            torch.stack(bias_eligibility_e, dim=1),
+            torch.stack(bias_eligibility_i, dim=1),
+            query_phi_e,
+            query_phi_i,
+            query_x,
+            running_e.clone(),
+            running_i.clone(),
+            running_bias_e.clone(),
+            running_bias_i.clone(),
+            weight_e,
+            weight_i,
+        ]
+        ctx.input_requires_grad = bool(ctx.needs_input_grad[0])
+        if ctx.input_requires_grad:
+            saved.extend((phi_e, phi_i))
+        ctx.save_for_backward(*saved)
+        ctx.query_positions = query_positions
+        ctx.time_steps = int(time_steps)
+        ctx.event_charge = float(event_charge)
+        ctx.surrogate_scale = scale
+        return raw_queries, final_e, final_i
+
+    @staticmethod
+    def backward(
+        ctx: Any,
+        grad_raw: Optional[Tensor],
+        grad_final_e: Optional[Tensor],
+        grad_final_i: Optional[Tensor],
+    ) -> Tuple[
+        Optional[Tensor],
+        None,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        None,
+        None,
+        None,
+    ]:
+        saved = ctx.saved_tensors
+        (
+            query_q_e,
+            previous_q_e,
+            query_q_i,
+            previous_q_i,
+            eligibility_e,
+            eligibility_i,
+            bias_eligibility_e,
+            bias_eligibility_i,
+            query_phi_e,
+            query_phi_i,
+            query_x,
+            final_eligibility_e,
+            final_eligibility_i,
+            final_bias_eligibility_e,
+            final_bias_eligibility_i,
+            weight_e,
+            weight_i,
+        ) = saved[:17]
+        phi_e: Optional[Tensor] = None
+        phi_i: Optional[Tensor] = None
+        if ctx.input_requires_grad:
+            phi_e, phi_i = saved[17:19]
+
+        hidden = query_q_e.shape[-1]
+        zero_query = torch.zeros_like(query_q_e)
+        if grad_raw is None:
+            spike_signal_e = zero_query
+            spike_signal_i = zero_query
+            residual_signal_e = zero_query
+            residual_signal_i = zero_query
+        else:
+            spike_signal_e = grad_raw[:, :, :hidden]
+            spike_signal_i = -grad_raw[:, :, hidden : 2 * hidden]
+            residual_signal_e = grad_raw[:, :, 2 * hidden : 3 * hidden]
+            residual_signal_i = -grad_raw[:, :, 3 * hidden :]
+
+        scale = ctx.surrogate_scale
+        floor_e = _periodic_floor_derivative(query_q_e, scale)
+        floor_i = _periodic_floor_derivative(query_q_i, scale)
+        previous_floor_e = _periodic_floor_derivative(previous_q_e, scale)
+        previous_floor_i = _periodic_floor_derivative(previous_q_i, scale)
+        for query_index, position in enumerate(ctx.query_positions):
+            if position == 0:
+                previous_floor_e[:, query_index].zero_()
+                previous_floor_i[:, query_index].zero_()
+
+        terminal_signal_e = residual_signal_e + spike_signal_e * floor_e
+        terminal_signal_i = residual_signal_i + spike_signal_i * floor_i
+        previous_signal_e = spike_signal_e * previous_floor_e
+        previous_signal_i = spike_signal_i * previous_floor_i
+        final_signal_e = (
+            torch.zeros_like(query_q_e[:, 0])
+            if grad_final_e is None
+            else grad_final_e
+        )
+        final_signal_i = (
+            torch.zeros_like(query_q_i[:, 0])
+            if grad_final_i is None
+            else grad_final_i
+        )
+
+        query_contribution_e = query_phi_e.unsqueeze(-1) * query_x.unsqueeze(-2)
+        query_contribution_i = query_phi_i.unsqueeze(-1) * query_x.unsqueeze(-2)
+        previous_eligibility_e = eligibility_e - query_contribution_e
+        previous_eligibility_i = eligibility_i - query_contribution_i
+        previous_bias_eligibility_e = bias_eligibility_e - query_phi_e
+        previous_bias_eligibility_i = bias_eligibility_i - query_phi_i
+        event_charge = ctx.event_charge
+
+        grad_weight_e = event_charge * (
+            torch.sum(
+                terminal_signal_e.unsqueeze(-1) * eligibility_e
+                - previous_signal_e.unsqueeze(-1) * previous_eligibility_e,
+                dim=(0, 1),
+            )
+            + torch.sum(
+                final_signal_e.unsqueeze(-1) * final_eligibility_e,
+                dim=0,
+            )
+        )
+        grad_weight_i = event_charge * (
+            torch.sum(
+                terminal_signal_i.unsqueeze(-1) * eligibility_i
+                - previous_signal_i.unsqueeze(-1) * previous_eligibility_i,
+                dim=(0, 1),
+            )
+            + torch.sum(
+                final_signal_i.unsqueeze(-1) * final_eligibility_i,
+                dim=0,
+            )
+        )
+        grad_bias_e = event_charge * (
+            torch.sum(
+                terminal_signal_e * bias_eligibility_e
+                - previous_signal_e * previous_bias_eligibility_e,
+                dim=(0, 1),
+            )
+            + torch.sum(final_signal_e * final_bias_eligibility_e, dim=0)
+        )
+        grad_bias_i = event_charge * (
+            torch.sum(
+                terminal_signal_i * bias_eligibility_i
+                - previous_signal_i * previous_bias_eligibility_i,
+                dim=(0, 1),
+            )
+            + torch.sum(final_signal_i * final_bias_eligibility_i, dim=0)
+        )
+        grad_initial_e = (
+            terminal_signal_e - previous_signal_e
+        ).sum(dim=1) + final_signal_e
+        grad_initial_i = (
+            terminal_signal_i - previous_signal_i
+        ).sum(dim=1) + final_signal_i
+
+        grad_x: Optional[Tensor] = None
+        if ctx.input_requires_grad:
+            assert phi_e is not None and phi_i is not None
+            coefficient_e = final_signal_e.unsqueeze(1).expand(
+                -1, ctx.time_steps, -1
+            ).clone()
+            coefficient_i = final_signal_i.unsqueeze(1).expand(
+                -1, ctx.time_steps, -1
+            ).clone()
+            for query_index, position in enumerate(ctx.query_positions):
+                coefficient_e[:, : position + 1] += terminal_signal_e[
+                    :, query_index
+                ].unsqueeze(1)
+                coefficient_i[:, : position + 1] += terminal_signal_i[
+                    :, query_index
+                ].unsqueeze(1)
+                if position > 0:
+                    coefficient_e[:, :position] -= previous_signal_e[
+                        :, query_index
+                    ].unsqueeze(1)
+                    coefficient_i[:, :position] -= previous_signal_i[
+                        :, query_index
+                    ].unsqueeze(1)
+            grad_drive_e = event_charge * phi_e * coefficient_e
+            grad_drive_i = event_charge * phi_i * coefficient_i
+            grad_x = torch.matmul(grad_drive_e, weight_e) + torch.matmul(
+                grad_drive_i, weight_i
+            )
+
+        return (
+            grad_x,
+            None,
+            grad_weight_e,
+            grad_bias_e,
+            grad_weight_i,
+            grad_bias_i,
+            grad_initial_e,
+            grad_initial_i,
+            None,
+            None,
+            None,
+        )
+
+
+class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
+    """Exact sparse-query gradient for the AT0 gated affine trace."""
+
+    @staticmethod
+    def forward(
+        ctx: Any,
+        x: Tensor,
+        query_indices: Tensor,
+        weight: Tensor,
+        bias: Tensor,
+        decay_logits: Tensor,
+        initial_e: Tensor,
+        initial_i: Tensor,
+        min_decay: float,
+        max_decay: float,
+        spike_threshold: float,
+        surrogate_scale: float,
+        scan_aligned: bool,
+        reverse_adjoint: bool,
+        blocked_scan_size: int,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        ctx.set_materialize_grads(False)
+        time_steps = x.shape[1]
+        state_dim = initial_e.shape[-1]
+        query_positions = tuple(int(value) for value in query_indices.tolist())
+        scale = float(surrogate_scale)
+
+        drives = F.linear(x, weight, bias)
+        drive_content_e, drive_content_i, drive_gate_e, drive_gate_i = drives.chunk(
+            4, dim=-1
+        )
+        content_e = (drive_content_e >= 0.0).to(dtype=x.dtype)
+        content_i = (drive_content_i >= 0.0).to(dtype=x.dtype)
+        gate_e = (drive_gate_e >= 0.0).to(dtype=x.dtype)
+        gate_i = (drive_gate_i >= 0.0).to(dtype=x.dtype)
+        write_e = content_e * gate_e
+        write_i = content_i * gate_i
+
+        decay_sigmoid = torch.sigmoid(decay_logits)
+        decay_span = float(max_decay) - float(min_decay)
+        decays = float(min_decay) + decay_span * decay_sigmoid
+        decay_derivative = decay_span * decay_sigmoid * (1.0 - decay_sigmoid)
+        decay_e, decay_i = decays[0], decays[1]
+
+        def trace_and_decay_snapshots(
+            write: Tensor,
+            decay: Tensor,
+            decay_logit_derivative: Tensor,
+            initial: Tensor,
+        ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+            """Evaluate only query/final traces and their decay eligibility."""
+
+            running_trace = initial
+            running_decay = torch.zeros_like(initial)
+            query_traces = []
+            query_decays = []
+            cursor = 0
+
+            def advance(stop: int) -> None:
+                nonlocal cursor, running_trace, running_decay
+                length = stop - cursor
+                exponents = torch.arange(
+                    length - 1,
+                    -1,
+                    -1,
+                    device=x.device,
+                    dtype=x.dtype,
+                ).unsqueeze(1)
+                powers = decay.unsqueeze(0).pow(exponents)
+                exponent_derivative = torch.where(
+                    exponents == 0,
+                    torch.zeros_like(powers),
+                    exponents * decay.unsqueeze(0).pow(exponents - 1.0),
+                )
+                injection_weights = (1.0 - decay).unsqueeze(0) * powers
+                injection_derivative = decay_logit_derivative.unsqueeze(0) * (
+                    -powers
+                    + (1.0 - decay).unsqueeze(0) * exponent_derivative
+                )
+                segment = write[:, cursor:stop]
+                segment_bias = torch.sum(
+                    segment * injection_weights.unsqueeze(0), dim=1
+                )
+                segment_bias_derivative = torch.sum(
+                    segment * injection_derivative.unsqueeze(0), dim=1
+                )
+                retention = decay.pow(length)
+                retention_derivative = (
+                    float(length)
+                    * decay.pow(length - 1)
+                    * decay_logit_derivative
+                )
+                previous_trace = running_trace
+                running_trace = (
+                    retention.unsqueeze(0) * previous_trace + segment_bias
+                )
+                running_decay = (
+                    retention.unsqueeze(0) * running_decay
+                    + retention_derivative.unsqueeze(0) * previous_trace
+                    + segment_bias_derivative
+                )
+                cursor = stop
+
+            for position in query_positions:
+                advance(position + 1)
+                query_traces.append(running_trace.clone())
+                query_decays.append(running_decay.clone())
+            if cursor < time_steps:
+                advance(time_steps)
+            return (
+                torch.stack(query_traces, dim=1),
+                torch.stack(query_decays, dim=1),
+                running_trace.clone(),
+                running_decay.clone(),
+            )
+
+        if reverse_adjoint:
+            write_pair = torch.cat((write_e, write_i), dim=-1)
+            decay_pair = torch.cat((decay_e, decay_i), dim=0)
+            initial_pair = torch.cat((initial_e, initial_i), dim=-1)
+            if blocked_scan_size > 0:
+                aligned_pair = (
+                    E3GatedTraceScanCore._blocked_constant_affine_prefix_scan(
+                        write_pair,
+                        decay_pair,
+                        initial_pair,
+                        block_size=blocked_scan_size,
+                    )
+                )
+            else:
+                aligned_pair = E3GatedTraceScanCore._constant_affine_prefix_scan(
+                    write_pair,
+                    decay_pair,
+                    initial_pair,
+                )
+            query_trace_pair = aligned_pair.index_select(1, query_indices).clone()
+            query_trace_e, query_trace_i = query_trace_pair.chunk(2, dim=-1)
+            final_pair = aligned_pair[:, -1].clone()
+            final_e, final_i = final_pair.chunk(2, dim=-1)
+        else:
+            (
+                query_trace_pair,
+                query_decay_eligibility,
+                final_pair,
+                final_decay_eligibility,
+            ) = trace_and_decay_snapshots(
+                torch.cat((write_e, write_i), dim=-1),
+                torch.cat((decay_e, decay_i), dim=0),
+                decay_derivative.reshape(-1),
+                torch.cat((initial_e, initial_i), dim=-1),
+            )
+            query_trace_e, query_trace_i = query_trace_pair.chunk(2, dim=-1)
+            final_e, final_i = final_pair.chunk(2, dim=-1)
+            if scan_aligned:
+                coefficient_e = decay_e.view(1, 1, -1).expand_as(write_e)
+                coefficient_i = decay_i.view(1, 1, -1).expand_as(write_i)
+                aligned_e = E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient_e,
+                    (1.0 - coefficient_e) * write_e,
+                    initial_e,
+                )
+                aligned_i = E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient_i,
+                    (1.0 - coefficient_i) * write_i,
+                    initial_i,
+                )
+                query_trace_e = aligned_e.index_select(1, query_indices).clone()
+                query_trace_i = aligned_i.index_select(1, query_indices).clone()
+                final_e = aligned_e[:, -1].clone()
+                final_i = aligned_i[:, -1].clone()
+        query_spike_e = (query_trace_e >= float(spike_threshold)).to(dtype=x.dtype)
+        query_spike_i = (query_trace_i >= float(spike_threshold)).to(dtype=x.dtype)
+        raw_queries = torch.cat(
+            (query_spike_e, -query_spike_i, query_trace_e, -query_trace_i),
+            dim=-1,
+        )
+
+        phi_content_e = _event_step_derivative(drive_content_e, scale)
+        phi_content_i = _event_step_derivative(drive_content_i, scale)
+        phi_gate_e = _event_step_derivative(drive_gate_e, scale)
+        phi_gate_i = _event_step_derivative(drive_gate_i, scale)
+        drive_factors = torch.cat(
+            (
+                gate_e * phi_content_e,
+                gate_i * phi_content_i,
+                content_e * phi_gate_e,
+                content_i * phi_gate_i,
+            ),
+            dim=-1,
+        )
+        ctx.input_requires_grad = bool(ctx.needs_input_grad[0])
+        ctx.reverse_adjoint = bool(reverse_adjoint)
+        ctx.blocked_scan_size = int(blocked_scan_size)
+        ctx.query_positions = query_positions
+        ctx.query_indices = query_indices
+        ctx.time_steps = int(time_steps)
+        ctx.state_dim = int(state_dim)
+        ctx.spike_threshold = float(spike_threshold)
+        ctx.surrogate_scale = scale
+        if reverse_adjoint:
+            previous_trace_pair = torch.cat(
+                (initial_pair.unsqueeze(1), aligned_pair[:, :-1]), dim=1
+            )
+            ctx.save_for_backward(
+                query_trace_e,
+                query_trace_i,
+                x,
+                previous_trace_pair,
+                write_pair,
+                drive_factors,
+                decay_derivative.reshape(-1),
+                decay_e,
+                decay_i,
+                weight,
+            )
+            return raw_queries, final_e, final_i
+
+        local_weight = torch.cat(
+            (
+                (1.0 - decay_e) * gate_e * phi_content_e,
+                (1.0 - decay_i) * gate_i * phi_content_i,
+                (1.0 - decay_e) * content_e * phi_gate_e,
+                (1.0 - decay_i) * content_i * phi_gate_i,
+            ),
+            dim=-1,
+        )
+        decay_rows = torch.cat((decay_e, decay_i, decay_e, decay_i), dim=0)
+
+        def matrix_snapshots(
+            local: Tensor,
+            recurrence: Tensor,
+        ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+            batch_size, _, rows = local.shape
+            input_dim = x.shape[-1]
+            running_weight = x.new_zeros(batch_size, rows, input_dim)
+            running_bias = x.new_zeros(batch_size, rows)
+            query_weight = []
+            query_bias = []
+            cursor = 0
+            for position in query_positions:
+                stop = position + 1
+                length = stop - cursor
+                powers = recurrence.unsqueeze(0).pow(
+                    torch.arange(
+                        length - 1,
+                        -1,
+                        -1,
+                        device=x.device,
+                        dtype=x.dtype,
+                    ).unsqueeze(1)
+                )
+                weighted = local[:, cursor:stop] * powers.unsqueeze(0)
+                retention = recurrence.pow(length)
+                running_weight = retention.view(1, -1, 1) * running_weight + torch.einsum(
+                    "btr,btd->brd", weighted, x[:, cursor:stop]
+                )
+                running_bias = retention.unsqueeze(0) * running_bias + weighted.sum(dim=1)
+                query_weight.append(running_weight.clone())
+                query_bias.append(running_bias.clone())
+                cursor = stop
+            if cursor < time_steps:
+                length = time_steps - cursor
+                powers = recurrence.unsqueeze(0).pow(
+                    torch.arange(
+                        length - 1,
+                        -1,
+                        -1,
+                        device=x.device,
+                        dtype=x.dtype,
+                    ).unsqueeze(1)
+                )
+                weighted = local[:, cursor:] * powers.unsqueeze(0)
+                retention = recurrence.pow(length)
+                running_weight = retention.view(1, -1, 1) * running_weight + torch.einsum(
+                    "btr,btd->brd", weighted, x[:, cursor:]
+                )
+                running_bias = retention.unsqueeze(0) * running_bias + weighted.sum(dim=1)
+            return (
+                torch.stack(query_weight, dim=1),
+                torch.stack(query_bias, dim=1),
+                running_weight.clone(),
+                running_bias.clone(),
+            )
+
+        (
+            query_weight_eligibility,
+            query_bias_eligibility,
+            final_weight_eligibility,
+            final_bias_eligibility,
+        ) = matrix_snapshots(local_weight, decay_rows)
+
+        saved = [
+            query_trace_e,
+            query_trace_i,
+            query_weight_eligibility,
+            query_bias_eligibility,
+            query_decay_eligibility,
+            final_weight_eligibility,
+            final_bias_eligibility,
+            final_decay_eligibility,
+            decay_e,
+            decay_i,
+            weight,
+        ]
+        if ctx.input_requires_grad:
+            saved.append(drive_factors)
+        ctx.save_for_backward(*saved)
+        return raw_queries, final_e, final_i
+
+    @staticmethod
+    def backward(
+        ctx: Any,
+        grad_raw: Optional[Tensor],
+        grad_final_e: Optional[Tensor],
+        grad_final_i: Optional[Tensor],
+    ) -> Tuple[
+        Optional[Tensor],
+        None,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    ]:
+        saved = ctx.saved_tensors
+        if ctx.reverse_adjoint:
+            (
+                query_trace_e,
+                query_trace_i,
+                reverse_x,
+                previous_trace_pair,
+                write_pair,
+                drive_factors,
+                decay_logit_derivative,
+                decay_e,
+                decay_i,
+                weight,
+            ) = saved
+        else:
+            (
+                query_trace_e,
+                query_trace_i,
+                query_weight_eligibility,
+                query_bias_eligibility,
+                query_decay_eligibility,
+                final_weight_eligibility,
+                final_bias_eligibility,
+                final_decay_eligibility,
+                decay_e,
+                decay_i,
+                weight,
+            ) = saved[:11]
+            drive_factors: Optional[Tensor] = None
+            if ctx.input_requires_grad:
+                drive_factors = saved[11]
+
+        state_dim = ctx.state_dim
+        zero_query = torch.zeros_like(query_trace_e)
+        if grad_raw is None:
+            spike_signal_e = zero_query
+            spike_signal_i = zero_query
+            trace_signal_e = zero_query
+            trace_signal_i = zero_query
+        else:
+            spike_signal_e = grad_raw[:, :, :state_dim]
+            spike_signal_i = -grad_raw[:, :, state_dim : 2 * state_dim]
+            trace_signal_e = grad_raw[:, :, 2 * state_dim : 3 * state_dim]
+            trace_signal_i = -grad_raw[:, :, 3 * state_dim :]
+        output_derivative_e = _event_step_derivative(
+            query_trace_e - ctx.spike_threshold, ctx.surrogate_scale
+        )
+        output_derivative_i = _event_step_derivative(
+            query_trace_i - ctx.spike_threshold, ctx.surrogate_scale
+        )
+        learning_e = trace_signal_e + spike_signal_e * output_derivative_e
+        learning_i = trace_signal_i + spike_signal_i * output_derivative_i
+        final_signal_e = (
+            torch.zeros_like(query_trace_e[:, 0])
+            if grad_final_e is None
+            else grad_final_e
+        )
+        final_signal_i = (
+            torch.zeros_like(query_trace_i[:, 0])
+            if grad_final_i is None
+            else grad_final_i
+        )
+
+        if ctx.reverse_adjoint:
+            learning_pair = torch.cat((learning_e, learning_i), dim=-1)
+            final_pair = torch.cat((final_signal_e, final_signal_i), dim=-1)
+            decay_pair = torch.cat((decay_e, decay_i), dim=0)
+
+            def parallel_reverse_adjoint(
+                impulses: Tensor, decay: Tensor
+            ) -> Tensor:
+                direct = torch.zeros(
+                    impulses.shape[0],
+                    ctx.time_steps,
+                    impulses.shape[-1],
+                    device=impulses.device,
+                    dtype=impulses.dtype,
+                )
+                direct.index_copy_(1, ctx.query_indices, impulses)
+                direct[:, -1] += final_pair
+                reversed_direct = direct.flip(1)
+                if ctx.blocked_scan_size > 0:
+                    prefix = (
+                        E3GatedTraceScanCore._blocked_constant_affine_prefix_scan(
+                            reversed_direct,
+                            decay,
+                            torch.zeros_like(reversed_direct[:, 0]),
+                            block_size=ctx.blocked_scan_size,
+                            injection_scale=torch.ones_like(decay),
+                        )
+                    )
+                else:
+                    prefix = reversed_direct
+                    retention = torch.cumprod(
+                        decay.unsqueeze(0).expand(ctx.time_steps, -1), dim=0
+                    )
+                    offset = 1
+                    while offset < ctx.time_steps:
+                        composed = prefix[:, offset:] + retention[
+                            offset - 1
+                        ].view(1, 1, -1) * prefix[:, :-offset]
+                        prefix = torch.cat(
+                            (prefix[:, :offset], composed), dim=1
+                        )
+                        offset *= 2
+                return prefix.flip(1)
+
+            adjoint_pair = parallel_reverse_adjoint(learning_pair, decay_pair)
+            adjoint_e, adjoint_i = adjoint_pair.chunk(2, dim=-1)
+            adjoint_rows = torch.cat(
+                (adjoint_e, adjoint_i, adjoint_e, adjoint_i), dim=-1
+            )
+            decay_rows = torch.cat((decay_e, decay_i, decay_e, decay_i), dim=0)
+            grad_drives = (
+                (1.0 - decay_rows).view(1, 1, -1)
+                * adjoint_rows
+                * drive_factors
+            )
+            grad_weight = torch.einsum("btr,btd->rd", grad_drives, reverse_x)
+            grad_bias = grad_drives.sum(dim=(0, 1))
+            local_decay = decay_logit_derivative.view(1, 1, -1) * (
+                previous_trace_pair - write_pair
+            )
+            grad_decay_logits = torch.sum(
+                adjoint_pair * local_decay, dim=(0, 1)
+            ).reshape(2, state_dim)
+            initial_gradient = (
+                decay_pair.unsqueeze(0) * adjoint_pair[:, 0]
+            )
+            grad_initial_e, grad_initial_i = initial_gradient.chunk(2, dim=-1)
+            grad_x = (
+                torch.matmul(grad_drives, weight)
+                if ctx.input_requires_grad
+                else None
+            )
+            return (
+                grad_x,
+                None,
+                grad_weight,
+                grad_bias,
+                grad_decay_logits,
+                grad_initial_e,
+                grad_initial_i,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            )
+
+        learning_rows = torch.cat(
+            (learning_e, learning_i, learning_e, learning_i), dim=-1
+        )
+        final_rows = torch.cat(
+            (final_signal_e, final_signal_i, final_signal_e, final_signal_i),
+            dim=-1,
+        )
+        grad_weight = torch.sum(
+            learning_rows.unsqueeze(-1) * query_weight_eligibility,
+            dim=(0, 1),
+        ) + torch.sum(
+            final_rows.unsqueeze(-1) * final_weight_eligibility,
+            dim=0,
+        )
+        grad_bias = torch.sum(
+            learning_rows * query_bias_eligibility,
+            dim=(0, 1),
+        ) + torch.sum(final_rows * final_bias_eligibility, dim=0)
+        learning_decay = torch.cat((learning_e, learning_i), dim=-1)
+        final_decay_signal = torch.cat((final_signal_e, final_signal_i), dim=-1)
+        grad_decay_logits = torch.sum(
+            learning_decay * query_decay_eligibility,
+            dim=(0, 1),
+        ) + torch.sum(final_decay_signal * final_decay_eligibility, dim=0)
+        grad_decay_logits = grad_decay_logits.reshape(2, state_dim)
+
+        query_powers_e = torch.stack(
+            [decay_e.pow(position + 1) for position in ctx.query_positions], dim=0
+        )
+        query_powers_i = torch.stack(
+            [decay_i.pow(position + 1) for position in ctx.query_positions], dim=0
+        )
+        grad_initial_e = torch.sum(
+            learning_e * query_powers_e.unsqueeze(0), dim=1
+        ) + final_signal_e * decay_e.pow(ctx.time_steps)
+        grad_initial_i = torch.sum(
+            learning_i * query_powers_i.unsqueeze(0), dim=1
+        ) + final_signal_i * decay_i.pow(ctx.time_steps)
+
+        grad_x: Optional[Tensor] = None
+        if ctx.input_requires_grad:
+            assert drive_factors is not None
+            direct_e = torch.zeros(
+                query_trace_e.shape[0],
+                ctx.time_steps,
+                state_dim,
+                device=query_trace_e.device,
+                dtype=query_trace_e.dtype,
+            )
+            direct_i = torch.zeros_like(direct_e)
+            for query_index, position in enumerate(ctx.query_positions):
+                direct_e[:, position] += learning_e[:, query_index]
+                direct_i[:, position] += learning_i[:, query_index]
+            direct_e[:, -1] += final_signal_e
+            direct_i[:, -1] += final_signal_i
+            reverse_e = torch.flip(direct_e, dims=(1,))
+            reverse_i = torch.flip(direct_i, dims=(1,))
+            coefficient_e = decay_e.view(1, 1, -1).expand_as(reverse_e)
+            coefficient_i = decay_i.view(1, 1, -1).expand_as(reverse_i)
+            adjoint_e = torch.flip(
+                E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient_e,
+                    reverse_e,
+                    torch.zeros_like(reverse_e[:, 0]),
+                ),
+                dims=(1,),
+            )
+            adjoint_i = torch.flip(
+                E3GatedTraceScanCore._affine_prefix_scan(
+                    coefficient_i,
+                    reverse_i,
+                    torch.zeros_like(reverse_i[:, 0]),
+                ),
+                dims=(1,),
+            )
+            adjoint_rows = torch.cat(
+                (adjoint_e, adjoint_i, adjoint_e, adjoint_i), dim=-1
+            )
+            decay_rows = torch.cat((decay_e, decay_i, decay_e, decay_i), dim=0)
+            grad_drives = (
+                (1.0 - decay_rows).view(1, 1, -1)
+                * adjoint_rows
+                * drive_factors
+            )
+            grad_x = torch.matmul(grad_drives, weight)
+
+        return (
+            grad_x,
+            None,
+            grad_weight,
+            grad_bias,
+            grad_decay_logits,
+            grad_initial_e,
+            grad_initial_i,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )
+
+
 class E3InputCodedScanCore(E3CumulativeScanCore):
     """One-layer exact-reset scan driven by explicit binary input events."""
 
@@ -1310,6 +2503,743 @@ class E3InputCodedScanCore(E3CumulativeScanCore):
     def _charge(self, drive: Tensor) -> Tensor:
         events = _surrogate_step(drive, self.event_surrogate_scale)
         return self.base_charge + self.event_charge * events
+
+    def _forward_step_tensors_unchecked(
+        self,
+        x_t: Tensor,
+        excitatory: Tensor,
+        inhibitory: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Pure-tensor inference graph for one exact IC0 event."""
+
+        event_e = (F.linear(x_t, self.input_to_e.weight, self.input_to_e.bias) >= 0.0).to(
+            dtype=x_t.dtype
+        )
+        event_i = (F.linear(x_t, self.input_to_i.weight, self.input_to_i.bias) >= 0.0).to(
+            dtype=x_t.dtype
+        )
+        pre_reset_e = excitatory + self.base_charge + self.event_charge * event_e
+        pre_reset_i = inhibitory + self.base_charge + self.event_charge * event_i
+        spike_e = torch.floor(pre_reset_e)
+        spike_i = torch.floor(pre_reset_i)
+        next_e = pre_reset_e - spike_e
+        next_i = pre_reset_i - spike_i
+        raw = torch.cat((spike_e, -spike_i, next_e, -next_i), dim=-1)
+        output = self.output_projection(self.output_norm(raw))
+        return output, next_e, next_i, spike_e, spike_i
+
+    def forward_step_tensors(
+        self,
+        x_t: Tensor,
+        excitatory: Tensor,
+        inhibitory: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Exact single-event inference without sequence/dataclass overhead.
+
+        The returned tuple is ``(output, next_e, next_i, spike_e, spike_i)``.
+        It is deliberately tensor-only so a deployment wrapper can compile the
+        complete event update as one graph.  Training should continue to use
+        :meth:`forward` or :meth:`forward_terminal_eligibility` because the
+        hard comparisons in this inference path do not install surrogates.
+        """
+
+        if x_t.ndim != 2 or x_t.shape[-1] != self.input_dim:
+            raise ValueError(
+                f"expected x_t shaped [batch, {self.input_dim}], got {tuple(x_t.shape)}"
+            )
+        expected = (x_t.shape[0], self.state_dim)
+        if tuple(excitatory.shape) != expected or tuple(inhibitory.shape) != expected:
+            raise ValueError(
+                "invalid IC0 tensor state shapes: "
+                f"E={tuple(excitatory.shape)}, I={tuple(inhibitory.shape)}, "
+                f"expected={expected}"
+            )
+        return self._forward_step_tensors_unchecked(x_t, excitatory, inhibitory)
+
+    def forward_terminal_eligibility(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> CoreOutput[E3ScanState]:
+        """Return only the final token using an exact eligibility backward.
+
+        This method is intended for query-sparse objectives whose loss reads
+        the final token.  It does not manufacture outputs for earlier tokens.
+        With a frozen/detached input tensor, its saved eligibility state is
+        independent of sequence length; when ``x.requires_grad`` is true it
+        retains per-time event derivatives to reconstruct the exact input
+        gradient without a temporal autograd chain.
+        """
+
+        batch_size, _ = _validate_sequence(x, self.input_dim)
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        else:
+            self._validate_state(state, batch_size)
+        layer = state.layers[0]
+        raw, final_e, final_i = _TerminalEligibilityScan.apply(
+            x,
+            self.input_to_e.weight,
+            self.input_to_e.bias,
+            self.input_to_i.weight,
+            self.input_to_i.bias,
+            layer.excitatory,
+            layer.inhibitory,
+            self.base_charge,
+            self.event_charge,
+            self.event_surrogate_scale,
+        )
+        sequence = self.output_projection(self.output_norm(raw)).unsqueeze(1)
+        next_state = E3ScanState(
+            layers=(E3LayerState(excitatory=final_e, inhibitory=final_i),)
+        )
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        return CoreOutput(sequence=sequence, state=next_state)
+
+    def forward_multi_query_eligibility(
+        self,
+        x: Tensor,
+        query_indices: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> CoreOutput[E3ScanState]:
+        """Return sparse query outputs with an exact prefix-eligibility backward.
+
+        ``query_indices`` identifies ordered sequence positions whose outputs
+        participate in the loss.  The returned sequence has length ``K`` in
+        the same order.  With frozen inputs, backward storage scales with K
+        rather than the input sequence length; dense input gradients remain
+        exact but retain per-time event derivatives.
+        """
+
+        batch_size, time_steps = _validate_sequence(x, self.input_dim)
+        if not isinstance(query_indices, Tensor):
+            raise TypeError("query_indices must be a torch.Tensor")
+        if query_indices.ndim != 1:
+            raise ValueError("query_indices must be one-dimensional")
+        if query_indices.dtype != torch.long:
+            raise ValueError("query_indices must use torch.long dtype")
+        if query_indices.numel() == 0:
+            raise ValueError("query_indices must be non-empty")
+        indices = query_indices.to(device=x.device)
+        if int(indices[0].item()) < 0 or int(indices[-1].item()) >= time_steps:
+            raise ValueError(
+                f"query_indices must lie in [0, {time_steps}), got "
+                f"[{int(indices[0].item())}, {int(indices[-1].item())}]"
+            )
+        if indices.numel() > 1 and not bool(torch.all(indices[1:] > indices[:-1])):
+            raise ValueError("query_indices must be strictly increasing and unique")
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        else:
+            self._validate_state(state, batch_size)
+        layer = state.layers[0]
+        raw, final_e, final_i = _MultiQueryEligibilityScan.apply(
+            x,
+            indices,
+            self.input_to_e.weight,
+            self.input_to_e.bias,
+            self.input_to_i.weight,
+            self.input_to_i.bias,
+            layer.excitatory,
+            layer.inhibitory,
+            self.base_charge,
+            self.event_charge,
+            self.event_surrogate_scale,
+        )
+        sequence = self.output_projection(self.output_norm(raw))
+        next_state = E3ScanState(
+            layers=(E3LayerState(excitatory=final_e, inhibitory=final_i),)
+        )
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        return CoreOutput(sequence=sequence, state=next_state)
+
+
+class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
+    """Binary-event SNN with an exact affine scan over slow synaptic traces.
+
+    Four hard-threshold populations encode excitatory/inhibitory content and
+    write gates.  Their binary products drive bounded leaky traces; output
+    spikes threshold those traces but do not reset them.  This separates the
+    slow, exactly scannable memory state from the fast discrete output event.
+    """
+
+    def __init__(
+        self,
+        input_dim: int,
+        hidden_dim: int,
+        *,
+        state_dim: Optional[int] = None,
+        min_decay: float = 0.50,
+        max_decay: float = 0.995,
+        min_initial_decay: float = 0.55,
+        max_initial_decay: float = 0.99,
+        spike_threshold: float = 0.50,
+        surrogate_scale: float = 5.0,
+        execution_mode: E3ExecutionMode = "scan",
+        eligibility_forward_mode: E3EligibilityForwardMode = "segment",
+        eligibility_backward_mode: E3EligibilityBackwardMode = "forward_eligibility",
+        scan_math_mode: E3ScanMathMode = "hillis_steele",
+        scan_block_size: int = 64,
+    ) -> None:
+        super().__init__(input_dim=input_dim, output_dim=hidden_dim)
+        state_dim = hidden_dim if state_dim is None else state_dim
+        if state_dim <= 0:
+            raise ValueError("state_dim must be positive")
+        if not 0.0 <= min_decay < max_decay < 1.0:
+            raise ValueError("decay bounds must satisfy 0 <= min < max < 1")
+        if not min_decay < min_initial_decay <= max_initial_decay < max_decay:
+            raise ValueError("initial decay range must lie inside decay bounds")
+        if not 0.0 < spike_threshold < 1.0:
+            raise ValueError("spike_threshold must lie in (0, 1)")
+        if surrogate_scale <= 0.0:
+            raise ValueError("surrogate_scale must be positive")
+        if execution_mode not in ("serial", "scan"):
+            raise ValueError("execution_mode must be 'serial' or 'scan'")
+        if eligibility_forward_mode not in ("segment", "scan_aligned"):
+            raise ValueError(
+                "eligibility_forward_mode must be 'segment' or 'scan_aligned'"
+            )
+        if eligibility_backward_mode not in (
+            "forward_eligibility",
+            "reverse_adjoint",
+        ):
+            raise ValueError(
+                "eligibility_backward_mode must be 'forward_eligibility' "
+                "or 'reverse_adjoint'"
+            )
+        if scan_math_mode not in (
+            "hillis_steele",
+            "blocked_cumsum",
+            "cuda_fused",
+        ):
+            raise ValueError(
+                "scan_math_mode must be 'hillis_steele', 'blocked_cumsum', "
+                "or 'cuda_fused'"
+            )
+        if scan_block_size <= 0:
+            raise ValueError("scan_block_size must be positive")
+
+        self.hidden_dim = int(hidden_dim)
+        self.state_dim = int(state_dim)
+        self.min_decay = float(min_decay)
+        self.max_decay = float(max_decay)
+        self.spike_threshold = float(spike_threshold)
+        self.surrogate_scale = float(surrogate_scale)
+        self.execution_mode: E3ExecutionMode = execution_mode
+        self.eligibility_forward_mode: E3EligibilityForwardMode = (
+            eligibility_forward_mode
+        )
+        self.eligibility_backward_mode: E3EligibilityBackwardMode = (
+            eligibility_backward_mode
+        )
+        self.scan_math_mode: E3ScanMathMode = scan_math_mode
+        self.scan_block_size = int(scan_block_size)
+
+        self.input_event_projection = nn.Linear(input_dim, 4 * self.state_dim)
+        self.decay_logits = nn.Parameter(torch.empty(2, self.state_dim))
+        self.output_norm = nn.LayerNorm(4 * self.state_dim)
+        self.output_projection = nn.Linear(4 * self.state_dim, hidden_dim)
+
+        initial_decay = torch.linspace(
+            min_initial_decay,
+            max_initial_decay,
+            steps=self.state_dim,
+        )
+        normalised = (initial_decay - self.min_decay) / (
+            self.max_decay - self.min_decay
+        )
+        logits = torch.logit(normalised)
+        with torch.no_grad():
+            self.decay_logits[0].copy_(logits)
+            self.decay_logits[1].copy_(logits.flip(0))
+
+    def initial_state(
+        self,
+        batch_size: int,
+        *,
+        device: Optional[torch.device] = None,
+        dtype: Optional[torch.dtype] = None,
+    ) -> E3ScanState:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive")
+        default_device, default_dtype = _module_device_dtype(self)
+        device = default_device if device is None else device
+        dtype = default_dtype if dtype is None else dtype
+        zeros = torch.zeros(
+            batch_size, self.state_dim, device=device, dtype=dtype
+        )
+        return E3ScanState(
+            layers=(
+                E3LayerState(
+                    excitatory=zeros.clone(),
+                    inhibitory=zeros.clone(),
+                ),
+            )
+        )
+
+    def _validate_state(self, state: E3ScanState, batch_size: int) -> None:
+        if len(state.layers) != 1:
+            raise ValueError(f"expected one AT0 state layer, got {len(state.layers)}")
+        expected = (batch_size, self.state_dim)
+        layer = state.layers[0]
+        if tuple(layer.excitatory.shape) != expected or tuple(layer.inhibitory.shape) != expected:
+            raise ValueError(
+                "invalid AT0 state shapes: "
+                f"E={tuple(layer.excitatory.shape)}, I={tuple(layer.inhibitory.shape)}, "
+                f"expected={expected}"
+            )
+        for name, value in (
+            ("excitatory", layer.excitatory),
+            ("inhibitory", layer.inhibitory),
+        ):
+            if not bool(torch.all((value >= 0.0) & (value <= 1.0))):
+                raise ValueError(f"AT0 {name} trace must lie in [0, 1]")
+
+    def decays(self) -> Tuple[Tensor, Tensor]:
+        """Return bounded per-neuron E/I trace decays."""
+
+        span = self.max_decay - self.min_decay
+        values = self.min_decay + span * torch.sigmoid(self.decay_logits)
+        return values[0], values[1]
+
+    def input_events(
+        self, x: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Return content, gate, and binary write events for both populations."""
+
+        _validate_sequence(x, self.input_dim)
+        logits = self.input_event_projection(x)
+        content_e, content_i, gate_e, gate_i = (
+            _surrogate_step(part, self.surrogate_scale)
+            for part in logits.chunk(4, dim=-1)
+        )
+        write_e = content_e * gate_e
+        write_i = content_i * gate_i
+        return content_e, content_i, gate_e, gate_i, write_e, write_i
+
+    def _forward_step_tensors_unchecked(
+        self,
+        x_t: Tensor,
+        excitatory: Tensor,
+        inhibitory: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Pure-tensor inference graph for one gated trace event."""
+
+        logits = F.linear(
+            x_t,
+            self.input_event_projection.weight,
+            self.input_event_projection.bias,
+        )
+        content_e, content_i, gate_e, gate_i = (
+            (part >= 0.0).to(dtype=x_t.dtype) for part in logits.chunk(4, dim=-1)
+        )
+        write_e = content_e * gate_e
+        write_i = content_i * gate_i
+        decay_e, decay_i = self.decays()
+        return self._forward_step_tensors_with_decays_unchecked(
+            x_t,
+            excitatory,
+            inhibitory,
+            decay_e,
+            decay_i,
+            write_e=write_e,
+            write_i=write_i,
+        )
+
+    def _forward_step_tensors_with_decays_unchecked(
+        self,
+        x_t: Tensor,
+        excitatory: Tensor,
+        inhibitory: Tensor,
+        decay_e: Tensor,
+        decay_i: Tensor,
+        *,
+        write_e: Optional[Tensor] = None,
+        write_i: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Pure tensor step with deployment-time decay values already cached."""
+
+        if write_e is None or write_i is None:
+            logits = F.linear(
+                x_t,
+                self.input_event_projection.weight,
+                self.input_event_projection.bias,
+            )
+            content_e, content_i, gate_e, gate_i = (
+                (part >= 0.0).to(dtype=x_t.dtype)
+                for part in logits.chunk(4, dim=-1)
+            )
+            write_e = content_e * gate_e
+            write_i = content_i * gate_i
+        next_e = decay_e * excitatory + (1.0 - decay_e) * write_e
+        next_i = decay_i * inhibitory + (1.0 - decay_i) * write_i
+        spike_e = (next_e >= self.spike_threshold).to(dtype=x_t.dtype)
+        spike_i = (next_i >= self.spike_threshold).to(dtype=x_t.dtype)
+        raw = torch.cat((spike_e, -spike_i, next_e, -next_i), dim=-1)
+        output = self.output_projection(self.output_norm(raw))
+        return output, next_e, next_i, spike_e, spike_i, write_e, write_i
+
+    def forward_step_tensors(
+        self,
+        x_t: Tensor,
+        excitatory: Tensor,
+        inhibitory: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Exact tensor-only AT0 inference step without sequence overhead."""
+
+        if x_t.ndim != 2 or x_t.shape[-1] != self.input_dim:
+            raise ValueError(
+                f"expected x_t shaped [batch, {self.input_dim}], got {tuple(x_t.shape)}"
+            )
+        expected = (x_t.shape[0], self.state_dim)
+        if tuple(excitatory.shape) != expected or tuple(inhibitory.shape) != expected:
+            raise ValueError(
+                "invalid AT0 tensor state shapes: "
+                f"E={tuple(excitatory.shape)}, I={tuple(inhibitory.shape)}, "
+                f"expected={expected}"
+            )
+        return self._forward_step_tensors_unchecked(x_t, excitatory, inhibitory)
+
+    def forward_step_tensors_cached_decay(
+        self,
+        x_t: Tensor,
+        excitatory: Tensor,
+        inhibitory: Tensor,
+        decay_e: Tensor,
+        decay_i: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Exact inference step using decays cached after a parameter update.
+
+        A deployment loop should call :meth:`decays` once whenever model
+        parameters change, then reuse the two returned ``[state_dim]`` tensors
+        for every event.  This removes two sigmoid/bounds evaluations from the
+        hot token path without changing the AT0 dynamics.
+        """
+
+        if x_t.ndim != 2 or x_t.shape[-1] != self.input_dim:
+            raise ValueError(
+                f"expected x_t shaped [batch, {self.input_dim}], got {tuple(x_t.shape)}"
+            )
+        expected = (x_t.shape[0], self.state_dim)
+        if tuple(excitatory.shape) != expected or tuple(inhibitory.shape) != expected:
+            raise ValueError(
+                "invalid AT1 tensor state shapes: "
+                f"E={tuple(excitatory.shape)}, I={tuple(inhibitory.shape)}, "
+                f"expected={expected}"
+            )
+        decay_shape = (self.state_dim,)
+        if tuple(decay_e.shape) != decay_shape or tuple(decay_i.shape) != decay_shape:
+            raise ValueError(
+                "invalid AT1 cached decay shapes: "
+                f"E={tuple(decay_e.shape)}, I={tuple(decay_i.shape)}, "
+                f"expected={decay_shape}"
+            )
+        return self._forward_step_tensors_with_decays_unchecked(
+            x_t,
+            excitatory,
+            inhibitory,
+            decay_e,
+            decay_i,
+        )
+
+    @staticmethod
+    def _affine_prefix_scan(
+        coefficient: Tensor, bias: Tensor, initial: Tensor
+    ) -> Tensor:
+        prefix_a = coefficient
+        prefix_b = bias
+        offset = 1
+        time_steps = coefficient.shape[1]
+        while offset < time_steps:
+            composed_a = prefix_a[:, offset:] * prefix_a[:, :-offset]
+            composed_b = (
+                prefix_b[:, offset:]
+                + prefix_a[:, offset:] * prefix_b[:, :-offset]
+            )
+            prefix_a = torch.cat((prefix_a[:, :offset], composed_a), dim=1)
+            prefix_b = torch.cat((prefix_b[:, :offset], composed_b), dim=1)
+            offset *= 2
+        return prefix_a * initial.unsqueeze(1) + prefix_b
+
+    @staticmethod
+    def _constant_affine_prefix_scan(
+        write: Tensor, decay: Tensor, initial: Tensor
+    ) -> Tensor:
+        """Parallel affine scan specialized to a time-invariant decay.
+
+        The generic scan composes both the affine coefficient and bias at every
+        tree level.  Here the coefficient of an ``offset``-long block is known
+        analytically as ``decay**offset``, so only the injected trace prefix is
+        scanned.  This preserves the same recurrence while halving the dynamic
+        scan state and its concatenation dispatches.
+        """
+
+        time_steps = write.shape[1]
+        retention = torch.cumprod(
+            decay.unsqueeze(0).expand(time_steps, -1), dim=0
+        )
+        prefix = (1.0 - decay).view(1, 1, -1) * write
+        offset = 1
+        while offset < time_steps:
+            composed = prefix[:, offset:] + retention[offset - 1].view(
+                1, 1, -1
+            ) * prefix[:, :-offset]
+            prefix = torch.cat((prefix[:, :offset], composed), dim=1)
+            offset *= 2
+        return prefix + retention.unsqueeze(0) * initial.unsqueeze(1)
+
+    @staticmethod
+    def _blocked_constant_affine_prefix_scan(
+        write: Tensor,
+        decay: Tensor,
+        initial: Tensor,
+        *,
+        block_size: int,
+        injection_scale: Optional[Tensor] = None,
+    ) -> Tensor:
+        """Evaluate a constant affine recurrence with stable block cumsums.
+
+        The block-local closed form uses bounded geometric exponents, while
+        exact block-end states carry all preceding history into the next block.
+        ``injection_scale`` is ``1 - decay`` for the forward trace and one for
+        the reverse-time adjoint recurrence.
+        """
+
+        if write.ndim != 3:
+            raise ValueError("write must be shaped [batch, time, state]")
+        if block_size <= 0:
+            raise ValueError("block_size must be positive")
+        time_steps = write.shape[1]
+        if time_steps <= 0:
+            raise ValueError("time dimension must be positive")
+        if decay.ndim != 1 or decay.shape[0] != write.shape[-1]:
+            raise ValueError("decay must match the write state dimension")
+        if initial.shape != (write.shape[0], write.shape[-1]):
+            raise ValueError("initial must be shaped [batch, state]")
+
+        block_count = (time_steps + block_size - 1) // block_size
+        padded_steps = block_count * block_size
+        padding = padded_steps - time_steps
+        padded = F.pad(write, (0, 0, 0, padding)) if padding else write
+        blocks = padded.reshape(
+            write.shape[0], block_count, block_size, write.shape[-1]
+        )
+        exponents = torch.arange(
+            1,
+            block_size + 1,
+            device=write.device,
+            dtype=decay.dtype,
+        ).unsqueeze(1)
+        powers = decay.unsqueeze(0).pow(exponents)
+        scale = 1.0 - decay if injection_scale is None else injection_scale
+        scaled = scale.view(1, 1, 1, -1) * blocks / powers.view(
+            1, 1, block_size, -1
+        )
+        local = powers.view(1, 1, block_size, -1) * torch.cumsum(
+            scaled, dim=2
+        )
+
+        starts = [initial]
+        running = initial
+        block_retention = powers[-1].unsqueeze(0)
+        for index in range(block_count - 1):
+            running = block_retention * running + local[:, index, -1]
+            starts.append(running)
+        block_starts = torch.stack(starts, dim=1)
+        states = local + powers.view(1, 1, block_size, -1) * block_starts.unsqueeze(
+            2
+        )
+        return states.reshape(write.shape[0], padded_steps, write.shape[-1])[
+            :, :time_steps
+        ]
+
+    @staticmethod
+    def _serial_trace(write: Tensor, decay: Tensor, initial: Tensor) -> Tensor:
+        state = initial
+        traces = []
+        retention = decay.unsqueeze(0)
+        injection = 1.0 - retention
+        for index in range(write.shape[1]):
+            state = retention * state + injection * write[:, index]
+            traces.append(state)
+        return torch.stack(traces, dim=1)
+
+    def _trace(self, write: Tensor, decay: Tensor, initial: Tensor) -> Tensor:
+        if self.execution_mode == "serial":
+            return self._serial_trace(write, decay, initial)
+        if self.scan_math_mode == "blocked_cumsum":
+            return self._blocked_constant_affine_prefix_scan(
+                write,
+                decay,
+                initial,
+                block_size=self.scan_block_size,
+            )
+        coefficient = decay.view(1, 1, -1).expand_as(write)
+        bias = (1.0 - coefficient) * write
+        return self._affine_prefix_scan(coefficient, bias, initial)
+
+    def forward_multi_query_eligibility(
+        self,
+        x: Tensor,
+        query_indices: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+        _unchecked: bool = False,
+    ) -> CoreOutput[E3ScanState]:
+        """Return exact sparse-query AT0 outputs with compact eligibility.
+
+        The forward dynamics are identical to :meth:`forward`; only the K
+        requested positions are materialised at the readout.  With frozen
+        inputs, backward saves prefix eligibilities proportional to K instead
+        of a time-length autograd graph.  Requiring an input gradient remains
+        exact and additionally stores one local event factor per time step.
+        """
+
+        batch_size, time_steps = _validate_sequence(x, self.input_dim)
+        if _unchecked:
+            indices = query_indices
+        else:
+            if not isinstance(query_indices, Tensor):
+                raise TypeError("query_indices must be a torch.Tensor")
+            if query_indices.ndim != 1:
+                raise ValueError("query_indices must be one-dimensional")
+            if query_indices.dtype != torch.long:
+                raise ValueError("query_indices must use torch.long dtype")
+            if query_indices.numel() == 0:
+                raise ValueError("query_indices must be non-empty")
+            indices = query_indices.to(device=x.device)
+            if int(indices[0].item()) < 0 or int(indices[-1].item()) >= time_steps:
+                raise ValueError(
+                    f"query_indices must lie in [0, {time_steps}), got "
+                    f"[{int(indices[0].item())}, {int(indices[-1].item())}]"
+                )
+            if indices.numel() > 1 and not bool(
+                torch.all(indices[1:] > indices[:-1])
+            ):
+                raise ValueError(
+                    "query_indices must be strictly increasing and unique"
+                )
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        elif not _unchecked:
+            self._validate_state(state, batch_size)
+        layer = state.layers[0]
+        if self.scan_math_mode == "cuda_fused":
+            if self.eligibility_backward_mode != "reverse_adjoint":
+                raise ValueError("cuda_fused requires reverse_adjoint mode")
+            from vpsc.world_model.fused_gated_trace_cuda import fused_gated_trace
+
+            drives = F.linear(
+                x,
+                self.input_event_projection.weight,
+                self.input_event_projection.bias,
+            )
+            decay_e, decay_i = self.decays()
+            raw, final_e, final_i = fused_gated_trace(
+                drives,
+                indices,
+                torch.stack((decay_e, decay_i), dim=0),
+                layer.excitatory,
+                layer.inhibitory,
+                spike_threshold=self.spike_threshold,
+                surrogate_scale=self.surrogate_scale,
+            )
+            sequence = self.output_projection(self.output_norm(raw))
+            next_state = E3ScanState(
+                layers=(E3LayerState(excitatory=final_e, inhibitory=final_i),)
+            )
+            if detach_state:
+                next_state = detach_core_state(next_state)
+            return CoreOutput(sequence=sequence, state=next_state)
+        raw, final_e, final_i = _GatedTraceMultiQueryEligibility.apply(
+            x,
+            indices,
+            self.input_event_projection.weight,
+            self.input_event_projection.bias,
+            self.decay_logits,
+            layer.excitatory,
+            layer.inhibitory,
+            self.min_decay,
+            self.max_decay,
+            self.spike_threshold,
+            self.surrogate_scale,
+            self.eligibility_forward_mode == "scan_aligned",
+            self.eligibility_backward_mode == "reverse_adjoint",
+            self.scan_block_size if self.scan_math_mode == "blocked_cumsum" else 0,
+        )
+        sequence = self.output_projection(self.output_norm(raw))
+        next_state = E3ScanState(
+            layers=(E3LayerState(excitatory=final_e, inhibitory=final_i),)
+        )
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        return CoreOutput(sequence=sequence, state=next_state)
+
+    def forward_dynamics(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> Tuple[CoreOutput[E3ScanState], E3GatedTrace]:
+        batch_size, _ = _validate_sequence(x, self.input_dim)
+        if state is None:
+            state = self.initial_state(batch_size, device=x.device, dtype=x.dtype)
+        else:
+            self._validate_state(state, batch_size)
+        layer = state.layers[0]
+        content_e, content_i, gate_e, gate_i, write_e, write_i = self.input_events(x)
+        decay_e, decay_i = self.decays()
+        trace_e = self._trace(write_e, decay_e, layer.excitatory)
+        trace_i = self._trace(write_i, decay_i, layer.inhibitory)
+        spike_e = _surrogate_step(
+            trace_e - self.spike_threshold, self.surrogate_scale
+        )
+        spike_i = _surrogate_step(
+            trace_i - self.spike_threshold, self.surrogate_scale
+        )
+        raw = torch.cat((spike_e, -spike_i, trace_e, -trace_i), dim=-1)
+        sequence = self.output_projection(self.output_norm(raw))
+        next_state = E3ScanState(
+            layers=(
+                E3LayerState(
+                    excitatory=trace_e[:, -1],
+                    inhibitory=trace_i[:, -1],
+                ),
+            )
+        )
+        if detach_state:
+            next_state = detach_core_state(next_state)
+        diagnostics = E3GatedTrace(
+            excitatory_content=content_e,
+            inhibitory_content=content_i,
+            excitatory_gate=gate_e,
+            inhibitory_gate=gate_i,
+            excitatory_writes=write_e,
+            inhibitory_writes=write_i,
+            excitatory_spikes=spike_e,
+            inhibitory_spikes=spike_i,
+            excitatory_traces=trace_e,
+            inhibitory_traces=trace_i,
+        )
+        return CoreOutput(sequence=sequence, state=next_state), diagnostics
+
+    def forward(
+        self,
+        x: Tensor,
+        state: Optional[E3ScanState] = None,
+        *,
+        detach_state: bool = False,
+    ) -> CoreOutput[E3ScanState]:
+        result, _ = self.forward_dynamics(x, state, detach_state=detach_state)
+        return result
 
 
 class E3FixedPointScanCore(TemporalCore[E3ScanState]):

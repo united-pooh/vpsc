@@ -26,4 +26,6 @@ venv/
 # Downloaded datasets (recreated automatically by the experiment scripts)
 lab/mnist/data/
 data/e2_world_model/
+data/e3_scan/
 results/e2_world_model/checkpoints/
+results/e3_scan/*.smoke.json

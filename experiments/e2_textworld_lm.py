@@ -198,8 +198,31 @@ def _event_header_seeds(path: Path, split: str) -> tuple[int, ...]:
     return tuple(seeds)
 
 
-def _manifest_provenance(root: Path) -> Dict[str, Any]:
+def _manifest_provenance(
+    root: Path,
+    *,
+    expected_seeds_by_split: Optional[Mapping[str, Sequence[int]]] = None,
+) -> Dict[str, Any]:
     """Verify the complete official-dataset proof chain for every split."""
+
+    if expected_seeds_by_split is None:
+        expected_seed_map = FROZEN_DATASET_SEEDS
+    else:
+        if set(expected_seeds_by_split) != set(SPLITS):
+            raise ValueError(
+                f"expected seed map must contain exactly {list(SPLITS)}"
+            )
+        expected_seed_map = {
+            split: tuple(int(seed) for seed in expected_seeds_by_split[split])
+            for split in SPLITS
+        }
+        if any(not seeds for seeds in expected_seed_map.values()):
+            raise ValueError("expected seed sets must be non-empty")
+        flattened = tuple(
+            seed for split in SPLITS for seed in expected_seed_map[split]
+        )
+        if len(set(flattened)) != len(flattened):
+            raise ValueError("expected game seeds must be unique across splits")
 
     records: Dict[str, Any] = {}
     hash_inputs: Dict[str, Any] = {}
@@ -314,7 +337,7 @@ def _manifest_provenance(root: Path) -> Dict[str, Any]:
                 }
             )
 
-        expected_seeds = FROZEN_DATASET_SEEDS[split]
+        expected_seeds = expected_seed_map[split]
         seeds = tuple(manifest_seeds)
         summary_seed_values = summary.get("seeds")
         if not isinstance(summary_seed_values, list):

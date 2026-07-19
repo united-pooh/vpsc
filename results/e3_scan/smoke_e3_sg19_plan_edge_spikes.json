@@ -1,0 +1,2617 @@
+{
+  "configuration": {
+    "action_order": [
+      "examine coin",
+      "go east",
+      "go north",
+      "go south",
+      "go west",
+      "inventory",
+      "look",
+      "take coin"
+    ],
+    "corpus_dir": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg16r_l5",
+    "inverse_move_map": {
+      "go east": "go west",
+      "go north": "go south",
+      "go south": "go north",
+      "go west": "go east"
+    },
+    "kernel": "affordance_phase_suffix_times_return_edge_and_objective_plan_tape",
+    "objective_plan_source": "public objective string only",
+    "ridge_lambda": 1e-06,
+    "threads": 4,
+    "walkthrough_role": "audit equality only; never model input"
+  },
+  "dataset": {
+    "base_action_alphabet": [
+      "<event_examine_coin>",
+      "<event_go_east>",
+      "<event_go_north>",
+      "<event_go_south>",
+      "<event_go_west>",
+      "<event_inventory>",
+      "<event_look>",
+      "<event_take_coin>"
+    ],
+    "base_vocabulary_fingerprint": "9d31551deae8300719634f1fc584b6ec508348c74b94efd3c456eb2096f1f749",
+    "exhaustive_counts": {
+      "test": 160,
+      "train": 640,
+      "valid": 160
+    },
+    "objective_plan_audit": {
+      "all_plans_equal_walkthrough_for_audit": true,
+      "compiler": "word-boundary compass directions in text order plus take coin",
+      "game_count": 48,
+      "records": [
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260801,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260802,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260803,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260804,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260805,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260806,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260807,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260808,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260809,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260810,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260811,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260812,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260813,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260814,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260815,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260816,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260817,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260818,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260819,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260820,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260821,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260822,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260823,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260824,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260825,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260826,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260827,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260828,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go south",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260829,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go south",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260830,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260831,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260832,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go east",
+            "go east",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261201,
+          "split": "valid",
+          "walkthrough": [
+            "go south",
+            "go east",
+            "go east",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261202,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20261203,
+          "split": "valid",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261204,
+          "split": "valid",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261205,
+          "split": "valid",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261206,
+          "split": "valid",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261207,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261208,
+          "split": "valid",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261209,
+          "split": "test",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20261210,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go east",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261211,
+          "split": "test",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go east",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261212,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20261213,
+          "split": "test",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261214,
+          "split": "test",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20261215,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20261216,
+          "split": "test",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go east",
+            "take coin"
+          ]
+        }
+      ],
+      "source": "public objective text only"
+    },
+    "persistent_room_tree_repair": {
+      "changed_pair_count": 48,
+      "changed_pair_ids": [
+        "20261209:0:inventory:look",
+        "20261209:1:inventory:look",
+        "20261209:2:inventory:look",
+        "20261209:3:inventory:look",
+        "20261209:4:examine coin:look",
+        "20261209:4:inventory:look",
+        "20261210:0:inventory:look",
+        "20261210:1:inventory:look",
+        "20261210:2:inventory:look",
+        "20261210:3:inventory:look",
+        "20261210:4:examine coin:look",
+        "20261210:4:inventory:look",
+        "20261211:0:inventory:look",
+        "20261211:1:inventory:look",
+        "20261211:2:inventory:look",
+        "20261211:3:inventory:look",
+        "20261211:4:examine coin:look",
+        "20261211:4:inventory:look",
+        "20261212:0:inventory:look",
+        "20261212:1:inventory:look",
+        "20261212:2:inventory:look",
+        "20261212:3:inventory:look",
+        "20261212:4:examine coin:look",
+        "20261212:4:inventory:look",
+        "20261213:0:inventory:look",
+        "20261213:1:inventory:look",
+        "20261213:2:inventory:look",
+        "20261213:3:inventory:look",
+        "20261213:4:examine coin:look",
+        "20261213:4:inventory:look",
+        "20261214:0:inventory:look",
+        "20261214:1:inventory:look",
+        "20261214:2:inventory:look",
+        "20261214:3:inventory:look",
+        "20261214:4:examine coin:look",
+        "20261214:4:inventory:look",
+        "20261215:0:inventory:look",
+        "20261215:1:inventory:look",
+        "20261215:2:inventory:look",
+        "20261215:3:inventory:look",
+        "20261215:4:examine coin:look",
+        "20261215:4:inventory:look",
+        "20261216:0:inventory:look",
+        "20261216:1:inventory:look",
+        "20261216:2:inventory:look",
+        "20261216:3:inventory:look",
+        "20261216:4:examine coin:look",
+        "20261216:4:inventory:look"
+      ],
+      "repaired_tree_sha256": "1A8C6C1C61BDCCF06D66F75A547C4FA55BAEBC8A8A4B9F5E5391AB1F352BB373",
+      "rule": "if first delta has no room text, preserve physical current room; a following look is room_same, not room_previous",
+      "source_tree_sha256": "EAF5F15797C1E0BB4C28E1FDA55828C11801B1D15D7FCBF7409E78C2A1416217"
+    }
+  },
+  "decision": {
+    "language_state_gate": "SMOKE",
+    "next_route": "formal_sg19_plan_edge_spikes",
+    "one_step_state_gate": "SMOKE",
+    "overall": "SMOKE",
+    "response_speed_gate": "SMOKE",
+    "storage_gate": "SMOKE",
+    "training_speed_gate": "SMOKE",
+    "two_step_composition_gate": "SMOKE",
+    "weighted_math_gate": "SMOKE"
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "42cdfdbc1e30b0efc7227302ca81f833aea07e3d",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      "?? experiments/e3_sg10_multichannel_delta.py",
+      "?? experiments/e3_sg11_temporal_basis.py",
+      "?? experiments/e3_sg12_spike_delay_rls.py",
+      "?? experiments/e3_sg13_suffix_spike_kernel.py",
+      "?? experiments/e3_sg14_phase_bound_kernel.py",
+      "?? experiments/e3_sg15_phase_isolated_kernel.py",
+      "?? experiments/e3_sg16_closed_loop_planner.py",
+      "?? experiments/e3_sg17_two_step_rollout.py",
+      "?? experiments/e3_sg18_affordance_weighted_krr.py",
+      "?? experiments/e3_sg19_plan_edge_spikes.py",
+      "?? experiments/e3_sg6_move_delta.py",
+      "?? experiments/e3_sg7_paired_binary_batch.py",
+      "?? experiments/e3_sg8_bilinear_closed_form.py",
+      "?? experiments/e3_sg9_atomic_event_stream.py",
+      "?? results/e3_scan/e3_sg10_multichannel_delta.json",
+      "?? results/e3_scan/e3_sg10r_fresh_game_baselines.json",
+      "?? results/e3_scan/e3_sg11_temporal_basis.json",
+      "?? results/e3_scan/e3_sg12_spike_delay_rls.json",
+      "?? results/e3_scan/e3_sg13_suffix_spike_kernel.json",
+      "?? results/e3_scan/e3_sg13r_fresh_games.json",
+      "?? results/e3_scan/e3_sg14_phase_bound_kernel.json",
+      "?? results/e3_scan/e3_sg14r_third_fresh_confirmation.json",
+      "?? results/e3_scan/e3_sg15_phase_isolated_kernel.json",
+      "?? results/e3_scan/e3_sg15r_fourth_fresh_confirmation.json",
+      "?? results/e3_scan/e3_sg16_closed_loop_planner.json",
+      "?? results/e3_scan/e3_sg16r_fifth_fresh_closed_loop_confirmation.json",
+      "?? results/e3_scan/e3_sg17_two_step_rollout.json",
+      "?? results/e3_scan/e3_sg17_two_step_rollout_invalid_terminal_label.json",
+      "?? results/e3_scan/e3_sg18_affordance_weighted_krr.json",
+      "?? results/e3_scan/e3_sg18_affordance_weighted_krr_zero_threshold.json",
+      "?? results/e3_scan/e3_sg18_exhaustive_affordance_cache.json",
+      "?? results/e3_scan/e3_sg6_move_delta.json",
+      "?? results/e3_scan/e3_sg7_paired_binary_batch.json",
+      "?? results/e3_scan/e3_sg8_bilinear_closed_form.json",
+      "?? results/e3_scan/e3_sg9_atomic_event_stream.json",
+      "?? results/e3_scan/e3_sg9r_atomic_event_stream_replication.json",
+      "?? results/e3_scan/smoke_e3_sg16_closed_loop_planner.json",
+      "?? results/e3_scan/smoke_e3_sg17_two_step_rollout.json",
+      "?? results/e3_scan/smoke_e3_sg18_affordance_weighted_krr.json",
+      "?? results/e3_scan/smoke_e3_sg19_plan_edge_spikes.json",
+      "?? results/e3_scan/textworld_sg13r_l5/",
+      "?? results/e3_scan/textworld_sg14r_l5/",
+      "?? results/e3_scan/textworld_sg15r_l5/",
+      "?? results/e3_scan/textworld_sg16r_l5/",
+      "?? tests/test_e3_sg10_multichannel_delta.py",
+      "?? tests/test_e3_sg11_temporal_basis.py",
+      "?? tests/test_e3_sg12_spike_delay_rls.py",
+      "?? tests/test_e3_sg13_suffix_spike_kernel.py",
+      "?? tests/test_e3_sg14_phase_bound_kernel.py",
+      "?? tests/test_e3_sg15_phase_isolated_kernel.py",
+      "?? tests/test_e3_sg16_closed_loop_planner.py",
+      "?? tests/test_e3_sg17_two_step_rollout.py",
+      "?? tests/test_e3_sg18_affordance_weighted_krr.py",
+      "?? tests/test_e3_sg19_plan_edge_spikes.py",
+      "?? tests/test_e3_sg6_move_delta.py",
+      "?? tests/test_e3_sg7_paired_binary_batch.py",
+      "?? tests/test_e3_sg8_bilinear_closed_form.py",
+      "?? tests/test_e3_sg9_atomic_event_stream.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "experiment": "E3-SG19 objective plan tape and visited-edge spikes",
+  "formal": false,
+  "generated_at_utc": "2026-07-19T05:58:28.888898+00:00",
+  "logical_model_storage_bytes": 40756,
+  "references": {
+    "exhaustive_cache": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg18_exhaustive_affordance_cache.json",
+      "sha256": "2E6F7462C2620163CC1F89C3F52D7EE6851C2EAE4C52BADBA5DB08287561A9AB"
+    },
+    "sg17_rollout_tree": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg17_two_step_rollout.json",
+      "sha256": "E46E5F24C3D57A40A3405D8BCFBF737A5223C151371FC235BC527DC2096CC7EF"
+    },
+    "sg18_affordance_negative": {
+      "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg18_affordance_weighted_krr.json",
+      "sha256": "86D069D6AEAC497ABBCAD64CD6E327DB8A4CB7A85C081EB3A68DC92A1CF08FE3"
+    }
+  },
+  "research_hypothesis": {
+    "epistemic_status": "mechanism repair on observed fifth games",
+    "statement": "Public objective-plan spikes and one visited-edge relation complete the discrete state needed for two-step composition.",
+    "what_if": "What if language goals are sparse future events and episodic topology needs only the last physical edge?"
+  },
+  "schema_version": 1,
+  "split_metrics": {
+    "test": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 160,
+        "macro_channel_accuracy": 1.0,
+        "mse": 0.012370067893347225,
+        "step_group_count": 40,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.9859375,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.9625,
+            "negative_recall": 0.9902912621359223,
+            "positive_recall": 0.9122807017543859
+          },
+          "go north": {
+            "accuracy": 0.96875,
+            "negative_recall": 0.946236559139785,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.9893617021276596,
+            "positive_recall": 0.9696969696969697
+          },
+          "go west": {
+            "accuracy": 0.975,
+            "negative_recall": 0.9901960784313726,
+            "positive_recall": 0.9482758620689655
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.93125,
+        "example_count": 160
+      }
+    },
+    "train": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 640,
+        "macro_channel_accuracy": 1.0,
+        "mse": 3.517570341373113e-17,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 1.0,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go north": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go south": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go west": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 1.0,
+        "example_count": 640
+      }
+    },
+    "valid": {
+      "delta": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 1.0,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 1.0,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 1.0,
+        "example_count": 160,
+        "macro_channel_accuracy": 1.0,
+        "mse": 0.013707399842858578,
+        "step_group_count": 40,
+        "step_group_exact_consistency": 1.0
+      },
+      "next_affordance": {
+        "bit_accuracy": 0.98671875,
+        "by_action": {
+          "examine coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "go east": {
+            "accuracy": 0.975,
+            "negative_recall": 1.0,
+            "positive_recall": 0.9259259259259259
+          },
+          "go north": {
+            "accuracy": 0.95625,
+            "negative_recall": 0.9333333333333333,
+            "positive_recall": 0.9857142857142858
+          },
+          "go south": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.9888888888888889,
+            "positive_recall": 0.9714285714285714
+          },
+          "go west": {
+            "accuracy": 0.98125,
+            "negative_recall": 0.9905660377358491,
+            "positive_recall": 0.9629629629629629
+          },
+          "inventory": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "look": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          },
+          "take coin": {
+            "accuracy": 1.0,
+            "negative_recall": 1.0,
+            "positive_recall": 1.0
+          }
+        },
+        "exact_mask_accuracy": 0.9375,
+        "example_count": 160
+      }
+    }
+  },
+  "two_step_rollout": {
+    "first_all_admissible": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 1.0,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 1.0,
+          "<exit_count_2>": 1.0
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 1.0,
+      "example_count": 160,
+      "macro_channel_accuracy": 1.0,
+      "missing_prediction_count": 0
+    },
+    "first_next_affordance": {
+      "bit_accuracy": 0.9859375,
+      "by_action": {
+        "examine coin": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "go east": {
+          "accuracy": 0.9625,
+          "negative_recall": 0.9902912621359223,
+          "positive_recall": 0.9122807017543859
+        },
+        "go north": {
+          "accuracy": 0.96875,
+          "negative_recall": 0.946236559139785,
+          "positive_recall": 1.0
+        },
+        "go south": {
+          "accuracy": 0.98125,
+          "negative_recall": 0.9893617021276596,
+          "positive_recall": 0.9696969696969697
+        },
+        "go west": {
+          "accuracy": 0.975,
+          "negative_recall": 0.9901960784313726,
+          "positive_recall": 0.9482758620689655
+        },
+        "inventory": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "look": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        },
+        "take coin": {
+          "accuracy": 1.0,
+          "negative_recall": 1.0,
+          "positive_recall": 1.0
+        }
+      },
+      "exact_mask_accuracy": 0.93125,
+      "example_count": 160
+    },
+    "first_routing_accuracy": 1.0,
+    "premature_stop_first_branch_count": 0,
+    "previous_room_self_error_count": 33,
+    "self_error_records_first_100": [
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261209:1:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261209:2:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261209:3:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [
+          "go west",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261209:4:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [
+          "go west",
+          "go south",
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go west",
+          "go south",
+          "go west"
+        ]
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261210:1:go west:go east",
+        "return_edge": 1,
+        "second_action": "go east",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261210:2:go west:go east",
+        "return_edge": 1,
+        "second_action": "go east",
+        "self_context": [
+          "go east"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261210:3:go west:go east",
+        "return_edge": 1,
+        "second_action": "go east",
+        "self_context": [
+          "go east",
+          "go east"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go east",
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go south",
+        "last_move": "go south",
+        "pair_id": "20261210:4:go south:go north",
+        "return_edge": 1,
+        "second_action": "go north",
+        "self_context": [
+          "go east",
+          "go east",
+          "go east"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go east",
+          "go east",
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261211:1:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go south",
+        "last_move": "go south",
+        "pair_id": "20261211:2:go south:go north",
+        "return_edge": 1,
+        "second_action": "go north",
+        "self_context": [
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west"
+        ]
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261211:3:go west:go south",
+        "return_edge": 0,
+        "second_action": "go south",
+        "self_context": [
+          "go west",
+          "go north"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west",
+          "go north"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261211:4:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go west",
+          "go north",
+          "go east"
+        ],
+        "self_prediction": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go west",
+          "go north",
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261211:4:go north:go west",
+        "return_edge": 0,
+        "second_action": "go west",
+        "self_context": [
+          "go west",
+          "go north",
+          "go east"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go west",
+          "go north",
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261212:1:go west:go east",
+        "return_edge": 1,
+        "second_action": "go east",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261212:2:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go east"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261212:3:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [
+          "go east",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go east",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261212:4:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go east",
+          "go south",
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go east",
+          "go south",
+          "go west"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261213:1:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261213:2:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261213:3:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [
+          "go south",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go south",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261213:4:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [
+          "go south",
+          "go south",
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go south",
+          "go south",
+          "go west"
+        ]
+      },
+      {
+        "first_action": "go south",
+        "last_move": "go south",
+        "pair_id": "20261214:1:go south:go north",
+        "return_edge": 1,
+        "second_action": "go north",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go east",
+        "last_move": "go east",
+        "pair_id": "20261214:2:go east:go west",
+        "return_edge": 1,
+        "second_action": "go west",
+        "self_context": [
+          "go north"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go north"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261214:3:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go north",
+          "go west"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go north",
+          "go west"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261214:4:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go north",
+          "go west",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go north",
+          "go west",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261215:1:go west:go east",
+        "return_edge": 1,
+        "second_action": "go east",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261215:2:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go east"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go east"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261215:3:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go east",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go east",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261215:4:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go east",
+          "go south",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go east",
+          "go south",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261216:1:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": []
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261216:2:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go north",
+        "last_move": "go north",
+        "pair_id": "20261216:3:go north:go south",
+        "return_edge": 1,
+        "second_action": "go south",
+        "self_context": [
+          "go south",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          2
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          2
+        ],
+        "true_context": [
+          "go south",
+          "go south"
+        ]
+      },
+      {
+        "first_action": "go west",
+        "last_move": "go west",
+        "pair_id": "20261216:4:go west:go east",
+        "return_edge": 1,
+        "second_action": "go east",
+        "self_context": [
+          "go south",
+          "go south",
+          "go south"
+        ],
+        "self_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "target_indices": [
+          2,
+          0,
+          0,
+          1
+        ],
+        "teacher_prediction": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "true_context": [
+          "go south",
+          "go south",
+          "go south"
+        ]
+      }
+    ],
+    "self_minus_teacher_exact": 0.0,
+    "self_pair_timing": {
+      "max_ms": 4.037713,
+      "mean_ms": 0.2849776022727273,
+      "min_ms": 0.21030900000000002,
+      "p50_ms": 0.249408,
+      "p95_ms": 0.34810325,
+      "p99_ms": 0.57898385,
+      "sample_count": 616
+    },
+    "self_rollout_second": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9967532467532467,
+        "reward": 1.0,
+        "room_relation": 0.948051948051948
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.9951923076923077,
+          "<exit_count_2>": 0.9973404255319149
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 0.8,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9464285714285714,
+      "example_count": 616,
+      "macro_channel_accuracy": 0.9862012987012987,
+      "missing_prediction_count": 0
+    },
+    "teacher_forced_second": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9967532467532467,
+        "reward": 1.0,
+        "room_relation": 0.948051948051948
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.9951923076923077,
+          "<exit_count_2>": 0.9973404255319149
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 0.8,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9464285714285714,
+      "example_count": 616,
+      "macro_channel_accuracy": 0.9862012987012987,
+      "missing_prediction_count": 0
+    },
+    "teacher_pair_timing": {
+      "max_ms": 4.094741,
+      "mean_ms": 0.28367092207792205,
+      "min_ms": 0.209728,
+      "p50_ms": 0.2490725,
+      "p95_ms": 0.34911274999999997,
+      "p99_ms": 0.5601098500000027,
+      "sample_count": 616
+    }
+  },
+  "weighted_unique_fit": {
+    "ambiguous_unique_key_count": 0,
+    "compression_ratio": 0.6921875,
+    "deployment_training_wall_seconds": 0.124212179,
+    "expanded_equivalence_audit_seconds_excluded": 0.023653349,
+    "expanded_example_count": 640,
+    "expanded_prediction_equivalent": true,
+    "expanded_train_score_max_abs_difference": 2.220446049250313e-15,
+    "kernel": "affordance_phase_suffix_times_return_edge_and_objective_plan_tape",
+    "mask_decision_threshold": 1e-06,
+    "ridge_lambda": 1e-06,
+    "single_pass_aggregation_seconds": 0.031977357,
+    "unique_kernel_seconds": 0.016728242,
+    "unique_prototype_count": 443,
+    "weighted_cholesky_solve_seconds": 0.019091796
+  }
+}

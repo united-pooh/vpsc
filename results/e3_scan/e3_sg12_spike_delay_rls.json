@@ -1,0 +1,2415 @@
+{
+  "cached_stream_replications": [
+    {
+      "active_feature_count": {
+        "max": 8,
+        "mean": 5.6,
+        "min": 2
+      },
+      "candidate_timing": {
+        "count": 7680,
+        "mean_ms": 0.03739587786458333,
+        "p50_ms": 0.03198,
+        "p95_ms": 0.06622354999999988,
+        "p99_ms": 0.09574290000000002,
+        "tokens_per_second_at_p50": 31269.543464665414
+      },
+      "candidate_timing_sample_count": 7680,
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9333333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.9,
+          "<exit_count_2>": 0.9444444444444444
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "delay_order": 3,
+      "dense_readout_multiply_adds": 2475,
+      "exact_vector_accuracy": 0.9333333333333333,
+      "example_count": 60,
+      "feature_dimension": 225,
+      "macro_channel_accuracy": 0.9833333333333334,
+      "max_full_score_abs_difference": 0.0,
+      "mode": "persistent_sparse_spike_delay_line",
+      "state_bytes_max": 24,
+      "state_dtype": "bool",
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.8,
+      "timing_replication": 0
+    },
+    {
+      "active_feature_count": {
+        "max": 8,
+        "mean": 5.6,
+        "min": 2
+      },
+      "candidate_timing": {
+        "count": 7680,
+        "mean_ms": 0.03728032903645833,
+        "p50_ms": 0.032011,
+        "p95_ms": 0.06599244999999991,
+        "p99_ms": 0.09198318999999999,
+        "tokens_per_second_at_p50": 31239.26150385805
+      },
+      "candidate_timing_sample_count": 7680,
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9333333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.9,
+          "<exit_count_2>": 0.9444444444444444
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "delay_order": 3,
+      "dense_readout_multiply_adds": 2475,
+      "exact_vector_accuracy": 0.9333333333333333,
+      "example_count": 60,
+      "feature_dimension": 225,
+      "macro_channel_accuracy": 0.9833333333333334,
+      "max_full_score_abs_difference": 0.0,
+      "mode": "persistent_sparse_spike_delay_line",
+      "state_bytes_max": 24,
+      "state_dtype": "bool",
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.8,
+      "timing_replication": 1
+    },
+    {
+      "active_feature_count": {
+        "max": 8,
+        "mean": 5.6,
+        "min": 2
+      },
+      "candidate_timing": {
+        "count": 7680,
+        "mean_ms": 0.03611513489583333,
+        "p50_ms": 0.03161,
+        "p95_ms": 0.06203954999999997,
+        "p99_ms": 0.08426620000000001,
+        "tokens_per_second_at_p50": 31635.55836760519
+      },
+      "candidate_timing_sample_count": 7680,
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9333333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.9,
+          "<exit_count_2>": 0.9444444444444444
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "delay_order": 3,
+      "dense_readout_multiply_adds": 2475,
+      "exact_vector_accuracy": 0.9333333333333333,
+      "example_count": 60,
+      "feature_dimension": 225,
+      "macro_channel_accuracy": 0.9833333333333334,
+      "max_full_score_abs_difference": 0.0,
+      "mode": "persistent_sparse_spike_delay_line",
+      "state_bytes_max": 24,
+      "state_dtype": "bool",
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.8,
+      "timing_replication": 2
+    }
+  ],
+  "configuration": {
+    "batch_groups": 16,
+    "block_examples": 48,
+    "blocks_per_rls_pass": 10,
+    "corpus_dir": "/mnt/d/projects/vpsc/results/e3_scan/textworld_sg2_l5",
+    "deployment_readout_dtype": "float32",
+    "orders": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "primary_order": 3,
+    "ridge_lambdas": [
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "schedule_seeds": [
+      0,
+      1,
+      2
+    ],
+    "threads": 4,
+    "timing_repeats_per_candidate": 128,
+    "timing_warmup_repeats_per_candidate": 16,
+    "training_dtype": "float64"
+  },
+  "dataset": {
+    "audit": {
+      "passed": true,
+      "sg10_multichannel": {
+        "channels": {
+          "done": [
+            "<continue>",
+            "<done>"
+          ],
+          "move_exit_count_after": [
+            "<exit_count_0>",
+            "<exit_count_1>",
+            "<exit_count_2>"
+          ],
+          "reward": [
+            "<reward_zero>",
+            "<reward_positive>"
+          ],
+          "room_relation": [
+            "<room_no_observation>",
+            "<room_novel>",
+            "<room_previous>",
+            "<room_same>"
+          ]
+        },
+        "expected_counts": {
+          "test": 60,
+          "train": 480,
+          "valid": 60
+        },
+        "expected_groups": {
+          "test": 20,
+          "train": 160,
+          "valid": 20
+        },
+        "heldout_full_input_coverage": {
+          "test": {
+            "covered": 52,
+            "total": 60
+          },
+          "valid": {
+            "covered": 38,
+            "total": 60
+          }
+        },
+        "label_sources": {
+          "done": "recorded transition done",
+          "move_exit_count_after": "counterfactual admissible_actions_after or next factual step",
+          "reward": "recorded transition reward",
+          "room_relation": "normalized next_obs room vs current/prior rooms"
+        },
+        "passed": true,
+        "splits": {
+          "test": {
+            "ambiguous_input_count": 0,
+            "channel_label_counts": {
+              "done": {
+                "<continue>": 56,
+                "<done>": 4
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 4,
+                "<exit_count_1>": 20,
+                "<exit_count_2>": 36
+              },
+              "reward": {
+                "<reward_positive>": 4,
+                "<reward_zero>": 56
+              },
+              "room_relation": {
+                "<room_no_observation>": 24,
+                "<room_novel>": 16,
+                "<room_previous>": 16,
+                "<room_same>": 4
+              }
+            },
+            "exact_vector_count": 8,
+            "exact_vector_majority_accuracy": 0.2,
+            "example_count": 60,
+            "game_count": 4,
+            "groups_valid": true,
+            "length_group_counts": {
+              "2": 4,
+              "3": 4,
+              "4": 4,
+              "5": 4,
+              "6": 4
+            },
+            "passed": true,
+            "prompt_length": {
+              "max": 6,
+              "mean": 4.0,
+              "min": 2,
+              "p50": 4.0,
+              "p95": 6.0
+            },
+            "prompt_unknown_count": 0,
+            "step_group_count": 20
+          },
+          "train": {
+            "ambiguous_input_count": 0,
+            "channel_label_counts": {
+              "done": {
+                "<continue>": 448,
+                "<done>": 32
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 32,
+                "<exit_count_1>": 160,
+                "<exit_count_2>": 288
+              },
+              "reward": {
+                "<reward_positive>": 32,
+                "<reward_zero>": 448
+              },
+              "room_relation": {
+                "<room_no_observation>": 192,
+                "<room_novel>": 128,
+                "<room_previous>": 128,
+                "<room_same>": 32
+              }
+            },
+            "exact_vector_count": 8,
+            "exact_vector_majority_accuracy": 0.2,
+            "example_count": 480,
+            "game_count": 32,
+            "groups_valid": true,
+            "length_group_counts": {
+              "2": 32,
+              "3": 32,
+              "4": 32,
+              "5": 32,
+              "6": 32
+            },
+            "passed": true,
+            "prompt_length": {
+              "max": 6,
+              "mean": 4.0,
+              "min": 2,
+              "p50": 4.0,
+              "p95": 6.0
+            },
+            "prompt_unknown_count": 0,
+            "step_group_count": 160
+          },
+          "valid": {
+            "ambiguous_input_count": 0,
+            "channel_label_counts": {
+              "done": {
+                "<continue>": 56,
+                "<done>": 4
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 4,
+                "<exit_count_1>": 20,
+                "<exit_count_2>": 36
+              },
+              "reward": {
+                "<reward_positive>": 4,
+                "<reward_zero>": 56
+              },
+              "room_relation": {
+                "<room_no_observation>": 24,
+                "<room_novel>": 16,
+                "<room_previous>": 16,
+                "<room_same>": 4
+              }
+            },
+            "exact_vector_count": 8,
+            "exact_vector_majority_accuracy": 0.2,
+            "example_count": 60,
+            "game_count": 4,
+            "groups_valid": true,
+            "length_group_counts": {
+              "2": 4,
+              "3": 4,
+              "4": 4,
+              "5": 4,
+              "6": 4
+            },
+            "passed": true,
+            "prompt_length": {
+              "max": 6,
+              "mean": 4.0,
+              "min": 2,
+              "p50": 4.0,
+              "p95": 6.0
+            },
+            "prompt_unknown_count": 0,
+            "step_group_count": 20
+          }
+        },
+        "task": "multichannel action-conditioned real TextWorld event delta"
+      },
+      "spike_delay_line": {
+        "action_alphabet": [
+          "<event_examine_coin>",
+          "<event_go_east>",
+          "<event_go_north>",
+          "<event_go_south>",
+          "<event_go_west>",
+          "<event_inventory>",
+          "<event_look>",
+          "<event_take_coin>"
+        ],
+        "action_alphabet_size": 8,
+        "conditional_history": {
+          "1": {
+            "splits": {
+              "test": {
+                "covered_examples": 60,
+                "covered_majority_accuracy": 0.8833333333333333,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 0.8708333333333333,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 60,
+                "covered_majority_accuracy": 0.85,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 15,
+            "train_examples_in_ambiguous_keys": 217,
+            "train_key_count": 34
+          },
+          "2": {
+            "splits": {
+              "test": {
+                "covered_examples": 59,
+                "covered_majority_accuracy": 0.9491525423728814,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 0.9645833333333333,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 54,
+                "covered_majority_accuracy": 0.9259259259259259,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 12,
+            "train_examples_in_ambiguous_keys": 41,
+            "train_key_count": 101
+          },
+          "3": {
+            "splits": {
+              "test": {
+                "covered_examples": 55,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 42,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 0,
+            "train_examples_in_ambiguous_keys": 0,
+            "train_key_count": 189
+          },
+          "4": {
+            "splits": {
+              "test": {
+                "covered_examples": 52,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              },
+              "train": {
+                "covered_examples": 480,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 480
+              },
+              "valid": {
+                "covered_examples": 38,
+                "covered_majority_accuracy": 1.0,
+                "total_examples": 60
+              }
+            },
+            "train_ambiguous_key_count": 0,
+            "train_examples_in_ambiguous_keys": 0,
+            "train_key_count": 228
+          }
+        },
+        "heldout_unknown_action_events": {
+          "test": [],
+          "train": [],
+          "valid": []
+        },
+        "independent_confirmation_required": true,
+        "passed": true,
+        "primary_order": 3,
+        "test_labels_already_observed_during_mechanism_design": true
+      }
+    },
+    "synthetic": false,
+    "vocabulary_fingerprint": "9d31551deae8300719634f1fc584b6ec508348c74b94efd3c456eb2096f1f749"
+  },
+  "decision": {
+    "cached_stream_gate": "FAIL",
+    "data_gate": "PASS",
+    "independent_confirmation_required": true,
+    "mechanism_comparisons": {
+      "1": {
+        "control_exact": 0.8833333333333333,
+        "passed": true,
+        "primary_minus_control": 0.050000000000000044
+      },
+      "2": {
+        "control_exact": 0.9166666666666666,
+        "passed": true,
+        "primary_minus_control": 0.01666666666666672
+      }
+    },
+    "mechanism_gate": "PASS",
+    "next_route": "sg13_hierarchical_suffix_spike_kernel",
+    "overall": "FAIL",
+    "per_replication_stream_comparison": [
+      {
+        "passed": true,
+        "quality_equivalent": true,
+        "snn_p50_ms": 0.03198,
+        "snn_p95_ms": 0.06622354999999988,
+        "timing_replication": 0,
+        "transformer_p50_ms": 0.3001195,
+        "transformer_p95_ms": 0.5383575499999999
+      },
+      {
+        "passed": true,
+        "quality_equivalent": true,
+        "snn_p50_ms": 0.032011,
+        "snn_p95_ms": 0.06599244999999991,
+        "timing_replication": 1,
+        "transformer_p50_ms": 0.294489,
+        "transformer_p95_ms": 0.5241264999999999
+      },
+      {
+        "passed": true,
+        "quality_equivalent": true,
+        "snn_p50_ms": 0.03161,
+        "snn_p95_ms": 0.06203954999999997,
+        "timing_replication": 2,
+        "transformer_p50_ms": 0.30004,
+        "transformer_p95_ms": 0.530286
+      }
+    ],
+    "primary_order": 3,
+    "primary_quality_gate": "FAIL",
+    "primary_test_metrics": {
+      "channel_accuracy": {
+        "done": 1.0,
+        "move_exit_count_after": 0.9333333333333333,
+        "reward": 1.0,
+        "room_relation": 1.0
+      },
+      "class_recall": {
+        "done": {
+          "<continue>": 1.0,
+          "<done>": 1.0
+        },
+        "move_exit_count_after": {
+          "<exit_count_0>": 1.0,
+          "<exit_count_1>": 0.9,
+          "<exit_count_2>": 0.9444444444444444
+        },
+        "reward": {
+          "<reward_positive>": 1.0,
+          "<reward_zero>": 1.0
+        },
+        "room_relation": {
+          "<room_no_observation>": 1.0,
+          "<room_novel>": 1.0,
+          "<room_previous>": 1.0,
+          "<room_same>": 1.0
+        }
+      },
+      "exact_vector_accuracy": 0.9333333333333333,
+      "example_count": 60,
+      "macro_channel_accuracy": 0.9833333333333334,
+      "mse": 0.038911360032818844,
+      "step_group_count": 20,
+      "step_group_exact_consistency": 0.8
+    },
+    "rls_end_to_end_training_wall_seconds": [
+      0.049047058000000004,
+      0.042089001,
+      0.043802398000000006
+    ],
+    "rls_equivalence_gate": "PASS",
+    "training_speed_gate": "PASS",
+    "transformer_training_wall_seconds": [
+      1.129604574,
+      1.069304309,
+      1.06895903
+    ]
+  },
+  "environment": {
+    "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "42cdfdbc1e30b0efc7227302ca81f833aea07e3d",
+    "git_executable": "git.exe",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      "?? experiments/e3_sg10_multichannel_delta.py",
+      "?? experiments/e3_sg11_temporal_basis.py",
+      "?? experiments/e3_sg12_spike_delay_rls.py",
+      "?? experiments/e3_sg6_move_delta.py",
+      "?? experiments/e3_sg7_paired_binary_batch.py",
+      "?? experiments/e3_sg8_bilinear_closed_form.py",
+      "?? experiments/e3_sg9_atomic_event_stream.py",
+      "?? results/e3_scan/e3_sg10_multichannel_delta.json",
+      "?? results/e3_scan/e3_sg11_temporal_basis.json",
+      "?? results/e3_scan/e3_sg12_spike_delay_rls.json",
+      "?? results/e3_scan/e3_sg6_move_delta.json",
+      "?? results/e3_scan/e3_sg7_paired_binary_batch.json",
+      "?? results/e3_scan/e3_sg8_bilinear_closed_form.json",
+      "?? results/e3_scan/e3_sg9_atomic_event_stream.json",
+      "?? results/e3_scan/e3_sg9r_atomic_event_stream_replication.json",
+      "?? tests/test_e3_sg10_multichannel_delta.py",
+      "?? tests/test_e3_sg11_temporal_basis.py",
+      "?? tests/test_e3_sg12_spike_delay_rls.py",
+      "?? tests/test_e3_sg6_move_delta.py",
+      "?? tests/test_e3_sg7_paired_binary_batch.py",
+      "?? tests/test_e3_sg8_bilinear_closed_form.py",
+      "?? tests/test_e3_sg9_atomic_event_stream.py"
+    ],
+    "logical_cpu_count": 32,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.13.0+cpu",
+    "torch_interop_threads": 32
+  },
+  "experiment": "E3-SG12 sparse spike delay-line with block RLS",
+  "formal": true,
+  "generated_at_utc": "2026-07-19T03:43:39.899243+00:00",
+  "order_results": {
+    "1": {
+      "active_feature_count": {
+        "test": {
+          "max": 4,
+          "mean": 3.6,
+          "min": 2
+        },
+        "train": {
+          "max": 4,
+          "mean": 3.6,
+          "min": 2
+        },
+        "valid": {
+          "max": 4,
+          "mean": 3.6,
+          "min": 2
+        }
+      },
+      "delay_order": 1,
+      "delay_state_bits": 8,
+      "feature_dimension": 81,
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "max_compiled_raw_score_difference": 5.551115123125783e-16,
+      "output_dimension": 11,
+      "readout_parameter_count": 891,
+      "selected_lambda": 1.0,
+      "selection_rule": "max valid exact, max valid macro, min MSE, min lambda",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8833333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 1.0
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8833333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9708333333333333,
+        "mse": 0.06205709336135444,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.65
+      },
+      "timing": {
+        "feature_extraction_seconds": {
+          "test": 0.003922355,
+          "train": 0.080599375,
+          "valid": 0.00427841
+        },
+        "lambda_grid_primal_solve_seconds": 0.032980583,
+        "selection_training_wall_seconds": 0.11785836799999999
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8708333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.625,
+            "<exit_count_2>": 0.9930555555555556
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8708333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9677083333333334,
+        "mse": 0.06453823480257904,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.625
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.85,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.6,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.85,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9625,
+        "mse": 0.08992852640280774,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.55
+      },
+      "validation_candidates": [
+        {
+          "lambda": 1e-06,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.08996281957059606,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.55
+          }
+        },
+        {
+          "lambda": 0.0001,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.08996281444665623,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.55
+          }
+        },
+        {
+          "lambda": 0.01,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.08996230383724986,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.55
+          }
+        },
+        {
+          "lambda": 1.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.08992852640280774,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.55
+          }
+        },
+        {
+          "lambda": 100.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.12399700262057997,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.55
+          }
+        }
+      ]
+    },
+    "2": {
+      "active_feature_count": {
+        "test": {
+          "max": 6,
+          "mean": 4.8,
+          "min": 2
+        },
+        "train": {
+          "max": 6,
+          "mean": 4.8,
+          "min": 2
+        },
+        "valid": {
+          "max": 6,
+          "mean": 4.8,
+          "min": 2
+        }
+      },
+      "delay_order": 2,
+      "delay_state_bits": 16,
+      "feature_dimension": 153,
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "max_compiled_raw_score_difference": 1.1102230246251565e-15,
+      "output_dimension": 11,
+      "readout_parameter_count": 1683,
+      "selected_lambda": 1.0,
+      "selection_rule": "max valid exact, max valid macro, min MSE, min lambda",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9166666666666666,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.8,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9166666666666666,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9791666666666666,
+        "mse": 0.054435138882127844,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.75
+      },
+      "timing": {
+        "feature_extraction_seconds": {
+          "test": 0.003096738,
+          "train": 0.028574054,
+          "valid": 0.003210784
+        },
+        "lambda_grid_primal_solve_seconds": 0.008252212,
+        "selection_training_wall_seconds": 0.040037050000000005
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8875,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.75,
+            "<exit_count_2>": 0.9513888888888888
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8875,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.971875,
+        "mse": 0.054055510926109454,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.7
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8666666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8666666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9666666666666667,
+        "mse": 0.08726230480985053,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.6
+      },
+      "validation_candidates": [
+        {
+          "lambda": 1e-06,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8666666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8666666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9666666666666667,
+            "mse": 0.08746825670547964,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.6
+          }
+        },
+        {
+          "lambda": 0.0001,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8666666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8666666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9666666666666667,
+            "mse": 0.08746823344629383,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.6
+          }
+        },
+        {
+          "lambda": 0.01,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8666666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8666666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9666666666666667,
+            "mse": 0.08746591050994595,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.6
+          }
+        },
+        {
+          "lambda": 1.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8666666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8666666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9666666666666667,
+            "mse": 0.08726230480985053,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.6
+          }
+        },
+        {
+          "lambda": 100.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.11914923442740175,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.6
+          }
+        }
+      ]
+    },
+    "3": {
+      "active_feature_count": {
+        "test": {
+          "max": 8,
+          "mean": 5.6,
+          "min": 2
+        },
+        "train": {
+          "max": 8,
+          "mean": 5.6,
+          "min": 2
+        },
+        "valid": {
+          "max": 8,
+          "mean": 5.6,
+          "min": 2
+        }
+      },
+      "delay_order": 3,
+      "delay_state_bits": 24,
+      "feature_dimension": 225,
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "max_compiled_raw_score_difference": 1.3322676295501878e-15,
+      "output_dimension": 11,
+      "readout_parameter_count": 2475,
+      "selected_lambda": 1.0,
+      "selection_rule": "max valid exact, max valid macro, min MSE, min lambda",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.9,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.038911360032818844,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      },
+      "timing": {
+        "feature_extraction_seconds": {
+          "test": 0.00344017,
+          "train": 0.027312049,
+          "valid": 0.004170696
+        },
+        "lambda_grid_primal_solve_seconds": 0.007203392,
+        "selection_training_wall_seconds": 0.038686137
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9083333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.8375,
+            "<exit_count_2>": 0.9375
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9083333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9770833333333333,
+        "mse": 0.043875865587848235,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.7875
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8166666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 0.8888888888888888
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8166666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9541666666666666,
+        "mse": 0.0747420123937426,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.5
+      },
+      "validation_candidates": [
+        {
+          "lambda": 1e-06,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8166666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.8888888888888888
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8166666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9541666666666666,
+            "mse": 0.0751186903566479,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.5
+          }
+        },
+        {
+          "lambda": 0.0001,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8166666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.8888888888888888
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8166666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9541666666666666,
+            "mse": 0.07511864949545656,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.5
+          }
+        },
+        {
+          "lambda": 0.01,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8166666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.8888888888888888
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8166666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9541666666666666,
+            "mse": 0.07511456708246989,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.5
+          }
+        },
+        {
+          "lambda": 1.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8166666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.65,
+                "<exit_count_2>": 0.8888888888888888
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8166666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9541666666666666,
+            "mse": 0.0747420123937426,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.5
+          }
+        },
+        {
+          "lambda": 100.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.8166666666666667,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9166666666666666
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.8166666666666667,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9541666666666666,
+            "mse": 0.10511321317122728,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.55
+          }
+        }
+      ]
+    },
+    "4": {
+      "active_feature_count": {
+        "test": {
+          "max": 10,
+          "mean": 6.0,
+          "min": 2
+        },
+        "train": {
+          "max": 10,
+          "mean": 6.0,
+          "min": 2
+        },
+        "valid": {
+          "max": 10,
+          "mean": 6.0,
+          "min": 2
+        }
+      },
+      "delay_order": 4,
+      "delay_state_bits": 32,
+      "feature_dimension": 297,
+      "lambda_candidates": [
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "max_compiled_raw_score_difference": 1.4432899320127035e-15,
+      "output_dimension": 11,
+      "readout_parameter_count": 3267,
+      "selected_lambda": 1.0,
+      "selection_rule": "max valid exact, max valid macro, min MSE, min lambda",
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9666666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.95,
+            "<exit_count_2>": 0.9722222222222222
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9666666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9916666666666667,
+        "mse": 0.02769435123776369,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.9
+      },
+      "timing": {
+        "feature_extraction_seconds": {
+          "test": 0.003063414,
+          "train": 0.026107302,
+          "valid": 0.003425171
+        },
+        "lambda_grid_primal_solve_seconds": 0.012082843,
+        "selection_training_wall_seconds": 0.041615316
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.94375,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.91875,
+            "<exit_count_2>": 0.9513888888888888
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.94375,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9859375,
+        "mse": 0.03769118691177063,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.86875
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9166666666666666,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.85,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9166666666666666,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9791666666666666,
+        "mse": 0.0643566247999669,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      },
+      "validation_candidates": [
+        {
+          "lambda": 1e-06,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9166666666666666,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.85,
+                "<exit_count_2>": 0.9444444444444444
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9166666666666666,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9791666666666666,
+            "mse": 0.06484126955112308,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.8
+          }
+        },
+        {
+          "lambda": 0.0001,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9166666666666666,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.85,
+                "<exit_count_2>": 0.9444444444444444
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9166666666666666,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9791666666666666,
+            "mse": 0.06484121721652325,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.8
+          }
+        },
+        {
+          "lambda": 0.01,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9166666666666666,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.85,
+                "<exit_count_2>": 0.9444444444444444
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9166666666666666,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9791666666666666,
+            "mse": 0.06483598827552044,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.8
+          }
+        },
+        {
+          "lambda": 1.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.9166666666666666,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.85,
+                "<exit_count_2>": 0.9444444444444444
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.9166666666666666,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9791666666666666,
+            "mse": 0.0643566247999669,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.8
+          }
+        },
+        {
+          "lambda": 100.0,
+          "valid": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 0.85,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 0.6,
+                "<exit_count_2>": 0.9722222222222222
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 0.85,
+            "example_count": 60,
+            "macro_channel_accuracy": 0.9625,
+            "mse": 0.0974139292595399,
+            "step_group_count": 20,
+            "step_group_exact_consistency": 0.6
+          }
+        }
+      ]
+    }
+  },
+  "reference": {
+    "best_ann_exact_vector_accuracy": 1.0,
+    "experiment": "E3-SG10 multichannel TextWorld event delta",
+    "path": "/mnt/d/projects/vpsc/results/e3_scan/e3_sg10_multichannel_delta.json",
+    "qualified_ann": "transformer",
+    "sha256": "56BD001A17AD7093F4B3A37329B9B2083AD127F848072F5881148C941C02A77F"
+  },
+  "research_hypothesis": {
+    "epistemic_status": "mechanism experiment; original test already observed",
+    "statement": "A fixed three-event binary spike delay-line is the minimal sufficient action state for SG10 and supports exact one-pass RLS.",
+    "what_if": "What if sparse causal events should be preserved exactly for a short horizon instead of approximated by decaying traces?"
+  },
+  "rls_replications": [
+    {
+      "algorithm": "block recursive least squares via Woodbury identity",
+      "covariance_symmetry_max_abs_error": 0.0,
+      "max_score_abs_difference_from_batch": 2.2737367544323206e-13,
+      "max_weight_abs_difference_from_batch": 1.0771522562791347e-12,
+      "prediction_equivalent_to_batch": true,
+      "schedule_seed": 0,
+      "selected_lambda": 1.0,
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.9,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.03891136003281939,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      },
+      "timing": {
+        "block_timing": {
+          "count": 10,
+          "mean_ms": 0.5155615,
+          "p50_ms": 0.4498085,
+          "p95_ms": 0.9347103499999994,
+          "tokens_per_second_at_p50": 2223.168303844858
+        },
+        "block_updates": 10,
+        "elapsed_seconds": 0.010360921,
+        "examples_seen": 480,
+        "residual_mse_first": 1.0,
+        "residual_mse_last": 0.3272713017172552
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9083333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.8375,
+            "<exit_count_2>": 0.9375
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9083333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9770833333333333,
+        "mse": 0.043875865587848166,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.7875
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8166666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 0.8888888888888888
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8166666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9541666666666666,
+        "mse": 0.07474201239374313,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.5
+      }
+    },
+    {
+      "algorithm": "block recursive least squares via Woodbury identity",
+      "covariance_symmetry_max_abs_error": 0.0,
+      "max_score_abs_difference_from_batch": 1.9950707752514063e-13,
+      "max_weight_abs_difference_from_batch": 1.0771938896425581e-12,
+      "prediction_equivalent_to_batch": true,
+      "schedule_seed": 1,
+      "selected_lambda": 1.0,
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.9,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.03891136003281823,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      },
+      "timing": {
+        "block_timing": {
+          "count": 10,
+          "mean_ms": 0.290945,
+          "p50_ms": 0.27043300000000003,
+          "p95_ms": 0.39348789999999995,
+          "tokens_per_second_at_p50": 3697.7735705331816
+        },
+        "block_updates": 10,
+        "elapsed_seconds": 0.003402864,
+        "examples_seen": 480,
+        "residual_mse_first": 1.0,
+        "residual_mse_last": 0.03969761382121044
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9083333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.8375,
+            "<exit_count_2>": 0.9375
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9083333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9770833333333333,
+        "mse": 0.043875865587848166,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.7875
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8166666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 0.8888888888888888
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8166666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9541666666666666,
+        "mse": 0.07474201239374109,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.5
+      }
+    },
+    {
+      "algorithm": "block recursive least squares via Woodbury identity",
+      "covariance_symmetry_max_abs_error": 0.0,
+      "max_score_abs_difference_from_batch": 1.9911849946652183e-13,
+      "max_weight_abs_difference_from_batch": 1.0771383784913269e-12,
+      "prediction_equivalent_to_batch": true,
+      "schedule_seed": 2,
+      "selected_lambda": 1.0,
+      "test": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9333333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.9,
+            "<exit_count_2>": 0.9444444444444444
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9333333333333333,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9833333333333334,
+        "mse": 0.038911360032819794,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.8
+      },
+      "timing": {
+        "block_timing": {
+          "count": 10,
+          "mean_ms": 0.4417083,
+          "p50_ms": 0.4350455,
+          "p95_ms": 0.54767395,
+          "tokens_per_second_at_p50": 2298.6101453755987
+        },
+        "block_updates": 10,
+        "elapsed_seconds": 0.005116261,
+        "examples_seen": 480,
+        "residual_mse_first": 1.0,
+        "residual_mse_last": 0.31321294346402373
+      },
+      "train": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.9083333333333333,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.8375,
+            "<exit_count_2>": 0.9375
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.9083333333333333,
+        "example_count": 480,
+        "macro_channel_accuracy": 0.9770833333333333,
+        "mse": 0.043875865587848166,
+        "step_group_count": 160,
+        "step_group_exact_consistency": 0.7875
+      },
+      "valid": {
+        "channel_accuracy": {
+          "done": 1.0,
+          "move_exit_count_after": 0.8166666666666667,
+          "reward": 1.0,
+          "room_relation": 1.0
+        },
+        "class_recall": {
+          "done": {
+            "<continue>": 1.0,
+            "<done>": 1.0
+          },
+          "move_exit_count_after": {
+            "<exit_count_0>": 1.0,
+            "<exit_count_1>": 0.65,
+            "<exit_count_2>": 0.8888888888888888
+          },
+          "reward": {
+            "<reward_positive>": 1.0,
+            "<reward_zero>": 1.0
+          },
+          "room_relation": {
+            "<room_no_observation>": 1.0,
+            "<room_novel>": 1.0,
+            "<room_previous>": 1.0,
+            "<room_same>": 1.0
+          }
+        },
+        "exact_vector_accuracy": 0.8166666666666667,
+        "example_count": 60,
+        "macro_channel_accuracy": 0.9541666666666666,
+        "mse": 0.07474201239374303,
+        "step_group_count": 20,
+        "step_group_exact_consistency": 0.5
+      }
+    }
+  ],
+  "schema_version": 1
+}

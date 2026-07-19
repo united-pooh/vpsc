@@ -1,0 +1,1051 @@
+{
+  "decision": {
+    "backend_gate": true,
+    "backward_error_gate": true,
+    "cuda_speed_gate": false,
+    "engineering_substrate": "FAIL",
+    "legacy_cpu_trajectory_gate": false,
+    "next_route": "sg23d_phase_block_failure_diagnostic",
+    "overall": "FAIL",
+    "provenance_gate": true,
+    "real_quality_gate": true,
+    "scale_memory_gate": true,
+    "structure_gate": true
+  },
+  "environment": {
+    "cpu_threads": 16,
+    "cuda_available": true,
+    "cuda_build": "12.1",
+    "cuda_capability": [
+      7,
+      0
+    ],
+    "cuda_device": "Tesla V100-PCIE-32GB",
+    "cuda_device_count": 1,
+    "cuda_total_memory_bytes": 34079899648,
+    "cudnn": 8902,
+    "git_commit": "551bacc52920ae31ea37dc8b204e59cbcf255a5b",
+    "hostname": "autodl-container-138c41aa1e-c36b1974",
+    "nvidia_driver": "535.54.03",
+    "pid": 24177,
+    "platform": "Linux-5.4.0-149-generic-x86_64-with-glibc2.35",
+    "python": "3.12.3",
+    "torch": "2.3.0+cu121"
+  },
+  "experiment": "E3-SG23D exact phase blocks and CUDA independent solves",
+  "protocol": {
+    "backward_error_tolerance": 1e-12,
+    "dtype": "torch.float64",
+    "group_key": "phase",
+    "lambda": 1e-06,
+    "legacy_score_tolerance": 1e-06,
+    "repetitions": 7,
+    "stress_sizes": [
+      1024,
+      2048,
+      4096
+    ],
+    "threads": 16,
+    "warmups": 2
+  },
+  "real_443": {
+    "cpu_blocks": {
+      "backward_error": {
+        "maximum": 7.288792250652431e-17,
+        "per_phase": {
+          "0": 3.8654991117296294e-17,
+          "1": 7.288792250652431e-17,
+          "2": 5.996383565204948e-17,
+          "3": 5.792672523787479e-17,
+          "4": 5.1816167552467875e-17
+        }
+      },
+      "cold_seconds": 0.023667186,
+      "device": "cpu",
+      "dtype": "torch.float64",
+      "end_to_end_median_seconds": 0.390205996,
+      "end_to_end_median_seconds_excluding_feature_build": 0.026132652000000003,
+      "kernel_system_factor_logical_bytes": 1035672,
+      "legacy_prediction_equivalent": true,
+      "legacy_score_max_abs_difference": 1.5543122344752192e-15,
+      "maximum_relative_residual": 3.295791996826257e-16,
+      "per_block_seconds_single_audit": {
+        "0": 0.001474113,
+        "1": 0.005560771,
+        "2": 0.004256516,
+        "3": 0.004215197,
+        "4": 0.004043347
+      },
+      "repetitions": 7,
+      "resident": {
+        "maximum_seconds": 0.077509825,
+        "median_seconds": 0.025319415,
+        "minimum_seconds": 0.017467572,
+        "p95_seconds": 0.077509825,
+        "sample_count": 7
+      },
+      "transfer": {
+        "per_block_seconds": {
+          "0": 0.000610785,
+          "1": 5.3962e-05,
+          "2": 4.5293e-05,
+          "3": 4.3036e-05,
+          "4": 4.2888e-05
+        },
+        "total_seconds": 0.000813237
+      },
+      "warmups": 2
+    },
+    "cuda_blocks": {
+      "backward_error": {
+        "maximum": 6.515747180821075e-17,
+        "per_phase": {
+          "0": 4.578390208292471e-17,
+          "1": 5.809635763804005e-17,
+          "2": 5.996383565204948e-17,
+          "3": 6.515747180821075e-17,
+          "4": 5.1816167552467875e-17
+        }
+      },
+      "cold_seconds": 0.391376477,
+      "cpu_block_score_max_abs_difference": 2.1094237467877974e-15,
+      "cuda_peak_allocated_bytes": 13736960,
+      "cuda_peak_reserved_bytes": 25165824,
+      "device": "cuda:0",
+      "dtype": "torch.float64",
+      "end_to_end_median_seconds": 0.374273509,
+      "end_to_end_median_seconds_excluding_feature_build": 0.010200165,
+      "kernel_system_factor_logical_bytes": 1035672,
+      "legacy_prediction_equivalent": true,
+      "legacy_score_max_abs_difference": 2.1094237467877974e-15,
+      "maximum_relative_residual": 3.7117137374601e-16,
+      "per_block_seconds_single_audit": {
+        "0": 0.001166691,
+        "1": 0.001285748,
+        "2": 0.001349496,
+        "3": 0.001338576,
+        "4": 0.00129241
+      },
+      "repetitions": 7,
+      "resident": {
+        "maximum_seconds": 0.00733771,
+        "median_seconds": 0.006574391,
+        "minimum_seconds": 0.006315585,
+        "p95_seconds": 0.00733771,
+        "sample_count": 7
+      },
+      "resident_speedup_over_cpu_blocks": 3.8512183105629103,
+      "resident_speedup_over_sg23c_full_pure_cuda": 0.3740256702103663,
+      "resident_speedup_over_sg23c_hybrid_pipeline": 0.969673692970193,
+      "transfer": {
+        "per_block_seconds": {
+          "0": 0.002076571,
+          "1": 0.00043724,
+          "2": 0.000492708,
+          "3": 0.000294997,
+          "4": 0.000297066
+        },
+        "total_seconds": 0.003625774
+      },
+      "warmups": 2
+    },
+    "dense_reference": {
+      "dense_kernel_logical_bytes": 1569992,
+      "factor_logical_bytes": 1569992,
+      "kernel_seconds": 0.008508151,
+      "solve_seconds": 0.003196834,
+      "total_seconds": 0.011704985000000001
+    },
+    "quality": {
+      "perfect_quality": true,
+      "rollout": {
+        "first_all_admissible": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 160,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "first_next_affordance": {
+          "bit_accuracy": 1.0,
+          "by_action": {
+            "examine coin": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go east": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go north": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go south": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go west": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "look": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "take coin": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            }
+          },
+          "exact_mask_accuracy": 1.0,
+          "example_count": 160
+        },
+        "first_projection_kind_counts": {
+          "known_edge_projection": 32,
+          "plan_path_constraint": 32,
+          "stationary_hold": 88,
+          "terminal": 8
+        },
+        "first_routing_accuracy": 1.0,
+        "premature_stop_first_branch_count": 0,
+        "second_projection_kind_counts": {
+          "known_edge_projection": 160,
+          "plan_path_constraint": 88,
+          "stationary_hold": 336,
+          "terminal": 32
+        },
+        "self_error_records_first_100": [],
+        "self_minus_teacher_exact": 0.0,
+        "self_pair_timing": {
+          "max_ms": 2.06739,
+          "mean_ms": 1.2672016769480519,
+          "min_ms": 1.087454,
+          "p50_ms": 1.258879,
+          "p95_ms": 1.4033535,
+          "p99_ms": 1.6726631000000003,
+          "sample_count": 616
+        },
+        "self_rollout_second": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 616,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "teacher_forced_second": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 616,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "teacher_pair_timing": {
+          "max_ms": 3.200029,
+          "mean_ms": 1.2722575551948052,
+          "min_ms": 1.08714,
+          "p50_ms": 1.262637,
+          "p95_ms": 1.410355,
+          "p99_ms": 1.7037517500000008,
+          "sample_count": 616
+        }
+      },
+      "split_metrics": {
+        "test": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          }
+        },
+        "train": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 640,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 640
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 128,
+            "plan_path_constraint": 128,
+            "stationary_hold": 352,
+            "terminal": 32
+          }
+        },
+        "valid": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          }
+        }
+      }
+    },
+    "rows": 443,
+    "structure": {
+      "block_count": 5,
+      "block_sizes": {
+        "0": 36,
+        "1": 88,
+        "2": 112,
+        "3": 112,
+        "4": 95
+      },
+      "build_seconds": 0.364073344,
+      "cross_phase_kernel_max_abs": 0.0,
+      "csr_logical_bytes_sum": 876800,
+      "cubic_ratio_full_over_blocks": 19.77956908639317,
+      "feature_build_seconds_sum": 0.359764146,
+      "feature_count_sum": 26612,
+      "feature_kernel_audit": {
+        "maximum": 0.0,
+        "per_phase": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0
+        }
+      },
+      "full_dense_kernel_system_factor_logical_bytes": 4709976,
+      "full_over_block_logical_memory_ratio": 4.5477487080851855,
+      "nnz_sum": 54576,
+      "quadratic_ratio_full_over_blocks": 4.5477487080851855
+    }
+  },
+  "references": {
+    "cache_sha256": "2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E",
+    "runner_source_sha256": "C46183F78827EF2A8979CC22F7976540DC91CC6E54AA110DC7A114D4A06252D7",
+    "sg22r_sha256": "1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92",
+    "sg23c_sha256": "17DDD84BCB1B010D13F19C567735BA9498534BE122B473E94407659FA6BA162B"
+  },
+  "stress": {
+    "1024": {
+      "cpu_blocks": {
+        "backward_error": {
+          "maximum": 4.987084413477563e-17,
+          "per_phase": {
+            "0": 4.987084413477563e-17,
+            "1": 1.574067220864884e-17
+          }
+        },
+        "cold_seconds": 0.145387238,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.334217225,
+        "end_to_end_median_seconds_excluding_feature_build": 0.147438917,
+        "kernel_system_factor_logical_bytes": 17746944,
+        "legacy_prediction_equivalent": true,
+        "legacy_score_max_abs_difference": 3.334134817123413e-06,
+        "maximum_relative_residual": 5.725916687003778e-07,
+        "per_block_seconds_single_audit": {
+          "0": 0.132423826,
+          "1": 0.012071133
+        },
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.157226582,
+          "median_seconds": 0.146993597,
+          "minimum_seconds": 0.141261608,
+          "p95_seconds": 0.157226582,
+          "sample_count": 7
+        },
+        "transfer": {
+          "per_block_seconds": {
+            "0": 0.000314107,
+            "1": 7.6085e-05
+          },
+          "total_seconds": 0.00044532
+        },
+        "warmups": 2
+      },
+      "cuda_blocks": {
+        "backward_error": {
+          "maximum": 5.010188849072689e-17,
+          "per_phase": {
+            "0": 5.010188849072689e-17,
+            "1": 3.058989497168154e-17
+          }
+        },
+        "cold_seconds": 0.015648278,
+        "cpu_block_score_max_abs_difference": 4.0531158447265625e-06,
+        "cuda_peak_allocated_bytes": 709107200,
+        "cuda_peak_reserved_bytes": 731906048,
+        "device": "cuda:0",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.200251667,
+        "end_to_end_median_seconds_excluding_feature_build": 0.013473358999999999,
+        "kernel_system_factor_logical_bytes": 17746944,
+        "legacy_prediction_equivalent": true,
+        "legacy_score_max_abs_difference": 3.5315752029418945e-06,
+        "maximum_relative_residual": 8.176608511829452e-07,
+        "per_block_seconds_single_audit": {
+          "0": 0.009545177,
+          "1": 0.001719131
+        },
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.011608443,
+          "median_seconds": 0.011254855,
+          "minimum_seconds": 0.01119784,
+          "p95_seconds": 0.011608443,
+          "sample_count": 7
+        },
+        "resident_speedup_over_cpu_blocks": 13.060461196523635,
+        "resident_speedup_over_sg23c_full_pure_cuda": 0.9322434629322192,
+        "resident_speedup_over_sg23c_hybrid_pipeline": 2.8497308050614607,
+        "transfer": {
+          "per_block_seconds": {
+            "0": 0.001796725,
+            "1": 0.000412937
+          },
+          "total_seconds": 0.002218504
+        },
+        "warmups": 2
+      },
+      "dense_reference": {
+        "dense_kernel_logical_bytes": 8388608,
+        "factor_logical_bytes": 8388608,
+        "kernel_seconds": 0.020829227,
+        "solve_seconds": 0.007723395,
+        "total_seconds": 0.028552622
+      },
+      "generation": {
+        "canonical_sha256": "1A9039E07625A5AB19C96D0D8332567C76ED874666101302D397E80424736879",
+        "mask_support_count": 14,
+        "row_count": 1024,
+        "support_capacity": 4200000,
+        "unique_state_count": 1024
+      },
+      "rows": 1024,
+      "structure": {
+        "block_count": 2,
+        "block_sizes": {
+          "0": 840,
+          "1": 184
+        },
+        "build_seconds": 0.186778308,
+        "cross_phase_kernel_max_abs": 0.0,
+        "csr_logical_bytes_sum": 1926672,
+        "cubic_ratio_full_over_blocks": 1.7927563190721085,
+        "feature_build_seconds_sum": 0.185125081,
+        "feature_count_sum": 2064,
+        "feature_kernel_audit": {
+          "maximum": 0.0,
+          "per_phase": {
+            "0": 0.0,
+            "1": 0.0
+          }
+        },
+        "full_dense_kernel_system_factor_logical_bytes": 25165824,
+        "full_over_block_logical_memory_ratio": 1.4180370434481564,
+        "nnz_sum": 119904,
+        "quadratic_ratio_full_over_blocks": 1.4180370434481564
+      }
+    },
+    "2048": {
+      "cpu_blocks": {
+        "backward_error": {
+          "maximum": 4.987084413477563e-17,
+          "per_phase": {
+            "0": 4.987084413477563e-17,
+            "1": 3.874967365179682e-17,
+            "2": 4.513769376276283e-17
+          }
+        },
+        "cold_seconds": 0.339444532,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.791847631,
+        "end_to_end_median_seconds_excluding_feature_build": 0.32679456100000004,
+        "kernel_system_factor_logical_bytes": 37118976,
+        "legacy_prediction_equivalent": true,
+        "legacy_score_max_abs_difference": 4.291534423828125e-06,
+        "maximum_relative_residual": 5.727821296963421e-07,
+        "per_block_seconds_single_audit": {
+          "0": 0.137192751,
+          "1": 0.153968,
+          "2": 0.030953212
+        },
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.32837803,
+          "median_seconds": 0.326112208,
+          "minimum_seconds": 0.321594867,
+          "p95_seconds": 0.32837803,
+          "sample_count": 7
+        },
+        "transfer": {
+          "per_block_seconds": {
+            "0": 0.000297895,
+            "1": 0.000240894,
+            "2": 0.000128432
+          },
+          "total_seconds": 0.000682353
+        },
+        "warmups": 2
+      },
+      "cuda_blocks": {
+        "backward_error": {
+          "maximum": 5.010188849072689e-17,
+          "per_phase": {
+            "0": 5.010188849072689e-17,
+            "1": 3.9299293597246795e-17,
+            "2": 4.040570964267346e-17
+          }
+        },
+        "cold_seconds": 0.022498693,
+        "cpu_block_score_max_abs_difference": 4.410743713378906e-06,
+        "cuda_peak_allocated_bytes": 719072768,
+        "cuda_peak_reserved_bytes": 734003200,
+        "device": "cuda:0",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.48912231,
+        "end_to_end_median_seconds_excluding_feature_build": 0.02406924,
+        "kernel_system_factor_logical_bytes": 37118976,
+        "legacy_prediction_equivalent": true,
+        "legacy_score_max_abs_difference": 4.172325134277344e-06,
+        "maximum_relative_residual": 1.1242622010043023e-06,
+        "per_block_seconds_single_audit": {
+          "0": 0.008927773,
+          "1": 0.008910303,
+          "2": 0.002628646
+        },
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.020856915,
+          "median_seconds": 0.020414302,
+          "minimum_seconds": 0.020307443,
+          "p95_seconds": 0.020856915,
+          "sample_count": 7
+        },
+        "resident_speedup_over_cpu_blocks": 15.974693036284073,
+        "resident_speedup_over_sg23c_full_pure_cuda": 0.8662118841976573,
+        "resident_speedup_over_sg23c_hybrid_pipeline": 13.689841024199604,
+        "transfer": {
+          "per_block_seconds": {
+            "0": 0.00164746,
+            "1": 0.001251768,
+            "2": 0.00073892
+          },
+          "total_seconds": 0.003654938
+        },
+        "warmups": 2
+      },
+      "dense_reference": {
+        "dense_kernel_logical_bytes": 33554432,
+        "factor_logical_bytes": 33554432,
+        "kernel_seconds": 0.268862834,
+        "solve_seconds": 0.108510382,
+        "total_seconds": 0.377373216
+      },
+      "generation": {
+        "canonical_sha256": "BDBF411FAE1C8A97C9D5FD2CD7DC17E0D8DED64BE836D834E94617FE24EF0929",
+        "mask_support_count": 14,
+        "row_count": 2048,
+        "support_capacity": 4200000,
+        "unique_state_count": 2048
+      },
+      "rows": 2048,
+      "structure": {
+        "block_count": 3,
+        "block_sizes": {
+          "0": 840,
+          "1": 840,
+          "2": 368
+        },
+        "build_seconds": 0.46505307,
+        "cross_phase_kernel_max_abs": 0.0,
+        "csr_logical_bytes_sum": 3876376,
+        "cubic_ratio_full_over_blocks": 6.9540385296109655,
+        "feature_build_seconds_sum": 0.461913514,
+        "feature_count_sum": 3528,
+        "feature_kernel_audit": {
+          "maximum": 0.0,
+          "per_phase": {
+            "0": 0.0,
+            "1": 0.0,
+            "2": 0.0
+          }
+        },
+        "full_dense_kernel_system_factor_logical_bytes": 100663296,
+        "full_over_block_logical_memory_ratio": 2.711909294049491,
+        "nnz_sum": 241248,
+        "quadratic_ratio_full_over_blocks": 2.711909294049491
+      }
+    },
+    "4096": {
+      "cpu_blocks": {
+        "backward_error": {
+          "maximum": 4.987084413477563e-17,
+          "per_phase": {
+            "0": 4.987084413477563e-17,
+            "1": 3.874967365179682e-17,
+            "2": 4.2884127087991874e-17,
+            "3": 2.641468883291343e-17,
+            "4": 4.555519381025449e-17
+          }
+        },
+        "cold_seconds": 0.649980063,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 1.5883996589999998,
+        "end_to_end_median_seconds_excluding_feature_build": 0.650859711,
+        "kernel_system_factor_logical_bytes": 80738304,
+        "legacy_prediction_equivalent": true,
+        "legacy_score_max_abs_difference": 3.904104232788086e-06,
+        "maximum_relative_residual": 5.727821296963421e-07,
+        "per_block_seconds_single_audit": {
+          "0": 0.131388628,
+          "1": 0.13227449,
+          "2": 0.132476113,
+          "3": 0.136364262,
+          "4": 0.113955181
+        },
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.652306019,
+          "median_seconds": 0.649811069,
+          "minimum_seconds": 0.640715197,
+          "p95_seconds": 0.652306019,
+          "sample_count": 7
+        },
+        "transfer": {
+          "per_block_seconds": {
+            "0": 0.000304923,
+            "1": 0.000184915,
+            "2": 0.000201566,
+            "3": 0.000179947,
+            "4": 0.000155848
+          },
+          "total_seconds": 0.001048642
+        },
+        "warmups": 2
+      },
+      "cuda_blocks": {
+        "backward_error": {
+          "maximum": 5.010188849072689e-17,
+          "per_phase": {
+            "0": 5.010188849072689e-17,
+            "1": 3.9299293597246795e-17,
+            "2": 4.2309716500107523e-17,
+            "3": 3.4062913724607065e-17,
+            "4": 3.925342600092912e-17
+          }
+        },
+        "cold_seconds": 0.050756613,
+        "cpu_block_score_max_abs_difference": 4.410743713378906e-06,
+        "cuda_peak_allocated_bytes": 726445056,
+        "cuda_peak_reserved_bytes": 1419771904,
+        "device": "cuda:0",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.987829039,
+        "end_to_end_median_seconds_excluding_feature_build": 0.050289090999999994,
+        "kernel_system_factor_logical_bytes": 80738304,
+        "legacy_prediction_equivalent": true,
+        "legacy_score_max_abs_difference": 4.559755325317383e-06,
+        "maximum_relative_residual": 1.1242622010043023e-06,
+        "per_block_seconds_single_audit": {
+          "0": 0.009020558,
+          "1": 0.008987453,
+          "2": 0.009005605,
+          "3": 0.008927521,
+          "4": 0.007031723
+        },
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.045162513,
+          "median_seconds": 0.043255497,
+          "minimum_seconds": 0.042713525,
+          "p95_seconds": 0.045162513,
+          "sample_count": 7
+        },
+        "resident_speedup_over_cpu_blocks": 15.022624037818824,
+        "resident_speedup_over_sg23c_full_pure_cuda": 0.9261918779941426,
+        "resident_speedup_over_sg23c_hybrid_pipeline": 22.862920474593093,
+        "transfer": {
+          "per_block_seconds": {
+            "0": 0.001743437,
+            "1": 0.001362161,
+            "2": 0.001276841,
+            "3": 0.001378163,
+            "4": 0.001251166
+          },
+          "total_seconds": 0.007033594
+        },
+        "warmups": 2
+      },
+      "dense_reference": {
+        "dense_kernel_logical_bytes": 134217728,
+        "factor_logical_bytes": 134217728,
+        "kernel_seconds": 1.068476142,
+        "solve_seconds": 0.398129218,
+        "total_seconds": 1.46660536
+      },
+      "generation": {
+        "canonical_sha256": "0971F11E45242275E3AF1E7B19A00F9F68615469E0015E853A67FB09E82CFA53",
+        "mask_support_count": 14,
+        "row_count": 4096,
+        "support_capacity": 4200000,
+        "unique_state_count": 4096
+      },
+      "rows": 4096,
+      "structure": {
+        "block_count": 5,
+        "block_sizes": {
+          "0": 840,
+          "1": 840,
+          "2": 840,
+          "3": 840,
+          "4": 736
+        },
+        "build_seconds": 0.937539948,
+        "cross_phase_kernel_max_abs": 0.0,
+        "csr_logical_bytes_sum": 7857192,
+        "cubic_ratio_full_over_blocks": 24.81291609757324,
+        "feature_build_seconds_sum": 0.93138458,
+        "feature_count_sum": 6480,
+        "feature_kernel_audit": {
+          "maximum": 0.0,
+          "per_phase": {
+            "0": 0.0,
+            "1": 0.0,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        },
+        "full_dense_kernel_system_factor_logical_bytes": 402653184,
+        "full_over_block_logical_memory_ratio": 4.987139487101438,
+        "nnz_sum": 489024,
+        "quadratic_ratio_full_over_blocks": 4.987139487101438
+      }
+    }
+  }
+}

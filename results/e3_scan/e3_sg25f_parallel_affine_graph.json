@@ -1,0 +1,4553 @@
+{
+  "configuration": {
+    "batch_size": 16,
+    "benchmark_epochs": 10,
+    "bucket_capacities": [
+      [
+        64,
+        6
+      ],
+      [
+        96,
+        41
+      ],
+      [
+        128,
+        65
+      ]
+    ],
+    "copy_and_padding_included": true,
+    "device": "cuda:0",
+    "equivalence_updates": 20,
+    "modes": [
+      "snn_serial",
+      "snn_parallel",
+      "lstm",
+      "transformer"
+    ],
+    "optimizer": "AdamW(lr=1e-3,wd=.01,fused=True,capturable=True)",
+    "quality_epochs": 100,
+    "stability_updates": 100,
+    "time_scan": "128-thread block shared-memory affine inclusive scan"
+  },
+  "decision": {
+    "basic_quality_pass": false,
+    "capture_gate": "PASS",
+    "cross_architecture_quality_pass": false,
+    "equivalence_gate": "PASS",
+    "event_gate": "PASS",
+    "kernel_gate": "PASS",
+    "memory_gate": "PASS",
+    "next_route": "projection_readout_fusion",
+    "overall": "FAIL",
+    "parallel_to_serial_allocated_ratio": 0.9995908012112285,
+    "parallel_to_serial_peak_ratio": 1.0248999744615646,
+    "quality_gate": "FAIL",
+    "same_run_order_sensitive_allocated_ratio": 0.5240410743399788,
+    "same_run_order_sensitive_peak_ratio": 0.5913455634961566,
+    "speed": {
+      "ann_gate": true,
+      "effective_examples_per_second": {
+        "lstm": 18498.15876842496,
+        "snn_parallel": 20133.046722635696,
+        "snn_serial": 18890.438232782974,
+        "transformer": 12251.66497255493
+      },
+      "effective_target_tokens_per_second": {
+        "lstm": 468003.4168411515,
+        "snn_parallel": 509366.08208268316,
+        "snn_serial": 477928.08728940925,
+        "transformer": 309967.12380563974
+      },
+      "five_percent_serial_gate": true,
+      "parallel_over_canonical_sg25e_lstm": 0.961364368760407,
+      "parallel_over_serial_speedup": 1.0657797598203025,
+      "passed": true,
+      "per_real_example_p50_ms": {
+        "lstm": 0.05217928571428571,
+        "snn_parallel": 0.04661378571428572,
+        "snn_serial": 0.04968371428571429,
+        "transformer": 0.0795722857142857
+      }
+    },
+    "speed_gate": "PASS",
+    "stability_gate": "PASS"
+  },
+  "environment": {
+    "cpu_model": "Intel(R) Xeon(R) Gold 6130 CPU @ 2.10GHz",
+    "cuda_available": true,
+    "cuda_compute_capability": [
+      7,
+      0
+    ],
+    "cuda_device_name": "Tesla V100-PCIE-32GB",
+    "cuda_version": "12.1",
+    "device": "cuda:0",
+    "git_commit": "551bacc52920ae31ea37dc8b204e59cbcf255a5b",
+    "git_executable": "git",
+    "git_status_porcelain": [
+      " M dev/LOG.md",
+      " M experiments/e3_sg21_episodic_edge_graph.py",
+      " M vpsc/world_model/cores.py",
+      "?? experiments/e3_sg23_backend_capability.py",
+      "?? experiments/e3_sg23_spike_feature_solvers.py",
+      "?? experiments/e3_sg23c_cuda_adaptive_krr.py",
+      "?? experiments/e3_sg23d_phase_block_cuda.py",
+      "?? experiments/e3_sg23e_symbolic_quotient_cuda.py",
+      "?? experiments/e3_sg24_cuda_counterfactual_generation.py",
+      "?? experiments/e3_sg25a_blocked_affine_scan_cuda.py",
+      "?? experiments/e3_sg25c_native_fused_scan_cuda.py",
+      "?? experiments/e3_sg25d_cuda_graph_training.py",
+      "?? experiments/e3_sg25e_bucketed_batch_graph.py",
+      "?? experiments/e3_sg25f_parallel_affine_graph.py",
+      "?? results/e3_scan/e3_sg23c_cuda_adaptive_krr.json",
+      "?? results/e3_scan/e3_sg23d_phase_block_cuda.json",
+      "?? results/e3_scan/e3_sg23e_symbolic_quotient_cuda.json",
+      "?? results/e3_scan/e3_sg24_cuda_counterfactual_generation.json",
+      "?? results/e3_scan/e3_sg25a_blocked_affine_scan_cuda.json",
+      "?? results/e3_scan/e3_sg25c_native_fused_scan_cuda.json",
+      "?? results/e3_scan/e3_sg25d_cuda_graph_training.json",
+      "?? results/e3_scan/e3_sg25e_bucketed_batch_graph.json",
+      "?? results/e3_scan/invalid_e3_sg23d_and_gate_semantics.json",
+      "?? results/e3_scan/invalid_e3_sg25a_no_selection_gate_semantics.json",
+      "?? results/e3_scan/invalid_e3_sg25c_quality_skip_condition.json",
+      "?? results/e3_scan/invalid_smoke_e3_sg25c_embedding_atomic_control.json",
+      "?? results/e3_scan/smoke_e3_sg23c_cuda_adaptive_krr.json",
+      "?? results/e3_scan/smoke_e3_sg23d_phase_block_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg23e_symbolic_quotient_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg24_cuda_counterfactual_generation.json",
+      "?? results/e3_scan/smoke_e3_sg25a_blocked_affine_scan_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg25c_native_fused_scan_cuda.json",
+      "?? results/e3_scan/smoke_e3_sg25d_cuda_graph_training.json",
+      "?? results/e3_scan/smoke_e3_sg25e_bucketed_batch_graph.json",
+      "?? results/e3_scan/smoke_e3_sg25f_parallel_affine_graph.json",
+      "?? tests/test_e3_sg23_backend_capability.py",
+      "?? tests/test_e3_sg23_spike_feature_solvers.py",
+      "?? tests/test_e3_sg23c_cuda_adaptive_krr.py",
+      "?? tests/test_e3_sg23d_phase_block_cuda.py",
+      "?? tests/test_e3_sg23e_symbolic_quotient_cuda.py",
+      "?? tests/test_e3_sg24_cuda_counterfactual_generation.py",
+      "?? tests/test_e3_sg25a_blocked_affine_scan_cuda.py",
+      "?? tests/test_e3_sg25c_native_fused_scan_cuda.py",
+      "?? tests/test_e3_sg25d_cuda_graph_training.py",
+      "?? tests/test_e3_sg25e_batched_gated_trace_cuda.py",
+      "?? tests/test_e3_sg25e_bucketed_batch_graph.py",
+      "?? tests/test_e3_sg25f_parallel_gated_trace_cuda.py",
+      "?? vpsc/cuda/",
+      "?? vpsc/world_model/fused_batched_gated_trace_cuda.py",
+      "?? vpsc/world_model/fused_gated_trace_cuda.py",
+      "?? vpsc/world_model/fused_parallel_gated_trace_cuda.py"
+    ],
+    "logical_cpu_count": 52,
+    "mkldnn_available": true,
+    "mkldnn_enabled": true,
+    "platform": "Linux-5.4.0-149-generic-x86_64-with-glibc2.35",
+    "python": "3.12.3",
+    "torch": "2.3.0+cu121",
+    "torch_interop_threads": 52
+  },
+  "experiment": "E3-SG25F block-parallel affine CUDA Graph training",
+  "formal": true,
+  "generated_at_utc": "2026-07-19T14:08:36.022082+00:00",
+  "kernel_equivalence": {
+    "cases": [
+      {
+        "all_finite": true,
+        "batch_size": 1,
+        "errors": {
+          "decay_grad_max_abs": 5.7220458984375e-06,
+          "drive_grad_max_abs": 8.58306884765625e-06,
+          "final_e_max_abs": 1.1920928955078125e-07,
+          "final_i_max_abs": 5.960464477539063e-08,
+          "initial_e_grad_max_abs": 4.76837158203125e-07,
+          "initial_i_grad_max_abs": 2.9802322387695312e-08,
+          "raw_max_abs": 1.1920928955078125e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 6,
+        "spike_disagreements": 0,
+        "time_steps": 64,
+        "valid_query_counts": [
+          6
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 1,
+        "errors": {
+          "decay_grad_max_abs": 1.1444091796875e-05,
+          "drive_grad_max_abs": 1.9073486328125e-06,
+          "final_e_max_abs": 5.960464477539063e-08,
+          "final_i_max_abs": 7.450580596923828e-08,
+          "initial_e_grad_max_abs": 5.960464477539062e-07,
+          "initial_i_grad_max_abs": 5.364418029785156e-07,
+          "raw_max_abs": 1.1920928955078125e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 41,
+        "spike_disagreements": 0,
+        "time_steps": 96,
+        "valid_query_counts": [
+          41
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 1,
+        "errors": {
+          "decay_grad_max_abs": 1.33514404296875e-05,
+          "drive_grad_max_abs": 9.5367431640625e-07,
+          "final_e_max_abs": 5.960464477539063e-08,
+          "final_i_max_abs": 5.960464477539063e-08,
+          "initial_e_grad_max_abs": 1.1920928955078125e-07,
+          "initial_i_grad_max_abs": 9.5367431640625e-07,
+          "raw_max_abs": 1.4901161193847656e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 65,
+        "spike_disagreements": 0,
+        "time_steps": 128,
+        "valid_query_counts": [
+          65
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 4,
+        "errors": {
+          "decay_grad_max_abs": 9.5367431640625e-06,
+          "drive_grad_max_abs": 5.960464477539062e-07,
+          "final_e_max_abs": 1.1920928955078125e-07,
+          "final_i_max_abs": 1.1920928955078125e-07,
+          "initial_e_grad_max_abs": 8.344650268554688e-07,
+          "initial_i_grad_max_abs": 2.384185791015625e-07,
+          "raw_max_abs": 1.4901161193847656e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 6,
+        "spike_disagreements": 0,
+        "time_steps": 64,
+        "valid_query_counts": [
+          2,
+          3,
+          4,
+          6
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 4,
+        "errors": {
+          "decay_grad_max_abs": 3.0994415283203125e-05,
+          "drive_grad_max_abs": 2.86102294921875e-06,
+          "final_e_max_abs": 5.960464477539063e-08,
+          "final_i_max_abs": 1.1920928955078125e-07,
+          "initial_e_grad_max_abs": 7.450580596923828e-07,
+          "initial_i_grad_max_abs": 2.1457672119140625e-06,
+          "raw_max_abs": 1.7881393432617188e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 41,
+        "spike_disagreements": 0,
+        "time_steps": 96,
+        "valid_query_counts": [
+          10,
+          20,
+          31,
+          41
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 4,
+        "errors": {
+          "decay_grad_max_abs": 1.1444091796875e-05,
+          "drive_grad_max_abs": 4.76837158203125e-06,
+          "final_e_max_abs": 5.960464477539063e-08,
+          "final_i_max_abs": 5.960464477539063e-08,
+          "initial_e_grad_max_abs": 1.3113021850585938e-06,
+          "initial_i_grad_max_abs": 5.960464477539062e-07,
+          "raw_max_abs": 1.1920928955078125e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 65,
+        "spike_disagreements": 0,
+        "time_steps": 128,
+        "valid_query_counts": [
+          16,
+          32,
+          49,
+          65
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 16,
+        "errors": {
+          "decay_grad_max_abs": 2.6702880859375e-05,
+          "drive_grad_max_abs": 2.384185791015625e-06,
+          "final_e_max_abs": 1.1920928955078125e-07,
+          "final_i_max_abs": 1.1920928955078125e-07,
+          "initial_e_grad_max_abs": 7.152557373046875e-07,
+          "initial_i_grad_max_abs": 7.152557373046875e-07,
+          "raw_max_abs": 1.4901161193847656e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 6,
+        "spike_disagreements": 0,
+        "time_steps": 64,
+        "valid_query_counts": [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 16,
+        "errors": {
+          "decay_grad_max_abs": 3.337860107421875e-05,
+          "drive_grad_max_abs": 4.291534423828125e-06,
+          "final_e_max_abs": 5.960464477539063e-08,
+          "final_i_max_abs": 5.960464477539063e-08,
+          "initial_e_grad_max_abs": 1.430511474609375e-06,
+          "initial_i_grad_max_abs": 5.960464477539062e-07,
+          "raw_max_abs": 1.7881393432617188e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 41,
+        "spike_disagreements": 0,
+        "time_steps": 96,
+        "valid_query_counts": [
+          3,
+          5,
+          8,
+          10,
+          13,
+          15,
+          18,
+          20,
+          23,
+          26,
+          28,
+          31,
+          33,
+          36,
+          38,
+          41
+        ]
+      },
+      {
+        "all_finite": true,
+        "batch_size": 16,
+        "errors": {
+          "decay_grad_max_abs": 0.0001163482666015625,
+          "drive_grad_max_abs": 5.7220458984375e-06,
+          "final_e_max_abs": 1.1920928955078125e-07,
+          "final_i_max_abs": 5.960464477539063e-08,
+          "initial_e_grad_max_abs": 3.6954879760742188e-06,
+          "initial_i_grad_max_abs": 1.9073486328125e-06,
+          "raw_max_abs": 2.384185791015625e-07
+        },
+        "forward_passed": true,
+        "gradient_passed": true,
+        "padding_nonzero": 0,
+        "passed": true,
+        "query_capacity": 65,
+        "spike_disagreements": 0,
+        "time_steps": 128,
+        "valid_query_counts": [
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61,
+          65
+        ]
+      }
+    ],
+    "passed": true
+  },
+  "preliminary": {
+    "capture_gate": "PASS",
+    "equivalence_gate": "PASS",
+    "event_gate": "PASS",
+    "kernel_gate": "PASS",
+    "memory_gate": "PASS",
+    "overall": "SMOKE",
+    "parallel_to_serial_allocated_ratio": 0.9995908012112285,
+    "parallel_to_serial_peak_ratio": 1.0248999744615646,
+    "quality_gate": "SMOKE",
+    "same_run_order_sensitive_allocated_ratio": 0.5240410743399788,
+    "same_run_order_sensitive_peak_ratio": 0.5913455634961566,
+    "speed": {
+      "ann_gate": true,
+      "effective_examples_per_second": {
+        "lstm": 18498.15876842496,
+        "snn_parallel": 20133.046722635696,
+        "snn_serial": 18890.438232782974,
+        "transformer": 12251.66497255493
+      },
+      "effective_target_tokens_per_second": {
+        "lstm": 468003.4168411515,
+        "snn_parallel": 509366.08208268316,
+        "snn_serial": 477928.08728940925,
+        "transformer": 309967.12380563974
+      },
+      "five_percent_serial_gate": true,
+      "parallel_over_canonical_sg25e_lstm": 0.961364368760407,
+      "parallel_over_serial_speedup": 1.0657797598203025,
+      "passed": true,
+      "per_real_example_p50_ms": {
+        "lstm": 0.05217928571428571,
+        "snn_parallel": 0.04661378571428572,
+        "snn_serial": 0.04968371428571429,
+        "transformer": 0.0795722857142857
+      }
+    },
+    "speed_gate": "SMOKE",
+    "stability_gate": "PASS"
+  },
+  "provenance": {
+    "bucket_audit": {
+      "counts": [
+        14,
+        14,
+        12
+      ],
+      "passed": true,
+      "records": [
+        {
+          "example_count": 14,
+          "input_utilization_if_unbatched": 0.8883928571428571,
+          "query_capacity": 6,
+          "real_input_tokens": 796,
+          "real_target_tokens": 84,
+          "target_utilization_if_unbatched": 1.0,
+          "time_capacity": 64
+        },
+        {
+          "example_count": 14,
+          "input_utilization_if_unbatched": 0.8385416666666666,
+          "query_capacity": 41,
+          "real_input_tokens": 1127,
+          "real_target_tokens": 349,
+          "target_utilization_if_unbatched": 0.60801393728223,
+          "time_capacity": 96
+        },
+        {
+          "example_count": 12,
+          "input_utilization_if_unbatched": 0.8444010416666666,
+          "query_capacity": 65,
+          "real_input_tokens": 1297,
+          "real_target_tokens": 579,
+          "target_utilization_if_unbatched": 0.7423076923076923,
+          "time_capacity": 128
+        }
+      ]
+    },
+    "canonical_serial_memory": {
+      "allocated_after_bytes": 310139904,
+      "allocated_before_bytes": 291371520,
+      "allocated_delta_bytes": 18768384,
+      "capture_seconds": 0.34354252,
+      "cold_first_replay_loss": 5.804147243499756,
+      "cold_first_replay_wall_ms": 0.816682,
+      "keys": [
+        [
+          16,
+          64,
+          6
+        ],
+        [
+          16,
+          96,
+          41
+        ],
+        [
+          16,
+          128,
+          65
+        ]
+      ],
+      "peak_additional_allocated_bytes": 24057856,
+      "peak_additional_reserved_bytes": 44040192,
+      "peak_allocated_bytes": 315429376,
+      "peak_reserved_bytes": 417333248,
+      "peak_total_allocated_delta_from_clean_bytes": 24177664,
+      "peak_total_reserved_delta_from_clean_bytes": 44040192,
+      "reserved_after_bytes": 417333248,
+      "reserved_before_bytes": 373293056,
+      "reserved_delta_bytes": 44040192,
+      "restore_wall_ms": 0.629416,
+      "shape_count": 3,
+      "total_allocated_delta_from_clean_bytes": 18879488,
+      "total_reserved_delta_from_clean_bytes": 44040192
+    },
+    "data_audit": {
+      "baselines": {
+        "action_majority": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.6666666666666667,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 1.0,
+              "lcs_f1": 0.6666666666666666,
+              "mean_generated_length": 6.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.6666666666666666
+            },
+            "inventory": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 4,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 5.0,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 1.0
+            },
+            "look": {
+              "edit_similarity": 0.21052631578947367,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.3188405797101449,
+              "mean_generated_length": 38.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 0.0,
+              "token_f1": 0.43478260869565216
+            },
+            "move": {
+              "edit_similarity": 0.30965909090909094,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.3333333333333333,
+              "lcs_f1": 0.40430813116723097,
+              "mean_generated_length": 42.0,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.4594101719835575
+            }
+          },
+          "edit_similarity": 0.6115829346092504,
+          "eos_rate": 1.0,
+          "exact": 0.4,
+          "example_count": 10,
+          "feature_f1": 0.6333333333333333,
+          "lcs_f1": 0.6602739771045736,
+          "mean_generated_length": 23.2,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 1.0,
+          "paired_different_target_count": 5,
+          "records": null,
+          "room_accuracy": 0.0,
+          "token_f1": 0.693908996329655
+        },
+        "copy_observation": {
+          "action_types": {
+            "examine": {
+              "edit_similarity": 0.05714285714285716,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 1,
+              "feature_f1": 0.5,
+              "lcs_f1": 0.0975609756097561,
+              "mean_generated_length": 35.0,
+              "mean_target_length": 6.0,
+              "room_accuracy": null,
+              "token_f1": 0.14634146341463414
+            },
+            "inventory": {
+              "edit_similarity": 0.05557882977237816,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.0,
+              "lcs_f1": 0.0992092621716483,
+              "mean_generated_length": 50.25,
+              "mean_target_length": 5.0,
+              "room_accuracy": null,
+              "token_f1": 0.0992092621716483
+            },
+            "look": {
+              "edit_similarity": 1.0,
+              "eos_rate": 1.0,
+              "exact": 1.0,
+              "example_count": 1,
+              "feature_f1": 1.0,
+              "lcs_f1": 1.0,
+              "mean_generated_length": 31.0,
+              "mean_target_length": 31.0,
+              "room_accuracy": 1.0,
+              "token_f1": 1.0
+            },
+            "move": {
+              "edit_similarity": 0.34862012987012986,
+              "eos_rate": 1.0,
+              "exact": 0.0,
+              "example_count": 4,
+              "feature_f1": 0.08333333333333333,
+              "lcs_f1": 0.44964836763338567,
+              "mean_generated_length": 51.25,
+              "mean_target_length": 50.25,
+              "room_accuracy": 0.0,
+              "token_f1": 0.5076684588343265
+            }
+          },
+          "edit_similarity": 0.2673938695712889,
+          "eos_rate": 1.0,
+          "exact": 0.1,
+          "example_count": 10,
+          "feature_f1": 0.18333333333333332,
+          "lcs_f1": 0.3292991494829892,
+          "mean_generated_length": 47.2,
+          "mean_target_length": 25.8,
+          "paired_action_sensitivity": 0.0,
+          "paired_different_target_count": 5,
+          "records": null,
+          "room_accuracy": 0.2,
+          "token_f1": 0.35738523474385336
+        }
+      },
+      "normalization": {
+        "collapse_internal_whitespace": true,
+        "drop_prefix_before_first_room_header": true,
+        "remove_empty_lines": true,
+        "remove_hud_lines_starting_with_prompt": true,
+        "target_truncation": false
+      },
+      "passed": true,
+      "splits": {
+        "test": {
+          "action_types": {
+            "examine": 1,
+            "inventory": 4,
+            "look": 1,
+            "move": 4
+          },
+          "example_count": 10,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 134,
+            "mean": 84.5,
+            "min": 47,
+            "p50": 77.5,
+            "p95": 125.89999999999998
+          },
+          "pair_count": 5,
+          "prompt_length": {
+            "max": 78,
+            "mean": 58.7,
+            "min": 42,
+            "p50": 59.5,
+            "p95": 77.55000000000001
+          },
+          "prompt_unknown_count": 32,
+          "target_length_with_eos": {
+            "max": 67,
+            "mean": 26.8,
+            "min": 6,
+            "p50": 19.5,
+            "p95": 62.49999999999999
+          },
+          "target_token_count_without_eos": 258,
+          "target_unknown_count": 17,
+          "target_unknown_ratio": 0.06589147286821706,
+          "unique_target_count": 6
+        },
+        "train": {
+          "action_types": {
+            "examine": 4,
+            "inventory": 16,
+            "look": 4,
+            "move": 16
+          },
+          "example_count": 40,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 123,
+            "mean": 80.5,
+            "min": 51,
+            "p50": 80.5,
+            "p95": 114.1
+          },
+          "pair_count": 20,
+          "prompt_length": {
+            "max": 76,
+            "mean": 56.2,
+            "min": 46,
+            "p50": 55.0,
+            "p95": 67.39999999999998
+          },
+          "prompt_unknown_count": 0,
+          "target_length_with_eos": {
+            "max": 65,
+            "mean": 25.3,
+            "min": 6,
+            "p50": 22.0,
+            "p95": 57.0
+          },
+          "target_token_count_without_eos": 972,
+          "target_unknown_count": 0,
+          "target_unknown_ratio": 0.0,
+          "unique_target_count": 21
+        },
+        "valid": {
+          "action_types": {
+            "examine": 1,
+            "inventory": 4,
+            "look": 1,
+            "move": 4
+          },
+          "example_count": 10,
+          "format_only_target_count": 0,
+          "input_length": {
+            "max": 119,
+            "mean": 85.8,
+            "min": 56,
+            "p50": 86.0,
+            "p95": 117.65
+          },
+          "pair_count": 5,
+          "prompt_length": {
+            "max": 76,
+            "mean": 58.5,
+            "min": 51,
+            "p50": 54.5,
+            "p95": 75.55
+          },
+          "prompt_unknown_count": 26,
+          "target_length_with_eos": {
+            "max": 65,
+            "mean": 28.3,
+            "min": 6,
+            "p50": 26.0,
+            "p95": 57.79999999999998
+          },
+          "target_token_count_without_eos": 273,
+          "target_unknown_count": 21,
+          "target_unknown_ratio": 0.07692307692307693,
+          "unique_target_count": 6
+        }
+      },
+      "target_overlap": {
+        "test_in_train": 1,
+        "valid_in_train": 1,
+        "valid_test": 1
+      }
+    },
+    "parallel_extension": {
+      "build_directory": "/root/autodl-tmp/torch_extensions/sg25f_formal_dc4c9b7ff806",
+      "cuda": "12.1",
+      "extension_name": "vpsc_sg25f_51e3c5333edf",
+      "load_compile_seconds": 89.444319055,
+      "source_sha256": "51e3c5333edf6ea5604aafecf2cd327a758cf7051f352d9db7f28db8855a0c81",
+      "sources": [
+        "/root/autodl-tmp/vpsc/vpsc/cuda/sg25f_parallel_gated_trace.cpp",
+        "/root/autodl-tmp/vpsc/vpsc/cuda/sg25f_parallel_gated_trace_kernel.cu"
+      ],
+      "torch": "2.3.0+cu121"
+    },
+    "runner_sha256": "dc4c9b7ff806bd887addf4a6630a767819fccdd5407bf411dacc2fef015a437a",
+    "serial_extension": {
+      "build_directory": "/root/autodl-tmp/torch_extensions/sg25e",
+      "cuda": "12.1",
+      "extension_name": "vpsc_sg25e_57e8a350daea",
+      "load_compile_seconds": 0.123108336,
+      "source_sha256": "57e8a350daea65780c3e9b4bf793be959f8cde6ea0675a434a197ce618751d3f",
+      "sources": [
+        "/root/autodl-tmp/vpsc/vpsc/cuda/sg25e_batched_gated_trace.cpp",
+        "/root/autodl-tmp/vpsc/vpsc/cuda/sg25e_batched_gated_trace_kernel.cu"
+      ],
+      "torch": "2.3.0+cu121"
+    },
+    "sg25e_reference": "/root/autodl-tmp/vpsc/results/e3_scan/e3_sg25e_bucketed_batch_graph.json",
+    "sg25e_reference_sha256": "87b531b8355e0294d7bdd069886908c2e37b39698bb9dee101bb988b0c202f73"
+  },
+  "quality": {
+    "lstm": {
+      "basic_passed": true,
+      "batch_size": 16,
+      "epochs": 100,
+      "generation": {
+        "action_types": {
+          "examine": {
+            "edit_similarity": 0.6666666666666667,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 1.0,
+            "lcs_f1": 0.7272727272727273,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 6.0,
+            "room_accuracy": null,
+            "token_f1": 0.7272727272727272
+          },
+          "inventory": {
+            "edit_similarity": 1.0,
+            "eos_rate": 1.0,
+            "exact": 1.0,
+            "example_count": 4,
+            "feature_f1": 1.0,
+            "lcs_f1": 1.0,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 5.0,
+            "room_accuracy": null,
+            "token_f1": 1.0
+          },
+          "look": {
+            "edit_similarity": 0.4838709677419355,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.5818181818181818,
+            "mean_generated_length": 24.0,
+            "mean_target_length": 31.0,
+            "room_accuracy": 0.0,
+            "token_f1": 0.5818181818181819
+          },
+          "move": {
+            "edit_similarity": 0.3078589757017176,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 4,
+            "feature_f1": 0.2,
+            "lcs_f1": 0.41767676767676765,
+            "mean_generated_length": 24.0,
+            "mean_target_length": 50.25,
+            "room_accuracy": 0.0,
+            "token_f1": 0.43434343434343436
+          }
+        },
+        "edit_similarity": 0.6381973537215473,
+        "eos_rate": 1.0,
+        "exact": 0.4,
+        "example_count": 10,
+        "feature_f1": 0.58,
+        "lcs_f1": 0.697979797979798,
+        "mean_generated_length": 14.5,
+        "mean_target_length": 25.8,
+        "paired_action_sensitivity": 1.0,
+        "paired_different_target_count": 5,
+        "records": [
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:0:0",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "look",
+            "action_type": "look",
+            "edit_similarity": 0.4838709677419355,
+            "exact": 0.0,
+            "example_id": "test:20260723:0:1",
+            "feature_f1": 0.0,
+            "generated_length": 24.0,
+            "lcs_f1": 0.5818181818181818,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "direction:south",
+              "room:shower"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Shower",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "sauntered",
+              "into",
+              "a",
+              "shower",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unblocked",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.5818181818181819
+          },
+          {
+            "action": "go east",
+            "action_type": "move",
+            "edit_similarity": 0.4838709677419355,
+            "exact": 0.0,
+            "example_id": "test:20260723:1:0",
+            "feature_f1": 0.0,
+            "generated_length": 24.0,
+            "lcs_f1": 0.5818181818181818,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "direction:south",
+              "room:shower"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Shower",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "sauntered",
+              "into",
+              "a",
+              "shower",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unblocked",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.5818181818181819
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:1:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.35416666666666663,
+            "exact": 0.0,
+            "example_id": "test:20260723:2:0",
+            "feature_f1": 0.4,
+            "generated_length": 24.0,
+            "lcs_f1": 0.5,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "direction:south",
+              "room:shower"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Shower",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "sauntered",
+              "into",
+              "a",
+              "shower",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unblocked",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:south",
+              "room:cookhouse"
+            ],
+            "target_length": 48.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Cookhouse",
+              "=",
+              "-",
+              "You've",
+              "entered",
+              "a",
+              "cookhouse",
+              ".",
+              "You",
+              "begin",
+              "to",
+              "take",
+              "stock",
+              "of",
+              "what's",
+              "in",
+              "the",
+              "room",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "east",
+              ".",
+              "There",
+              "is",
+              "an",
+              "exit",
+              "to",
+              "the",
+              "south",
+              ".",
+              "Don't",
+              "worry",
+              ",",
+              "it",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.5
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:2:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go west",
+            "action_type": "move",
+            "edit_similarity": 0.1964285714285714,
+            "exact": 0.0,
+            "example_id": "test:20260723:3:0",
+            "feature_f1": 0.0,
+            "generated_length": 24.0,
+            "lcs_f1": 0.3,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "direction:south",
+              "room:shower"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Shower",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "sauntered",
+              "into",
+              "a",
+              "shower",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unblocked",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:north",
+              "room:bedchamber"
+            ],
+            "target_length": 56.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Bedchamber",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "typical",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "<unk>",
+              "is",
+              "to",
+              "<unk>",
+              ",",
+              "you're",
+              "in",
+              "a",
+              "bedchamber",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "east",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "north",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.3
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:3:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "examine coin",
+            "action_type": "examine",
+            "edit_similarity": 0.6666666666666667,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:0",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.7272727272727273,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "object:coin"
+            ],
+            "prediction_tokens": [
+              "The",
+              "coin",
+              "is",
+              "dirty",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "object:coin"
+            ],
+            "target_length": 6.0,
+            "target_tokens": [
+              "The",
+              "coin",
+              "is",
+              "<unk>",
+              "looking",
+              "."
+            ],
+            "token_f1": 0.7272727272727272
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.19696969696969702,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:1",
+            "feature_f1": 0.4,
+            "generated_length": 24.0,
+            "lcs_f1": 0.28888888888888886,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "direction:south",
+              "room:shower"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Shower",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "sauntered",
+              "into",
+              "a",
+              "shower",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unblocked",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:south",
+              "direction:west",
+              "room:<unk>"
+            ],
+            "target_length": 66.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "<unk>",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "<unk>",
+              "up",
+              "in",
+              "an",
+              "<unk>",
+              ".",
+              "The",
+              "room",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              ",",
+              "as",
+              "<unk>",
+              "it",
+              "were",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "the",
+              "<unk>",
+              "<unk>",
+              "in",
+              "the",
+              "<unk>",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "south",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unblocked",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "west",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.3555555555555555
+          }
+        ],
+        "room_accuracy": 0.0,
+        "timing": {
+          "generated_token": {
+            "count": 145,
+            "mean_ms": 0.5619364482758621,
+            "p50_ms": 0.559166,
+            "p95_ms": 0.5818452,
+            "p99_ms": 0.6947822000000003,
+            "tokens_per_second_at_p50": 1788.3776910613306
+          },
+          "prefill": {
+            "count": 10,
+            "mean_ms": 0.6921446,
+            "p50_ms": 0.693865,
+            "p95_ms": 0.7141355,
+            "p99_ms": 0.7178183,
+            "tokens_per_second_at_p50": 1441.2025393988745
+          },
+          "state_bytes_max": 256,
+          "state_bytes_mean": 256.0
+        },
+        "token_f1": 0.7046464646464646
+      },
+      "loss_first": 5.651561737060547,
+      "loss_last": 0.45906978845596313,
+      "mode": "lstm",
+      "post_teacher": {
+        "test": {
+          "accuracy": 0.6380597014925373,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.7142857142857143,
+              "nll": 2.7904665810721263,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.02650520329674085,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.625,
+              "nll": 1.5707619190216064,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.5951219512195122,
+              "nll": 2.1451495100812212,
+              "target_count": 205
+            }
+          },
+          "nll": 1.903691872843166,
+          "ppl": 6.710623534647302,
+          "target_count": 268
+        },
+        "train": {
+          "accuracy": 0.8399209486166008,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.8620689655172413,
+              "nll": 0.40700337393530484,
+              "target_count": 29
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.02678834196800987,
+              "target_count": 96
+            },
+            "look": {
+              "accuracy": 0.8830409356725146,
+              "nll": 0.6332556406656901,
+              "target_count": 171
+            },
+            "move": {
+              "accuracy": 0.8072625698324022,
+              "nll": 0.8212406275658634,
+              "target_count": 716
+            }
+          },
+          "nll": 0.7022428681462886,
+          "ppl": 2.018274358110161,
+          "target_count": 1012
+        },
+        "valid": {
+          "accuracy": 0.6007067137809188,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.5454545454545454,
+              "nll": 3.8787002563476562,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.026605693623423576,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.3469387755102041,
+              "nll": 4.114275873923789,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.6180904522613065,
+              "nll": 1.8754421214961527,
+              "target_count": 199
+            }
+          },
+          "nll": 2.1841580899886446,
+          "ppl": 8.88316657736404,
+          "target_count": 283
+        }
+      },
+      "pre_teacher": {
+        "test": {
+          "accuracy": 0.007462686567164179,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.383514949253628,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 5.771550337473552,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.03125,
+              "nll": 5.695032119750977,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.004878048780487805,
+              "nll": 5.728922848585175,
+              "target_count": 205
+            }
+          },
+          "nll": 5.719671733343779,
+          "ppl": 304.8048492637113,
+          "target_count": 268
+        },
+        "valid": {
+          "accuracy": 0.0,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.233945673162287,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 5.771831671396892,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.0,
+              "nll": 5.739731769172513,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.0,
+              "nll": 5.650362407741834,
+              "target_count": 199
+            }
+          },
+          "nll": 5.659951725612681,
+          "ppl": 287.1347809658479,
+          "target_count": 283
+        }
+      },
+      "timing": {
+        "count": 240,
+        "mean_ms": 0.6709937958333333,
+        "p50_ms": 0.6782915,
+        "p95_ms": 0.7589818999999999,
+        "tokens_per_second_at_p50": 1474.2923949363953
+      },
+      "train_wall_seconds": 0.24098169,
+      "updates": 300
+    },
+    "snn_parallel": {
+      "basic_passed": false,
+      "batch_size": 16,
+      "epochs": 100,
+      "generation": {
+        "action_types": {
+          "examine": {
+            "edit_similarity": 0.2857142857142857,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 1.0,
+            "lcs_f1": 0.3076923076923077,
+            "mean_generated_length": 7.0,
+            "mean_target_length": 6.0,
+            "room_accuracy": null,
+            "token_f1": 0.30769230769230765
+          },
+          "inventory": {
+            "edit_similarity": 1.0,
+            "eos_rate": 1.0,
+            "exact": 1.0,
+            "example_count": 4,
+            "feature_f1": 1.0,
+            "lcs_f1": 1.0,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 5.0,
+            "room_accuracy": null,
+            "token_f1": 1.0
+          },
+          "look": {
+            "edit_similarity": 0.09677419354838712,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.16666666666666666,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 31.0,
+            "room_accuracy": 0.0,
+            "token_f1": 0.16666666666666666
+          },
+          "move": {
+            "edit_similarity": 0.09590141041753944,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 4,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.15278069074307687,
+            "mean_generated_length": 6.5,
+            "mean_target_length": 50.25,
+            "room_accuracy": 0.0,
+            "token_f1": 0.15278069074307687
+          }
+        },
+        "edit_similarity": 0.47660941209328306,
+        "eos_rate": 1.0,
+        "exact": 0.4,
+        "example_count": 10,
+        "feature_f1": 0.5,
+        "lcs_f1": 0.5085481737331282,
+        "mean_generated_length": 5.8,
+        "mean_target_length": 25.8,
+        "paired_action_sensitivity": 0.4,
+        "paired_different_target_count": 5,
+        "records": [
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:0:0",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "look",
+            "action_type": "look",
+            "edit_similarity": 0.09677419354838712,
+            "exact": 0.0,
+            "example_id": "test:20260723:0:1",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.16666666666666666,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.16666666666666666
+          },
+          {
+            "action": "go east",
+            "action_type": "move",
+            "edit_similarity": 0.25806451612903225,
+            "exact": 0.0,
+            "example_id": "test:20260723:1:0",
+            "feature_f1": 0.0,
+            "generated_length": 11.0,
+            "lcs_f1": 0.38095238095238093,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "direction:south",
+              "room:steam room"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Steam",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "find",
+              "You",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.38095238095238093
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:1:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.04166666666666663,
+            "exact": 0.0,
+            "example_id": "test:20260723:2:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.07547169811320754,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:south",
+              "room:cookhouse"
+            ],
+            "target_length": 48.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Cookhouse",
+              "=",
+              "-",
+              "You've",
+              "entered",
+              "a",
+              "cookhouse",
+              ".",
+              "You",
+              "begin",
+              "to",
+              "take",
+              "stock",
+              "of",
+              "what's",
+              "in",
+              "the",
+              "room",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "east",
+              ".",
+              "There",
+              "is",
+              "an",
+              "exit",
+              "to",
+              "the",
+              "south",
+              ".",
+              "Don't",
+              "worry",
+              ",",
+              "it",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.07547169811320754
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:2:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go west",
+            "action_type": "move",
+            "edit_similarity": 0.0535714285714286,
+            "exact": 0.0,
+            "example_id": "test:20260723:3:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.09836065573770492,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:north",
+              "room:bedchamber"
+            ],
+            "target_length": 56.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Bedchamber",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "typical",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "<unk>",
+              "is",
+              "to",
+              "<unk>",
+              ",",
+              "you're",
+              "in",
+              "a",
+              "bedchamber",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "east",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "north",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.0983606557377049
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:3:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "examine coin",
+            "action_type": "examine",
+            "edit_similarity": 0.2857142857142857,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:0",
+            "feature_f1": 1.0,
+            "generated_length": 7.0,
+            "lcs_f1": 0.3076923076923077,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "object:coin"
+            ],
+            "prediction_tokens": [
+              "The",
+              "coin",
+              "appears",
+              "out",
+              "of",
+              "place",
+              "here"
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "object:coin"
+            ],
+            "target_length": 6.0,
+            "target_tokens": [
+              "The",
+              "coin",
+              "is",
+              "<unk>",
+              "looking",
+              "."
+            ],
+            "token_f1": 0.30769230769230765
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.030303030303030276,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:1",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.056338028169014086,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:south",
+              "direction:west",
+              "room:<unk>"
+            ],
+            "target_length": 66.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "<unk>",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "<unk>",
+              "up",
+              "in",
+              "an",
+              "<unk>",
+              ".",
+              "The",
+              "room",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              ",",
+              "as",
+              "<unk>",
+              "it",
+              "were",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "the",
+              "<unk>",
+              "<unk>",
+              "in",
+              "the",
+              "<unk>",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "south",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unblocked",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "west",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.05633802816901409
+          }
+        ],
+        "room_accuracy": 0.0,
+        "timing": {
+          "generated_token": {
+            "count": 58,
+            "mean_ms": 0.9705060862068965,
+            "p50_ms": 0.9358375,
+            "p95_ms": 1.0757500499999997,
+            "p99_ms": 1.5451841099999999,
+            "tokens_per_second_at_p50": 1068.5615825397037
+          },
+          "prefill": {
+            "count": 10,
+            "mean_ms": 3.1640309,
+            "p50_ms": 2.9516195,
+            "p95_ms": 3.8572480999999996,
+            "p99_ms": 4.1361120200000006,
+            "tokens_per_second_at_p50": 338.7970570054846
+          },
+          "state_bytes_max": 248,
+          "state_bytes_mean": 248.0
+        },
+        "token_f1": 0.5085481737331282
+      },
+      "loss_first": 5.804147243499756,
+      "loss_last": 0.7011785507202148,
+      "mode": "snn_parallel",
+      "post_teacher": {
+        "test": {
+          "accuracy": 0.6119402985074627,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.2857142857142857,
+              "nll": 3.3236214773995534,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.04840096707145373,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.53125,
+              "nll": 1.917503833770752,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.5902439024390244,
+              "nll": 2.319921335359899,
+              "target_count": 205
+            }
+          },
+          "nll": 2.0946677984363995,
+          "ppl": 8.12274213432095,
+          "target_count": 268
+        },
+        "train": {
+          "accuracy": 0.7885375494071146,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.9310344827586207,
+              "nll": 0.49562348168471765,
+              "target_count": 29
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.04377878876402974,
+              "target_count": 96
+            },
+            "look": {
+              "accuracy": 0.7894736842105263,
+              "nll": 0.9543568795187432,
+              "target_count": 171
+            },
+            "move": {
+              "accuracy": 0.7541899441340782,
+              "nll": 1.0860219694382651,
+              "target_count": 716
+            }
+          },
+          "nll": 0.9479867600846903,
+          "ppl": 2.5805092420206464,
+          "target_count": 1012
+        },
+        "valid": {
+          "accuracy": 0.5830388692579506,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.45454545454545453,
+              "nll": 3.5957489013671875,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.043742128337423004,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.32653061224489793,
+              "nll": 4.101813802913743,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.6030150753768844,
+              "nll": 2.003390211555826,
+              "target_count": 199
+            }
+          },
+          "nll": 2.2624260686838165,
+          "ppl": 9.606366624224155,
+          "target_count": 283
+        }
+      },
+      "pre_teacher": {
+        "test": {
+          "accuracy": 0.007462686567164179,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.815898895263672,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 6.095336437225342,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.0,
+              "nll": 6.139926433563232,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.00975609756097561,
+              "nll": 5.7930068597560975,
+              "target_count": 205
+            }
+          },
+          "nll": 5.862102309269692,
+          "ppl": 351.462250230905,
+          "target_count": 268
+        },
+        "valid": {
+          "accuracy": 0.007067137809187279,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.595026189630682,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 6.1185652414957685,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.0,
+              "nll": 5.671376131018814,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.010050251256281407,
+              "nll": 5.753288384058966,
+              "target_count": 199
+            }
+          },
+          "nll": 5.763931705757923,
+          "ppl": 318.5985052221436,
+          "target_count": 283
+        }
+      },
+      "timing": {
+        "count": 240,
+        "mean_ms": 0.6074797041666666,
+        "p50_ms": 0.6062945,
+        "p95_ms": 0.6727789000000001,
+        "tokens_per_second_at_p50": 1649.3634694030707
+      },
+      "train_wall_seconds": 0.219188299,
+      "updates": 300
+    },
+    "snn_serial": {
+      "basic_passed": false,
+      "batch_size": 16,
+      "epochs": 100,
+      "generation": {
+        "action_types": {
+          "examine": {
+            "edit_similarity": 0.2857142857142857,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 1.0,
+            "lcs_f1": 0.3076923076923077,
+            "mean_generated_length": 7.0,
+            "mean_target_length": 6.0,
+            "room_accuracy": null,
+            "token_f1": 0.30769230769230765
+          },
+          "inventory": {
+            "edit_similarity": 1.0,
+            "eos_rate": 1.0,
+            "exact": 1.0,
+            "example_count": 4,
+            "feature_f1": 1.0,
+            "lcs_f1": 1.0,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 5.0,
+            "room_accuracy": null,
+            "token_f1": 1.0
+          },
+          "look": {
+            "edit_similarity": 0.09677419354838712,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.16666666666666666,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 31.0,
+            "room_accuracy": 0.0,
+            "token_f1": 0.16666666666666666
+          },
+          "move": {
+            "edit_similarity": 0.09590141041753944,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 4,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.15278069074307687,
+            "mean_generated_length": 6.5,
+            "mean_target_length": 50.25,
+            "room_accuracy": 0.0,
+            "token_f1": 0.15278069074307687
+          }
+        },
+        "edit_similarity": 0.47660941209328306,
+        "eos_rate": 1.0,
+        "exact": 0.4,
+        "example_count": 10,
+        "feature_f1": 0.5,
+        "lcs_f1": 0.5085481737331282,
+        "mean_generated_length": 5.8,
+        "mean_target_length": 25.8,
+        "paired_action_sensitivity": 0.4,
+        "paired_different_target_count": 5,
+        "records": [
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:0:0",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "look",
+            "action_type": "look",
+            "edit_similarity": 0.09677419354838712,
+            "exact": 0.0,
+            "example_id": "test:20260723:0:1",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.16666666666666666,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.16666666666666666
+          },
+          {
+            "action": "go east",
+            "action_type": "move",
+            "edit_similarity": 0.25806451612903225,
+            "exact": 0.0,
+            "example_id": "test:20260723:1:0",
+            "feature_f1": 0.0,
+            "generated_length": 11.0,
+            "lcs_f1": 0.38095238095238093,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "direction:south",
+              "room:steam room"
+            ],
+            "prediction_tokens": [
+              "-",
+              "=",
+              "Steam",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "find",
+              "You",
+              "south",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.38095238095238093
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:1:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.04166666666666663,
+            "exact": 0.0,
+            "example_id": "test:20260723:2:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.07547169811320754,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:south",
+              "room:cookhouse"
+            ],
+            "target_length": 48.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Cookhouse",
+              "=",
+              "-",
+              "You've",
+              "entered",
+              "a",
+              "cookhouse",
+              ".",
+              "You",
+              "begin",
+              "to",
+              "take",
+              "stock",
+              "of",
+              "what's",
+              "in",
+              "the",
+              "room",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "east",
+              ".",
+              "There",
+              "is",
+              "an",
+              "exit",
+              "to",
+              "the",
+              "south",
+              ".",
+              "Don't",
+              "worry",
+              ",",
+              "it",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.07547169811320754
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:2:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go west",
+            "action_type": "move",
+            "edit_similarity": 0.0535714285714286,
+            "exact": 0.0,
+            "example_id": "test:20260723:3:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.09836065573770492,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:north",
+              "room:bedchamber"
+            ],
+            "target_length": 56.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Bedchamber",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "typical",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "<unk>",
+              "is",
+              "to",
+              "<unk>",
+              ",",
+              "you're",
+              "in",
+              "a",
+              "bedchamber",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "east",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "north",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.0983606557377049
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:3:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "examine coin",
+            "action_type": "examine",
+            "edit_similarity": 0.2857142857142857,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:0",
+            "feature_f1": 1.0,
+            "generated_length": 7.0,
+            "lcs_f1": 0.3076923076923077,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "object:coin"
+            ],
+            "prediction_tokens": [
+              "The",
+              "coin",
+              "appears",
+              "out",
+              "of",
+              "place",
+              "here"
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "object:coin"
+            ],
+            "target_length": 6.0,
+            "target_tokens": [
+              "The",
+              "coin",
+              "is",
+              "<unk>",
+              "looking",
+              "."
+            ],
+            "token_f1": 0.30769230769230765
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.030303030303030276,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:1",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.056338028169014086,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:south",
+              "direction:west",
+              "room:<unk>"
+            ],
+            "target_length": 66.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "<unk>",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "<unk>",
+              "up",
+              "in",
+              "an",
+              "<unk>",
+              ".",
+              "The",
+              "room",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              ",",
+              "as",
+              "<unk>",
+              "it",
+              "were",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "the",
+              "<unk>",
+              "<unk>",
+              "in",
+              "the",
+              "<unk>",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "south",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unblocked",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "west",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.05633802816901409
+          }
+        ],
+        "room_accuracy": 0.0,
+        "timing": {
+          "generated_token": {
+            "count": 58,
+            "mean_ms": 1.0616253620689655,
+            "p50_ms": 0.941303,
+            "p95_ms": 1.3275796,
+            "p99_ms": 3.6036710499999987,
+            "tokens_per_second_at_p50": 1062.3571793567003
+          },
+          "prefill": {
+            "count": 10,
+            "mean_ms": 3.0599198999999997,
+            "p50_ms": 3.015091,
+            "p95_ms": 3.2007244,
+            "p99_ms": 3.20436328,
+            "tokens_per_second_at_p50": 331.66494808946067
+          },
+          "state_bytes_max": 248,
+          "state_bytes_mean": 248.0
+        },
+        "token_f1": 0.5085481737331282
+      },
+      "loss_first": 5.804147243499756,
+      "loss_last": 0.7037466168403625,
+      "mode": "snn_serial",
+      "post_teacher": {
+        "test": {
+          "accuracy": 0.6119402985074627,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.2857142857142857,
+              "nll": 3.323102133614676,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.04334213274220625,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.53125,
+              "nll": 1.912264108657837,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.5902439024390244,
+              "nll": 2.3265598762326123,
+              "target_count": 205
+            }
+          },
+          "nll": 2.0986535530815376,
+          "ppl": 8.15518199723562,
+          "target_count": 268
+        },
+        "train": {
+          "accuracy": 0.7905138339920948,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.9310344827586207,
+              "nll": 0.49358278307421455,
+              "target_count": 29
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.038938914270450674,
+              "target_count": 96
+            },
+            "look": {
+              "accuracy": 0.7894736842105263,
+              "nll": 0.9567298442996733,
+              "target_count": 171
+            },
+            "move": {
+              "accuracy": 0.7569832402234636,
+              "nll": 1.0924632615883256,
+              "target_count": 716
+            }
+          },
+          "nll": 0.9524274062762854,
+          "ppl": 2.5919938512292715,
+          "target_count": 1012
+        },
+        "valid": {
+          "accuracy": 0.5865724381625441,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.45454545454545453,
+              "nll": 3.5645946155894888,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.03912017370263735,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.32653061224489793,
+              "nll": 4.09182054169324,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.6080402010050251,
+              "nll": 2.0066201291491637,
+              "target_count": 199
+            }
+          },
+          "nll": 2.2613640889893993,
+          "ppl": 9.596170273049342,
+          "target_count": 283
+        }
+      },
+      "pre_teacher": {
+        "test": {
+          "accuracy": 0.007462686567164179,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.815898895263672,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 6.095336437225342,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.0,
+              "nll": 6.139926433563232,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.00975609756097561,
+              "nll": 5.7930068597560975,
+              "target_count": 205
+            }
+          },
+          "nll": 5.862102309269692,
+          "ppl": 351.462250230905,
+          "target_count": 268
+        },
+        "valid": {
+          "accuracy": 0.007067137809187279,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.595026189630682,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 6.1185652414957685,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.0,
+              "nll": 5.671376131018814,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.010050251256281407,
+              "nll": 5.753288384058966,
+              "target_count": 199
+            }
+          },
+          "nll": 5.763931705757923,
+          "ppl": 318.5985052221436,
+          "target_count": 283
+        }
+      },
+      "timing": {
+        "count": 240,
+        "mean_ms": 0.7402443083333333,
+        "p50_ms": 0.715829,
+        "p95_ms": 0.9146065000000001,
+        "tokens_per_second_at_p50": 1396.981681379212
+      },
+      "train_wall_seconds": 0.261037881,
+      "updates": 300
+    },
+    "transformer": {
+      "basic_passed": true,
+      "batch_size": 16,
+      "epochs": 100,
+      "generation": {
+        "action_types": {
+          "examine": {
+            "edit_similarity": 0.16666666666666663,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.18181818181818182,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 6.0,
+            "room_accuracy": null,
+            "token_f1": 0.1818181818181818
+          },
+          "inventory": {
+            "edit_similarity": 1.0,
+            "eos_rate": 1.0,
+            "exact": 1.0,
+            "example_count": 4,
+            "feature_f1": 1.0,
+            "lcs_f1": 1.0,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 5.0,
+            "room_accuracy": null,
+            "token_f1": 1.0
+          },
+          "look": {
+            "edit_similarity": 0.09677419354838712,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 1,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.16666666666666666,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 31.0,
+            "room_accuracy": 0.0,
+            "token_f1": 0.16666666666666666
+          },
+          "move": {
+            "edit_similarity": 0.05557882977237816,
+            "eos_rate": 1.0,
+            "exact": 0.0,
+            "example_count": 4,
+            "feature_f1": 0.0,
+            "lcs_f1": 0.0992092621716483,
+            "mean_generated_length": 5.0,
+            "mean_target_length": 50.25,
+            "room_accuracy": 0.0,
+            "token_f1": 0.0992092621716483
+          }
+        },
+        "edit_similarity": 0.44857561793045664,
+        "eos_rate": 1.0,
+        "exact": 0.4,
+        "example_count": 10,
+        "feature_f1": 0.4,
+        "lcs_f1": 0.47453218971714417,
+        "mean_generated_length": 5.0,
+        "mean_target_length": 25.8,
+        "paired_action_sensitivity": 0.0,
+        "paired_different_target_count": 5,
+        "records": [
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:0:0",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "look",
+            "action_type": "look",
+            "edit_similarity": 0.09677419354838712,
+            "exact": 0.0,
+            "example_id": "test:20260723:0:1",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.16666666666666666,
+            "pair_id": "test:20260723:0",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.16666666666666666
+          },
+          {
+            "action": "go east",
+            "action_type": "move",
+            "edit_similarity": 0.09677419354838712,
+            "exact": 0.0,
+            "example_id": "test:20260723:1:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.16666666666666666,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:west",
+              "room:spare room"
+            ],
+            "target_length": 31.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Spare",
+              "Room",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "spare",
+              "room",
+              ".",
+              "A",
+              "standard",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "west",
+              "."
+            ],
+            "token_f1": 0.16666666666666666
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:1:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:1",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.04166666666666663,
+            "exact": 0.0,
+            "example_id": "test:20260723:2:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.07547169811320754,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:south",
+              "room:cookhouse"
+            ],
+            "target_length": 48.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Cookhouse",
+              "=",
+              "-",
+              "You've",
+              "entered",
+              "a",
+              "cookhouse",
+              ".",
+              "You",
+              "begin",
+              "to",
+              "take",
+              "stock",
+              "of",
+              "what's",
+              "in",
+              "the",
+              "room",
+              ".",
+              "You",
+              "need",
+              "an",
+              "unguarded",
+              "exit",
+              "?",
+              "You",
+              "should",
+              "try",
+              "going",
+              "east",
+              ".",
+              "There",
+              "is",
+              "an",
+              "exit",
+              "to",
+              "the",
+              "south",
+              ".",
+              "Don't",
+              "worry",
+              ",",
+              "it",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.07547169811320754
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:2:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:2",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "go west",
+            "action_type": "move",
+            "edit_similarity": 0.0535714285714286,
+            "exact": 0.0,
+            "example_id": "test:20260723:3:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.09836065573770492,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:east",
+              "direction:north",
+              "room:bedchamber"
+            ],
+            "target_length": 56.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "Bedchamber",
+              "=",
+              "-",
+              "You",
+              "are",
+              "in",
+              "a",
+              "typical",
+              "kind",
+              "of",
+              "place",
+              ".",
+              "<unk>",
+              "is",
+              "to",
+              "<unk>",
+              ",",
+              "you're",
+              "in",
+              "a",
+              "bedchamber",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "east",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "north",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.0983606557377049
+          },
+          {
+            "action": "inventory",
+            "action_type": "inventory",
+            "edit_similarity": 1.0,
+            "exact": 1.0,
+            "example_id": "test:20260723:3:1",
+            "feature_f1": 1.0,
+            "generated_length": 5.0,
+            "lcs_f1": 1.0,
+            "pair_id": "test:20260723:3",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "inventory:empty"
+            ],
+            "target_length": 5.0,
+            "target_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "token_f1": 1.0
+          },
+          {
+            "action": "examine coin",
+            "action_type": "examine",
+            "edit_similarity": 0.16666666666666663,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:0",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.18181818181818182,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": NaN,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "object:coin"
+            ],
+            "target_length": 6.0,
+            "target_tokens": [
+              "The",
+              "coin",
+              "is",
+              "<unk>",
+              "looking",
+              "."
+            ],
+            "token_f1": 0.1818181818181818
+          },
+          {
+            "action": "go north",
+            "action_type": "move",
+            "edit_similarity": 0.030303030303030276,
+            "exact": 0.0,
+            "example_id": "test:20260723:4:1",
+            "feature_f1": 0.0,
+            "generated_length": 5.0,
+            "lcs_f1": 0.056338028169014086,
+            "pair_id": "test:20260723:4",
+            "prediction_features": [
+              "inventory:empty"
+            ],
+            "prediction_tokens": [
+              "You",
+              "are",
+              "carrying",
+              "nothing",
+              "."
+            ],
+            "room_accuracy": 0.0,
+            "stopped_on_eos": 1.0,
+            "target_features": [
+              "direction:south",
+              "direction:west",
+              "room:<unk>"
+            ],
+            "target_length": 66.0,
+            "target_tokens": [
+              "-",
+              "=",
+              "<unk>",
+              "=",
+              "-",
+              "You've",
+              "just",
+              "<unk>",
+              "up",
+              "in",
+              "an",
+              "<unk>",
+              ".",
+              "The",
+              "room",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              ",",
+              "as",
+              "<unk>",
+              "it",
+              "were",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "<unk>",
+              "the",
+              "<unk>",
+              "<unk>",
+              "in",
+              "the",
+              "<unk>",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "south",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unblocked",
+              ".",
+              "You",
+              "don't",
+              "like",
+              "doors",
+              "?",
+              "Why",
+              "not",
+              "try",
+              "going",
+              "west",
+              ",",
+              "that",
+              "entranceway",
+              "is",
+              "unguarded",
+              "."
+            ],
+            "token_f1": 0.05633802816901409
+          }
+        ],
+        "room_accuracy": 0.0,
+        "timing": {
+          "generated_token": {
+            "count": 50,
+            "mean_ms": 1.60533794,
+            "p50_ms": 1.5208595,
+            "p95_ms": 1.959628749999999,
+            "p99_ms": 3.293876649999997,
+            "tokens_per_second_at_p50": 657.5229335780195
+          },
+          "prefill": {
+            "count": 10,
+            "mean_ms": 1.5963774000000002,
+            "p50_ms": 1.5948445,
+            "p95_ms": 1.64490275,
+            "p99_ms": 1.6460997499999999,
+            "tokens_per_second_at_p50": 627.0203772217292
+          },
+          "state_bytes_max": 21248,
+          "state_bytes_mean": 16307.2
+        },
+        "token_f1": 0.47453218971714417
+      },
+      "loss_first": 5.561435222625732,
+      "loss_last": 0.8924053907394409,
+      "mode": "transformer",
+      "post_teacher": {
+        "test": {
+          "accuracy": 0.45149253731343286,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.42857142857142855,
+              "nll": 4.269118445260184,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.2560652941465378,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.40625,
+              "nll": 3.0331506729125977,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.3951219512195122,
+              "nll": 2.813448947813453,
+              "target_count": 205
+            }
+          },
+          "nll": 2.648683776161564,
+          "ppl": 14.135421017471282,
+          "target_count": 268
+        },
+        "train": {
+          "accuracy": 0.658102766798419,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.9655172413793104,
+              "nll": 0.4427243635572236,
+              "target_count": 29
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.12815056586017212,
+              "target_count": 96
+            },
+            "look": {
+              "accuracy": 0.6257309941520468,
+              "nll": 1.4927383333618878,
+              "target_count": 171
+            },
+            "move": {
+              "accuracy": 0.6075418994413407,
+              "nll": 1.6116234710096646,
+              "target_count": 716
+            }
+          },
+          "nll": 1.4173143489264217,
+          "ppl": 4.126024484901044,
+          "target_count": 1012
+        },
+        "valid": {
+          "accuracy": 0.4416961130742049,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.2727272727272727,
+              "nll": 4.353820107199929,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "nll": 0.1660117208957672,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.2857142857142857,
+              "nll": 3.8318699428013394,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.4221105527638191,
+              "nll": 2.5117920535293656,
+              "target_count": 199
+            }
+          },
+          "nll": 2.613019605407445,
+          "ppl": 13.640176679956904,
+          "target_count": 283
+        }
+      },
+      "pre_teacher": {
+        "test": {
+          "accuracy": 0.0,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.4785886492047995,
+              "target_count": 7
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 5.302304903666179,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.0,
+              "nll": 5.823709487915039,
+              "target_count": 32
+            },
+            "move": {
+              "accuracy": 0.0,
+              "nll": 5.66793555282965,
+              "target_count": 205
+            }
+          },
+          "nll": 5.648846754387243,
+          "ppl": 283.96379691589647,
+          "target_count": 268
+        },
+        "valid": {
+          "accuracy": 0.007067137809187279,
+          "action_types": {
+            "examine": {
+              "accuracy": 0.0,
+              "nll": 5.472518227317116,
+              "target_count": 11
+            },
+            "inventory": {
+              "accuracy": 0.0,
+              "nll": 5.474525133768718,
+              "target_count": 24
+            },
+            "look": {
+              "accuracy": 0.02040816326530612,
+              "nll": 5.429337482063138,
+              "target_count": 49
+            },
+            "move": {
+              "accuracy": 0.005025125628140704,
+              "nll": 5.595863227269159,
+              "target_count": 199
+            }
+          },
+          "nll": 5.551945662751215,
+          "ppl": 257.73854065215,
+          "target_count": 283
+        }
+      },
+      "timing": {
+        "count": 240,
+        "mean_ms": 1.0137405541666666,
+        "p50_ms": 1.0254029999999998,
+        "p95_ms": 1.11522465,
+        "tokens_per_second_at_p50": 975.2263256495253
+      },
+      "train_wall_seconds": 0.342301552,
+      "updates": 300
+    }
+  },
+  "schema_version": 1,
+  "short_stability": {
+    "all_losses_finite": true,
+    "final_parameter_max_abs": 1.1920928955078125e-07,
+    "last_20_mean_loss_abs_gap": 1.7881393432617187e-08,
+    "maximum_loss_abs_gap": 7.152557373046875e-07,
+    "mean_loss_abs_gap": 6.437301635742188e-08,
+    "parallel_loss_first": 5.804147243499756,
+    "parallel_loss_last": 0.7451346516609192,
+    "passed": true,
+    "prediction_count": 33480,
+    "prediction_disagreement_rate": 0.0,
+    "prediction_disagreements": 0,
+    "serial_loss_first": 5.804147243499756,
+    "serial_loss_last": 0.7451346516609192,
+    "updates": 100
+  },
+  "speed_records": {
+    "lstm": {
+      "benchmark": {
+        "effective_examples_per_second": 18498.15876842496,
+        "effective_input_tokens_per_second": 1489101.7808582094,
+        "effective_target_tokens_per_second": 468003.4168411515,
+        "input_padding_utilization": 0.6987847222222222,
+        "mean_real_examples_per_update": 13.333333333333334,
+        "per_real_example_timing": {
+          "count": 24,
+          "mean_ms": 0.054717353670634926,
+          "p50_ms": 0.05217928571428571,
+          "p95_ms": 0.06822537916666667,
+          "tokens_per_second_at_p50": 19164.69315957345
+        },
+        "steady_input_tokens": 25760,
+        "steady_real_examples": 320,
+        "steady_target_tokens": 8096,
+        "step_timing": {
+          "count": 24,
+          "mean_ms": 0.7207924583333334,
+          "p50_ms": 0.73051,
+          "p95_ms": 0.8187045500000001,
+          "tokens_per_second_at_p50": 1368.9066542552464
+        },
+        "target_padding_utilization": 0.5647321428571429,
+        "updates": 30,
+        "warmup_updates_excluded": 6
+      },
+      "capture": {
+        "allocated_after_bytes": 87958016,
+        "allocated_before_bytes": 69202944,
+        "allocated_delta_bytes": 18755072,
+        "capture_seconds": 0.38811043,
+        "cold_first_replay_loss": 5.741031169891357,
+        "cold_first_replay_wall_ms": 0.811844,
+        "keys": [
+          [
+            16,
+            64,
+            6
+          ],
+          [
+            16,
+            96,
+            41
+          ],
+          [
+            16,
+            128,
+            65
+          ]
+        ],
+        "peak_additional_allocated_bytes": 36355584,
+        "peak_additional_reserved_bytes": 111149056,
+        "peak_allocated_bytes": 105558528,
+        "peak_reserved_bytes": 197132288,
+        "reserved_after_bytes": 197132288,
+        "reserved_before_bytes": 85983232,
+        "reserved_delta_bytes": 111149056,
+        "restore_wall_ms": 1.287321,
+        "shape_count": 3,
+        "total_allocated_delta_from_clean_bytes": 18872832,
+        "total_reserved_delta_from_clean_bytes": 111149056
+      },
+      "equivalence": {
+        "all_losses_finite": true,
+        "last_loss_abs_gap": 0.0,
+        "maximum_loss_abs_gap": 0.0,
+        "mean_loss_abs_gap": 0.0,
+        "passed": true,
+        "prediction_count": 6505,
+        "prediction_disagreement_rate": 0.0,
+        "prediction_disagreements": 0,
+        "updates": 20
+      },
+      "profiler": {
+        "cuda_graph_launch_count": 1,
+        "cuda_kernel_event_count": 91,
+        "cuda_launch_kernel_count": 2,
+        "cuda_memcpy_async_count": 6,
+        "host_api_per_real_example": 0.6428571428571429,
+        "host_launch_and_copy_api_count": 9,
+        "real_example_count": 14
+      }
+    },
+    "snn_parallel": {
+      "benchmark": {
+        "effective_examples_per_second": 20133.046722635696,
+        "effective_input_tokens_per_second": 1620710.2611721738,
+        "effective_target_tokens_per_second": 509366.08208268316,
+        "input_padding_utilization": 0.6987847222222222,
+        "mean_real_examples_per_update": 13.333333333333334,
+        "per_real_example_timing": {
+          "count": 24,
+          "mean_ms": 0.050206784722222224,
+          "p50_ms": 0.04661378571428572,
+          "p95_ms": 0.06012948333333333,
+          "tokens_per_second_at_p50": 21452.88104530695
+        },
+        "steady_input_tokens": 25760,
+        "steady_real_examples": 320,
+        "steady_target_tokens": 8096,
+        "step_timing": {
+          "count": 24,
+          "mean_ms": 0.6622610833333333,
+          "p50_ms": 0.652593,
+          "p95_ms": 0.7587822,
+          "tokens_per_second_at_p50": 1532.3486460933539
+        },
+        "target_padding_utilization": 0.5647321428571429,
+        "updates": 30,
+        "warmup_updates_excluded": 6
+      },
+      "capture": {
+        "allocated_after_bytes": 70925312,
+        "allocated_before_bytes": 52164608,
+        "allocated_delta_bytes": 18760704,
+        "capture_seconds": 0.318138306,
+        "cold_first_replay_loss": 6.089395046234131,
+        "cold_first_replay_wall_ms": 0.641808,
+        "keys": [
+          [
+            16,
+            64,
+            6
+          ],
+          [
+            16,
+            96,
+            41
+          ],
+          [
+            16,
+            128,
+            65
+          ]
+        ],
+        "peak_additional_allocated_bytes": 24656896,
+        "peak_additional_reserved_bytes": 44040192,
+        "peak_allocated_bytes": 76821504,
+        "peak_reserved_bytes": 109051904,
+        "reserved_after_bytes": 109051904,
+        "reserved_before_bytes": 65011712,
+        "reserved_delta_bytes": 44040192,
+        "restore_wall_ms": 0.825456,
+        "shape_count": 3,
+        "total_allocated_delta_from_clean_bytes": 18879488,
+        "total_reserved_delta_from_clean_bytes": 44040192
+      },
+      "equivalence": {
+        "all_losses_finite": true,
+        "last_loss_abs_gap": 0.0,
+        "maximum_loss_abs_gap": 0.0,
+        "mean_loss_abs_gap": 0.0,
+        "passed": true,
+        "prediction_count": 6505,
+        "prediction_disagreement_rate": 0.0,
+        "prediction_disagreements": 0,
+        "updates": 20
+      },
+      "profiler": {
+        "cuda_graph_launch_count": 1,
+        "cuda_kernel_event_count": 104,
+        "cuda_launch_kernel_count": 2,
+        "cuda_memcpy_async_count": 6,
+        "host_api_per_real_example": 0.6428571428571429,
+        "host_launch_and_copy_api_count": 9,
+        "real_example_count": 14
+      }
+    },
+    "snn_serial": {
+      "benchmark": {
+        "effective_examples_per_second": 18890.438232782974,
+        "effective_input_tokens_per_second": 1520680.2777390296,
+        "effective_target_tokens_per_second": 477928.08728940925,
+        "input_padding_utilization": 0.6987847222222222,
+        "mean_real_examples_per_update": 13.333333333333334,
+        "per_real_example_timing": {
+          "count": 24,
+          "mean_ms": 0.05375135416666666,
+          "p50_ms": 0.04968371428571429,
+          "p95_ms": 0.070580725,
+          "tokens_per_second_at_p50": 20127.31967359238
+        },
+        "steady_input_tokens": 25760,
+        "steady_real_examples": 320,
+        "steady_target_tokens": 8096,
+        "step_timing": {
+          "count": 24,
+          "mean_ms": 0.7058244583333333,
+          "p50_ms": 0.6955720000000001,
+          "p95_ms": 0.8469687000000001,
+          "tokens_per_second_at_p50": 1437.6656909708843
+        },
+        "target_padding_utilization": 0.5647321428571429,
+        "updates": 30,
+        "warmup_updates_excluded": 6
+      },
+      "capture": {
+        "allocated_after_bytes": 53885952,
+        "allocated_before_bytes": 18085888,
+        "allocated_delta_bytes": 35800064,
+        "capture_seconds": 0.343859927,
+        "cold_first_replay_loss": 6.089395046234131,
+        "cold_first_replay_wall_ms": 0.647601,
+        "keys": [
+          [
+            16,
+            64,
+            6
+          ],
+          [
+            16,
+            96,
+            41
+          ],
+          [
+            16,
+            128,
+            65
+          ]
+        ],
+        "peak_additional_allocated_bytes": 41696256,
+        "peak_additional_reserved_bytes": 65011712,
+        "peak_allocated_bytes": 59782144,
+        "peak_reserved_bytes": 88080384,
+        "reserved_after_bytes": 88080384,
+        "reserved_before_bytes": 23068672,
+        "reserved_delta_bytes": 65011712,
+        "restore_wall_ms": 0.630391,
+        "shape_count": 3,
+        "total_allocated_delta_from_clean_bytes": 35918848,
+        "total_reserved_delta_from_clean_bytes": 65011712
+      },
+      "equivalence": {
+        "all_losses_finite": true,
+        "last_loss_abs_gap": 0.0,
+        "maximum_loss_abs_gap": 0.0,
+        "mean_loss_abs_gap": 0.0,
+        "passed": true,
+        "prediction_count": 6505,
+        "prediction_disagreement_rate": 0.0,
+        "prediction_disagreements": 0,
+        "updates": 20
+      },
+      "profiler": {
+        "cuda_graph_launch_count": 1,
+        "cuda_kernel_event_count": 102,
+        "cuda_launch_kernel_count": 2,
+        "cuda_memcpy_async_count": 6,
+        "host_api_per_real_example": 0.6428571428571429,
+        "host_launch_and_copy_api_count": 9,
+        "real_example_count": 14
+      }
+    },
+    "transformer": {
+      "benchmark": {
+        "effective_examples_per_second": 12251.66497255493,
+        "effective_input_tokens_per_second": 986259.030290672,
+        "effective_target_tokens_per_second": 309967.12380563974,
+        "input_padding_utilization": 0.6987847222222222,
+        "mean_real_examples_per_update": 13.333333333333334,
+        "per_real_example_timing": {
+          "count": 24,
+          "mean_ms": 0.08250377777777777,
+          "p50_ms": 0.0795722857142857,
+          "p95_ms": 0.10082673333333333,
+          "tokens_per_second_at_p50": 12567.189581440776
+        },
+        "steady_input_tokens": 25760,
+        "steady_real_examples": 320,
+        "steady_target_tokens": 8096,
+        "step_timing": {
+          "count": 24,
+          "mean_ms": 1.0882874583333333,
+          "p50_ms": 1.114012,
+          "p95_ms": 1.2099208000000001,
+          "tokens_per_second_at_p50": 897.6563986743411
+        },
+        "target_padding_utilization": 0.5647321428571429,
+        "updates": 30,
+        "warmup_updates_excluded": 6
+      },
+      "capture": {
+        "allocated_after_bytes": 105036288,
+        "allocated_before_bytes": 86250496,
+        "allocated_delta_bytes": 18785792,
+        "capture_seconds": 0.421222464,
+        "cold_first_replay_loss": 5.610983371734619,
+        "cold_first_replay_wall_ms": 0.982429,
+        "keys": [
+          [
+            16,
+            64,
+            6
+          ],
+          [
+            16,
+            96,
+            41
+          ],
+          [
+            16,
+            128,
+            65
+          ]
+        ],
+        "peak_additional_allocated_bytes": 28099072,
+        "peak_additional_reserved_bytes": 109051904,
+        "peak_allocated_bytes": 114349568,
+        "peak_reserved_bytes": 228589568,
+        "reserved_after_bytes": 228589568,
+        "reserved_before_bytes": 119537664,
+        "reserved_delta_bytes": 109051904,
+        "restore_wall_ms": 1.170569,
+        "shape_count": 3,
+        "total_allocated_delta_from_clean_bytes": 18911744,
+        "total_reserved_delta_from_clean_bytes": 109051904
+      },
+      "equivalence": {
+        "all_losses_finite": true,
+        "last_loss_abs_gap": 0.0,
+        "maximum_loss_abs_gap": 0.0,
+        "mean_loss_abs_gap": 0.0,
+        "passed": true,
+        "prediction_count": 6505,
+        "prediction_disagreement_rate": 0.0,
+        "prediction_disagreements": 0,
+        "updates": 20
+      },
+      "profiler": {
+        "cuda_graph_launch_count": 1,
+        "cuda_kernel_event_count": 145,
+        "cuda_launch_kernel_count": 2,
+        "cuda_memcpy_async_count": 6,
+        "host_api_per_real_example": 0.6428571428571429,
+        "host_launch_and_copy_api_count": 9,
+        "real_example_count": 14
+      }
+    }
+  }
+}

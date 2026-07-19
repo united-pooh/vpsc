@@ -1,0 +1,648 @@
+{
+  "experiment": "E3-SG27B fully fused ROCm Triton gated trace",
+  "timestamp_utc": "2026-07-19T16:30:10.830859+00:00",
+  "protocol": {
+    "batch_size": 16,
+    "state_dim": 31,
+    "buckets": [
+      [
+        64,
+        27
+      ],
+      [
+        96,
+        55
+      ],
+      [
+        128,
+        71
+      ],
+      [
+        160,
+        71
+      ]
+    ],
+    "warmups": 5,
+    "repeats": 30,
+    "timing_scope": "complete forward or complete forward+backward with device synchronize",
+    "same_seed_per_route": true,
+    "same_hardware_only": true
+  },
+  "environment": {
+    "torch": "2.9.1+rocm7.2.0.git7e1940d4",
+    "torch_hip": "7.2.26015-fc0010cf6a",
+    "torch_cuda": null,
+    "triton": "3.5.1+rocm7.2.0.gita272dfa8",
+    "target_backend": "hip",
+    "target_arch": "gfx1101",
+    "target_warp_size": 32,
+    "fused": {
+      "torch": "2.9.1+rocm7.2.0.git7e1940d4",
+      "torch_hip": "7.2.26015-fc0010cf6a",
+      "triton": "3.5.1+rocm7.2.0.gita272dfa8",
+      "target_backend": "hip",
+      "target_arch": "gfx1101",
+      "max_time": 256,
+      "forward_kernel_count": 2,
+      "backward_kernel_count_excluding_zero_fill": 2
+    },
+    "device_name": "AMD Radeon RX 7800 XT",
+    "device_memory_bytes": 16963137536
+  },
+  "sources": {
+    "runner_sha256": "a19700f18f876d848e04f3637b231bc44f8317d8dcc83fa6fc0c9059869f4ae9",
+    "portable_sha256": "751d452bedc698545d880b11983d7c353adc644448fe040487ca2648d7715884",
+    "affine_sha256": "0be66f6edc7b5741adc027db11517923f7fd69278a1d39b63eb59ceb5ae7fb97",
+    "fused_sha256": "6ced69232c10d860300e8c0b2f61343f4a2d8cce17c6fdd9771ca2687372f6c8"
+  },
+  "equivalence": {
+    "non_power_of_two": {
+      "shape": {
+        "batch": 3,
+        "time": 31,
+        "state": 31,
+        "query": 11
+      },
+      "routes": {
+        "tensor_tree": {
+          "errors": {
+            "raw_max_abs": 1.1920928955078125e-07,
+            "final_e_max_abs": 5.960464477539063e-08,
+            "final_i_max_abs": 1.1920928955078125e-07,
+            "drive_grad_max_abs": 3.5762786865234375e-07,
+            "decay_grad_max_abs": 1.049041748046875e-05,
+            "initial_e_grad_max_abs": 4.76837158203125e-07,
+            "initial_i_grad_max_abs": 7.152557373046875e-07
+          },
+          "spike_disagreements": 0,
+          "passed": true
+        },
+        "triton_composed": {
+          "errors": {
+            "raw_max_abs": 1.1920928955078125e-07,
+            "final_e_max_abs": 5.960464477539063e-08,
+            "final_i_max_abs": 8.940696716308594e-08,
+            "drive_grad_max_abs": 1.1920928955078125e-06,
+            "decay_grad_max_abs": 7.62939453125e-06,
+            "initial_e_grad_max_abs": 4.172325134277344e-07,
+            "initial_i_grad_max_abs": 9.5367431640625e-07
+          },
+          "spike_disagreements": 0,
+          "passed": true
+        },
+        "triton_fused": {
+          "errors": {
+            "raw_max_abs": 1.1920928955078125e-07,
+            "final_e_max_abs": 5.960464477539063e-08,
+            "final_i_max_abs": 8.940696716308594e-08,
+            "drive_grad_max_abs": 1.1920928955078125e-06,
+            "decay_grad_max_abs": 1.049041748046875e-05,
+            "initial_e_grad_max_abs": 3.5762786865234375e-07,
+            "initial_i_grad_max_abs": 9.5367431640625e-07
+          },
+          "spike_disagreements": 0,
+          "passed": true
+        }
+      },
+      "passed": true
+    },
+    "long_fallback": {
+      "shape": {
+        "batch": 3,
+        "time": 160,
+        "state": 31,
+        "query": 71
+      },
+      "routes": {
+        "tensor_tree": {
+          "errors": {
+            "raw_max_abs": 1.7881393432617188e-07,
+            "final_e_max_abs": 5.960464477539063e-08,
+            "final_i_max_abs": 1.1920928955078125e-07,
+            "drive_grad_max_abs": 9.5367431640625e-07,
+            "decay_grad_max_abs": 4.38690185546875e-05,
+            "initial_e_grad_max_abs": 1.0132789611816406e-06,
+            "initial_i_grad_max_abs": 7.152557373046875e-07
+          },
+          "spike_disagreements": 0,
+          "passed": true
+        },
+        "triton_composed": {
+          "errors": {
+            "raw_max_abs": 1.7881393432617188e-07,
+            "final_e_max_abs": 5.960464477539063e-08,
+            "final_i_max_abs": 1.1920928955078125e-07,
+            "drive_grad_max_abs": 9.5367431640625e-07,
+            "decay_grad_max_abs": 4.57763671875e-05,
+            "initial_e_grad_max_abs": 9.5367431640625e-07,
+            "initial_i_grad_max_abs": 6.258487701416016e-07
+          },
+          "spike_disagreements": 0,
+          "passed": true
+        },
+        "triton_fused": {
+          "errors": {
+            "raw_max_abs": 1.7881393432617188e-07,
+            "final_e_max_abs": 5.960464477539063e-08,
+            "final_i_max_abs": 1.1920928955078125e-07,
+            "drive_grad_max_abs": 9.5367431640625e-07,
+            "decay_grad_max_abs": 4.291534423828125e-05,
+            "initial_e_grad_max_abs": 1.0728836059570312e-06,
+            "initial_i_grad_max_abs": 6.258487701416016e-07
+          },
+          "spike_disagreements": 0,
+          "passed": true
+        }
+      },
+      "passed": true
+    }
+  },
+  "buckets": {
+    "t64_q27": {
+      "serial": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 5.263478466666667,
+          "p50_ms": 5.2339815,
+          "p95_ms": 5.98046,
+          "min_ms": 4.51256,
+          "max_ms": 6.51105
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 1.0745638333333332,
+          "p50_ms": 1.050203,
+          "p95_ms": 1.233341,
+          "min_ms": 0.977856,
+          "max_ms": 1.281391
+        },
+        "memory": {
+          "baseline_allocated_bytes": 516096,
+          "baseline_reserved_bytes": 2097152,
+          "peak_allocated_bytes": 2985472,
+          "peak_reserved_bytes": 4194304,
+          "incremental_peak_allocated_bytes": 2469376,
+          "incremental_peak_reserved_bytes": 2097152
+        }
+      },
+      "tensor_tree": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 2.0663065,
+          "p50_ms": 2.0726035,
+          "p95_ms": 2.716538,
+          "min_ms": 1.688334,
+          "max_ms": 2.744676
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.6122613,
+          "p50_ms": 0.5781725,
+          "p95_ms": 0.769661,
+          "min_ms": 0.502564,
+          "max_ms": 0.961023
+        },
+        "memory": {
+          "baseline_allocated_bytes": 516096,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 6028288,
+          "peak_reserved_bytes": 8388608,
+          "incremental_peak_allocated_bytes": 5512192,
+          "incremental_peak_reserved_bytes": 4194304
+        }
+      },
+      "triton_composed": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 1.3626686,
+          "p50_ms": 1.302219,
+          "p95_ms": 1.92043,
+          "min_ms": 1.110819,
+          "max_ms": 2.036742
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.6293168,
+          "p50_ms": 0.659447,
+          "p95_ms": 1.030325,
+          "min_ms": 0.34249,
+          "max_ms": 1.160192
+        },
+        "memory": {
+          "baseline_allocated_bytes": 516096,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 2981376,
+          "peak_reserved_bytes": 4194304,
+          "incremental_peak_allocated_bytes": 2465280,
+          "incremental_peak_reserved_bytes": 0
+        }
+      },
+      "triton_fused": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 0.7137750333333333,
+          "p50_ms": 0.706789,
+          "p95_ms": 0.919495,
+          "min_ms": 0.554472,
+          "max_ms": 0.974349
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.1752397,
+          "p50_ms": 0.16871049999999999,
+          "p95_ms": 0.256256,
+          "min_ms": 0.145666,
+          "max_ms": 0.281444
+        },
+        "memory": {
+          "baseline_allocated_bytes": 516096,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 1847808,
+          "peak_reserved_bytes": 4194304,
+          "incremental_peak_allocated_bytes": 1331712,
+          "incremental_peak_reserved_bytes": 0
+        }
+      },
+      "speedups_fused_over": {
+        "serial": {
+          "training": 7.405295639858571,
+          "inference": 6.224882268738461
+        },
+        "tensor_tree": {
+          "training": 2.93242184018144,
+          "inference": 3.4270095815020407
+        },
+        "triton_composed": {
+          "training": 1.8424437844957973,
+          "inference": 3.908749010879584
+        }
+      }
+    },
+    "t96_q55": {
+      "serial": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 7.462679133333333,
+          "p50_ms": 7.225709,
+          "p95_ms": 9.090409,
+          "min_ms": 6.437334,
+          "max_ms": 11.34942
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 1.4288995333333332,
+          "p50_ms": 1.4019555000000001,
+          "p95_ms": 1.602221,
+          "min_ms": 1.31161,
+          "max_ms": 1.85456
+        },
+        "memory": {
+          "baseline_allocated_bytes": 773632,
+          "baseline_reserved_bytes": 6291456,
+          "peak_allocated_bytes": 5109760,
+          "peak_reserved_bytes": 6291456,
+          "incremental_peak_allocated_bytes": 4336128,
+          "incremental_peak_reserved_bytes": 0
+        }
+      },
+      "tensor_tree": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 2.3159335,
+          "p50_ms": 2.1905145,
+          "p95_ms": 3.108607,
+          "min_ms": 1.757736,
+          "max_ms": 3.249461
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.6405013666666667,
+          "p50_ms": 0.6251519999999999,
+          "p95_ms": 0.799237,
+          "min_ms": 0.546628,
+          "max_ms": 0.940309
+        },
+        "memory": {
+          "baseline_allocated_bytes": 773632,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 10434048,
+          "peak_reserved_bytes": 14680064,
+          "incremental_peak_allocated_bytes": 9660416,
+          "incremental_peak_reserved_bytes": 10485760
+        }
+      },
+      "triton_composed": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 1.3684765666666665,
+          "p50_ms": 1.3295219999999999,
+          "p95_ms": 1.745213,
+          "min_ms": 1.086642,
+          "max_ms": 1.821777
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.38955069999999997,
+          "p50_ms": 0.3795105,
+          "p95_ms": 0.461065,
+          "min_ms": 0.332882,
+          "max_ms": 0.466876
+        },
+        "memory": {
+          "baseline_allocated_bytes": 773632,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 5101568,
+          "peak_reserved_bytes": 6291456,
+          "incremental_peak_allocated_bytes": 4327936,
+          "incremental_peak_reserved_bytes": 2097152
+        }
+      },
+      "triton_fused": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 0.7554461333333333,
+          "p50_ms": 0.7417225000000001,
+          "p95_ms": 0.941957,
+          "min_ms": 0.628503,
+          "max_ms": 0.997559
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.1550259,
+          "p50_ms": 0.1469335,
+          "p95_ms": 0.197575,
+          "min_ms": 0.135648,
+          "max_ms": 0.266506
+        },
+        "memory": {
+          "baseline_allocated_bytes": 773632,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 3343360,
+          "peak_reserved_bytes": 4194304,
+          "incremental_peak_allocated_bytes": 2569728,
+          "incremental_peak_reserved_bytes": 0
+        }
+      },
+      "speedups_fused_over": {
+        "serial": {
+          "training": 9.74179561763328,
+          "inference": 9.541428605457572
+        },
+        "tensor_tree": {
+          "training": 2.953280371028248,
+          "inference": 4.25465942075837
+        },
+        "triton_composed": {
+          "training": 1.7924789931544476,
+          "inference": 2.5828725239649226
+        }
+      }
+    },
+    "t128_q71": {
+      "serial": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 8.998194733333333,
+          "p50_ms": 8.721283,
+          "p95_ms": 12.864962,
+          "min_ms": 7.922686,
+          "max_ms": 13.031929
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 1.7918995666666668,
+          "p50_ms": 1.7254705000000001,
+          "p95_ms": 2.213261,
+          "min_ms": 1.622228,
+          "max_ms": 2.375548
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1029632,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 6706176,
+          "peak_reserved_bytes": 8388608,
+          "incremental_peak_allocated_bytes": 5676544,
+          "incremental_peak_reserved_bytes": 4194304
+        }
+      },
+      "tensor_tree": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 2.171064966666667,
+          "p50_ms": 2.15638,
+          "p95_ms": 2.536406,
+          "min_ms": 1.793454,
+          "max_ms": 2.563125
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.6914703666666667,
+          "p50_ms": 0.6441175,
+          "p95_ms": 0.957298,
+          "min_ms": 0.555624,
+          "max_ms": 1.081784
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1029632,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 13804032,
+          "peak_reserved_bytes": 16777216,
+          "incremental_peak_allocated_bytes": 12774400,
+          "incremental_peak_reserved_bytes": 12582912
+        }
+      },
+      "triton_composed": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 1.3815850666666667,
+          "p50_ms": 1.33968,
+          "p95_ms": 1.984562,
+          "min_ms": 1.038922,
+          "max_ms": 2.331385
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.44481396666666667,
+          "p50_ms": 0.4270255,
+          "p95_ms": 0.586854,
+          "min_ms": 0.341057,
+          "max_ms": 0.864089
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1029632,
+          "baseline_reserved_bytes": 4194304,
+          "peak_allocated_bytes": 6693888,
+          "peak_reserved_bytes": 8388608,
+          "incremental_peak_allocated_bytes": 5664256,
+          "incremental_peak_reserved_bytes": 4194304
+        }
+      },
+      "triton_fused": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 0.7550688333333333,
+          "p50_ms": 0.7291345,
+          "p95_ms": 1.013124,
+          "min_ms": 0.60042,
+          "max_ms": 1.050433
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.21740366666666666,
+          "p50_ms": 0.224221,
+          "p95_ms": 0.370052,
+          "min_ms": 0.143201,
+          "max_ms": 0.413886
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1029632,
+          "baseline_reserved_bytes": 2097152,
+          "peak_allocated_bytes": 4361216,
+          "peak_reserved_bytes": 6291456,
+          "incremental_peak_allocated_bytes": 3331584,
+          "incremental_peak_reserved_bytes": 4194304
+        }
+      },
+      "speedups_fused_over": {
+        "serial": {
+          "training": 11.961144343053304,
+          "inference": 7.695400966011213
+        },
+        "tensor_tree": {
+          "training": 2.957451608722396,
+          "inference": 2.8726903367659586
+        },
+        "triton_composed": {
+          "training": 1.837356482240245,
+          "inference": 1.9044848609184688
+        }
+      }
+    },
+    "t160_q71": {
+      "serial": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 11.537789199999999,
+          "p50_ms": 11.1718835,
+          "p95_ms": 13.864115,
+          "min_ms": 9.837887,
+          "max_ms": 18.283545
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 2.459797866666667,
+          "p50_ms": 2.2947105,
+          "p95_ms": 3.808138,
+          "min_ms": 1.997561,
+          "max_ms": 3.966598
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1283584,
+          "baseline_reserved_bytes": 23068672,
+          "peak_allocated_bytes": 7599104,
+          "peak_reserved_bytes": 27262976,
+          "incremental_peak_allocated_bytes": 6315520,
+          "incremental_peak_reserved_bytes": 4194304
+        }
+      },
+      "tensor_tree": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 2.6714642333333334,
+          "p50_ms": 2.329847,
+          "p95_ms": 4.284848,
+          "min_ms": 1.988574,
+          "max_ms": 4.517219
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.6779052333333334,
+          "p50_ms": 0.6517525,
+          "p95_ms": 0.890155,
+          "min_ms": 0.591042,
+          "max_ms": 0.921007
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1283584,
+          "baseline_reserved_bytes": 23068672,
+          "peak_allocated_bytes": 17740288,
+          "peak_reserved_bytes": 39845888,
+          "incremental_peak_allocated_bytes": 16456704,
+          "incremental_peak_reserved_bytes": 16777216
+        }
+      },
+      "triton_composed": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 1.2857435666666668,
+          "p50_ms": 1.223963,
+          "p95_ms": 1.723551,
+          "min_ms": 1.024474,
+          "max_ms": 2.016317
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.40338926666666663,
+          "p50_ms": 0.381995,
+          "p95_ms": 0.45841,
+          "min_ms": 0.344885,
+          "max_ms": 0.856044
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1283584,
+          "baseline_reserved_bytes": 23068672,
+          "peak_allocated_bytes": 7582720,
+          "peak_reserved_bytes": 27262976,
+          "incremental_peak_allocated_bytes": 6299136,
+          "incremental_peak_reserved_bytes": 4194304
+        }
+      },
+      "triton_fused": {
+        "training": {
+          "count": 30.0,
+          "mean_ms": 0.7207155000000001,
+          "p50_ms": 0.6917800000000001,
+          "p95_ms": 0.96137,
+          "min_ms": 0.586929,
+          "max_ms": 1.046345
+        },
+        "inference": {
+          "count": 30.0,
+          "mean_ms": 0.15810326666666666,
+          "p50_ms": 0.148051,
+          "p95_ms": 0.219026,
+          "min_ms": 0.135217,
+          "max_ms": 0.262508
+        },
+        "memory": {
+          "baseline_allocated_bytes": 1283584,
+          "baseline_reserved_bytes": 23068672,
+          "peak_allocated_bytes": 4742144,
+          "peak_reserved_bytes": 25165824,
+          "incremental_peak_allocated_bytes": 3458560,
+          "incremental_peak_reserved_bytes": 2097152
+        }
+      },
+      "speedups_fused_over": {
+        "serial": {
+          "training": 16.14947454393015,
+          "inference": 15.499459645662643
+        },
+        "tensor_tree": {
+          "training": 3.3679016450316572,
+          "inference": 4.402216128226084
+        },
+        "triton_composed": {
+          "training": 1.7692951516378037,
+          "inference": 2.5801581887322613
+        }
+      }
+    }
+  },
+  "gates": {
+    "equivalence": true,
+    "speed": true,
+    "memory": true,
+    "overall": true
+  }
+}

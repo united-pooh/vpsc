@@ -1,0 +1,911 @@
+{
+  "decision": {
+    "backend_gate": true,
+    "end_to_end_speed_gate": false,
+    "engineering_substrate": "FAIL",
+    "legacy_cpu_trajectory_gate": false,
+    "next_route": "sg24_same_v100_raw_language_ann_comparison",
+    "numerical_gate": true,
+    "overall": "FAIL",
+    "provenance_gate": true,
+    "real_quality_gate": true,
+    "scale_memory_gate": true,
+    "symbolic_gate": true
+  },
+  "environment": {
+    "cpu_threads": 16,
+    "cuda_available": true,
+    "cuda_build": "12.1",
+    "cuda_capability": [
+      7,
+      0
+    ],
+    "cuda_device": "Tesla V100-PCIE-32GB",
+    "cuda_device_count": 1,
+    "cuda_total_memory_bytes": 34079899648,
+    "cudnn": 8902,
+    "git_commit": "551bacc52920ae31ea37dc8b204e59cbcf255a5b",
+    "hostname": "autodl-container-138c41aa1e-c36b1974",
+    "nvidia_driver": "535.54.03",
+    "pid": 30814,
+    "platform": "Linux-5.4.0-149-generic-x86_64-with-glibc2.35",
+    "python": "3.12.3",
+    "torch": "2.3.0+cu121"
+  },
+  "experiment": "E3-SG23E symbolic support quotient and identifiable CUDA solve",
+  "protocol": {
+    "backward_error_tolerance": 1e-12,
+    "cpu_cuda_score_tolerance": 1e-09,
+    "dtype": "torch.float64",
+    "lambda": 1e-06,
+    "legacy_score_tolerance": 1e-06,
+    "repetitions": 7,
+    "stress_sizes": [
+      1024,
+      2048,
+      4096
+    ],
+    "symbolic_round_tolerance": 1e-09,
+    "threads": 16,
+    "warmups": 2
+  },
+  "real_443": {
+    "cpu": {
+      "cold_seconds": 0.006306547,
+      "conservative_training_and_model_logical_bytes": 10134000,
+      "device": "cpu",
+      "dtype": "torch.float64",
+      "end_to_end_median_seconds_excluding_build": 0.005228331,
+      "maximum_small_system_relative_residual": 1.6030486935159112e-16,
+      "repetitions": 7,
+      "resident": {
+        "maximum_seconds": 0.064766281,
+        "median_seconds": 0.005211496,
+        "minimum_seconds": 0.004637555,
+        "p95_seconds": 0.064766281,
+        "sample_count": 7
+      },
+      "transfer_seconds": 1.6835e-05,
+      "warmups": 2
+    },
+    "cuda": {
+      "cold_seconds": 0.153303281,
+      "conservative_training_and_model_logical_bytes": 10134000,
+      "cuda_peak_allocated_bytes": 18556416,
+      "cuda_peak_reserved_bytes": 23068672,
+      "device": "cuda:0",
+      "dtype": "torch.float64",
+      "end_to_end_median_seconds": 1.0763690890000002,
+      "end_to_end_median_seconds_excluding_build": 0.003496452,
+      "end_to_end_speedup_over_sg23d": 0.2927627235122133,
+      "maximum_small_system_relative_residual": 1.448435207610901e-16,
+      "repetitions": 7,
+      "resident": {
+        "maximum_seconds": 0.002765443,
+        "median_seconds": 0.002601157,
+        "minimum_seconds": 0.002583956,
+        "p95_seconds": 0.002765443,
+        "sample_count": 7
+      },
+      "resident_speedup_over_cpu": 2.003529967625945,
+      "transfer_seconds": 0.000895295,
+      "warmups": 2
+    },
+    "dense_reference": {
+      "dense_kernel_logical_bytes": 1569992,
+      "factor_logical_bytes": 1569992,
+      "kernel_seconds": 0.003731176,
+      "solve_seconds": 0.003066535,
+      "total_seconds": 0.006797711
+    },
+    "exactness": {
+      "cpu_cuda_score_max_abs_difference": 2.7200464103316335e-14,
+      "dual_recovery_score_max_abs_difference": 9.992007221626409e-16,
+      "legacy_dense_score_max_abs_difference": 3.6415315207705135e-14,
+      "legacy_prediction_equivalent": true,
+      "original_feature_model_score_max_abs_difference": 4.773959005888173e-15,
+      "original_system_normalized_backward_error": 2.811767011289156e-17
+    },
+    "feature_map": {
+      "build_seconds": 0.307773823,
+      "feature_count": 26612,
+      "logical_csr_bytes": 876768,
+      "nnz": 54576,
+      "vocabulary_sha256": "65B6FDAD7431DA118ACE673DEE0B79C9A8D0164BF4C8AC2ADC601E8F6B600C70"
+    },
+    "memory": {
+      "full_dense_kernel_system_factor_logical_bytes": 4709976,
+      "full_over_symbolic_ratio": 0.4647696862048549,
+      "symbolic_conservative_logical_bytes": 10134000
+    },
+    "quality": {
+      "perfect_quality": true,
+      "rollout": {
+        "first_all_admissible": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 160,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "first_next_affordance": {
+          "bit_accuracy": 1.0,
+          "by_action": {
+            "examine coin": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go east": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go north": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go south": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "go west": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "inventory": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "look": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            },
+            "take coin": {
+              "accuracy": 1.0,
+              "negative_recall": 1.0,
+              "positive_recall": 1.0
+            }
+          },
+          "exact_mask_accuracy": 1.0,
+          "example_count": 160
+        },
+        "first_projection_kind_counts": {
+          "known_edge_projection": 32,
+          "plan_path_constraint": 32,
+          "stationary_hold": 88,
+          "terminal": 8
+        },
+        "first_routing_accuracy": 1.0,
+        "premature_stop_first_branch_count": 0,
+        "second_projection_kind_counts": {
+          "known_edge_projection": 160,
+          "plan_path_constraint": 88,
+          "stationary_hold": 336,
+          "terminal": 32
+        },
+        "self_error_records_first_100": [],
+        "self_minus_teacher_exact": 0.0,
+        "self_pair_timing": {
+          "max_ms": 5.693928,
+          "mean_ms": 1.2560597694805193,
+          "min_ms": 1.060714,
+          "p50_ms": 1.2388105,
+          "p95_ms": 1.40181925,
+          "p99_ms": 1.6968412500000007,
+          "sample_count": 616
+        },
+        "self_rollout_second": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 616,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "teacher_forced_second": {
+          "channel_accuracy": {
+            "done": 1.0,
+            "move_exit_count_after": 1.0,
+            "reward": 1.0,
+            "room_relation": 1.0
+          },
+          "class_recall": {
+            "done": {
+              "<continue>": 1.0,
+              "<done>": 1.0
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 1.0,
+              "<exit_count_1>": 1.0,
+              "<exit_count_2>": 1.0
+            },
+            "reward": {
+              "<reward_positive>": 1.0,
+              "<reward_zero>": 1.0
+            },
+            "room_relation": {
+              "<room_no_observation>": 1.0,
+              "<room_novel>": 1.0,
+              "<room_previous>": 1.0,
+              "<room_same>": 1.0
+            }
+          },
+          "exact_vector_accuracy": 1.0,
+          "example_count": 616,
+          "macro_channel_accuracy": 1.0,
+          "missing_prediction_count": 0
+        },
+        "teacher_pair_timing": {
+          "max_ms": 2.132882,
+          "mean_ms": 1.250219064935065,
+          "min_ms": 1.0632139999999999,
+          "p50_ms": 1.239498,
+          "p95_ms": 1.3992864999999999,
+          "p99_ms": 1.6548339500000002,
+          "sample_count": 616
+        }
+      },
+      "split_metrics": {
+        "test": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          }
+        },
+        "train": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 640,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 640
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 128,
+            "plan_path_constraint": 128,
+            "stationary_hold": 352,
+            "terminal": 32
+          }
+        },
+        "valid": {
+          "delta": {
+            "channel_accuracy": {
+              "done": 1.0,
+              "move_exit_count_after": 1.0,
+              "reward": 1.0,
+              "room_relation": 1.0
+            },
+            "class_recall": {
+              "done": {
+                "<continue>": 1.0,
+                "<done>": 1.0
+              },
+              "move_exit_count_after": {
+                "<exit_count_0>": 1.0,
+                "<exit_count_1>": 1.0,
+                "<exit_count_2>": 1.0
+              },
+              "reward": {
+                "<reward_positive>": 1.0,
+                "<reward_zero>": 1.0
+              },
+              "room_relation": {
+                "<room_no_observation>": 1.0,
+                "<room_novel>": 1.0,
+                "<room_previous>": 1.0,
+                "<room_same>": 1.0
+              }
+            },
+            "exact_vector_accuracy": 1.0,
+            "example_count": 160,
+            "macro_channel_accuracy": 1.0,
+            "missing_prediction_count": 0
+          },
+          "next_affordance": {
+            "bit_accuracy": 1.0,
+            "by_action": {
+              "examine coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go east": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go north": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go south": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "go west": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "inventory": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "look": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              },
+              "take coin": {
+                "accuracy": 1.0,
+                "negative_recall": 1.0,
+                "positive_recall": 1.0
+              }
+            },
+            "exact_mask_accuracy": 1.0,
+            "example_count": 160
+          },
+          "projection_kind_counts": {
+            "known_edge_projection": 32,
+            "plan_path_constraint": 32,
+            "stationary_hold": 88,
+            "terminal": 8
+          }
+        }
+      }
+    },
+    "rows": 443,
+    "symbolic": {
+      "constant_column_max_abs_error": 0.0,
+      "coordinate_round_max_abs_error": 0.0,
+      "cuda_coordinate_seconds": 0.389185746,
+      "gf2_elimination_seconds": 0.001478049,
+      "gf2_rank": 443,
+      "grouping_seconds": 0.344631014,
+      "integer_reconstruction_max_abs_error": 0.0,
+      "kernel_max_abs_error_vs_analytic": 0.0,
+      "maximum_abs_integer_coordinate": 1,
+      "maximum_metric_eigenvalue": 264.1526736719702,
+      "minimum_metric_eigenvalue": 0.9999999999999969,
+      "original_feature_count": 26612,
+      "pivots_sha256": "523E4CE489E184643D33C7695CA1439D476AADA6DCB108B80D182F93AC8EF97C",
+      "rows": 443,
+      "support_group_count": 1044,
+      "total_build_seconds": 0.765098814,
+      "transform_nonzero_count": 3111,
+      "weight_grid_max_abs_error": 1.1102230246251565e-16
+    }
+  },
+  "references": {
+    "cache_sha256": "2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E",
+    "runner_source_sha256": "A127C1B725451AF2F6464A5556A7F9962717936107B7A647894FA90B1415A923",
+    "sg22r_sha256": "1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92",
+    "sg23c_decision": {
+      "backend_gate": true,
+      "cuda_speed_gate": true,
+      "dense_cuda_exactness_gate": false,
+      "effective_rank_exactness_gate": false,
+      "feature_math_gate": true,
+      "hybrid_exactness_gate": true,
+      "hybrid_grid_audit_gate": true,
+      "next_route": "sg23c_residual_correction_or_deflation",
+      "overall": "FAIL",
+      "provenance_gate": true,
+      "real_quality_gate": true,
+      "scale_memory_gate": false
+    },
+    "sg23c_sha256": "17DDD84BCB1B010D13F19C567735BA9498534BE122B473E94407659FA6BA162B",
+    "sg23d_sha256": "88074887CF2999E02EA75D2D1F366EA1FD2723CE3DEE3C0514D555F317BF06F8"
+  },
+  "stress": {
+    "1024": {
+      "cpu": {
+        "cold_seconds": 0.005752119,
+        "conservative_training_and_model_logical_bytes": 2693680,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds_excluding_build": 0.005819296,
+        "maximum_small_system_relative_residual": 9.275108462145894e-16,
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.059625766,
+          "median_seconds": 0.005795393,
+          "minimum_seconds": 0.003047398,
+          "p95_seconds": 0.059625766,
+          "sample_count": 7
+        },
+        "transfer_seconds": 2.3903e-05,
+        "warmups": 2
+      },
+      "cuda": {
+        "cold_seconds": 0.002948999,
+        "conservative_training_and_model_logical_bytes": 2693680,
+        "cuda_peak_allocated_bytes": 12827648,
+        "cuda_peak_reserved_bytes": 23068672,
+        "device": "cuda:0",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.31178617,
+        "end_to_end_median_seconds_excluding_build": 0.0018643980000000002,
+        "end_to_end_speedup_over_sg23d": 0.6315356547084817,
+        "maximum_small_system_relative_residual": 9.170657861160632e-16,
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.001319995,
+          "median_seconds": 0.001212865,
+          "minimum_seconds": 0.001192814,
+          "p95_seconds": 0.001319995,
+          "sample_count": 7
+        },
+        "resident_speedup_over_cpu": 4.778267160813446,
+        "transfer_seconds": 0.000651533,
+        "warmups": 2
+      },
+      "dense_reference": {
+        "dense_kernel_logical_bytes": 8388608,
+        "factor_logical_bytes": 8388608,
+        "kernel_seconds": 0.019971182,
+        "solve_seconds": 0.008739162,
+        "total_seconds": 0.028710344
+      },
+      "exactness": {
+        "cpu_cuda_score_max_abs_difference": 7.327471962526033e-14,
+        "dual_recovery_score_max_abs_difference": 2.935429677108914e-13,
+        "legacy_dense_score_max_abs_difference": 2.248199033771936e-06,
+        "legacy_prediction_equivalent": true,
+        "original_feature_model_score_max_abs_difference": 3.552713678800501e-15,
+        "original_system_normalized_backward_error": 8.599710057807782e-25
+      },
+      "feature_map": {
+        "build_seconds": 0.201791585,
+        "feature_count": 2064,
+        "logical_csr_bytes": 1926664,
+        "nnz": 119904,
+        "vocabulary_sha256": "4C3246768FF93C7C8852FB18868E2AA9966ECC1934F1BC7D2CD9CD00E7E694DA"
+      },
+      "generation": {
+        "canonical_sha256": "1A9039E07625A5AB19C96D0D8332567C76ED874666101302D397E80424736879",
+        "mask_support_count": 14,
+        "row_count": 1024,
+        "support_capacity": 4200000,
+        "unique_state_count": 1024
+      },
+      "memory": {
+        "full_dense_kernel_system_factor_logical_bytes": 25165824,
+        "full_over_symbolic_ratio": 9.342544028986367,
+        "symbolic_conservative_logical_bytes": 2693680
+      },
+      "rows": 1024,
+      "symbolic": {
+        "constant_column_max_abs_error": 0.0,
+        "coordinate_round_max_abs_error": 1.7763568394002505e-15,
+        "cuda_coordinate_seconds": 0.049126439,
+        "gf2_elimination_seconds": 0.000613185,
+        "gf2_rank": 184,
+        "grouping_seconds": 0.05056808,
+        "integer_reconstruction_max_abs_error": 0.0,
+        "kernel_max_abs_error_vs_analytic": 0.0,
+        "maximum_abs_integer_coordinate": 1,
+        "maximum_metric_eigenvalue": 229.86832980505147,
+        "minimum_metric_eigenvalue": 0.4999999999999956,
+        "original_feature_count": 2064,
+        "pivots_sha256": "C1D6F5B5EEE3B1C54CB8D0D5B7DFE21EBF5BE001E73EEA4DEEF41B73DE2DBAB5",
+        "rows": 1024,
+        "support_group_count": 333,
+        "total_build_seconds": 0.108130187,
+        "transform_nonzero_count": 952,
+        "weight_grid_max_abs_error": 1.1102230246251565e-16
+      }
+    },
+    "2048": {
+      "cpu": {
+        "cold_seconds": 0.007423215,
+        "conservative_training_and_model_logical_bytes": 8422736,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds_excluding_build": 0.005542923999999999,
+        "maximum_small_system_relative_residual": 1.201498406809181e-15,
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.063209431,
+          "median_seconds": 0.005510708,
+          "minimum_seconds": 0.005096914,
+          "p95_seconds": 0.063209431,
+          "sample_count": 7
+        },
+        "transfer_seconds": 3.2216e-05,
+        "warmups": 2
+      },
+      "cuda": {
+        "cold_seconds": 0.004481957,
+        "conservative_training_and_model_logical_bytes": 8422736,
+        "cuda_peak_allocated_bytes": 21678592,
+        "cuda_peak_reserved_bytes": 69206016,
+        "device": "cuda:0",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 0.579238454,
+        "end_to_end_median_seconds_excluding_build": 0.003459275,
+        "end_to_end_speedup_over_sg23d": 0.8302962755300773,
+        "maximum_small_system_relative_residual": 7.368985326969956e-16,
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.002024529,
+          "median_seconds": 0.002001877,
+          "minimum_seconds": 0.001986682,
+          "p95_seconds": 0.002024529,
+          "sample_count": 7
+        },
+        "resident_speedup_over_cpu": 2.7527705248624166,
+        "transfer_seconds": 0.001457398,
+        "warmups": 2
+      },
+      "dense_reference": {
+        "dense_kernel_logical_bytes": 33554432,
+        "factor_logical_bytes": 33554432,
+        "kernel_seconds": 0.264819378,
+        "solve_seconds": 0.095339096,
+        "total_seconds": 0.360158474
+      },
+      "exactness": {
+        "cpu_cuda_score_max_abs_difference": 8.504308368628699e-14,
+        "dual_recovery_score_max_abs_difference": 2.9465319073551655e-13,
+        "legacy_dense_score_max_abs_difference": 3.1125612702798122e-06,
+        "legacy_prediction_equivalent": true,
+        "original_feature_model_score_max_abs_difference": 2.886579864025407e-15,
+        "original_system_normalized_backward_error": 2.525084406036665e-24
+      },
+      "feature_map": {
+        "build_seconds": 0.374880689,
+        "feature_count": 3528,
+        "logical_csr_bytes": 3876360,
+        "nnz": 241248,
+        "vocabulary_sha256": "D80C224C5FE6B5BCFDC546AF3327B06AB95313266EC0FDC5B699AA616440BE9C"
+      },
+      "generation": {
+        "canonical_sha256": "BDBF411FAE1C8A97C9D5FD2CD7DC17E0D8DED64BE836D834E94617FE24EF0929",
+        "mask_support_count": 14,
+        "row_count": 2048,
+        "support_capacity": 4200000,
+        "unique_state_count": 2048
+      },
+      "memory": {
+        "full_dense_kernel_system_factor_logical_bytes": 100663296,
+        "full_over_symbolic_ratio": 11.951377319673798,
+        "symbolic_conservative_logical_bytes": 8422736
+      },
+      "rows": 2048,
+      "symbolic": {
+        "constant_column_max_abs_error": 0.0,
+        "coordinate_round_max_abs_error": 2.55351295663786e-15,
+        "cuda_coordinate_seconds": 0.009276119,
+        "gf2_elimination_seconds": 0.001171815,
+        "gf2_rank": 328,
+        "grouping_seconds": 0.167820823,
+        "integer_reconstruction_max_abs_error": 0.0,
+        "kernel_max_abs_error_vs_analytic": 0.0,
+        "maximum_abs_integer_coordinate": 1,
+        "maximum_metric_eigenvalue": 229.86832980505147,
+        "minimum_metric_eigenvalue": 0.49999999999999273,
+        "original_feature_count": 3528,
+        "pivots_sha256": "BB64ACD752CD4BE0F45F3FE80640796E71FF4EF4F5EF36DB13D8874BC2F9DDD4",
+        "rows": 2048,
+        "support_group_count": 591,
+        "total_build_seconds": 0.20089849,
+        "transform_nonzero_count": 1696,
+        "weight_grid_max_abs_error": 1.1102230246251565e-16
+      }
+    },
+    "4096": {
+      "cpu": {
+        "cold_seconds": 0.028569016,
+        "conservative_training_and_model_logical_bytes": 28493312,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds_excluding_build": 0.080784898,
+        "maximum_small_system_relative_residual": 8.09824243493549e-16,
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.089707323,
+          "median_seconds": 0.080722491,
+          "minimum_seconds": 0.019424613,
+          "p95_seconds": 0.089707323,
+          "sample_count": 7
+        },
+        "transfer_seconds": 6.2407e-05,
+        "warmups": 2
+      },
+      "cuda": {
+        "cold_seconds": 0.005543429,
+        "conservative_training_and_model_logical_bytes": 28493312,
+        "cuda_peak_allocated_bytes": 54971392,
+        "cuda_peak_reserved_bytes": 140509184,
+        "device": "cuda:0",
+        "dtype": "torch.float64",
+        "end_to_end_median_seconds": 1.895421821,
+        "end_to_end_median_seconds_excluding_build": 0.008565816,
+        "end_to_end_speedup_over_sg23d": 0.4870803341880488,
+        "maximum_small_system_relative_residual": 7.452171480108473e-16,
+        "repetitions": 7,
+        "resident": {
+          "maximum_seconds": 0.004290645,
+          "median_seconds": 0.004252378,
+          "minimum_seconds": 0.004233218,
+          "p95_seconds": 0.004290645,
+          "sample_count": 7
+        },
+        "resident_speedup_over_cpu": 18.982905800001785,
+        "transfer_seconds": 0.004313438,
+        "warmups": 2
+      },
+      "dense_reference": {
+        "dense_kernel_logical_bytes": 134217728,
+        "factor_logical_bytes": 134217728,
+        "kernel_seconds": 1.055374319,
+        "solve_seconds": 0.462819461,
+        "total_seconds": 1.51819378
+      },
+      "exactness": {
+        "cpu_cuda_score_max_abs_difference": 8.559819519859957e-14,
+        "dual_recovery_score_max_abs_difference": 3.856914787547794e-13,
+        "legacy_dense_score_max_abs_difference": 2.3816512941809975e-06,
+        "legacy_prediction_equivalent": true,
+        "original_feature_model_score_max_abs_difference": 2.886579864025407e-15,
+        "original_system_normalized_backward_error": 1.242689280400016e-24
+      },
+      "feature_map": {
+        "build_seconds": 0.964750989,
+        "feature_count": 6480,
+        "logical_csr_bytes": 7857160,
+        "nnz": 489024,
+        "vocabulary_sha256": "B161C8D3F26B0DB21A679888CD42352DDA9327D2A915C098049F9B5FFA102340"
+      },
+      "generation": {
+        "canonical_sha256": "0971F11E45242275E3AF1E7B19A00F9F68615469E0015E853A67FB09E82CFA53",
+        "mask_support_count": 14,
+        "row_count": 4096,
+        "support_capacity": 4200000,
+        "unique_state_count": 4096
+      },
+      "memory": {
+        "full_dense_kernel_system_factor_logical_bytes": 402653184,
+        "full_over_symbolic_ratio": 14.131498086287758,
+        "symbolic_conservative_logical_bytes": 28493312
+      },
+      "rows": 4096,
+      "symbolic": {
+        "constant_column_max_abs_error": 0.0,
+        "coordinate_round_max_abs_error": 2.2041570920017255e-15,
+        "cuda_coordinate_seconds": 0.027805962,
+        "gf2_elimination_seconds": 0.002738936,
+        "gf2_rank": 600,
+        "grouping_seconds": 0.748037041,
+        "integer_reconstruction_max_abs_error": 0.0,
+        "kernel_max_abs_error_vs_analytic": 0.0,
+        "maximum_abs_integer_coordinate": 1,
+        "maximum_metric_eigenvalue": 229.86832980505147,
+        "minimum_metric_eigenvalue": 0.49999999999999273,
+        "original_feature_count": 6480,
+        "pivots_sha256": "D48F56C5BB7441E27E39D26B5521F740C8AA046ABF5CBE5368658D4E1CCB7CA3",
+        "rows": 4096,
+        "support_group_count": 1080,
+        "total_build_seconds": 0.922105016,
+        "transform_nonzero_count": 3120,
+        "weight_grid_max_abs_error": 1.1102230246251565e-16
+      }
+    }
+  }
+}
