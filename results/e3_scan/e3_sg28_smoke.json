@@ -1,0 +1,93 @@
+{
+  "experiment": "SG28 scaling directions smoke",
+  "device": "mps",
+  "config": {
+    "variant": "d6",
+    "train_chars": 131072,
+    "valid_chars": 32768,
+    "seq_len": 64,
+    "batch_size": 32,
+    "epochs": 2,
+    "lr": 0.001,
+    "seeds": [
+      0
+    ]
+  },
+  "variants": [
+    {
+      "variant": "d6",
+      "vocab": 140,
+      "train_seqs": 2047,
+      "valid_seqs": 511,
+      "results": {
+        "snn_d6": {
+          "name": "d6",
+          "params": {
+            "registered": 38311
+          },
+          "valid_bpc": 4.074010683690829,
+          "usage": [
+            0.3508419692516327,
+            0.36266085505485535,
+            0.28649717569351196
+          ],
+          "history": [
+            {
+              "epoch": 1,
+              "train_bpc": 5.215975919783448,
+              "valid_bpc": 4.560489155286947
+            },
+            {
+              "epoch": 2,
+              "train_bpc": 4.204080285565734,
+              "valid_bpc": 4.074010683690829
+            }
+          ],
+          "elapsed_s": 2.7049301249790005
+        },
+        "lstm": {
+          "name": "lstm",
+          "params": {
+            "registered": 13132
+          },
+          "valid_bpc": 3.9551893214605762,
+          "usage": null,
+          "history": [
+            {
+              "epoch": 1,
+              "train_bpc": 5.451827981100173,
+              "valid_bpc": 4.448344337267377
+            },
+            {
+              "epoch": 2,
+              "train_bpc": 4.077588197728216,
+              "valid_bpc": 3.9551893214605762
+            }
+          ],
+          "elapsed_s": 0.5742459160101134
+        },
+        "transformer": {
+          "name": "transformer",
+          "params": {
+            "registered": 13292
+          },
+          "valid_bpc": 4.641123138349979,
+          "usage": null,
+          "history": [
+            {
+              "epoch": 1,
+              "train_bpc": 5.461839484910221,
+              "valid_bpc": 4.750637698133302
+            },
+            {
+              "epoch": 2,
+              "train_bpc": 4.6151720898763715,
+              "valid_bpc": 4.641123138349979
+            }
+          ],
+          "elapsed_s": 0.7489535420027096
+        }
+      }
+    }
+  ]
+}
