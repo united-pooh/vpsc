@@ -29,3 +29,13 @@ data/e2_world_model/
 data/e3_scan/
 results/e2_world_model/checkpoints/
 results/e3_scan/*.smoke.json
+
+# SG28/SG29 large artifacts (recreated by scripts; keep only source + key JSON)
+results/e3_scan/*.log
+results/e3_sg28_cache/
+results/e3_sg29_cache/
+results/e3_sg29_tb/
+lab/tinystories_scaling/checkpoints/
+lab/tinystories_scaling/comparison_checkpoints/
+lab/tinystories_scaling/data_cache/
+lab/tinystories_scaling/results/*.png
