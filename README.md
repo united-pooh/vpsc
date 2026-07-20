@@ -103,6 +103,44 @@ synaptic gradient.
 
 ---
 
+## Main-line architecture: d4 temporal-MoE fused SNN
+
+Beyond the B-stage mean-field prototype above, the main research line scales the
+**gated-trace SNN** (`vpsc/world_model/cores.py::E3GatedTraceScanCore`) and
+compares it head-to-head with LSTM and causal-Transformer baselines on language
+modeling. The current best-performing variant is **d4 — a temporal-timescale
+mixture-of-experts** (`vpsc/world_model/scaling_variants.py::TemporalMoEGatedTraceCore`).
+
+![d4 architecture](docs/d4_arch.png)
+
+**How it works.** The recurrence `z_t = d·z_{t-1} + b_t` is an affine map and is
+solved by an associative prefix scan (O(log T) depth), keeping hard-spike
+semantics exact (the SG27B fused CUDA kernel). d4 runs **E expert cores in
+parallel, each with a distinct decay band** (short / mid / long horizons) — so
+the experts specialize by *temporal scale*, not by feedforward weights. A
+per-timestep router (input change-norm = transition signal) soft-combines the
+expert sequences. Decay is per-state inside each expert's scan, so MoE adds
+near-zero scan depth.
+
+**Headline result (SG29, Tesla T4, 3 seeds).** On the catgirl-110k BPE corpus
+(15M train tokens, vocab 8192, d_model=128, 3 epochs, fused backend):
+
+| model | valid BPC (mean±std) | tok/s | params |
+|---|---:|---:|---:|
+| base fused SNN | 5.876±0.002 | 313k | 2.24M |
+| **d4 fused SNN** | **5.641±0.004** | 226k | 2.50M |
+| LSTM | 5.592±0.002 | 306k | 1.19M |
+| Transformer | 5.845±0.023 | 294k | 1.19M |
+
+d4 MoE-SNN **surpasses the Transformer** (5.641 vs 5.845, 0.20 bpc, stable
+across 3 seeds) and the fused base SNN is 1.15× faster than the Transformer
+(speed win from the SG27B fused kernel). LSTM remains the strongest baseline
+(d4 trails by 0.05 bpc at 2.1× the params). Full provenance in `dev/LOG.md`
+(SG29 entry); reproduce with
+`experiments/e3_sg29_catgirl_longtrain.py --device cuda --fused`.
+
+---
+
 ## Repository
 
 ```
