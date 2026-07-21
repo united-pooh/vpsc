@@ -1,0 +1,348 @@
+{
+  "schema_version": 1,
+  "experiment": "e3_fe2h_scale_train",
+  "label": "wiring_d256",
+  "configuration": {
+    "out": "results/e3_scan/e3_fe2h_scale_wiring_d256.json",
+    "cache_dir": "/root/vpsc/results/e3_sg29_cache",
+    "checkpoint": null,
+    "label": "wiring_d256",
+    "d_model": 256,
+    "state_dim": 256,
+    "tile_size": 64,
+    "active_tiles": 2,
+    "block_size": 32,
+    "rank": 32,
+    "batch_size": 4,
+    "seq_len": 32,
+    "max_steps": 2,
+    "warmup_steps": 1,
+    "valid_steps": 1,
+    "log_every": 1,
+    "finite_check_every": 1,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.01,
+    "seed": 0,
+    "amp": true,
+    "low_rank_output": true,
+    "sample_interval_ms": 200,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "save_optimizer": false,
+    "precision": "fp16_autocast_fp32_master"
+  },
+  "data": {
+    "name": "cyberlangke/Nana-catgirl-dataset-110k",
+    "vocab_size": 8192,
+    "train_tokens": 15035242,
+    "valid_tokens": 811815,
+    "train_sequences": 469851,
+    "valid_sequences": 25369,
+    "tokenizer_path": "/root/vpsc/results/e3_sg29_cache/bpe/catgirl_bpe_8192.json"
+  },
+  "model": {
+    "parameter_stats": {
+      "model_total": 4510532,
+      "model_trainable": 4510532,
+      "core_total": 307524,
+      "core_trainable": 307524,
+      "embedding_total": 2097152,
+      "embedding_trainable": 2097152,
+      "output_norm_total": 512,
+      "output_norm_trainable": 512,
+      "lm_head_total": 2105344,
+      "lm_head_trainable": 2105344,
+      "wrapper_unique_total": 4203008,
+      "wrapper_unique_trainable": 4203008,
+      "shared_embedding_head": 0,
+      "tied_weights": false,
+      "core_type": "FE2HNeuronTileCore"
+    },
+    "provenance": {
+      "path_label": "low_rank_tile_sparse",
+      "supported": true,
+      "hardware_executed_sparsity": true,
+      "dense_input_projection_retained": true,
+      "input_projection_kind": "dense",
+      "router_projection_kind": "dense_router_mlp",
+      "output_projection_kind": "low_rank",
+      "output_projection_provenance": {
+        "init_mode": "random",
+        "rank": 32,
+        "source_name": null,
+        "source_shape": null,
+        "allow_test_rank": false
+      },
+      "unsupported_reason": null,
+      "notes": [
+        "True sparse path keeps input_event_projection dense because sparse slicing currently requires nn.Linear."
+      ]
+    }
+  },
+  "preflight": {
+    "status": "ALLOW",
+    "can_launch": true,
+    "reason": "estimate is within both user and physical launch limits",
+    "raw_estimate_gib": 0.07747405767440796,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "calibrated_estimate_gib": 0.8662110865116119,
+    "user_warning_gib": 16.0,
+    "user_refuse_gib": 32.0,
+    "physical_total_gib": 14.56805419921875,
+    "physical_headroom_gib": 0.5,
+    "physical_launch_limit_gib": 14.06805419921875,
+    "architecture_estimate": {
+      "core_total_gib": 0.006299436092376709,
+      "core_forward_only_gib": 0.002007916569709778,
+      "model_total_gib": 0.07747405767440796,
+      "projection_bytes": 524288,
+      "core": {
+        "parameter_bytes": 1230096,
+        "state_bytes": 8192,
+        "route_bytes": 192,
+        "raw_trace_bytes": 524288,
+        "output_bytes": 131072,
+        "active_projection_bytes": 262144,
+        "forward_only_bytes": 2155984,
+        "forward_only_gib": 0.002007916569709778,
+        "total_bytes": 6763968,
+        "total_gib": 0.006299436092376709,
+        "notes": [
+          "forward_only_gib is the materialised forward footprint for this core only.",
+          "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+          "Output projection remains dense and is not claimed as sparse speedup."
+        ]
+      }
+    }
+  },
+  "status": "COMPLETED",
+  "training": {
+    "completed_steps": 2,
+    "requested_steps": 2,
+    "tokens": 256,
+    "elapsed_s": 0.7269784212112427,
+    "tokens_per_s": 352.1425018000809,
+    "mean_ce": 9.182846069335938,
+    "mean_bpc": 13.248046485477667,
+    "mean_objective": 9.292413711547852,
+    "windows": [
+      {
+        "step_start": 0,
+        "step_end": 1,
+        "elapsed_s": 0.6874530166387558,
+        "tokens": 128,
+        "tokens_per_s": 186.19454261157415,
+        "ce": 9.22998046875,
+        "bpc": 13.316047049767615,
+        "objective": 9.33952522277832,
+        "route_supervision_loss": 10.949487686157227,
+        "homeostasis_loss": 0.004993697628378868,
+        "grad_norm": {
+          "mean": 3.7117061614990234,
+          "p50": 3.7117061614990234,
+          "p90": 3.7117061614990234,
+          "max": 3.7117061614990234
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.4852583408355713,
+            0.4017442464828491,
+            0.5133762955665588,
+            0.599621057510376
+          ],
+          "entropy": 1.3762552738189697,
+          "gini": 0.038859281688928604,
+          "p99_tile_load": 0.5996717214584351,
+          "block_fill": 0.5,
+          "hotspot_share": 0.599621057510376,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1,
+        "step_end": 2,
+        "elapsed_s": 0.038062095642089844,
+        "tokens": 128,
+        "tokens_per_s": 3362.925709704092,
+        "ce": 9.135711669921875,
+        "bpc": 13.18004592118772,
+        "objective": 9.245302200317383,
+        "route_supervision_loss": 10.9542236328125,
+        "homeostasis_loss": 0.004834213759750128,
+        "grad_norm": {
+          "mean": 4.133169651031494,
+          "p50": 4.133169651031494,
+          "p90": 4.133169651031494,
+          "max": 4.133169651031494
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.48676782846450806,
+            0.40314775705337524,
+            0.5119022130966187,
+            0.598182201385498
+          ],
+          "entropy": 1.376577377319336,
+          "gini": 0.03813985735177994,
+          "p99_tile_load": 0.598270833492279,
+          "block_fill": 0.5,
+          "hotspot_share": 0.598182201385498,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      }
+    ],
+    "homeostasis": {
+      "activation_rate": [
+        0.4860130846500397,
+        0.4024460017681122,
+        0.5126392543315887,
+        0.598901629447937
+      ],
+      "entropy": 1.3764163255691528,
+      "gini": 0.03849956952035427,
+      "p99_tile_load": 0.5989712774753571,
+      "block_fill": 0.5,
+      "hotspot_share": 0.598901629447937,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    },
+    "finite_check_protocol": {
+      "loss": "every step",
+      "gradient_global_norm": "every step after AMP unscale",
+      "parameters_gradients_optimizer": "step 0 and every 1 steps",
+      "amp_overflow": "fail closed on any scale drop"
+    }
+  },
+  "validation": {
+    "steps": 1,
+    "tokens": 128,
+    "elapsed_s": 0.008437104523181915,
+    "tokens_per_s": 15171.08145908413,
+    "ce": 9.07415771484375,
+    "bpc": 13.091242335449406,
+    "finite": true,
+    "homeostasis": {
+      "activation_rate": [
+        0.48751890659332275,
+        0.40421050786972046,
+        0.5116878151893616,
+        0.59658282995224
+      ],
+      "entropy": 1.3768455982208252,
+      "gini": 0.03758036717772484,
+      "p99_tile_load": 0.5966703295707703,
+      "block_fill": 0.5,
+      "hotspot_share": 0.59658282995224,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    }
+  },
+  "memory": {
+    "torch_peak_allocated_bytes": 110833152,
+    "torch_peak_allocated_gib": 0.10322141647338867,
+    "torch_peak_reserved_bytes": 138412032,
+    "torch_peak_reserved_gib": 0.12890625,
+    "device_samples_full_training": {
+      "sample_count": 4,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 2.0,
+        "p50": 1.5,
+        "p90": 4.4,
+        "max": 5.0
+      },
+      "memory_used_mib": {
+        "mean": 182.0,
+        "p50": 176.0,
+        "p90": 229.4,
+        "max": 251.0
+      },
+      "memory_util_percent": {
+        "mean": 0.25,
+        "p50": 0.0,
+        "p90": 0.7000000000000002,
+        "max": 1.0
+      },
+      "power_w": {
+        "mean": 25.99,
+        "p50": 26.015,
+        "p90": 26.06,
+        "max": 26.06
+      },
+      "error": null
+    }
+  },
+  "gpu_utilization": {
+    "full_training": {
+      "sample_count": 4,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 2.0,
+        "p50": 1.5,
+        "p90": 4.4,
+        "max": 5.0
+      },
+      "memory_used_mib": {
+        "mean": 182.0,
+        "p50": 176.0,
+        "p90": 229.4,
+        "max": 251.0
+      },
+      "memory_util_percent": {
+        "mean": 0.25,
+        "p50": 0.0,
+        "p90": 0.7000000000000002,
+        "max": 1.0
+      },
+      "power_w": {
+        "mean": 25.99,
+        "p50": 26.015,
+        "p90": 26.06,
+        "max": 26.06
+      },
+      "error": null
+    },
+    "post_warmup": {
+      "sample_count": 0,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": null,
+        "p50": null,
+        "p90": null,
+        "max": null
+      },
+      "memory_used_mib": {
+        "mean": null,
+        "p50": null,
+        "p90": null,
+        "max": null
+      },
+      "memory_util_percent": {
+        "mean": null,
+        "p50": null,
+        "p90": null,
+        "max": null
+      },
+      "power_w": {
+        "mean": null,
+        "p50": null,
+        "p90": null,
+        "max": null
+      },
+      "error": null
+    }
+  },
+  "saturation": {
+    "utilization_target": "p50>=90 and p90>=95",
+    "memory_target": "device max between 13.0 and 14.5 GiB",
+    "utilization_pass": false,
+    "memory_pass": false,
+    "learning_signal_pass": true,
+    "homeostasis_pass": true
+  },
+  "checkpoint": null,
+  "failure": null
+}

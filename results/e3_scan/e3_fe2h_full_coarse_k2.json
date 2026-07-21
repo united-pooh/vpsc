@@ -1,0 +1,3871 @@
+{
+  "schema_version": 1,
+  "experiment": "e3_fe2h_scale_train",
+  "label": "full_coarse_k2",
+  "configuration": {
+    "out": "/root/vpsc/results/e3_scan/e3_fe2h_full_coarse_k2.json",
+    "cache_dir": "/root/vpsc/results/e3_sg29_cache",
+    "checkpoint": "/root/vpsc/results/e3_scan/checkpoints/e3_fe2h_full_coarse_k2.pt",
+    "label": "full_coarse_k2",
+    "d_model": 8192,
+    "state_dim": 8192,
+    "tile_size": 2048,
+    "active_tiles": 2,
+    "block_size": 32,
+    "rank": 512,
+    "batch_size": 112,
+    "seq_len": 128,
+    "max_steps": 20,
+    "train_mode": "full_epoch",
+    "epochs": 1,
+    "warmup_steps": 10,
+    "valid_steps": 4,
+    "full_validation": true,
+    "log_every": 10,
+    "finite_check_every": 25,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.01,
+    "route_supervision_weight": 0.01,
+    "homeostasis_weight": 1.0,
+    "seed": 0,
+    "amp": true,
+    "amp_init_scale": 256.0,
+    "amp_growth_interval": 100000,
+    "low_rank_output": true,
+    "sample_interval_ms": 200,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "save_optimizer": true,
+    "checkpoint_every_steps": 1000,
+    "tqdm_progress": true,
+    "shared_init": "/root/vpsc/results/e3_scan/checkpoints/e3_fe2h_full_shared_init.pt",
+    "create_shared_init": true,
+    "precision": "fp16_autocast_fp32_master",
+    "requested_steps": 1047,
+    "steps_per_epoch": 1047
+  },
+  "data": {
+    "name": "cyberlangke/Nana-catgirl-dataset-110k",
+    "vocab_size": 8192,
+    "train_tokens": 15008971,
+    "valid_tokens": 810338,
+    "train_sequences": 117257,
+    "valid_sequences": 6330,
+    "train_sequence_tokens": 15008896,
+    "valid_sequence_tokens": 810240,
+    "tokenizer_path": "/root/vpsc/results/e3_sg29_cache/bpe/catgirl_bpe_8192.json"
+  },
+  "model": {
+    "parameter_stats": {
+      "model_total": 423772740,
+      "model_trainable": 423772740,
+      "core_total": 289530436,
+      "core_trainable": 289530436,
+      "embedding_total": 67108864,
+      "embedding_trainable": 67108864,
+      "output_norm_total": 16384,
+      "output_norm_trainable": 16384,
+      "lm_head_total": 67117056,
+      "lm_head_trainable": 67117056,
+      "wrapper_unique_total": 134242304,
+      "wrapper_unique_trainable": 134242304,
+      "shared_embedding_head": 0,
+      "tied_weights": false,
+      "core_type": "FE2HNeuronTileCore"
+    },
+    "provenance": {
+      "path_label": "low_rank_dense_mask_training",
+      "supported": true,
+      "hardware_executed_sparsity": false,
+      "dense_input_projection_retained": true,
+      "input_projection_kind": "dense",
+      "router_projection_kind": "dense_router_mlp",
+      "output_projection_kind": "low_rank",
+      "output_projection_provenance": {
+        "init_mode": "random",
+        "rank": 512,
+        "source_name": null,
+        "source_shape": null,
+        "allow_test_rank": true
+      },
+      "output_projection_cost": {
+        "in_features": 32768,
+        "out_features": 8192,
+        "rank": 512,
+        "bias": true,
+        "dense_parameters": 268443648,
+        "low_rank_parameters": 20979712,
+        "dense_macs": 268435456,
+        "low_rank_macs": 20971520,
+        "parameter_reduction": 247463936,
+        "mac_reduction": 247463936,
+        "parameter_ratio": 0.07815313253379719,
+        "mac_ratio": 0.078125
+      },
+      "non_formal_scaling_rank": true,
+      "unsupported_reason": null,
+      "notes": [
+        "Training uses the differentiable dense-mask path; no hardware sparse speedup is claimed.",
+        "Ranks outside {16, 32} are isolated to this scaling runner and marked non-formal."
+      ]
+    },
+    "shared_initialization": {
+      "enabled": true,
+      "created": true,
+      "path": "/root/vpsc/results/e3_scan/checkpoints/e3_fe2h_full_shared_init.pt",
+      "bytes": 1695097735,
+      "reference_metadata": {
+        "seed": 0,
+        "label": "full_coarse_k2",
+        "d_model": 8192,
+        "state_dim": 8192,
+        "rank": 512,
+        "vocab_size": 8192
+      },
+      "matched_key_count": 17,
+      "matched_parameter_count": 423772740,
+      "total_parameter_count": 423772740,
+      "matched_parameter_ratio": 1.0,
+      "unmatched_keys": []
+    }
+  },
+  "preflight": {
+    "status": "ALLOW",
+    "can_launch": true,
+    "reason": "estimate is within both user and physical launch limits",
+    "raw_estimate_gib": 15.946581900119781,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "calibrated_estimate_gib": 24.669872850179672,
+    "user_warning_gib": 32.0,
+    "user_refuse_gib": 32.0,
+    "physical_total_gib": 31.7325439453125,
+    "physical_headroom_gib": 0.5,
+    "physical_launch_limit_gib": 31.2325439453125,
+    "architecture_estimate": {
+      "core_total_gib": 10.446215689182281,
+      "core_forward_only_gib": 4.147940889000893,
+      "model_total_gib": 15.946581900119781,
+      "projection_bytes": 1879048192,
+      "core": {
+        "parameter_bytes": 1158121744,
+        "state_bytes": 7340032,
+        "route_bytes": 21504,
+        "raw_trace_bytes": 1879048192,
+        "output_bytes": 469762048,
+        "active_projection_bytes": 939524096,
+        "forward_only_bytes": 4453817616,
+        "forward_only_gib": 4.147940889000893,
+        "total_bytes": 11216538688,
+        "total_gib": 10.446215689182281,
+        "notes": [
+          "forward_only_gib is the materialised forward footprint for this core only.",
+          "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+          "Output projection remains dense and is not claimed as sparse speedup."
+        ]
+      }
+    }
+  },
+  "status": "COMPLETED",
+  "training": {
+    "completed_steps": 1047,
+    "requested_steps": 1047,
+    "train_mode": "full_epoch",
+    "epochs": 1,
+    "steps_per_epoch": 1047,
+    "tokens": 15008896,
+    "expected_full_epoch_tokens": 15008896,
+    "coverage_fraction": 1.0,
+    "elapsed_s": 784.634300339967,
+    "tokens_per_s": 19128.523942296346,
+    "mean_ce": 4.233417775437238,
+    "mean_bpc": 6.107530830634491,
+    "mean_objective": 4.358408862146347,
+    "loss_weights": {
+      "route_supervision": 0.01,
+      "homeostasis": 1.0
+    },
+    "amp_scale": {
+      "initial": 256.0,
+      "final": 256.0,
+      "growth_interval": 100000
+    },
+    "windows": [
+      {
+        "step_start": 0,
+        "step_end": 10,
+        "elapsed_s": 7.9833874851465225,
+        "tokens": 143360,
+        "tokens_per_s": 17957.28946725036,
+        "ce": 7.550462865829468,
+        "bpc": 10.893015332948444,
+        "objective": 7.676158714294433,
+        "route_supervision_loss": 12.56952886581421,
+        "homeostasis_loss": 4.741450254641677e-07,
+        "grad_norm": {
+          "mean": 8.950973606109619,
+          "p50": 8.195166826248169,
+          "p90": 12.084823036193843,
+          "max": 24.816444396972656
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5006637036800384,
+            0.5003057479858398,
+            0.499905526638031,
+            0.49912509620189666
+          ],
+          "entropy": 1.3862935423851013,
+          "gini": 0.00034739691764116285,
+          "p99_tile_load": 0.5008799970149994,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5008770942687988,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 10,
+        "step_end": 20,
+        "elapsed_s": 7.279167536646128,
+        "tokens": 143360,
+        "tokens_per_s": 19694.559752646255,
+        "ce": 6.636413669586181,
+        "bpc": 9.574321090399712,
+        "objective": 6.762966775894165,
+        "route_supervision_loss": 12.655265808105469,
+        "homeostasis_loss": 4.900395026652404e-07,
+        "grad_norm": {
+          "mean": 3.3804252624511717,
+          "p50": 3.120749592781067,
+          "p90": 4.179254531860352,
+          "max": 4.991225719451904
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.500770217180252,
+            0.5002355426549911,
+            0.5001068472862243,
+            0.49888751804828646
+          ],
+          "entropy": 1.3862934350967406,
+          "gini": 0.000361049547791481,
+          "p99_tile_load": 0.5007723808288574,
+          "block_fill": 0.5,
+          "hotspot_share": 0.500770217180252,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 20,
+        "step_end": 30,
+        "elapsed_s": 7.400852248072624,
+        "tokens": 143360,
+        "tokens_per_s": 19370.742070595275,
+        "ce": 6.073907089233399,
+        "bpc": 8.762795636457342,
+        "objective": 6.200099325180053,
+        "route_supervision_loss": 12.619176292419434,
+        "homeostasis_loss": 6.06229747290854e-07,
+        "grad_norm": {
+          "mean": 2.169052278995514,
+          "p50": 2.1367701292037964,
+          "p90": 2.4849602460861204,
+          "max": 2.7663941383361816
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5006271004676819,
+            0.5004139304161072,
+            0.5002865552902221,
+            0.49867251217365266
+          ],
+          "entropy": 1.3862932205200196,
+          "gini": 0.00037485230714082716,
+          "p99_tile_load": 0.5006301522254943,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5006271004676819,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 30,
+        "step_end": 40,
+        "elapsed_s": 7.313803464174271,
+        "tokens": 143360,
+        "tokens_per_s": 19601.29236480452,
+        "ce": 5.865897369384766,
+        "bpc": 8.462701045175018,
+        "objective": 5.991358041763306,
+        "route_supervision_loss": 12.546016883850097,
+        "homeostasis_loss": 4.928842201934458e-07,
+        "grad_norm": {
+          "mean": 2.081902015209198,
+          "p50": 2.0255826711654663,
+          "p90": 2.387480163574219,
+          "max": 2.491229295730591
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5007477581501008,
+            0.5002009034156799,
+            0.5001942634582519,
+            0.49885718822479247
+          ],
+          "entropy": 1.3862935066223145,
+          "gini": 0.0003557521849870682,
+          "p99_tile_load": 0.5007513046264649,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5007477581501008,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 40,
+        "step_end": 50,
+        "elapsed_s": 7.400155656039715,
+        "tokens": 143360,
+        "tokens_per_s": 19372.565478807897,
+        "ce": 5.701486968994141,
+        "bpc": 8.225506975860895,
+        "objective": 5.826941776275635,
+        "route_supervision_loss": 12.545434951782227,
+        "homeostasis_loss": 5.544066937090974e-07,
+        "grad_norm": {
+          "mean": 1.7088579177856444,
+          "p50": 1.7404754161834717,
+          "p90": 1.8035334467887878,
+          "max": 1.9049575328826904
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5010865032672882,
+            0.4999689608812332,
+            0.49994768798351286,
+            0.4989969491958618
+          ],
+          "entropy": 1.386293351650238,
+          "gini": 0.0003935258835554123,
+          "p99_tile_load": 0.5010898053646088,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5010865032672882,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 50,
+        "step_end": 60,
+        "elapsed_s": 7.300548609346151,
+        "tokens": 143360,
+        "tokens_per_s": 19636.88041422952,
+        "ce": 5.52226505279541,
+        "bpc": 7.9669444061423675,
+        "objective": 5.647697973251343,
+        "route_supervision_loss": 12.543200206756591,
+        "homeostasis_loss": 9.721853245991952e-07,
+        "grad_norm": {
+          "mean": 1.8308387398719788,
+          "p50": 1.7404218912124634,
+          "p90": 2.0776953816413877,
+          "max": 2.7885098457336426
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.501663339138031,
+            0.49961017370224,
+            0.49950083792209626,
+            0.49922572672367094
+          ],
+          "entropy": 1.3862924814224242,
+          "gini": 0.0004639487713575363,
+          "p99_tile_load": 0.5016659080982209,
+          "block_fill": 0.5,
+          "hotspot_share": 0.501663339138031,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 60,
+        "step_end": 70,
+        "elapsed_s": 7.321098890155554,
+        "tokens": 143360,
+        "tokens_per_s": 19581.75980832216,
+        "ce": 5.362251138687133,
+        "bpc": 7.736093125785125,
+        "objective": 5.487540626525879,
+        "route_supervision_loss": 12.528697872161866,
+        "homeostasis_loss": 2.374826715367817e-06,
+        "grad_norm": {
+          "mean": 1.747151291370392,
+          "p50": 1.7362903356552124,
+          "p90": 1.9901701092720032,
+          "max": 2.091134786605835
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5026127994060516,
+            0.4993960052728653,
+            0.499312624335289,
+            0.49867868423461914
+          ],
+          "entropy": 1.3862896680831909,
+          "gini": 0.0007429741322994232,
+          "p99_tile_load": 0.5026185631752014,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5026127994060516,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 70,
+        "step_end": 80,
+        "elapsed_s": 7.41714496165514,
+        "tokens": 143360,
+        "tokens_per_s": 19328.191742393712,
+        "ce": 5.246435880661011,
+        "bpc": 7.569007027371562,
+        "objective": 5.3712921142578125,
+        "route_supervision_loss": 12.48514757156372,
+        "homeostasis_loss": 4.7876134885882495e-06,
+        "grad_norm": {
+          "mean": 1.4935486793518067,
+          "p50": 1.4628063440322876,
+          "p90": 1.5895922899246215,
+          "max": 1.728973388671875
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5036983072757721,
+            0.49911739230155944,
+            0.49910696148872374,
+            0.498077455163002
+          ],
+          "entropy": 1.386284863948822,
+          "gini": 0.0010547725483775138,
+          "p99_tile_load": 0.5037127614021302,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5036983072757721,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 80,
+        "step_end": 90,
+        "elapsed_s": 7.318293679505587,
+        "tokens": 143360,
+        "tokens_per_s": 19589.26578766175,
+        "ce": 5.1460388660430905,
+        "bpc": 7.424164752262231,
+        "objective": 5.271051979064941,
+        "route_supervision_loss": 12.50033884048462,
+        "homeostasis_loss": 9.647699698689394e-06,
+        "grad_norm": {
+          "mean": 1.639540672302246,
+          "p50": 1.6545752882957458,
+          "p90": 1.749358332157135,
+          "max": 1.7841973304748535
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5053138196468353,
+            0.49857234954833984,
+            0.49852597415447236,
+            0.4975879430770874
+          ],
+          "entropy": 1.3862752079963685,
+          "gini": 0.0014515003189444543,
+          "p99_tile_load": 0.5053412020206451,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5053138196468353,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 90,
+        "step_end": 100,
+        "elapsed_s": 7.418870758265257,
+        "tokens": 143360,
+        "tokens_per_s": 19323.69556920569,
+        "ce": 5.0323878765106205,
+        "bpc": 7.260201033271613,
+        "objective": 5.157273769378662,
+        "route_supervision_loss": 12.486891841888427,
+        "homeostasis_loss": 1.707073733996367e-05,
+        "grad_norm": {
+          "mean": 1.5647975206375122,
+          "p50": 1.5535752773284912,
+          "p90": 1.6725056290626528,
+          "max": 1.7025400400161743
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5070892691612243,
+            0.4980458468198776,
+            0.4979989558458328,
+            0.4968660444021225
+          ],
+          "entropy": 1.3862603545188903,
+          "gini": 0.0019197853282094002,
+          "p99_tile_load": 0.5071311354637146,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5070892691612243,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 100,
+        "step_end": 110,
+        "elapsed_s": 7.306714087724686,
+        "tokens": 143360,
+        "tokens_per_s": 19620.31061826348,
+        "ce": 4.907289791107178,
+        "bpc": 7.079722645835362,
+        "objective": 5.032123804092407,
+        "route_supervision_loss": 12.480512619018555,
+        "homeostasis_loss": 2.8940079391759355e-05,
+        "grad_norm": {
+          "mean": 1.4702449440956116,
+          "p50": 1.4464340209960938,
+          "p90": 1.5895852684974672,
+          "max": 1.7504616975784302
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5092211842536927,
+            0.4974727690219879,
+            0.49742524027824403,
+            0.49588090777397154
+          ],
+          "entropy": 1.3862367868423462,
+          "gini": 0.002504272386431694,
+          "p99_tile_load": 0.5092795431613922,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5092211842536927,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 110,
+        "step_end": 120,
+        "elapsed_s": 7.30595900863409,
+        "tokens": 143360,
+        "tokens_per_s": 19622.338399459804,
+        "ce": 4.884521436691284,
+        "bpc": 7.046874853830351,
+        "objective": 5.009390878677368,
+        "route_supervision_loss": 12.482100677490234,
+        "homeostasis_loss": 4.846349911531433e-05,
+        "grad_norm": {
+          "mean": 1.901770579814911,
+          "p50": 1.8445460200309753,
+          "p90": 2.1981512069702145,
+          "max": 2.5844974517822266
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5119382023811341,
+            0.49676879644393923,
+            0.496697136759758,
+            0.49459593296051024
+          ],
+          "entropy": 1.3861979842185974,
+          "gini": 0.0032561542466282845,
+          "p99_tile_load": 0.512014877796173,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5119382023811341,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 120,
+        "step_end": 130,
+        "elapsed_s": 7.385634057223797,
+        "tokens": 143360,
+        "tokens_per_s": 19410.65572559493,
+        "ce": 4.793890857696534,
+        "bpc": 6.916122566961729,
+        "objective": 4.91874508857727,
+        "route_supervision_loss": 12.478129577636718,
+        "homeostasis_loss": 7.290502908290364e-05,
+        "grad_norm": {
+          "mean": 1.586651825904846,
+          "p50": 1.5712648630142212,
+          "p90": 1.78549907207489,
+          "max": 1.8725032806396484
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5146228969097137,
+            0.49614243805408476,
+            0.4960370361804962,
+            0.49319770038127897
+          ],
+          "entropy": 1.386149513721466,
+          "gini": 0.0040238119661808016,
+          "p99_tile_load": 0.5147146821022034,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5146228969097137,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 130,
+        "step_end": 140,
+        "elapsed_s": 7.2962993159890175,
+        "tokens": 143360,
+        "tokens_per_s": 19648.31674131607,
+        "ce": 4.733440208435058,
+        "bpc": 6.828910715053681,
+        "objective": 4.858315801620483,
+        "route_supervision_loss": 12.476903438568115,
+        "homeostasis_loss": 0.00010660509942681529,
+        "grad_norm": {
+          "mean": 1.5785548448562623,
+          "p50": 1.5846982598304749,
+          "p90": 1.7456796407699584,
+          "max": 1.7758911848068237
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5176636397838592,
+            0.4954585313796997,
+            0.49525271356105804,
+            0.4916252076625824
+          ],
+          "entropy": 1.3860827445983888,
+          "gini": 0.004895069636404514,
+          "p99_tile_load": 0.517772376537323,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5176636397838592,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 140,
+        "step_end": 150,
+        "elapsed_s": 7.420017268508673,
+        "tokens": 143360,
+        "tokens_per_s": 19320.7097520426,
+        "ce": 4.664453220367432,
+        "bpc": 6.729383529482649,
+        "objective": 4.789350938796997,
+        "route_supervision_loss": 12.474866390228271,
+        "homeostasis_loss": 0.00014908538432791829,
+        "grad_norm": {
+          "mean": 1.838064980506897,
+          "p50": 1.8244507908821106,
+          "p90": 2.115341305732727,
+          "max": 2.1295344829559326
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5208792567253113,
+            0.49464446902275083,
+            0.4944816917181015,
+            0.48999466598033903
+          ],
+          "entropy": 1.385998785495758,
+          "gini": 0.005801034346222878,
+          "p99_tile_load": 0.5210083842277526,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5208792567253113,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 150,
+        "step_end": 160,
+        "elapsed_s": 7.310754239559174,
+        "tokens": 143360,
+        "tokens_per_s": 19609.46781992283,
+        "ce": 4.614089012145996,
+        "bpc": 6.656723336043285,
+        "objective": 4.739026832580566,
+        "route_supervision_loss": 12.47430067062378,
+        "homeostasis_loss": 0.00019484727381495758,
+        "grad_norm": {
+          "mean": 1.4692002058029174,
+          "p50": 1.4283055663108826,
+          "p90": 1.6239900946617127,
+          "max": 1.753967046737671
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5238575100898742,
+            0.49404014050960543,
+            0.4936456918716431,
+            0.4884567350149155
+          ],
+          "entropy": 1.3859085083007812,
+          "gini": 0.006662298366427422,
+          "p99_tile_load": 0.5239939749240875,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5238575100898742,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 160,
+        "step_end": 170,
+        "elapsed_s": 7.307608015835285,
+        "tokens": 143360,
+        "tokens_per_s": 19617.91049675144,
+        "ce": 4.595466613769531,
+        "bpc": 6.6298568942561005,
+        "objective": 4.720467138290405,
+        "route_supervision_loss": 12.475163745880128,
+        "homeostasis_loss": 0.000248966715298593,
+        "grad_norm": {
+          "mean": 1.4825930833816527,
+          "p50": 1.4759232997894287,
+          "p90": 1.6066963076591492,
+          "max": 1.6471681594848633
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5269721746444702,
+            0.4933958947658539,
+            0.49267209470272066,
+            0.4869599133729935
+          ],
+          "entropy": 1.3858018875122071,
+          "gini": 0.007547536492347717,
+          "p99_tile_load": 0.5271340548992157,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5269721746444702,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 170,
+        "step_end": 180,
+        "elapsed_s": 7.40544106811285,
+        "tokens": 143360,
+        "tokens_per_s": 19358.73888961118,
+        "ce": 4.57135534286499,
+        "bpc": 6.595071683292589,
+        "objective": 4.696422958374024,
+        "route_supervision_loss": 12.47604923248291,
+        "homeostasis_loss": 0.00030717818881385026,
+        "grad_norm": {
+          "mean": 1.4378772020339965,
+          "p50": 1.3982696533203125,
+          "p90": 1.5557592272758483,
+          "max": 1.7499600648880005
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5299590945243835,
+            0.4927258938550949,
+            0.4918299674987793,
+            0.4854851394891739
+          ],
+          "entropy": 1.3856874346733092,
+          "gini": 0.008394861966371537,
+          "p99_tile_load": 0.5301346242427826,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5299590945243835,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 180,
+        "step_end": 190,
+        "elapsed_s": 7.332773387432098,
+        "tokens": 143360,
+        "tokens_per_s": 19550.583718529993,
+        "ce": 4.511570072174072,
+        "bpc": 6.508819769748596,
+        "objective": 4.636655569076538,
+        "route_supervision_loss": 12.472178936004639,
+        "homeostasis_loss": 0.00036368957080412656,
+        "grad_norm": {
+          "mean": 1.451365315914154,
+          "p50": 1.4472958445549011,
+          "p90": 1.5088568806648255,
+          "max": 1.519413948059082
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5325932979583741,
+            0.4921873062849045,
+            0.4910378396511078,
+            0.4841816484928131
+          ],
+          "entropy": 1.3855764865875244,
+          "gini": 0.009149025939404965,
+          "p99_tile_load": 0.532787024974823,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5325932979583741,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 190,
+        "step_end": 200,
+        "elapsed_s": 7.40784665197134,
+        "tokens": 143360,
+        "tokens_per_s": 19352.452437963162,
+        "ce": 4.482187366485595,
+        "bpc": 6.466429485963931,
+        "objective": 4.607334756851197,
+        "route_supervision_loss": 12.471702098846436,
+        "homeostasis_loss": 0.0004303350840928033,
+        "grad_norm": {
+          "mean": 1.498435950279236,
+          "p50": 1.5112791657447815,
+          "p90": 1.60784273147583,
+          "max": 1.7142571210861206
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5354604661464691,
+            0.4915416777133942,
+            0.4901751220226288,
+            0.4828228384256363
+          ],
+          "entropy": 1.3854458689689637,
+          "gini": 0.00995496492832899,
+          "p99_tile_load": 0.535657387971878,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5354604661464691,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 200,
+        "step_end": 210,
+        "elapsed_s": 7.319071538746357,
+        "tokens": 143360,
+        "tokens_per_s": 19587.18387176133,
+        "ce": 4.443493795394898,
+        "bpc": 6.410606462837097,
+        "objective": 4.568669605255127,
+        "route_supervision_loss": 12.468815326690674,
+        "homeostasis_loss": 0.00048767736880108716,
+        "grad_norm": {
+          "mean": 1.511111056804657,
+          "p50": 1.4951070547103882,
+          "p90": 1.673214042186737,
+          "max": 1.6906952857971191
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5377645611763,
+            0.4910604476928711,
+            0.48936931490898133,
+            0.48180576860904695
+          ],
+          "entropy": 1.3853336691856384,
+          "gini": 0.01059796940535307,
+          "p99_tile_load": 0.5379758715629578,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5377645611763,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 210,
+        "step_end": 220,
+        "elapsed_s": 7.331873372197151,
+        "tokens": 143360,
+        "tokens_per_s": 19552.983626753383,
+        "ce": 4.402024984359741,
+        "bpc": 6.350779614805115,
+        "objective": 4.527203702926636,
+        "route_supervision_loss": 12.46471872329712,
+        "homeostasis_loss": 0.0005316122842486948,
+        "grad_norm": {
+          "mean": 1.549517035484314,
+          "p50": 1.5439109802246094,
+          "p90": 1.626971995830536,
+          "max": 1.8231008052825928
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5394286453723908,
+            0.490802189707756,
+            0.4887694239616394,
+            0.4809998244047165
+          ],
+          "entropy": 1.385247790813446,
+          "gini": 0.011082451790571213,
+          "p99_tile_load": 0.5396471619606018,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5394286453723908,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 220,
+        "step_end": 230,
+        "elapsed_s": 7.425590809434652,
+        "tokens": 143360,
+        "tokens_per_s": 19306.20790710049,
+        "ce": 4.376680946350097,
+        "bpc": 6.314215896852501,
+        "objective": 4.501871538162232,
+        "route_supervision_loss": 12.461851501464844,
+        "homeostasis_loss": 0.0005720613640733063,
+        "grad_norm": {
+          "mean": 1.3539119601249694,
+          "p50": 1.354561984539032,
+          "p90": 1.4765493154525757,
+          "max": 1.4816845655441284
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5408991694450378,
+            0.4906058877706528,
+            0.48815736174583435,
+            0.4803376615047455
+          ],
+          "entropy": 1.3851687788963318,
+          "gini": 0.01150831561535597,
+          "p99_tile_load": 0.5411159276962281,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5408991694450378,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 230,
+        "step_end": 240,
+        "elapsed_s": 7.323654145002365,
+        "tokens": 143360,
+        "tokens_per_s": 19574.92764699004,
+        "ce": 4.382209825515747,
+        "bpc": 6.322192383406458,
+        "objective": 4.507436847686767,
+        "route_supervision_loss": 12.461123847961426,
+        "homeostasis_loss": 0.0006156700139399618,
+        "grad_norm": {
+          "mean": 1.4967686176300048,
+          "p50": 1.5038006901741028,
+          "p90": 1.6198493599891661,
+          "max": 1.7454092502593994
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5424428164958954,
+            0.4903505355119705,
+            0.48749122619628904,
+            0.47971551716327665
+          ],
+          "entropy": 1.3850837230682373,
+          "gini": 0.0119400754570961,
+          "p99_tile_load": 0.5426731169223785,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5424428164958954,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 240,
+        "step_end": 250,
+        "elapsed_s": 7.406717054545879,
+        "tokens": 143360,
+        "tokens_per_s": 19355.403877891174,
+        "ce": 4.336957263946533,
+        "bpc": 6.256906737243031,
+        "objective": 4.462212324142456,
+        "route_supervision_loss": 12.460796642303468,
+        "homeostasis_loss": 0.0006470137857832014,
+        "grad_norm": {
+          "mean": 1.3862092733383178,
+          "p50": 1.3980230689048767,
+          "p90": 1.4841156601905823,
+          "max": 1.4932013750076294
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5435214102268219,
+            0.4903053790330887,
+            0.4868096113204956,
+            0.4793637037277222
+          ],
+          "entropy": 1.3850226640701293,
+          "gini": 0.012248055450618267,
+          "p99_tile_load": 0.5437498092651367,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5435214102268219,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 250,
+        "step_end": 260,
+        "elapsed_s": 7.341492947191,
+        "tokens": 143360,
+        "tokens_per_s": 19527.36330760249,
+        "ce": 4.2880449295043945,
+        "bpc": 6.186341154905055,
+        "objective": 4.413272047042847,
+        "route_supervision_loss": 12.456600761413574,
+        "homeostasis_loss": 0.0006610345910303295,
+        "grad_norm": {
+          "mean": 1.4117706179618836,
+          "p50": 1.4013471603393555,
+          "p90": 1.46183340549469,
+          "max": 1.5267733335494995
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5439836800098419,
+            0.490508970618248,
+            0.4862591207027435,
+            0.47924833595752714
+          ],
+          "entropy": 1.3849952697753907,
+          "gini": 0.012403492629528046,
+          "p99_tile_load": 0.5442172825336457,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5439836800098419,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 260,
+        "step_end": 270,
+        "elapsed_s": 7.328263096511364,
+        "tokens": 143360,
+        "tokens_per_s": 19562.61642247081,
+        "ce": 4.309520530700683,
+        "bpc": 6.21732389825105,
+        "objective": 4.4347950458526615,
+        "route_supervision_loss": 12.45903034210205,
+        "homeostasis_loss": 0.0006841192429419607,
+        "grad_norm": {
+          "mean": 1.4500596284866334,
+          "p50": 1.457578957080841,
+          "p90": 1.501549243927002,
+          "max": 1.5513074398040771
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5447526693344116,
+            0.49043901562690734,
+            0.48579266369342805,
+            0.4790157228708267
+          ],
+          "entropy": 1.384950375556946,
+          "gini": 0.012616074457764626,
+          "p99_tile_load": 0.5449879944324494,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5447526693344116,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 270,
+        "step_end": 280,
+        "elapsed_s": 7.420221827924252,
+        "tokens": 143360,
+        "tokens_per_s": 19320.17712199634,
+        "ce": 4.303588008880615,
+        "bpc": 6.208765078441272,
+        "objective": 4.428846120834351,
+        "route_supervision_loss": 12.45624589920044,
+        "homeostasis_loss": 0.0006956535507924855,
+        "grad_norm": {
+          "mean": 1.5661328554153442,
+          "p50": 1.533764123916626,
+          "p90": 1.7417584180831909,
+          "max": 1.7582718133926392
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5451230823993682,
+            0.4905094623565674,
+            0.48547020852565764,
+            0.478897351026535
+          ],
+          "entropy": 1.3849278330802917,
+          "gini": 0.012732277996838093,
+          "p99_tile_load": 0.5453619420528412,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5451230823993682,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 280,
+        "step_end": 290,
+        "elapsed_s": 7.344294175505638,
+        "tokens": 143360,
+        "tokens_per_s": 19519.915266756045,
+        "ce": 4.219667291641235,
+        "bpc": 6.087693075852173,
+        "objective": 4.344881010055542,
+        "route_supervision_loss": 12.45102300643921,
+        "homeostasis_loss": 0.0007035088608972728,
+        "grad_norm": {
+          "mean": 1.4080167770385743,
+          "p50": 1.3882328271865845,
+          "p90": 1.5088685035705565,
+          "max": 1.6488094329833984
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.545365709066391,
+            0.49060543477535246,
+            0.48523451685905455,
+            0.47879442274570466
+          ],
+          "entropy": 1.3849125266075135,
+          "gini": 0.012817798554897309,
+          "p99_tile_load": 0.5455931663513184,
+          "block_fill": 0.5,
+          "hotspot_share": 0.545365709066391,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 290,
+        "step_end": 300,
+        "elapsed_s": 7.422255273908377,
+        "tokens": 143360,
+        "tokens_per_s": 19314.884049320786,
+        "ce": 4.261143827438355,
+        "bpc": 6.147531068359932,
+        "objective": 4.386330699920654,
+        "route_supervision_loss": 12.448596572875976,
+        "homeostasis_loss": 0.0007010047091171145,
+        "grad_norm": {
+          "mean": 1.3687255859375,
+          "p50": 1.3480888605117798,
+          "p90": 1.416293466091156,
+          "max": 1.6204242706298828
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5452329993247986,
+            0.49110041856765746,
+            0.4848915159702301,
+            0.4787751644849777
+          ],
+          "entropy": 1.3849172472953797,
+          "gini": 0.012848900444805623,
+          "p99_tile_load": 0.5454746127128601,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5452329993247986,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 300,
+        "step_end": 310,
+        "elapsed_s": 7.339904811233282,
+        "tokens": 143360,
+        "tokens_per_s": 19531.58844520656,
+        "ce": 4.253931045532227,
+        "bpc": 6.137125223672947,
+        "objective": 4.379133844375611,
+        "route_supervision_loss": 12.448961925506591,
+        "homeostasis_loss": 0.0007131733756978065,
+        "grad_norm": {
+          "mean": 1.4552169680595397,
+          "p50": 1.4684776067733765,
+          "p90": 1.5655995607376099,
+          "max": 1.696060061454773
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5455793261528015,
+            0.49137911200523376,
+            0.4845134824514389,
+            0.4785281777381897
+          ],
+          "entropy": 1.3848934054374695,
+          "gini": 0.013001192174851895,
+          "p99_tile_load": 0.5458089947700501,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5455793261528015,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 310,
+        "step_end": 320,
+        "elapsed_s": 7.335236664861441,
+        "tokens": 143360,
+        "tokens_per_s": 19544.01835277499,
+        "ce": 4.228115892410278,
+        "bpc": 6.099881830284122,
+        "objective": 4.353313541412353,
+        "route_supervision_loss": 12.44862117767334,
+        "homeostasis_loss": 0.0007113765284884721,
+        "grad_norm": {
+          "mean": 1.51584233045578,
+          "p50": 1.5068575739860535,
+          "p90": 1.6400306582450865,
+          "max": 1.6719739437103271
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.545460331439972,
+            0.4918516784906387,
+            0.48420391976833344,
+            0.47848418951034544
+          ],
+          "entropy": 1.384896695613861,
+          "gini": 0.013036011531949044,
+          "p99_tile_load": 0.5456883788108826,
+          "block_fill": 0.5,
+          "hotspot_share": 0.545460331439972,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 320,
+        "step_end": 330,
+        "elapsed_s": 7.431661143898964,
+        "tokens": 143360,
+        "tokens_per_s": 19290.438197345913,
+        "ce": 4.13039002418518,
+        "bpc": 5.958893204829206,
+        "objective": 4.255541276931763,
+        "route_supervision_loss": 12.444611835479737,
+        "homeostasis_loss": 0.0007051417022012174,
+        "grad_norm": {
+          "mean": 1.4893623471260071,
+          "p50": 1.4832137823104858,
+          "p90": 1.5797332525253296,
+          "max": 1.6474601030349731
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5452024638652802,
+            0.49231100380420684,
+            0.4839334040880203,
+            0.4785532146692276
+          ],
+          "entropy": 1.384908640384674,
+          "gini": 0.013020334206521511,
+          "p99_tile_load": 0.5454196453094482,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5452024638652802,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 330,
+        "step_end": 340,
+        "elapsed_s": 7.337492395192385,
+        "tokens": 143360,
+        "tokens_per_s": 19538.01002832129,
+        "ce": 4.207221508026123,
+        "bpc": 6.069737605550674,
+        "objective": 4.332324552536011,
+        "route_supervision_loss": 12.441026306152343,
+        "homeostasis_loss": 0.0006928264396265149,
+        "grad_norm": {
+          "mean": 1.5827070951461792,
+          "p50": 1.5472819805145264,
+          "p90": 1.8178162813186645,
+          "max": 2.1543822288513184
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5447531938552856,
+            0.4927679240703583,
+            0.4837114900350571,
+            0.47876748740673064
+          ],
+          "entropy": 1.3849325299263,
+          "gini": 0.012938347086310387,
+          "p99_tile_load": 0.5449654877185821,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5447531938552856,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 340,
+        "step_end": 350,
+        "elapsed_s": 7.440193839371204,
+        "tokens": 143360,
+        "tokens_per_s": 19268.315193803584,
+        "ce": 4.1960255146026615,
+        "bpc": 6.0535852013608205,
+        "objective": 4.321126174926758,
+        "route_supervision_loss": 12.44095811843872,
+        "homeostasis_loss": 0.0006910210708156228,
+        "grad_norm": {
+          "mean": 1.468880832195282,
+          "p50": 1.4323065280914307,
+          "p90": 1.5613114833831785,
+          "max": 1.854637861251831
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5446618497371674,
+            0.4929798305034637,
+            0.48359340727329253,
+            0.478765019774437
+          ],
+          "entropy": 1.3849359393119811,
+          "gini": 0.012942307069897652,
+          "p99_tile_load": 0.5448742926120758,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5446618497371674,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 350,
+        "step_end": 360,
+        "elapsed_s": 7.346598863601685,
+        "tokens": 143360,
+        "tokens_per_s": 19513.791709830402,
+        "ce": 4.160609483718872,
+        "bpc": 6.002490669236807,
+        "objective": 4.285654973983765,
+        "route_supervision_loss": 12.436496162414551,
+        "homeostasis_loss": 0.0006804654840379953,
+        "grad_norm": {
+          "mean": 1.4446964025497437,
+          "p50": 1.3959962725639343,
+          "p90": 1.6106536507606506,
+          "max": 1.6193881034851074
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5442758500576019,
+            0.4932988345623016,
+            0.48351549208164213,
+            0.478909906744957
+          ],
+          "entropy": 1.3849564075469971,
+          "gini": 0.012867573276162147,
+          "p99_tile_load": 0.5444848537445068,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5442758500576019,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 360,
+        "step_end": 370,
+        "elapsed_s": 7.337971419095993,
+        "tokens": 143360,
+        "tokens_per_s": 19536.734584019592,
+        "ce": 4.164345693588257,
+        "bpc": 6.00788088068709,
+        "objective": 4.28939642906189,
+        "route_supervision_loss": 12.43794584274292,
+        "homeostasis_loss": 0.0006712489062920213,
+        "grad_norm": {
+          "mean": 1.4080636382102967,
+          "p50": 1.4264658689498901,
+          "p90": 1.5152530074119566,
+          "max": 1.613801121711731
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5438931465148926,
+            0.4937674909830093,
+            0.48344728350639343,
+            0.4788921594619751
+          ],
+          "entropy": 1.3849740624427795,
+          "gini": 0.012832698039710521,
+          "p99_tile_load": 0.5440946996212006,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5438931465148926,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 370,
+        "step_end": 380,
+        "elapsed_s": 7.445268355309963,
+        "tokens": 143360,
+        "tokens_per_s": 19255.182373346648,
+        "ce": 4.153088188171386,
+        "bpc": 5.991639733449389,
+        "objective": 4.278130054473877,
+        "route_supervision_loss": 12.436851692199706,
+        "homeostasis_loss": 0.0006733369955327362,
+        "grad_norm": {
+          "mean": 1.4138537287712096,
+          "p50": 1.428473174571991,
+          "p90": 1.5107404351234437,
+          "max": 1.5302103757858276
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.54391450881958,
+            0.49402221739292146,
+            0.4832118719816208,
+            0.47885149121284487
+          ],
+          "entropy": 1.3849698543548583,
+          "gini": 0.012874962389469146,
+          "p99_tile_load": 0.5441080451011657,
+          "block_fill": 0.5,
+          "hotspot_share": 0.54391450881958,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 380,
+        "step_end": 390,
+        "elapsed_s": 7.345833044499159,
+        "tokens": 143360,
+        "tokens_per_s": 19515.826065139536,
+        "ce": 4.122264957427978,
+        "bpc": 5.947171211311698,
+        "objective": 4.247297525405884,
+        "route_supervision_loss": 12.434528350830078,
+        "homeostasis_loss": 0.000687281769933179,
+        "grad_norm": {
+          "mean": 1.414271306991577,
+          "p50": 1.4163955450057983,
+          "p90": 1.4970937609672545,
+          "max": 1.5734623670578003
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5443513572216034,
+            0.49407058358192446,
+            0.4828824639320374,
+            0.47869567573070526
+          ],
+          "entropy": 1.384942615032196,
+          "gini": 0.013009697757661342,
+          "p99_tile_load": 0.5445487201213837,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5443513572216034,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 390,
+        "step_end": 400,
+        "elapsed_s": 7.429736848920584,
+        "tokens": 143360,
+        "tokens_per_s": 19295.434403013587,
+        "ce": 4.158568811416626,
+        "bpc": 5.999546601426277,
+        "objective": 4.283599710464477,
+        "route_supervision_loss": 12.434356212615967,
+        "homeostasis_loss": 0.0006872954545542598,
+        "grad_norm": {
+          "mean": 1.4134882807731628,
+          "p50": 1.3928223848342896,
+          "p90": 1.5523118257522583,
+          "max": 1.561091661453247
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5443142771720886,
+            0.49428093433380127,
+            0.4826872617006302,
+            0.4787176251411438
+          ],
+          "entropy": 1.3849424719810486,
+          "gini": 0.013023976795375347,
+          "p99_tile_load": 0.5445115804672241,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5443142771720886,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 400,
+        "step_end": 410,
+        "elapsed_s": 7.350804165005684,
+        "tokens": 143360,
+        "tokens_per_s": 19502.62811822428,
+        "ce": 4.128056764602661,
+        "bpc": 5.955527022800398,
+        "objective": 4.253061771392822,
+        "route_supervision_loss": 12.432909107208252,
+        "homeostasis_loss": 0.00067595110158436,
+        "grad_norm": {
+          "mean": 1.4534653067588805,
+          "p50": 1.3347790241241455,
+          "p90": 1.8096258401870726,
+          "max": 2.09780216217041
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5438745677471161,
+            0.494707190990448,
+            0.48251394331455233,
+            0.47890439033508303
+          ],
+          "entropy": 1.3849644184112548,
+          "gini": 0.012943986244499684,
+          "p99_tile_load": 0.5440659105777741,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5438745677471161,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 410,
+        "step_end": 420,
+        "elapsed_s": 7.352734833955765,
+        "tokens": 143360,
+        "tokens_per_s": 19497.507150393514,
+        "ce": 4.122902059555054,
+        "bpc": 5.9480903553909705,
+        "objective": 4.247868490219116,
+        "route_supervision_loss": 12.429581642150879,
+        "homeostasis_loss": 0.0006706222426146269,
+        "grad_norm": {
+          "mean": 1.6838082075119019,
+          "p50": 1.6229246258735657,
+          "p90": 1.8048321366310118,
+          "max": 2.151564836502075
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5436902642250061,
+            0.4947717159986496,
+            0.48258169591426847,
+            0.47895642220973966
+          ],
+          "entropy": 1.3849748015403747,
+          "gini": 0.012899471633136272,
+          "p99_tile_load": 0.5438842058181763,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5436902642250061,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 420,
+        "step_end": 430,
+        "elapsed_s": 7.434479169547558,
+        "tokens": 143360,
+        "tokens_per_s": 19283.126192244683,
+        "ce": 4.067221903800965,
+        "bpc": 5.86776087080862,
+        "objective": 4.19214448928833,
+        "route_supervision_loss": 12.427053356170655,
+        "homeostasis_loss": 0.0006521189294289798,
+        "grad_norm": {
+          "mean": 1.5949808955192566,
+          "p50": 1.593937873840332,
+          "p90": 1.8080424547195433,
+          "max": 1.864543080329895
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5429960191249847,
+            0.4952208399772644,
+            0.48271392583847045,
+            0.47906930446624757
+          ],
+          "entropy": 1.3850106835365295,
+          "gini": 0.012767941132187844,
+          "p99_tile_load": 0.5431780338287353,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5429960191249847,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 430,
+        "step_end": 440,
+        "elapsed_s": 7.360851213335991,
+        "tokens": 143360,
+        "tokens_per_s": 19476.008391565927,
+        "ce": 4.047163963317871,
+        "bpc": 5.838823379543215,
+        "objective": 4.172065544128418,
+        "route_supervision_loss": 12.425245380401611,
+        "homeostasis_loss": 0.0006491122883744537,
+        "grad_norm": {
+          "mean": 1.395874845981598,
+          "p50": 1.3951712846755981,
+          "p90": 1.4767517566680908,
+          "max": 1.5559322834014893
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5427953243255615,
+            0.4956959098577499,
+            0.4824380040168762,
+            0.47907085716724396
+          ],
+          "entropy": 1.3850162148475647,
+          "gini": 0.012776956707239152,
+          "p99_tile_load": 0.5429728269577027,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5427953243255615,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 440,
+        "step_end": 450,
+        "elapsed_s": 7.440799277275801,
+        "tokens": 143360,
+        "tokens_per_s": 19266.7473826127,
+        "ce": 4.068403506278992,
+        "bpc": 5.869465562843973,
+        "objective": 4.1933262825012205,
+        "route_supervision_loss": 12.426839351654053,
+        "homeostasis_loss": 0.0006544335570652038,
+        "grad_norm": {
+          "mean": 1.4415738344192506,
+          "p50": 1.40101557970047,
+          "p90": 1.5427509188652038,
+          "max": 1.7353342771530151
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5428804457187653,
+            0.49607794284820556,
+            0.48205591142177584,
+            0.4789858043193817
+          ],
+          "entropy": 1.3850056052207946,
+          "gini": 0.012856622226536274,
+          "p99_tile_load": 0.5430472075939179,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5428804457187653,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 450,
+        "step_end": 460,
+        "elapsed_s": 7.342059336602688,
+        "tokens": 143360,
+        "tokens_per_s": 19525.856905745935,
+        "ce": 4.08170063495636,
+        "bpc": 5.888649264444874,
+        "objective": 4.206631469726562,
+        "route_supervision_loss": 12.42676763534546,
+        "homeostasis_loss": 0.0006631934316828847,
+        "grad_norm": {
+          "mean": 1.3417696356773376,
+          "p50": 1.35009104013443,
+          "p90": 1.4413423418998719,
+          "max": 1.4424601793289185
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5430381059646606,
+            0.49656967222690584,
+            0.481653556227684,
+            0.4787387579679489
+          ],
+          "entropy": 1.3849880933761596,
+          "gini": 0.012988384999334811,
+          "p99_tile_load": 0.5432077050209045,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5430381059646606,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 460,
+        "step_end": 470,
+        "elapsed_s": 7.364229403436184,
+        "tokens": 143360,
+        "tokens_per_s": 19467.074169784493,
+        "ce": 4.004489874839782,
+        "bpc": 5.77725768372142,
+        "objective": 4.129417467117309,
+        "route_supervision_loss": 12.425361824035644,
+        "homeostasis_loss": 0.0006739284261129796,
+        "grad_norm": {
+          "mean": 1.414731240272522,
+          "p50": 1.370950996875763,
+          "p90": 1.5978939890861512,
+          "max": 1.6414920091629028
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5433218121528626,
+            0.49679757952690123,
+            0.4813213050365448,
+            0.47855937480926514
+          ],
+          "entropy": 1.3849668979644776,
+          "gini": 0.013110224157571793,
+          "p99_tile_load": 0.5434888124465942,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5433218121528626,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 470,
+        "step_end": 480,
+        "elapsed_s": 7.4405250661075115,
+        "tokens": 143360,
+        "tokens_per_s": 19267.45743429077,
+        "ce": 4.0108232498168945,
+        "bpc": 5.78639481239299,
+        "objective": 4.135706853866577,
+        "route_supervision_loss": 12.423402214050293,
+        "homeostasis_loss": 0.0006495655747130513,
+        "grad_norm": {
+          "mean": 1.434573233127594,
+          "p50": 1.4266512393951416,
+          "p90": 1.549397039413452,
+          "max": 1.6730870008468628
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5424185335636139,
+            0.49728245139122007,
+            0.48145888447761537,
+            0.478840234875679
+          ],
+          "entropy": 1.385014259815216,
+          "gini": 0.012909903936088086,
+          "p99_tile_load": 0.5425758719444275,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5424185335636139,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 480,
+        "step_end": 490,
+        "elapsed_s": 7.3693544417619705,
+        "tokens": 143360,
+        "tokens_per_s": 19453.535738162085,
+        "ce": 4.018537497520446,
+        "bpc": 5.797524119299093,
+        "objective": 4.143434667587281,
+        "route_supervision_loss": 12.423516368865966,
+        "homeostasis_loss": 0.0006620348431169987,
+        "grad_norm": {
+          "mean": 1.4576387047767638,
+          "p50": 1.451941967010498,
+          "p90": 1.5979371547698975,
+          "max": 1.643874168395996
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5427635908126831,
+            0.4974825829267502,
+            0.4811321496963501,
+            0.47862179279327394
+          ],
+          "entropy": 1.3849897265434266,
+          "gini": 0.013048489205539226,
+          "p99_tile_load": 0.5429263412952423,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5427635908126831,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 490,
+        "step_end": 500,
+        "elapsed_s": 7.454778034240007,
+        "tokens": 143360,
+        "tokens_per_s": 19230.619522344386,
+        "ce": 4.015601944923401,
+        "bpc": 5.793289012125067,
+        "objective": 4.14049072265625,
+        "route_supervision_loss": 12.421770477294922,
+        "homeostasis_loss": 0.0006710259942337871,
+        "grad_norm": {
+          "mean": 1.386218285560608,
+          "p50": 1.3429811000823975,
+          "p90": 1.515765869617462,
+          "max": 1.5496150255203247
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5429897248744965,
+            0.49769064486026765,
+            0.48092598021030425,
+            0.47839375734329226
+          ],
+          "entropy": 1.3849719882011413,
+          "gini": 0.013159535452723503,
+          "p99_tile_load": 0.5431435883045197,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5429897248744965,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 500,
+        "step_end": 510,
+        "elapsed_s": 7.353986747562885,
+        "tokens": 143360,
+        "tokens_per_s": 19494.18797192007,
+        "ce": 3.994698929786682,
+        "bpc": 5.763132335847696,
+        "objective": 4.11959924697876,
+        "route_supervision_loss": 12.42175235748291,
+        "homeostasis_loss": 0.0006827234232332557,
+        "grad_norm": {
+          "mean": 1.3407411694526672,
+          "p50": 1.3509413599967957,
+          "p90": 1.4074123144149782,
+          "max": 1.4345693588256836
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5432958841323853,
+            0.49790661931037905,
+            0.48063950538635253,
+            0.4781580775976181
+          ],
+          "entropy": 1.3849487900733948,
+          "gini": 0.013292533345520496,
+          "p99_tile_load": 0.5434513330459595,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5432958841323853,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 510,
+        "step_end": 520,
+        "elapsed_s": 7.367523021996021,
+        "tokens": 143360,
+        "tokens_per_s": 19458.37150043417,
+        "ce": 4.028116369247437,
+        "bpc": 5.811343510036934,
+        "objective": 4.153046894073486,
+        "route_supervision_loss": 12.422898960113525,
+        "homeostasis_loss": 0.000701579131418839,
+        "grad_norm": {
+          "mean": 1.5088138341903687,
+          "p50": 1.5220811367034912,
+          "p90": 1.726426863670349,
+          "max": 1.753678321838379
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5438227415084839,
+            0.4981085479259491,
+            0.4802959352731705,
+            0.47777287364006044
+          ],
+          "entropy": 1.3849117755889893,
+          "gini": 0.013497638516128063,
+          "p99_tile_load": 0.5439742743968964,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5438227415084839,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 520,
+        "step_end": 530,
+        "elapsed_s": 7.454140394926071,
+        "tokens": 143360,
+        "tokens_per_s": 19232.264540869546,
+        "ce": 4.038818883895874,
+        "bpc": 5.826783974845275,
+        "objective": 4.163722085952759,
+        "route_supervision_loss": 12.421102523803711,
+        "homeostasis_loss": 0.0006921327614691109,
+        "grad_norm": {
+          "mean": 1.3639509081840515,
+          "p50": 1.3746257424354553,
+          "p90": 1.4308427572250366,
+          "max": 1.4621366262435913
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5435049712657929,
+            0.49819267690181734,
+            0.4804180502891541,
+            0.4778843730688095
+          ],
+          "entropy": 1.3849302291870118,
+          "gini": 0.01341477632522583,
+          "p99_tile_load": 0.5436522960662842,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5435049712657929,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 530,
+        "step_end": 540,
+        "elapsed_s": 7.362652309238911,
+        "tokens": 143360,
+        "tokens_per_s": 19471.24405428013,
+        "ce": 4.035771012306213,
+        "bpc": 5.822386825617606,
+        "objective": 4.160686397552491,
+        "route_supervision_loss": 12.423172950744629,
+        "homeostasis_loss": 0.0006835097214207053,
+        "grad_norm": {
+          "mean": 1.3127458333969115,
+          "p50": 1.3111215829849243,
+          "p90": 1.3746910810470583,
+          "max": 1.43755304813385
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5430964946746826,
+            0.4986534684896469,
+            0.4804226726293564,
+            0.47782746851444247
+          ],
+          "entropy": 1.3849466800689698,
+          "gini": 0.01337736714631319,
+          "p99_tile_load": 0.543232524394989,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5430964946746826,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 540,
+        "step_end": 550,
+        "elapsed_s": 7.466332335025072,
+        "tokens": 143360,
+        "tokens_per_s": 19200.859748432107,
+        "ce": 3.9892836570739747,
+        "bpc": 5.755319748760011,
+        "objective": 4.114185261726379,
+        "route_supervision_loss": 12.422370052337646,
+        "homeostasis_loss": 0.0006779406045097858,
+        "grad_norm": {
+          "mean": 1.3339822053909303,
+          "p50": 1.337686002254486,
+          "p90": 1.4004567503929137,
+          "max": 1.4327384233474731
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5428462147712707,
+            0.49891051054000857,
+            0.4803315162658691,
+            0.47791183590888975
+          ],
+          "entropy": 1.3849574327468872,
+          "gini": 0.013336383178830147,
+          "p99_tile_load": 0.5429809808731079,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5428462147712707,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 550,
+        "step_end": 560,
+        "elapsed_s": 7.358786851167679,
+        "tokens": 143360,
+        "tokens_per_s": 19481.472000680642,
+        "ce": 4.022533822059631,
+        "bpc": 5.803289596893558,
+        "objective": 4.147434711456299,
+        "route_supervision_loss": 12.422069549560547,
+        "homeostasis_loss": 0.0006801410228945315,
+        "grad_norm": {
+          "mean": 1.319653296470642,
+          "p50": 1.3007705807685852,
+          "p90": 1.4106712579727172,
+          "max": 1.4736733436584473
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.542808073759079,
+            0.4992547512054443,
+            0.48013637959957123,
+            0.47780089676380155
+          ],
+          "entropy": 1.3849527835845947,
+          "gini": 0.013383743911981582,
+          "p99_tile_load": 0.5429349899291992,
+          "block_fill": 0.5,
+          "hotspot_share": 0.542808073759079,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 560,
+        "step_end": 570,
+        "elapsed_s": 7.36300091445446,
+        "tokens": 143360,
+        "tokens_per_s": 19470.322177818423,
+        "ce": 4.008239197731018,
+        "bpc": 5.782666813263297,
+        "objective": 4.133142423629761,
+        "route_supervision_loss": 12.42116174697876,
+        "homeostasis_loss": 0.0006916154525242746,
+        "grad_norm": {
+          "mean": 1.3209221243858338,
+          "p50": 1.323762059211731,
+          "p90": 1.3985615491867065,
+          "max": 1.4372063875198364
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5431584477424621,
+            0.49929300248622893,
+            0.4798247367143631,
+            0.47772391736507414
+          ],
+          "entropy": 1.3849302649497985,
+          "gini": 0.013485741056501865,
+          "p99_tile_load": 0.5432835459709168,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5431584477424621,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 570,
+        "step_end": 580,
+        "elapsed_s": 7.452370062470436,
+        "tokens": 143360,
+        "tokens_per_s": 19236.83322195042,
+        "ce": 3.924844741821289,
+        "bpc": 5.662354045284697,
+        "objective": 4.049676322937012,
+        "route_supervision_loss": 12.414809513092042,
+        "homeostasis_loss": 0.0006835233944002539,
+        "grad_norm": {
+          "mean": 1.3528791427612306,
+          "p50": 1.3063277006149292,
+          "p90": 1.5023860573768615,
+          "max": 1.6119035482406616
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5428372144699096,
+            0.49952579438686373,
+            0.47967016100883486,
+            0.4779669404029846
+          ],
+          "entropy": 1.3849459886550903,
+          "gini": 0.01340415347367525,
+          "p99_tile_load": 0.5429574728012085,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5428372144699096,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 580,
+        "step_end": 590,
+        "elapsed_s": 7.370312102138996,
+        "tokens": 143360,
+        "tokens_per_s": 19451.008045967872,
+        "ce": 3.9644986152648927,
+        "bpc": 5.719562491853823,
+        "objective": 4.089344835281372,
+        "route_supervision_loss": 12.41768388748169,
+        "homeostasis_loss": 0.0006693991192150861,
+        "grad_norm": {
+          "mean": 1.3537994742393493,
+          "p50": 1.3227903246879578,
+          "p90": 1.468890380859375,
+          "max": 1.4817334413528442
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5422271847724914,
+            0.5000379532575607,
+            0.479656845331192,
+            0.4780781090259552
+          ],
+          "entropy": 1.3849732518196105,
+          "gini": 0.013301770947873593,
+          "p99_tile_load": 0.5423423409461975,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5422271847724914,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 590,
+        "step_end": 600,
+        "elapsed_s": 7.450862508267164,
+        "tokens": 143360,
+        "tokens_per_s": 19240.725465130214,
+        "ce": 3.9871965408325196,
+        "bpc": 5.752308676508705,
+        "objective": 4.112027621269226,
+        "route_supervision_loss": 12.418116092681885,
+        "homeostasis_loss": 0.0006498157570604235,
+        "grad_norm": {
+          "mean": 1.314285111427307,
+          "p50": 1.2954894304275513,
+          "p90": 1.392237949371338,
+          "max": 1.45796537399292
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5414996266365051,
+            0.5003460228443146,
+            0.4799060136079788,
+            0.4782484471797943
+          ],
+          "entropy": 1.3850113868713378,
+          "gini": 0.013137096725404262,
+          "p99_tile_load": 0.5416002333164215,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5414996266365051,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 600,
+        "step_end": 610,
+        "elapsed_s": 7.368919495493174,
+        "tokens": 143360,
+        "tokens_per_s": 19454.683972009585,
+        "ce": 3.9637382507324217,
+        "bpc": 5.718465517713559,
+        "objective": 4.088546180725098,
+        "route_supervision_loss": 12.415320491790771,
+        "homeostasis_loss": 0.0006547595490701497,
+        "grad_norm": {
+          "mean": 1.379029643535614,
+          "p50": 1.363650619983673,
+          "p90": 1.4820317149162294,
+          "max": 1.5026569366455078
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5416829228401184,
+            0.500273448228836,
+            0.4798339784145355,
+            0.4782097339630127
+          ],
+          "entropy": 1.3850017070770264,
+          "gini": 0.013178689777851105,
+          "p99_tile_load": 0.5417809605598449,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5416829228401184,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 610,
+        "step_end": 620,
+        "elapsed_s": 7.401856277137995,
+        "tokens": 143360,
+        "tokens_per_s": 19368.11451511075,
+        "ce": 3.989556407928467,
+        "bpc": 5.755713245065186,
+        "objective": 4.114400386810303,
+        "route_supervision_loss": 12.418264865875244,
+        "homeostasis_loss": 0.0006612846103962511,
+        "grad_norm": {
+          "mean": 1.3409641981124878,
+          "p50": 1.3418790102005005,
+          "p90": 1.4371492862701416,
+          "max": 1.4860674142837524
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5419013500213623,
+            0.500242018699646,
+            0.479738712310791,
+            0.47811803221702576
+          ],
+          "entropy": 1.3849889755249023,
+          "gini": 0.013240828737616539,
+          "p99_tile_load": 0.5419952094554901,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5419013500213623,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 620,
+        "step_end": 630,
+        "elapsed_s": 7.469709325581789,
+        "tokens": 143360,
+        "tokens_per_s": 19192.179206897614,
+        "ce": 3.9736976146698,
+        "bpc": 5.732833842676424,
+        "objective": 4.098530507087707,
+        "route_supervision_loss": 12.417172241210938,
+        "homeostasis_loss": 0.0006612101395148783,
+        "grad_norm": {
+          "mean": 1.3230492353439331,
+          "p50": 1.3143789768218994,
+          "p90": 1.4503759145736694,
+          "max": 1.4569129943847656
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5417587876319885,
+            0.5006474018096924,
+            0.47964256107807157,
+            0.4779513657093048
+          ],
+          "entropy": 1.3849887251853943,
+          "gini": 0.013276694156229497,
+          "p99_tile_load": 0.5418462812900543,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5417587876319885,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 630,
+        "step_end": 640,
+        "elapsed_s": 7.382833760231733,
+        "tokens": 143360,
+        "tokens_per_s": 19418.0181561477,
+        "ce": 3.96916286945343,
+        "bpc": 5.726291588241072,
+        "objective": 4.094025492668152,
+        "route_supervision_loss": 12.419509983062744,
+        "homeostasis_loss": 0.0006674683652818203,
+        "grad_norm": {
+          "mean": 1.2823199033737183,
+          "p50": 1.284657061100006,
+          "p90": 1.337357795238495,
+          "max": 1.4158899784088135
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5417629301548004,
+            0.5011898517608643,
+            0.47947989106178285,
+            0.4775674343109131
+          ],
+          "entropy": 1.3849758982658387,
+          "gini": 0.013393528014421462,
+          "p99_tile_load": 0.5418464958667755,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5417629301548004,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 640,
+        "step_end": 650,
+        "elapsed_s": 7.4722065180540085,
+        "tokens": 143360,
+        "tokens_per_s": 19185.7652292693,
+        "ce": 3.9572917938232424,
+        "bpc": 5.709165246299382,
+        "objective": 4.082119560241699,
+        "route_supervision_loss": 12.415444660186768,
+        "homeostasis_loss": 0.0006733123154845089,
+        "grad_norm": {
+          "mean": 1.277940809726715,
+          "p50": 1.2641679644584656,
+          "p90": 1.3428976893424989,
+          "max": 1.3571040630340576
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5418805122375489,
+            0.5013799071311951,
+            0.47926545739173887,
+            0.47747421860694883
+          ],
+          "entropy": 1.3849642992019653,
+          "gini": 0.013458333164453506,
+          "p99_tile_load": 0.5419619917869568,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5418805122375489,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 650,
+        "step_end": 660,
+        "elapsed_s": 7.374995518475771,
+        "tokens": 143360,
+        "tokens_per_s": 19438.65587997387,
+        "ce": 3.9235067844390867,
+        "bpc": 5.660423780804474,
+        "objective": 4.0483428001403805,
+        "route_supervision_loss": 12.4155743598938,
+        "homeostasis_loss": 0.0006802495568990708,
+        "grad_norm": {
+          "mean": 1.3056772708892823,
+          "p50": 1.2936752438545227,
+          "p90": 1.3975312113761902,
+          "max": 1.407671570777893
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5420509517192841,
+            0.5015123188495636,
+            0.4790936321020126,
+            0.47734319269657133
+          ],
+          "entropy": 1.3849506020545959,
+          "gini": 0.013533872738480567,
+          "p99_tile_load": 0.5421301484107971,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5420509517192841,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 660,
+        "step_end": 670,
+        "elapsed_s": 7.383477099239826,
+        "tokens": 143360,
+        "tokens_per_s": 19416.326220441555,
+        "ce": 3.95285050868988,
+        "bpc": 5.702757826262307,
+        "objective": 4.077666068077088,
+        "route_supervision_loss": 12.413904857635497,
+        "homeostasis_loss": 0.0006765091209672391,
+        "grad_norm": {
+          "mean": 1.3162927150726318,
+          "p50": 1.2991492748260498,
+          "p90": 1.4684659123420716,
+          "max": 1.4813951253890991
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.541871291399002,
+            0.5016901314258575,
+            0.47898524105548856,
+            0.4774534344673157
+          ],
+          "entropy": 1.38495774269104,
+          "gini": 0.01349740382283926,
+          "p99_tile_load": 0.5419423639774322,
+          "block_fill": 0.5,
+          "hotspot_share": 0.541871291399002,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 670,
+        "step_end": 680,
+        "elapsed_s": 7.470422223210335,
+        "tokens": 143360,
+        "tokens_per_s": 19190.34770947559,
+        "ce": 3.9436341285705567,
+        "bpc": 5.689461400369211,
+        "objective": 4.068456768989563,
+        "route_supervision_loss": 12.413871669769287,
+        "homeostasis_loss": 0.0006838423840235918,
+        "grad_norm": {
+          "mean": 1.266163170337677,
+          "p50": 1.2697893977165222,
+          "p90": 1.3101196527481078,
+          "max": 1.3382304906845093
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5420975923538208,
+            0.5017020106315613,
+            0.47880625128746035,
+            0.477394238114357
+          ],
+          "entropy": 1.3849433660507202,
+          "gini": 0.013562863878905772,
+          "p99_tile_load": 0.5421639561653138,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5420975923538208,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 680,
+        "step_end": 690,
+        "elapsed_s": 7.384245630353689,
+        "tokens": 143360,
+        "tokens_per_s": 19414.305424877013,
+        "ce": 3.909632611274719,
+        "bpc": 5.640407579983806,
+        "objective": 4.034468412399292,
+        "route_supervision_loss": 12.414011383056641,
+        "homeostasis_loss": 0.0006957637320738286,
+        "grad_norm": {
+          "mean": 1.2627237558364868,
+          "p50": 1.2624256014823914,
+          "p90": 1.2988961696624755,
+          "max": 1.3336713314056396
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5424490988254547,
+            0.5017628014087677,
+            0.47846548855304716,
+            0.477322718501091
+          ],
+          "entropy": 1.3849198937416076,
+          "gini": 0.013667278364300728,
+          "p99_tile_load": 0.5425109446048737,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5424490988254547,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 690,
+        "step_end": 700,
+        "elapsed_s": 7.475209064781666,
+        "tokens": 143360,
+        "tokens_per_s": 19178.058935557976,
+        "ce": 3.9039586782455444,
+        "bpc": 5.632221824940279,
+        "objective": 4.028809261322022,
+        "route_supervision_loss": 12.414258670806884,
+        "homeostasis_loss": 0.0007080003968439996,
+        "grad_norm": {
+          "mean": 1.328840470314026,
+          "p50": 1.317257821559906,
+          "p90": 1.4586440443992617,
+          "max": 1.4684985876083374
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5428107261657715,
+            0.5018080830574035,
+            0.47819745540618896,
+            0.47718383073806764
+          ],
+          "entropy": 1.38489590883255,
+          "gini": 0.013780707120895385,
+          "p99_tile_load": 0.5428709328174591,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5428107261657715,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 700,
+        "step_end": 710,
+        "elapsed_s": 7.360058706253767,
+        "tokens": 143360,
+        "tokens_per_s": 19478.105504537412,
+        "ce": 3.9116276025772097,
+        "bpc": 5.643285744042526,
+        "objective": 4.0364984512329105,
+        "route_supervision_loss": 12.415006256103515,
+        "homeostasis_loss": 0.0007208307622931897,
+        "grad_norm": {
+          "mean": 1.3032363414764405,
+          "p50": 1.313977301120758,
+          "p90": 1.3882076621055601,
+          "max": 1.451770544052124
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5432417392730713,
+            0.5017037868499756,
+            0.4780136406421661,
+            0.47704093158245087
+          ],
+          "entropy": 1.3848707556724549,
+          "gini": 0.01389328557997942,
+          "p99_tile_load": 0.5432976663112641,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5432417392730713,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 710,
+        "step_end": 720,
+        "elapsed_s": 7.389976587146521,
+        "tokens": 143360,
+        "tokens_per_s": 19399.249552339294,
+        "ce": 3.867710995674133,
+        "bpc": 5.579927473050787,
+        "objective": 3.9925472497940064,
+        "route_supervision_loss": 12.411837768554687,
+        "homeostasis_loss": 0.0007178120082244277,
+        "grad_norm": {
+          "mean": 1.3422799229621887,
+          "p50": 1.337968647480011,
+          "p90": 1.4216191172599792,
+          "max": 1.493087649345398
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5430655121803284,
+            0.5019288003444672,
+            0.4780146300792694,
+            0.4769911766052246
+          ],
+          "entropy": 1.38487651348114,
+          "gini": 0.013883573561906814,
+          "p99_tile_load": 0.5431174635887146,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5430655121803284,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 720,
+        "step_end": 730,
+        "elapsed_s": 7.45865985378623,
+        "tokens": 143360,
+        "tokens_per_s": 19220.61104948047,
+        "ce": 3.8612523078918457,
+        "bpc": 5.570609556216631,
+        "objective": 3.986073899269104,
+        "route_supervision_loss": 12.411833095550538,
+        "homeostasis_loss": 0.0007032815366983414,
+        "grad_norm": {
+          "mean": 1.2949069738388062,
+          "p50": 1.2466720938682556,
+          "p90": 1.4196772813796996,
+          "max": 1.7129276990890503
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5424066483974457,
+            0.5024944245815277,
+            0.47802304327487943,
+            0.47707597017288206
+          ],
+          "entropy": 1.3849044680595397,
+          "gini": 0.013778963498771191,
+          "p99_tile_load": 0.5424514651298523,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5424066483974457,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 730,
+        "step_end": 740,
+        "elapsed_s": 7.419824726879597,
+        "tokens": 143360,
+        "tokens_per_s": 19321.211117110844,
+        "ce": 3.848646950721741,
+        "bpc": 5.5524238699386865,
+        "objective": 3.973507356643677,
+        "route_supervision_loss": 12.414437198638916,
+        "homeostasis_loss": 0.0007160442532040179,
+        "grad_norm": {
+          "mean": 1.246527874469757,
+          "p50": 1.232332468032837,
+          "p90": 1.366549003124237,
+          "max": 1.3779547214508057
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5426745355129242,
+            0.502814644575119,
+            0.47773768901824953,
+            0.47677322328090666
+          ],
+          "entropy": 1.3848791241645813,
+          "gini": 0.013923805765807628,
+          "p99_tile_load": 0.542712664604187,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5426745355129242,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 740,
+        "step_end": 750,
+        "elapsed_s": 7.474042251706123,
+        "tokens": 143360,
+        "tokens_per_s": 19181.052925848093,
+        "ce": 3.914998912811279,
+        "bpc": 5.648149516598516,
+        "objective": 4.039878296852112,
+        "route_supervision_loss": 12.414585971832276,
+        "homeostasis_loss": 0.000733556947670877,
+        "grad_norm": {
+          "mean": 1.2704104781150818,
+          "p50": 1.2848199009895325,
+          "p90": 1.31054345369339,
+          "max": 1.3109289407730103
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5432676672935486,
+            0.5026544630527496,
+            0.4775793045759201,
+            0.47649864554405214
+          ],
+          "entropy": 1.3848448395729065,
+          "gini": 0.014086388982832432,
+          "p99_tile_load": 0.543305367231369,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5432676672935486,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 750,
+        "step_end": 760,
+        "elapsed_s": 7.382047973573208,
+        "tokens": 143360,
+        "tokens_per_s": 19420.085119090334,
+        "ce": 3.879306697845459,
+        "bpc": 5.596656535068984,
+        "objective": 4.004174995422363,
+        "route_supervision_loss": 12.413403034210205,
+        "homeostasis_loss": 0.0007342277851421386,
+        "grad_norm": {
+          "mean": 1.278583824634552,
+          "p50": 1.2570318579673767,
+          "p90": 1.363683533668518,
+          "max": 1.4642122983932495
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5432586073875427,
+            0.5027326941490173,
+            0.4774582177400589,
+            0.4765505462884903
+          ],
+          "entropy": 1.3848434448242188,
+          "gini": 0.014087416231632233,
+          "p99_tile_load": 0.5432912528514862,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5432586073875427,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 760,
+        "step_end": 770,
+        "elapsed_s": 7.379498723894358,
+        "tokens": 143360,
+        "tokens_per_s": 19426.793792349235,
+        "ce": 3.9290249586105346,
+        "bpc": 5.668384823316383,
+        "objective": 4.053857088088989,
+        "route_supervision_loss": 12.411516284942627,
+        "homeostasis_loss": 0.0007169609307311475,
+        "grad_norm": {
+          "mean": 1.2637861371040344,
+          "p50": 1.2465981245040894,
+          "p90": 1.390082824230194,
+          "max": 1.399234414100647
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5426942646503449,
+            0.5028408885002136,
+            0.4775807857513428,
+            0.4768841564655304
+          ],
+          "entropy": 1.3848772287368774,
+          "gini": 0.013918151706457138,
+          "p99_tile_load": 0.5427185416221618,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5426942646503449,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 770,
+        "step_end": 780,
+        "elapsed_s": 7.472885638475418,
+        "tokens": 143360,
+        "tokens_per_s": 19184.02166652822,
+        "ce": 3.8944376945495605,
+        "bpc": 5.618485948977699,
+        "objective": 4.019295477867127,
+        "route_supervision_loss": 12.413290786743165,
+        "homeostasis_loss": 0.0007249929767567664,
+        "grad_norm": {
+          "mean": 1.2509475469589233,
+          "p50": 1.2602266669273376,
+          "p90": 1.3201271057128907,
+          "max": 1.3434653282165527
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5427886724472046,
+            0.503218287229538,
+            0.4774334728717804,
+            0.47655966877937317
+          ],
+          "entropy": 1.3848610758781432,
+          "gini": 0.014029489085078239,
+          "p99_tile_load": 0.5428078055381775,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5427886724472046,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 780,
+        "step_end": 790,
+        "elapsed_s": 7.389438588172197,
+        "tokens": 143360,
+        "tokens_per_s": 19400.66194331288,
+        "ce": 3.888130617141724,
+        "bpc": 5.60938675967891,
+        "objective": 4.013002943992615,
+        "route_supervision_loss": 12.413503742218017,
+        "homeostasis_loss": 0.0007372831692919135,
+        "grad_norm": {
+          "mean": 1.2237631916999816,
+          "p50": 1.216188907623291,
+          "p90": 1.3022119879722593,
+          "max": 1.3361879587173462
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5431219696998596,
+            0.5033127725124359,
+            0.477289554476738,
+            0.47627579271793363
+          ],
+          "entropy": 1.3848369121551514,
+          "gini": 0.014160109311342239,
+          "p99_tile_load": 0.5431396007537842,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5431219696998596,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 790,
+        "step_end": 800,
+        "elapsed_s": 7.482991240918636,
+        "tokens": 143360,
+        "tokens_per_s": 19158.11409962317,
+        "ce": 3.881685996055603,
+        "bpc": 5.600089136797555,
+        "objective": 4.006526088714599,
+        "route_supervision_loss": 12.411675453186035,
+        "homeostasis_loss": 0.0007232739764731378,
+        "grad_norm": {
+          "mean": 1.2655571818351745,
+          "p50": 1.2348138689994812,
+          "p90": 1.3377625465393068,
+          "max": 1.3683907985687256
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5424832463264465,
+            0.5038404583930969,
+            0.4773624151945114,
+            0.4763139933347702
+          ],
+          "entropy": 1.3848638534545898,
+          "gini": 0.014061612635850906,
+          "p99_tile_load": 0.5425014019012451,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5424832463264465,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 800,
+        "step_end": 810,
+        "elapsed_s": 7.376588027924299,
+        "tokens": 143360,
+        "tokens_per_s": 19434.459326901047,
+        "ce": 3.8848476886749266,
+        "bpc": 5.604650495060269,
+        "objective": 4.009704351425171,
+        "route_supervision_loss": 12.413839435577392,
+        "homeostasis_loss": 0.000718283758033067,
+        "grad_norm": {
+          "mean": 1.3673683881759644,
+          "p50": 1.380118727684021,
+          "p90": 1.5271565437316894,
+          "max": 1.5343616008758545
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5422055423259735,
+            0.5041398346424103,
+            0.4774182617664337,
+            0.47623646855354307
+          ],
+          "entropy": 1.3848733067512513,
+          "gini": 0.014039299637079238,
+          "p99_tile_load": 0.5422316312789917,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5422055423259735,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 810,
+        "step_end": 820,
+        "elapsed_s": 7.389720916748047,
+        "tokens": 143360,
+        "tokens_per_s": 19399.92072976521,
+        "ce": 3.823889946937561,
+        "bpc": 5.516707063351981,
+        "objective": 3.948730635643005,
+        "route_supervision_loss": 12.410779571533203,
+        "homeostasis_loss": 0.0007329941610805691,
+        "grad_norm": {
+          "mean": 1.2807783365249634,
+          "p50": 1.2558636665344238,
+          "p90": 1.4720092296600342,
+          "max": 1.4805186986923218
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5425732254981994,
+            0.5043259501457215,
+            0.4772388458251953,
+            0.4758620709180832
+          ],
+          "entropy": 1.3848441958427429,
+          "gini": 0.014201285503804683,
+          "p99_tile_load": 0.5426018953323364,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5425732254981994,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 820,
+        "step_end": 830,
+        "elapsed_s": 7.486040521413088,
+        "tokens": 143360,
+        "tokens_per_s": 19150.310446481384,
+        "ce": 3.868921089172363,
+        "bpc": 5.581673268939696,
+        "objective": 3.993795466423035,
+        "route_supervision_loss": 12.411681842803954,
+        "homeostasis_loss": 0.0007576113275717944,
+        "grad_norm": {
+          "mean": 1.366956853866577,
+          "p50": 1.3390267491340637,
+          "p90": 1.5448989629745484,
+          "max": 1.6448957920074463
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5433461904525757,
+            0.5042531371116639,
+            0.4767102837562561,
+            0.4756904810667038
+          ],
+          "entropy": 1.3847959637641907,
+          "gini": 0.014406873844563961,
+          "p99_tile_load": 0.5433764159679413,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5433461904525757,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 830,
+        "step_end": 840,
+        "elapsed_s": 7.396713353693485,
+        "tokens": 143360,
+        "tokens_per_s": 19381.581135412584,
+        "ce": 3.775528645515442,
+        "bpc": 5.446936453619354,
+        "objective": 3.900380086898804,
+        "route_supervision_loss": 12.408749103546143,
+        "homeostasis_loss": 0.0007639915449544788,
+        "grad_norm": {
+          "mean": 1.3123661756515503,
+          "p50": 1.3179216384887695,
+          "p90": 1.4230989694595337,
+          "max": 1.4491018056869507
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5435828268527985,
+            0.5041441559791565,
+            0.476555198431015,
+            0.47571790516376494
+          ],
+          "entropy": 1.3847835063934326,
+          "gini": 0.014448982663452625,
+          "p99_tile_load": 0.5436166167259217,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5435828268527985,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 840,
+        "step_end": 850,
+        "elapsed_s": 7.4923735074698925,
+        "tokens": 143360,
+        "tokens_per_s": 19134.12349999238,
+        "ce": 3.848120832443237,
+        "bpc": 5.551664841707368,
+        "objective": 3.9730064392089846,
+        "route_supervision_loss": 12.411949825286865,
+        "homeostasis_loss": 0.0007661141105927527,
+        "grad_norm": {
+          "mean": 1.2545273661613465,
+          "p50": 1.263040840625763,
+          "p90": 1.3225390672683717,
+          "max": 1.3468847274780273
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5435513317584991,
+            0.5043719828128814,
+            0.47640511989593504,
+            0.47567166984081266
+          ],
+          "entropy": 1.384779155254364,
+          "gini": 0.014475365541875363,
+          "p99_tile_load": 0.5435918629169464,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5435513317584991,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 850,
+        "step_end": 860,
+        "elapsed_s": 7.402461536228657,
+        "tokens": 143360,
+        "tokens_per_s": 19366.53088953946,
+        "ce": 3.8190536975860594,
+        "bpc": 5.509729830396067,
+        "objective": 3.9439374208450317,
+        "route_supervision_loss": 12.411491203308106,
+        "homeostasis_loss": 0.0007688839803449809,
+        "grad_norm": {
+          "mean": 1.2504835844039917,
+          "p50": 1.2524760961532593,
+          "p90": 1.3054022669792176,
+          "max": 1.3370661735534668
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5435839176177979,
+            0.5044838130474091,
+            0.4764999896287918,
+            0.4754323959350586
+          ],
+          "entropy": 1.384773564338684,
+          "gini": 0.014527399279177188,
+          "p99_tile_load": 0.5436306476593018,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5435839176177979,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 860,
+        "step_end": 870,
+        "elapsed_s": 7.405414197593927,
+        "tokens": 143360,
+        "tokens_per_s": 19358.809132725986,
+        "ce": 3.8855262279510496,
+        "bpc": 5.605629420308979,
+        "objective": 4.0104636430740355,
+        "route_supervision_loss": 12.41618366241455,
+        "homeostasis_loss": 0.000775557808810845,
+        "grad_norm": {
+          "mean": 1.231019127368927,
+          "p50": 1.2179338335990906,
+          "p90": 1.2983843326568603,
+          "max": 1.3018038272857666
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5438131868839264,
+            0.5044097900390625,
+            0.47635745704174043,
+            0.4754196643829346
+          ],
+          "entropy": 1.3847604870796204,
+          "gini": 0.014577056281268597,
+          "p99_tile_load": 0.5438670337200164,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5438131868839264,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 870,
+        "step_end": 880,
+        "elapsed_s": 7.4858885034918785,
+        "tokens": 143360,
+        "tokens_per_s": 19150.699336909453,
+        "ce": 3.852568769454956,
+        "bpc": 5.558081858376362,
+        "objective": 3.9774813652038574,
+        "route_supervision_loss": 12.41358985900879,
+        "homeostasis_loss": 0.0007768269919324666,
+        "grad_norm": {
+          "mean": 1.233813428878784,
+          "p50": 1.2127248048782349,
+          "p90": 1.3831709265708922,
+          "max": 1.443885087966919
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5438320219516755,
+            0.5044531762599945,
+            0.47633504271507265,
+            0.47537983357906344
+          ],
+          "entropy": 1.384757936000824,
+          "gini": 0.014592169411480426,
+          "p99_tile_load": 0.5438928127288818,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5438320219516755,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 880,
+        "step_end": 890,
+        "elapsed_s": 7.392975367605686,
+        "tokens": 143360,
+        "tokens_per_s": 19391.380719076988,
+        "ce": 3.8299777030944826,
+        "bpc": 5.525489838969713,
+        "objective": 3.9548838138580322,
+        "route_supervision_loss": 12.413330078125,
+        "homeostasis_loss": 0.0007728347729425878,
+        "grad_norm": {
+          "mean": 1.238422656059265,
+          "p50": 1.2320539951324463,
+          "p90": 1.306095230579376,
+          "max": 1.4543976783752441
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5437766432762146,
+            0.5043042719364166,
+            0.4764568477869034,
+            0.4754623264074326
+          ],
+          "entropy": 1.3847659349441528,
+          "gini": 0.01454939842224121,
+          "p99_tile_load": 0.5438414573669433,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5437766432762146,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 890,
+        "step_end": 900,
+        "elapsed_s": 7.471138916909695,
+        "tokens": 143360,
+        "tokens_per_s": 19188.5068119304,
+        "ce": 3.8262489318847654,
+        "bpc": 5.520110359236845,
+        "objective": 3.951112723350525,
+        "route_supervision_loss": 12.41049404144287,
+        "homeostasis_loss": 0.0007588251959532499,
+        "grad_norm": {
+          "mean": 1.237509286403656,
+          "p50": 1.2440126538276672,
+          "p90": 1.314761447906494,
+          "max": 1.3204256296157837
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5433575928211212,
+            0.5043174028396606,
+            0.47654242217540743,
+            0.47578268945217134
+          ],
+          "entropy": 1.384793484210968,
+          "gini": 0.014406230673193932,
+          "p99_tile_load": 0.5434396803379059,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5433575928211212,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 900,
+        "step_end": 910,
+        "elapsed_s": 7.384348355233669,
+        "tokens": 143360,
+        "tokens_per_s": 19414.03534929299,
+        "ce": 3.7869906187057496,
+        "bpc": 5.4634725854998125,
+        "objective": 3.9118334293365478,
+        "route_supervision_loss": 12.407952690124512,
+        "homeostasis_loss": 0.0007632850203663111,
+        "grad_norm": {
+          "mean": 1.2232606530189514,
+          "p50": 1.2402669787406921,
+          "p90": 1.2977373242378236,
+          "max": 1.3633792400360107
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.543321943283081,
+            0.5047118544578553,
+            0.47645978927612304,
+            0.475506517291069
+          ],
+          "entropy": 1.3847842335700988,
+          "gini": 0.014481146447360515,
+          "p99_tile_load": 0.5434101045131683,
+          "block_fill": 0.5,
+          "hotspot_share": 0.543321943283081,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 910,
+        "step_end": 920,
+        "elapsed_s": 7.378667581826448,
+        "tokens": 143360,
+        "tokens_per_s": 19428.98204996978,
+        "ce": 3.810380291938782,
+        "bpc": 5.497216751081122,
+        "objective": 3.9352563858032226,
+        "route_supervision_loss": 12.41047706604004,
+        "homeostasis_loss": 0.0007713485683780164,
+        "grad_norm": {
+          "mean": 1.1783352851867677,
+          "p50": 1.1660528779029846,
+          "p90": 1.2932715654373168,
+          "max": 1.3069274425506592
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5434280574321747,
+            0.5050195455551147,
+            0.4762969106435776,
+            0.47525560259819033
+          ],
+          "entropy": 1.38476802110672,
+          "gini": 0.014577499963343144,
+          "p99_tile_load": 0.5435263514518738,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5434280574321747,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 920,
+        "step_end": 930,
+        "elapsed_s": 7.489533711224794,
+        "tokens": 143360,
+        "tokens_per_s": 19141.37855940777,
+        "ce": 3.7779651403427126,
+        "bpc": 5.450451572623808,
+        "objective": 3.9027994155883787,
+        "route_supervision_loss": 12.408240795135498,
+        "homeostasis_loss": 0.0007517582795117051,
+        "grad_norm": {
+          "mean": 1.215811812877655,
+          "p50": 1.2161447405815125,
+          "p90": 1.2778528451919555,
+          "max": 1.2974132299423218
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5425324022769928,
+            0.5057277619838715,
+            0.47642858922481535,
+            0.4753113746643066
+          ],
+          "entropy": 1.3848058462142945,
+          "gini": 0.01443514097481966,
+          "p99_tile_load": 0.5426430583000184,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5425324022769928,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 930,
+        "step_end": 940,
+        "elapsed_s": 7.385446414351463,
+        "tokens": 143360,
+        "tokens_per_s": 19411.148894320268,
+        "ce": 3.799040651321411,
+        "bpc": 5.480857107796978,
+        "objective": 3.923907494544983,
+        "route_supervision_loss": 12.410822868347168,
+        "homeostasis_loss": 0.0007586355321109294,
+        "grad_norm": {
+          "mean": 1.2500316739082336,
+          "p50": 1.2239609956741333,
+          "p90": 1.3039748430252074,
+          "max": 1.54952871799469
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5426745235919952,
+            0.505863493680954,
+            0.47644608914852143,
+            0.4750160098075867
+          ],
+          "entropy": 1.3847920656204225,
+          "gini": 0.014524559117853641,
+          "p99_tile_load": 0.5427952826023101,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5426745235919952,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 940,
+        "step_end": 950,
+        "elapsed_s": 7.485557086765766,
+        "tokens": 143360,
+        "tokens_per_s": 19151.547217969397,
+        "ce": 3.8286473035812376,
+        "bpc": 5.523570478189553,
+        "objective": 3.953514742851257,
+        "route_supervision_loss": 12.412735652923583,
+        "homeostasis_loss": 0.0007400225207675248,
+        "grad_norm": {
+          "mean": 1.2354331254959106,
+          "p50": 1.209904134273529,
+          "p90": 1.3631046056747436,
+          "max": 1.3697073459625244
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5419761836528778,
+            0.5061639070510864,
+            0.4767067700624466,
+            0.4751532435417175
+          ],
+          "entropy": 1.3848284482955933,
+          "gini": 0.014370372332632542,
+          "p99_tile_load": 0.5421092450618744,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5419761836528778,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 950,
+        "step_end": 960,
+        "elapsed_s": 7.399748496711254,
+        "tokens": 143360,
+        "tokens_per_s": 19373.63142324566,
+        "ce": 3.780620503425598,
+        "bpc": 5.454282451775247,
+        "objective": 3.9054099559783935,
+        "route_supervision_loss": 12.40544090270996,
+        "homeostasis_loss": 0.0007350061030592769,
+        "grad_norm": {
+          "mean": 1.2131482481956481,
+          "p50": 1.2146246433258057,
+          "p90": 1.2764358997344971,
+          "max": 1.3052303791046143
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5417985796928406,
+            0.5062282860279084,
+            0.47662113010883334,
+            0.4753520965576172
+          ],
+          "entropy": 1.3848382115364075,
+          "gini": 0.014309162832796573,
+          "p99_tile_load": 0.5419448435306549,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5417985796928406,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 960,
+        "step_end": 970,
+        "elapsed_s": 7.396625675261021,
+        "tokens": 143360,
+        "tokens_per_s": 19381.81088161406,
+        "ce": 3.8135125398635865,
+        "bpc": 5.501735629629072,
+        "objective": 3.938353943824768,
+        "route_supervision_loss": 12.410156631469727,
+        "homeostasis_loss": 0.0007398671004921198,
+        "grad_norm": {
+          "mean": 1.1749237298965454,
+          "p50": 1.188962161540985,
+          "p90": 1.21404470205307,
+          "max": 1.215983510017395
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5419639348983765,
+            0.5061900973320007,
+            0.4765284150838852,
+            0.47531764805316923
+          ],
+          "entropy": 1.3848286986351013,
+          "gini": 0.014350033923983574,
+          "p99_tile_load": 0.5421140015125274,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5419639348983765,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 970,
+        "step_end": 980,
+        "elapsed_s": 7.48674775287509,
+        "tokens": 143360,
+        "tokens_per_s": 19148.50142305734,
+        "ce": 3.823751664161682,
+        "bpc": 5.5165075634769805,
+        "objective": 3.9485945463180543,
+        "route_supervision_loss": 12.411025524139404,
+        "homeostasis_loss": 0.00073267204570584,
+        "grad_norm": {
+          "mean": 1.173714554309845,
+          "p50": 1.1699811220169067,
+          "p90": 1.2736116886138915,
+          "max": 1.2789291143417358
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5416323006153106,
+            0.5064382135868073,
+            0.4764761656522751,
+            0.4754534125328064
+          ],
+          "entropy": 1.384842586517334,
+          "gini": 0.014281169511377811,
+          "p99_tile_load": 0.5418023705482483,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5416323006153106,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 980,
+        "step_end": 990,
+        "elapsed_s": 7.374751307070255,
+        "tokens": 143360,
+        "tokens_per_s": 19439.299581880026,
+        "ce": 3.824566674232483,
+        "bpc": 5.517683374464399,
+        "objective": 3.9494246006011964,
+        "route_supervision_loss": 12.412425518035889,
+        "homeostasis_loss": 0.0007337380433455109,
+        "grad_norm": {
+          "mean": 1.2111798167228698,
+          "p50": 1.1812026500701904,
+          "p90": 1.3552022099494934,
+          "max": 1.3992173671722412
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5415339529514313,
+            0.5067172706127167,
+            0.4764494448900223,
+            0.47529943883419035
+          ],
+          "entropy": 1.384840178489685,
+          "gini": 0.01431071050465107,
+          "p99_tile_load": 0.5417089998722077,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5415339529514313,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 990,
+        "step_end": 1000,
+        "elapsed_s": 7.4824104234576225,
+        "tokens": 143360,
+        "tokens_per_s": 19159.601236329047,
+        "ce": 3.8007747173309325,
+        "bpc": 5.483358836229488,
+        "objective": 3.925618577003479,
+        "route_supervision_loss": 12.409525966644287,
+        "homeostasis_loss": 0.0007486369111575186,
+        "grad_norm": {
+          "mean": 1.1940144062042237,
+          "p50": 1.2028102278709412,
+          "p90": 1.2636702537536622,
+          "max": 1.2981016635894775
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5420638382434845,
+            0.5065508723258972,
+            0.47622381448745726,
+            0.4751615673303604
+          ],
+          "entropy": 1.3848110556602478,
+          "gini": 0.014439616911113262,
+          "p99_tile_load": 0.5422492563724518,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5420638382434845,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1000,
+        "step_end": 1010,
+        "elapsed_s": 17.279426638036966,
+        "tokens": 143360,
+        "tokens_per_s": 8296.5715820931,
+        "ce": 3.8354652166366576,
+        "bpc": 5.53340664754382,
+        "objective": 3.960341787338257,
+        "route_supervision_loss": 12.412823295593261,
+        "homeostasis_loss": 0.0007483214314561338,
+        "grad_norm": {
+          "mean": 1.209507668018341,
+          "p50": 1.1918228268623352,
+          "p90": 1.303428268432617,
+          "max": 1.370267629623413
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5422435998916626,
+            0.5061407744884491,
+            0.4762884318828583,
+            0.4753272861242294
+          ],
+          "entropy": 1.384812068939209,
+          "gini": 0.014412580244243144,
+          "p99_tile_load": 0.5424408495426178,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5422435998916626,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1010,
+        "step_end": 1020,
+        "elapsed_s": 7.369118347764015,
+        "tokens": 143360,
+        "tokens_per_s": 19454.158996306418,
+        "ce": 3.808478665351868,
+        "bpc": 5.494473283834558,
+        "objective": 3.933325004577637,
+        "route_supervision_loss": 12.409784698486328,
+        "homeostasis_loss": 0.0007485766138415784,
+        "grad_norm": {
+          "mean": 1.2155521273612977,
+          "p50": 1.1897460222244263,
+          "p90": 1.3417269229888917,
+          "max": 1.351885199546814
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.542314875125885,
+            0.5060028612613678,
+            0.47629434168338775,
+            0.4753880202770233
+          ],
+          "entropy": 1.3848117351531983,
+          "gini": 0.01440556775778532,
+          "p99_tile_load": 0.5425123035907745,
+          "block_fill": 0.5,
+          "hotspot_share": 0.542314875125885,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1020,
+        "step_end": 1030,
+        "elapsed_s": 7.503916788846254,
+        "tokens": 143360,
+        "tokens_per_s": 19104.68946205385,
+        "ce": 3.7385910034179686,
+        "bpc": 5.393646700543197,
+        "objective": 3.8634209632873535,
+        "route_supervision_loss": 12.408825492858886,
+        "homeostasis_loss": 0.0007416807638946921,
+        "grad_norm": {
+          "mean": 1.2439770698547363,
+          "p50": 1.2332888841629028,
+          "p90": 1.3607753276824952,
+          "max": 1.4299954175949097
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.542070347070694,
+            0.5060804486274719,
+            0.47645832002162936,
+            0.4753909856081009
+          ],
+          "entropy": 1.3848252058029176,
+          "gini": 0.014353763312101364,
+          "p99_tile_load": 0.5422833621501922,
+          "block_fill": 0.5,
+          "hotspot_share": 0.542070347070694,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1030,
+        "step_end": 1040,
+        "elapsed_s": 7.36604118719697,
+        "tokens": 143360,
+        "tokens_per_s": 19462.285962937083,
+        "ce": 3.8044829845428465,
+        "bpc": 5.488708734946408,
+        "objective": 3.9293206930160522,
+        "route_supervision_loss": 12.410758113861084,
+        "homeostasis_loss": 0.0007302072248421609,
+        "grad_norm": {
+          "mean": 1.22431378364563,
+          "p50": 1.2089058756828308,
+          "p90": 1.3009454250335692,
+          "max": 1.3349957466125488
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5415478408336639,
+            0.5064581453800201,
+            0.4765306502580643,
+            0.47546346187591554
+          ],
+          "entropy": 1.3848473668098449,
+          "gini": 0.01426128949970007,
+          "p99_tile_load": 0.5417822957038879,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5415478408336639,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1040,
+        "step_end": 1047,
+        "elapsed_s": 5.116407852619886,
+        "tokens": 99456,
+        "tokens_per_s": 19438.637979001807,
+        "ce": 3.8167499474116733,
+        "bpc": 5.506406221444033,
+        "objective": 3.9415571008409773,
+        "route_supervision_loss": 12.407696315220424,
+        "homeostasis_loss": 0.0007301281355986637,
+        "grad_norm": {
+          "mean": 1.258780905178615,
+          "p50": 1.2551343441009521,
+          "p90": 1.380056118965149,
+          "max": 1.3925954103469849
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5416742392948696,
+            0.5061808569090707,
+            0.4765722709042685,
+            0.475572726556233
+          ],
+          "entropy": 1.384847845349993,
+          "gini": 0.01424457026379449,
+          "p99_tile_load": 0.5419230716569083,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5416742392948696,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      }
+    ],
+    "homeostasis": {
+      "activation_rate": [
+        0.5371097677530509,
+        0.49905788767531356,
+        0.483252276265291,
+        0.4805801647155765
+      ],
+      "entropy": 1.3851411794636972,
+      "gini": 0.011587494656927492,
+      "p99_tile_load": 0.537234415126735,
+      "block_fill": 0.5,
+      "hotspot_share": 0.5371118058675567,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    },
+    "finite_check_protocol": {
+      "loss": "every step",
+      "gradient_global_norm": "every step after AMP unscale",
+      "parameters_gradients_optimizer": "step 0 and every 25 steps",
+      "amp_overflow": "fail closed on any scale drop"
+    }
+  },
+  "validation": {
+    "steps": 57,
+    "requested_steps": 57,
+    "available_steps": 57,
+    "full_validation": true,
+    "sequences": 6330,
+    "available_sequences": 6330,
+    "tokens": 810240,
+    "available_tokens": 810240,
+    "coverage_fraction": 1.0,
+    "elapsed_s": 11.838148448616266,
+    "tokens_per_s": 68443.13564041402,
+    "ce": 3.79383888764404,
+    "bpc": 5.473352549135758,
+    "finite": true,
+    "homeostasis": {
+      "activation_rate": [
+        0.5417553656979611,
+        0.5061730815653216,
+        0.47646682879381014,
+        0.47560483269524156
+      ],
+      "entropy": 1.3848428956249303,
+      "gini": 0.014259865866941317,
+      "p99_tile_load": 0.5419860942321911,
+      "block_fill": 0.5,
+      "hotspot_share": 0.5417553656979611,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    },
+    "route_specialization": {
+      "supported": true,
+      "observation_count": 810240,
+      "tile_count": 4,
+      "active_tiles": 2,
+      "theoretical_route_count": 6,
+      "unique_route_count": 1,
+      "observed_route_fraction": 0.16666666666666666,
+      "route_entropy_nats": -0.0,
+      "route_entropy_over_log_unique": 0.0,
+      "top_route_share": 1.0,
+      "top_routes": [
+        {
+          "route_code": 3,
+          "count": 810240,
+          "share": 1.0
+        }
+      ],
+      "token_route_mutual_information_nats": -3.8495185624374545e-16,
+      "shuffled_token_route_mutual_information_nats": -3.8495185624374545e-16,
+      "excess_token_route_mutual_information_nats": 0.0,
+      "token_route_mi_over_route_entropy": 0.0,
+      "excess_token_route_mi_over_route_entropy": 0.0,
+      "hard_activation_rate": [
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "hard_hotspot_share": 1.0,
+      "hard_dead_tile_ratio": 0.5,
+      "interpretation_boundary": "Token-route MI measures statistical dependence between input token IDs and blockwise hard routes. The shuffled baseline estimates finite-sample bias; even positive excess MI does not by itself prove semantic interpretability."
+    }
+  },
+  "memory": {
+    "torch_peak_allocated_bytes": 22550027776,
+    "torch_peak_allocated_gib": 21.001349925994873,
+    "torch_peak_reserved_bytes": 26218594304,
+    "torch_peak_reserved_gib": 24.41796875,
+    "device_samples_full_training": {
+      "sample_count": 3847,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 97.89654276059267,
+        "p50": 100.0,
+        "p90": 100.0,
+        "max": 100.0
+      },
+      "memory_used_mib": {
+        "mean": 25368.09357941253,
+        "p50": 25396.0,
+        "p90": 25396.0,
+        "max": 25396.0
+      },
+      "memory_util_percent": {
+        "mean": 72.7702105536782,
+        "p50": 77.0,
+        "p90": 91.0,
+        "max": 100.0
+      },
+      "power_w": {
+        "mean": 192.9952170522485,
+        "p50": 196.15,
+        "p90": 261.202,
+        "max": 330.5
+      },
+      "error": null
+    }
+  },
+  "gpu_utilization": {
+    "full_training": {
+      "sample_count": 3847,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 97.89654276059267,
+        "p50": 100.0,
+        "p90": 100.0,
+        "max": 100.0
+      },
+      "memory_used_mib": {
+        "mean": 25368.09357941253,
+        "p50": 25396.0,
+        "p90": 25396.0,
+        "max": 25396.0
+      },
+      "memory_util_percent": {
+        "mean": 72.7702105536782,
+        "p50": 77.0,
+        "p90": 91.0,
+        "max": 100.0
+      },
+      "power_w": {
+        "mean": 192.9952170522485,
+        "p50": 196.15,
+        "p90": 261.202,
+        "max": 330.5
+      },
+      "error": null
+    },
+    "post_warmup": {
+      "sample_count": 3807,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 97.99527186761229,
+        "p50": 100.0,
+        "p90": 100.0,
+        "max": 100.0
+      },
+      "memory_used_mib": {
+        "mean": 25396.0,
+        "p50": 25396.0,
+        "p90": 25396.0,
+        "max": 25396.0
+      },
+      "memory_util_percent": {
+        "mean": 72.82453375361177,
+        "p50": 77.0,
+        "p90": 91.0,
+        "max": 100.0
+      },
+      "power_w": {
+        "mean": 193.2304623062779,
+        "p50": 196.35,
+        "p90": 261.264,
+        "max": 330.5
+      },
+      "error": null
+    }
+  },
+  "saturation": {
+    "utilization_target": "p50>=90 and p90>=95",
+    "memory_target": "device max stays within the 32 GiB user limit and the 31.233 GiB physical launch limit",
+    "utilization_pass": true,
+    "memory_pass": true,
+    "learning_signal_pass": true,
+    "homeostasis_pass": true
+  },
+  "matched_gates": {
+    "training_complete": true,
+    "validation_complete": true,
+    "finite": true,
+    "scaled_homeostasis_cap": 0.7,
+    "soft_homeostasis_pass": true,
+    "hard_homeostasis_pass": false,
+    "specialization_pass": false
+  },
+  "checkpoint": {
+    "path": "/root/vpsc/results/e3_scan/checkpoints/e3_fe2h_full_coarse_k2.pt",
+    "bytes": 5085296250,
+    "includes_optimizer": true,
+    "periodic_interval_steps": 1000,
+    "periodic_steps": [
+      1000
+    ],
+    "last_saved_step": 1047,
+    "rolling": false,
+    "atomic_replace": true
+  },
+  "failure": null
+}

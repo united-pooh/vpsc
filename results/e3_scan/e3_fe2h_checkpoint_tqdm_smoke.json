@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "experiment": "e3_fe2h_scale_train",
+  "label": "checkpoint_tqdm_smoke",
+  "configuration": {
+    "out": "results/e3_scan/e3_fe2h_checkpoint_tqdm_smoke.json",
+    "cache_dir": "/root/vpsc/results/e3_sg29_cache",
+    "checkpoint": "results/e3_scan/checkpoints/e3_fe2h_checkpoint_tqdm_smoke.pt",
+    "label": "checkpoint_tqdm_smoke",
+    "d_model": 128,
+    "state_dim": 128,
+    "tile_size": 32,
+    "active_tiles": 2,
+    "block_size": 32,
+    "rank": 16,
+    "batch_size": 4,
+    "seq_len": 32,
+    "max_steps": 3,
+    "train_mode": "random",
+    "epochs": 1,
+    "warmup_steps": 1,
+    "valid_steps": 1,
+    "full_validation": false,
+    "log_every": 1,
+    "finite_check_every": 1,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.01,
+    "route_supervision_weight": 0.01,
+    "homeostasis_weight": 1.0,
+    "seed": 0,
+    "amp": true,
+    "amp_init_scale": 256.0,
+    "amp_growth_interval": 100000,
+    "low_rank_output": true,
+    "sample_interval_ms": 100,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "save_optimizer": true,
+    "checkpoint_every_steps": 2,
+    "tqdm_progress": true,
+    "shared_init": null,
+    "create_shared_init": false,
+    "precision": "fp16_autocast_fp32_master",
+    "requested_steps": 3,
+    "steps_per_epoch": 117258
+  },
+  "data": {
+    "name": "cyberlangke/Nana-catgirl-dataset-110k",
+    "vocab_size": 8192,
+    "train_tokens": 15008971,
+    "valid_tokens": 810338,
+    "train_sequences": 469030,
+    "valid_sequences": 25323,
+    "train_sequence_tokens": 15008960,
+    "valid_sequence_tokens": 810336,
+    "tokenizer_path": "/root/vpsc/results/e3_sg29_cache/bpe/catgirl_bpe_8192.json"
+  },
+  "model": {
+    "parameter_stats": {
+      "model_total": 2183876,
+      "model_trainable": 2183876,
+      "core_total": 78276,
+      "core_trainable": 78276,
+      "embedding_total": 1048576,
+      "embedding_trainable": 1048576,
+      "output_norm_total": 256,
+      "output_norm_trainable": 256,
+      "lm_head_total": 1056768,
+      "lm_head_trainable": 1056768,
+      "wrapper_unique_total": 2105600,
+      "wrapper_unique_trainable": 2105600,
+      "shared_embedding_head": 0,
+      "tied_weights": false,
+      "core_type": "FE2HNeuronTileCore"
+    },
+    "provenance": {
+      "path_label": "low_rank_dense_mask_training",
+      "supported": true,
+      "hardware_executed_sparsity": false,
+      "dense_input_projection_retained": true,
+      "input_projection_kind": "dense",
+      "router_projection_kind": "dense_router_mlp",
+      "output_projection_kind": "low_rank",
+      "output_projection_provenance": {
+        "init_mode": "random",
+        "rank": 16,
+        "source_name": null,
+        "source_shape": null,
+        "allow_test_rank": false
+      },
+      "output_projection_cost": {
+        "in_features": 512,
+        "out_features": 128,
+        "rank": 16,
+        "bias": true,
+        "dense_parameters": 65664,
+        "low_rank_parameters": 10368,
+        "dense_macs": 65536,
+        "low_rank_macs": 10240,
+        "parameter_reduction": 55296,
+        "mac_reduction": 55296,
+        "parameter_ratio": 0.15789473684210525,
+        "mac_ratio": 0.15625
+      },
+      "non_formal_scaling_rank": false,
+      "unsupported_reason": null,
+      "notes": [
+        "Training uses the differentiable dense-mask path; no hardware sparse speedup is claimed.",
+        "Ranks outside {16, 32} are isolated to this scaling runner and marked non-formal."
+      ]
+    },
+    "shared_initialization": {
+      "enabled": false,
+      "created": false,
+      "path": null,
+      "matched_parameter_count": 0,
+      "matched_parameter_ratio": 0.0,
+      "unmatched_keys": []
+    }
+  },
+  "preflight": {
+    "status": "ALLOW",
+    "can_launch": true,
+    "reason": "estimate is within both user and physical launch limits",
+    "raw_estimate_gib": 0.04157966375350952,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "calibrated_estimate_gib": 0.8123694956302643,
+    "user_warning_gib": 32.0,
+    "user_refuse_gib": 32.0,
+    "physical_total_gib": 31.7325439453125,
+    "physical_headroom_gib": 0.5,
+    "physical_launch_limit_gib": 31.2325439453125,
+    "architecture_estimate": {
+      "core_total_gib": 0.0020250678062438965,
+      "core_forward_only_gib": 0.000722840428352356,
+      "model_total_gib": 0.04157966375350952,
+      "projection_bytes": 262144,
+      "core": {
+        "parameter_bytes": 313104,
+        "state_bytes": 4096,
+        "route_bytes": 192,
+        "raw_trace_bytes": 262144,
+        "output_bytes": 65536,
+        "active_projection_bytes": 131072,
+        "forward_only_bytes": 776144,
+        "forward_only_gib": 0.000722840428352356,
+        "total_bytes": 2174400,
+        "total_gib": 0.0020250678062438965,
+        "notes": [
+          "forward_only_gib is the materialised forward footprint for this core only.",
+          "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+          "Output projection remains dense and is not claimed as sparse speedup."
+        ]
+      }
+    }
+  },
+  "status": "COMPLETED",
+  "training": {
+    "completed_steps": 3,
+    "requested_steps": 3,
+    "train_mode": "random",
+    "epochs": 1,
+    "steps_per_epoch": 117258,
+    "tokens": 384,
+    "expected_full_epoch_tokens": null,
+    "coverage_fraction": null,
+    "elapsed_s": 0.907372023910284,
+    "tokens_per_s": 423.20017576161,
+    "mean_ce": 9.153544108072916,
+    "mean_bpc": 13.205772691275186,
+    "mean_objective": 9.258228302001953,
+    "loss_weights": {
+      "route_supervision": 0.01,
+      "homeostasis": 1.0
+    },
+    "amp_scale": {
+      "initial": 256.0,
+      "final": 256.0,
+      "growth_interval": 100000
+    },
+    "windows": [
+      {
+        "step_start": 0,
+        "step_end": 1,
+        "elapsed_s": 0.7808163166046143,
+        "tokens": 128,
+        "tokens_per_s": 163.9310005157282,
+        "ce": 9.213165283203125,
+        "bpc": 13.29178786496751,
+        "objective": 9.317816734313965,
+        "route_supervision_loss": 10.464344024658203,
+        "homeostasis_loss": 8.003553375601768e-06,
+        "grad_norm": {
+          "mean": 2.5340800285339355,
+          "p50": 2.5340800285339355,
+          "p90": 2.5340800285339355,
+          "max": 2.5340800285339355
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5012436509132385,
+            0.4982757866382599,
+            0.503940224647522,
+            0.4965403378009796
+          ],
+          "entropy": 1.3862783908843994,
+          "gini": 0.001572970300912857,
+          "p99_tile_load": 0.5039497017860413,
+          "block_fill": 0.5,
+          "hotspot_share": 0.503940224647522,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 1,
+        "step_end": 2,
+        "elapsed_s": 0.03962751477956772,
+        "tokens": 128,
+        "tokens_per_s": 3230.078916430002,
+        "ce": 9.114471435546875,
+        "bpc": 13.149402740387588,
+        "objective": 9.219264030456543,
+        "route_supervision_loss": 10.478631973266602,
+        "homeostasis_loss": 6.6788784351956565e-06,
+        "grad_norm": {
+          "mean": 2.504772424697876,
+          "p50": 2.504772424697876,
+          "p90": 2.504772424697876,
+          "max": 2.504772424697876
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5009442567825317,
+            0.4980301856994629,
+            0.503785252571106,
+            0.4972403645515442
+          ],
+          "entropy": 1.3862810134887695,
+          "gini": 0.0014092959463596344,
+          "p99_tile_load": 0.5038283467292786,
+          "block_fill": 0.5,
+          "hotspot_share": 0.503785252571106,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 2,
+        "step_end": 3,
+        "elapsed_s": 0.08477867767214775,
+        "tokens": 128,
+        "tokens_per_s": 1509.8135936372562,
+        "ce": 9.13299560546875,
+        "bpc": 13.176127468470462,
+        "objective": 9.237604141235352,
+        "route_supervision_loss": 10.460322380065918,
+        "homeostasis_loss": 5.932375643169507e-06,
+        "grad_norm": {
+          "mean": 2.612837553024292,
+          "p50": 2.612837553024292,
+          "p90": 2.612837553024292,
+          "max": 2.612837553024292
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5011720061302185,
+            0.4977029860019684,
+            0.503430187702179,
+            0.4976949095726013
+          ],
+          "entropy": 1.3862824440002441,
+          "gini": 0.0012921784073114395,
+          "p99_tile_load": 0.5035120248794556,
+          "block_fill": 0.5,
+          "hotspot_share": 0.503430187702179,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      }
+    ],
+    "homeostasis": {
+      "activation_rate": [
+        0.5011199712753296,
+        0.4980029861132304,
+        0.5037185549736023,
+        0.49715853730837506
+      ],
+      "entropy": 1.386280616124471,
+      "gini": 0.0014248148848613103,
+      "p99_tile_load": 0.5037633577982584,
+      "block_fill": 0.5,
+      "hotspot_share": 0.5037185549736023,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    },
+    "finite_check_protocol": {
+      "loss": "every step",
+      "gradient_global_norm": "every step after AMP unscale",
+      "parameters_gradients_optimizer": "step 0 and every 1 steps",
+      "amp_overflow": "fail closed on any scale drop"
+    }
+  },
+  "validation": {
+    "steps": 1,
+    "requested_steps": 1,
+    "available_steps": 6331,
+    "full_validation": false,
+    "sequences": 4,
+    "available_sequences": 25323,
+    "tokens": 128,
+    "available_tokens": 810336,
+    "coverage_fraction": 0.00015795916755518698,
+    "elapsed_s": 0.015597585588693619,
+    "tokens_per_s": 8206.398309029615,
+    "ce": 8.951202392578125,
+    "bpc": 12.913855301765885,
+    "finite": true,
+    "homeostasis": {
+      "activation_rate": [
+        0.5011817216873169,
+        0.49739500880241394,
+        0.503511905670166,
+        0.49791139364242554
+      ],
+      "entropy": 1.386281967163086,
+      "gini": 0.001351313665509224,
+      "p99_tile_load": 0.5035339593887329,
+      "block_fill": 0.5,
+      "hotspot_share": 0.503511905670166,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    },
+    "route_specialization": {
+      "supported": true,
+      "observation_count": 128,
+      "tile_count": 4,
+      "active_tiles": 2,
+      "theoretical_route_count": 6,
+      "unique_route_count": 1,
+      "observed_route_fraction": 0.16666666666666666,
+      "route_entropy_nats": -0.0,
+      "route_entropy_over_log_unique": 0.0,
+      "top_route_share": 1.0,
+      "top_routes": [
+        {
+          "route_code": 5,
+          "count": 128,
+          "share": 1.0
+        }
+      ],
+      "token_route_mutual_information_nats": 0.0,
+      "shuffled_token_route_mutual_information_nats": 0.0,
+      "excess_token_route_mutual_information_nats": 0.0,
+      "token_route_mi_over_route_entropy": 0.0,
+      "excess_token_route_mi_over_route_entropy": 0.0,
+      "hard_activation_rate": [
+        1.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "hard_hotspot_share": 1.0,
+      "hard_dead_tile_ratio": 0.5,
+      "interpretation_boundary": "Token-route MI measures statistical dependence between input token IDs and blockwise hard routes. The shuffled baseline estimates finite-sample bias; even positive excess MI does not by itself prove semantic interpretability."
+    }
+  },
+  "memory": {
+    "torch_peak_allocated_bytes": 63577088,
+    "torch_peak_allocated_gib": 0.059210777282714844,
+    "torch_peak_reserved_bytes": 92274688,
+    "torch_peak_reserved_gib": 0.0859375,
+    "device_samples_full_training": {
+      "sample_count": 9,
+      "interval_ms": 100,
+      "gpu_util_percent": {
+        "mean": 1.8888888888888888,
+        "p50": 1.0,
+        "p90": 6.0,
+        "max": 6.0
+      },
+      "memory_used_mib": {
+        "mean": 414.22222222222223,
+        "p50": 404.0,
+        "p90": 476.4,
+        "max": 478.0
+      },
+      "memory_util_percent": {
+        "mean": 0.2222222222222222,
+        "p50": 0.0,
+        "p90": 1.0,
+        "max": 1.0
+      },
+      "power_w": {
+        "mean": 35.56444444444444,
+        "p50": 35.51,
+        "p90": 35.732,
+        "max": 35.86
+      },
+      "error": null
+    }
+  },
+  "gpu_utilization": {
+    "full_training": {
+      "sample_count": 9,
+      "interval_ms": 100,
+      "gpu_util_percent": {
+        "mean": 1.8888888888888888,
+        "p50": 1.0,
+        "p90": 6.0,
+        "max": 6.0
+      },
+      "memory_used_mib": {
+        "mean": 414.22222222222223,
+        "p50": 404.0,
+        "p90": 476.4,
+        "max": 478.0
+      },
+      "memory_util_percent": {
+        "mean": 0.2222222222222222,
+        "p50": 0.0,
+        "p90": 1.0,
+        "max": 1.0
+      },
+      "power_w": {
+        "mean": 35.56444444444444,
+        "p50": 35.51,
+        "p90": 35.732,
+        "max": 35.86
+      },
+      "error": null
+    },
+    "post_warmup": {
+      "sample_count": 1,
+      "interval_ms": 100,
+      "gpu_util_percent": {
+        "mean": 2.0,
+        "p50": 2.0,
+        "p90": 2.0,
+        "max": 2.0
+      },
+      "memory_used_mib": {
+        "mean": 478.0,
+        "p50": 478.0,
+        "p90": 478.0,
+        "max": 478.0
+      },
+      "memory_util_percent": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "max": 0.0
+      },
+      "power_w": {
+        "mean": 35.65,
+        "p50": 35.65,
+        "p90": 35.65,
+        "max": 35.65
+      },
+      "error": null
+    }
+  },
+  "saturation": {
+    "utilization_target": "p50>=90 and p90>=95",
+    "memory_target": "device max stays within the 32 GiB user limit and the 31.233 GiB physical launch limit",
+    "utilization_pass": false,
+    "memory_pass": true,
+    "learning_signal_pass": true,
+    "homeostasis_pass": true
+  },
+  "matched_gates": {
+    "training_complete": true,
+    "validation_complete": true,
+    "finite": true,
+    "scaled_homeostasis_cap": 0.7,
+    "soft_homeostasis_pass": true,
+    "hard_homeostasis_pass": false,
+    "specialization_pass": false
+  },
+  "checkpoint": {
+    "path": "results/e3_scan/checkpoints/e3_fe2h_checkpoint_tqdm_smoke.pt",
+    "bytes": 26230034,
+    "includes_optimizer": true,
+    "periodic_interval_steps": 2,
+    "periodic_steps": [
+      2
+    ],
+    "last_saved_step": 3,
+    "rolling": false,
+    "atomic_replace": true
+  },
+  "failure": null
+}

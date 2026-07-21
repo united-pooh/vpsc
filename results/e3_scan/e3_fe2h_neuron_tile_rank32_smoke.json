@@ -1,0 +1,720 @@
+{
+  "schema_version": 1,
+  "formal": false,
+  "environment": {
+    "generated_at_utc": "2026-07-21T04:32:41.109213+00:00",
+    "python": "3.12.3",
+    "torch": "2.5.1+cu124",
+    "requested_device": "cuda",
+    "resolved_device": "cuda",
+    "device_label": "cuda:0 (Tesla T4)",
+    "cuda_available": true,
+    "mps_available": false,
+    "nvidia_device": {
+      "name": "Tesla T4",
+      "total_memory_bytes": 15642329088,
+      "multi_processor_count": 40,
+      "compute_capability": [
+        7,
+        5
+      ]
+    }
+  },
+  "configuration": {
+    "mode": "smoke",
+    "device_request": "cuda",
+    "out": "/root/vpsc/results/e3_scan/e3_fe2h_neuron_tile_rank32_smoke.json",
+    "cache_dir": "/root/vpsc/results/e3_sg29_cache",
+    "d_model": 128,
+    "state_dim": 128,
+    "tile_size": 32,
+    "active_tiles": 2,
+    "block_size": 32,
+    "rank": 32,
+    "batch_size": 8,
+    "seq_len": 32,
+    "max_convs": null,
+    "epochs": 1,
+    "seed": 0,
+    "warmup_steps": 10,
+    "benchmark_steps": 50,
+    "vocab_size": 8192,
+    "smoke_vocab_size": 64,
+    "smoke_train_sequences": 24,
+    "smoke_valid_sequences": 8,
+    "svd_init": true
+  },
+  "provenance": {
+    "base_ref": "/root/vpsc/.pipeline-workspace/bases/wave-3-group-5-base.json",
+    "worker_group": "GROUP-5",
+    "training_loss": {
+      "weights": {
+        "ce": 1.0,
+        "route_supervision": 0.01,
+        "homeostasis": 0.01
+      },
+      "provenance": {
+        "ce": "model._loss(logits, targets)",
+        "route_supervision": "diagnostics.route_supervision_loss during FE2H training",
+        "homeostasis": "diagnostics.homeostasis.loss during FE2H training",
+        "total": "ce + 0.01*route_supervision + 0.01*homeostasis for FE2H training; eval remains ce only"
+      },
+      "metric_reporting": "artifact ce and bpc remain cross_entropy only"
+    },
+    "variant_paths": {
+      "base_e3": {
+        "path_label": "base_e3",
+        "supported": true,
+        "hardware_executed_sparsity": false
+      },
+      "fe2h_dense_mask": {
+        "path_label": "dense_mask",
+        "supported": true,
+        "hardware_executed_sparsity": false,
+        "dense_input_projection_retained": true,
+        "input_projection_kind": "dense",
+        "router_projection_kind": "dense_router_mlp",
+        "output_projection_kind": "dense",
+        "output_projection_provenance": null,
+        "unsupported_reason": null,
+        "notes": []
+      },
+      "fe2h_tile_sparse": {
+        "path_label": "tile_sparse",
+        "supported": true,
+        "hardware_executed_sparsity": true,
+        "route_protocol": "eval+no_grad route_blocks, then route_override into sparse_inference",
+        "dense_input_projection_retained": true,
+        "unsupported_reason": null
+      },
+      "fe2h_low_rank_tile_sparse": {
+        "path_label": "low_rank_tile_sparse",
+        "supported": true,
+        "hardware_executed_sparsity": true,
+        "dense_input_projection_retained": true,
+        "input_projection_kind": "dense",
+        "router_projection_kind": "dense_router_mlp",
+        "output_projection_kind": "low_rank",
+        "output_projection_provenance": {
+          "init_mode": "svd",
+          "rank": 32,
+          "source_name": "output_projection",
+          "source_shape": [
+            128,
+            512
+          ],
+          "allow_test_rank": false
+        },
+        "unsupported_reason": null,
+        "notes": [
+          "True sparse path keeps input_event_projection dense because sparse slicing currently requires nn.Linear."
+        ]
+      },
+      "all_lowrank_dense_mask": {
+        "path_label": "all_lowrank_dense_mask",
+        "requested_rank": 32,
+        "supported": false,
+        "hardware_executed_sparsity": false,
+        "unsupported_reason": "rank must be strictly smaller than min(in_features, out_features)",
+        "projection_reports": {
+          "input_event_projection": {
+            "supported": true,
+            "report": {
+              "in_features": 128,
+              "out_features": 512,
+              "rank": 32,
+              "bias": true,
+              "dense_parameters": 66048,
+              "low_rank_parameters": 20992,
+              "dense_macs": 65536,
+              "low_rank_macs": 20480,
+              "parameter_reduction": 45056,
+              "mac_reduction": 45056,
+              "parameter_ratio": 0.3178294573643411,
+              "mac_ratio": 0.3125
+            },
+            "unsupported_reason": null
+          },
+          "router_projection_first_linear": {
+            "supported": false,
+            "report": null,
+            "unsupported_reason": "rank must be strictly smaller than min(in_features, out_features)"
+          },
+          "router_projection_second_linear": {
+            "supported": false,
+            "report": null,
+            "unsupported_reason": "rank must be strictly smaller than min(in_features, out_features)"
+          },
+          "output_projection": {
+            "supported": true,
+            "report": {
+              "in_features": 512,
+              "out_features": 128,
+              "rank": 32,
+              "bias": true,
+              "dense_parameters": 65664,
+              "low_rank_parameters": 20608,
+              "dense_macs": 65536,
+              "low_rank_macs": 20480,
+              "parameter_reduction": 45056,
+              "mac_reduction": 45056,
+              "parameter_ratio": 0.3138401559454191,
+              "mac_ratio": 0.3125
+            },
+            "unsupported_reason": null
+          }
+        },
+        "notes": [
+          "This report is honest dense-mask accounting only; it is not claimed as true sparse execution.",
+          "Router low-rank support is fail-closed when rank 16/32 exceeds the router dimensions."
+        ]
+      }
+    },
+    "dataset": {
+      "name": "synthetic_next_token_smoke",
+      "metadata": {
+        "train_sequences": 24,
+        "valid_sequences": 8,
+        "seq_len": 32,
+        "seed": 0
+      }
+    }
+  },
+  "mechanism": {
+    "status": "PASS",
+    "variant_checks": {
+      "fe2h_tile_sparse": {
+        "supported": true,
+        "status": "PASS",
+        "route_budget_ok": true,
+        "max_abs_logit_diff": 0.0,
+        "max_abs_state_diff": 0.0,
+        "loss_diff": 0.0,
+        "homeostasis": {
+          "status": "PASS",
+          "target_activation_rate": 0.5,
+          "activation_rate": [
+            0.5933609008789062,
+            0.4742059111595154,
+            0.48234298825263977,
+            0.4500901997089386
+          ],
+          "activation_rate_mean": 0.5,
+          "activation_rate_max_abs_deviation": 0.09336090087890625,
+          "activation_rate_max_abs_tolerance": 0.25,
+          "entropy": 1.380399227142334,
+          "gini": 0.02737182378768921,
+          "p99_tile_load": 0.5934449434280396,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5933609008789062,
+          "hotspot_share_max": 0.7,
+          "dead_tile_ratio": 0.0,
+          "dead_tile_ratio_max": 0.0,
+          "batch_windows": 8,
+          "failures": []
+        },
+        "blocks": 1,
+        "tiles": 4,
+        "active_tiles": 2,
+        "route_protocol": "eval+no_grad route_blocks then route_override into sparse_inference",
+        "unsupported_reason": null,
+        "failure_reasons": []
+      },
+      "fe2h_low_rank_tile_sparse": {
+        "supported": true,
+        "status": "PASS",
+        "route_budget_ok": true,
+        "max_abs_logit_diff": 0.0,
+        "max_abs_state_diff": 0.0,
+        "loss_diff": 0.0,
+        "homeostasis": {
+          "status": "PASS",
+          "target_activation_rate": 0.5,
+          "activation_rate": [
+            0.5266492366790771,
+            0.3893284797668457,
+            0.45459023118019104,
+            0.629431962966919
+          ],
+          "activation_rate_mean": 0.4999999776482582,
+          "activation_rate_max_abs_deviation": 0.12943196296691895,
+          "activation_rate_max_abs_tolerance": 0.25,
+          "entropy": 1.3705132007598877,
+          "gini": 0.04952309653162956,
+          "p99_tile_load": 0.6295015215873718,
+          "block_fill": 0.5,
+          "hotspot_share": 0.629431962966919,
+          "hotspot_share_max": 0.7,
+          "dead_tile_ratio": 0.0,
+          "dead_tile_ratio_max": 0.0,
+          "batch_windows": 8,
+          "failures": []
+        },
+        "blocks": 1,
+        "tiles": 4,
+        "active_tiles": 2,
+        "route_protocol": "eval+no_grad route_blocks then route_override into sparse_inference",
+        "unsupported_reason": null,
+        "failure_reasons": []
+      }
+    },
+    "homeostasis": {
+      "status": "PASS",
+      "target_activation_rate": 0.5,
+      "activation_rate": [
+        0.5933609008789062,
+        0.4742059111595154,
+        0.48234298825263977,
+        0.4500901997089386
+      ],
+      "activation_rate_mean": 0.5,
+      "activation_rate_max_abs_deviation": 0.09336090087890625,
+      "activation_rate_max_abs_tolerance": 0.25,
+      "entropy": 1.380399227142334,
+      "gini": 0.02737182378768921,
+      "p99_tile_load": 0.5934449434280396,
+      "block_fill": 0.5,
+      "hotspot_share": 0.5933609008789062,
+      "hotspot_share_max": 0.7,
+      "dead_tile_ratio": 0.0,
+      "dead_tile_ratio_max": 0.0,
+      "batch_windows": 8,
+      "failures": []
+    },
+    "tolerance": {
+      "max_abs_logit": 1e-05,
+      "max_abs_state": 1e-05
+    },
+    "details": []
+  },
+  "numerics": {
+    "status": "PASS",
+    "mode": "smoke",
+    "variants": {
+      "base_e3": {
+        "status": "PASS",
+        "vocab_size": 64,
+        "train_history": [
+          {
+            "ce": 4.213898658752441,
+            "bpc": 6.079370697790802,
+            "loss_breakdown": {
+              "ce": 4.213898658752441,
+              "route_supervision": 0.0,
+              "homeostasis": 0.0,
+              "total": 4.213898658752441,
+              "aux_applied": false
+            },
+            "loss_provenance": {
+              "ce": "model._loss(logits, targets)",
+              "route_supervision": "not_applied_eval_or_missing_diagnostics",
+              "homeostasis": "not_applied_eval_or_missing_diagnostics",
+              "total": "ce + 0.01*route_supervision + 0.01*homeostasis"
+            },
+            "tokens_per_s": 5082.841635042486,
+            "elapsed_s": 0.15109658241271973,
+            "peak_memory_bytes": 27433472,
+            "first_failure": null
+          }
+        ],
+        "valid_dense": {
+          "ce": 3.9101147651672363,
+          "bpc": 5.641103181013486,
+          "loss_breakdown": {
+            "ce": 3.9101147651672363,
+            "route_supervision": 0.0,
+            "homeostasis": 0.0,
+            "total": 3.9101147651672363,
+            "aux_applied": false
+          },
+          "loss_provenance": {
+            "ce": "model._loss(logits, targets)",
+            "route_supervision": "not_applied_eval_or_missing_diagnostics",
+            "homeostasis": "not_applied_eval_or_missing_diagnostics",
+            "total": "ce_only"
+          },
+          "tokens_per_s": 97850.01258162536,
+          "elapsed_s": 0.0026162490248680115,
+          "peak_memory_bytes": 22962176,
+          "first_failure": null
+        }
+      },
+      "fe2h_dense_mask": {
+        "status": "PASS",
+        "vocab_size": 64,
+        "train_history": [
+          {
+            "ce": 4.275956948598226,
+            "bpc": 6.168901884797364,
+            "loss_breakdown": {
+              "ce": 4.275956948598226,
+              "route_supervision": 10.592586199442545,
+              "homeostasis": 0.0026717024544874826,
+              "total": 4.381909529368083,
+              "aux_applied": true
+            },
+            "loss_provenance": {
+              "ce": "model._loss(logits, targets)",
+              "route_supervision": "diagnostics.route_supervision_loss",
+              "homeostasis": "diagnostics.homeostasis.loss",
+              "total": "ce + 0.01*route_supervision + 0.01*homeostasis"
+            },
+            "tokens_per_s": 5096.051770901362,
+            "elapsed_s": 0.15070490539073944,
+            "peak_memory_bytes": 27981824,
+            "first_failure": null
+          }
+        ],
+        "valid_dense": {
+          "ce": 4.025757312774658,
+          "bpc": 5.8079401109624795,
+          "loss_breakdown": {
+            "ce": 4.025757312774658,
+            "route_supervision": 0.0,
+            "homeostasis": 0.0,
+            "total": 4.025757312774658,
+            "aux_applied": false
+          },
+          "loss_provenance": {
+            "ce": "model._loss(logits, targets)",
+            "route_supervision": "not_applied_eval_or_missing_diagnostics",
+            "homeostasis": "not_applied_eval_or_missing_diagnostics",
+            "total": "ce_only"
+          },
+          "tokens_per_s": 33212.41547540223,
+          "elapsed_s": 0.007707960903644562,
+          "peak_memory_bytes": 24299520,
+          "first_failure": null
+        }
+      },
+      "fe2h_low_rank_tile_sparse": {
+        "status": "PASS",
+        "vocab_size": 64,
+        "train_history": [
+          {
+            "ce": 4.2501654624938965,
+            "bpc": 6.131692635697492,
+            "loss_breakdown": {
+              "ce": 4.2501654624938965,
+              "route_supervision": 10.778009414672852,
+              "homeostasis": 0.007278740871697664,
+              "total": 4.358018398284912,
+              "aux_applied": true
+            },
+            "loss_provenance": {
+              "ce": "model._loss(logits, targets)",
+              "route_supervision": "diagnostics.route_supervision_loss",
+              "homeostasis": "diagnostics.homeostasis.loss",
+              "total": "ce + 0.01*route_supervision + 0.01*homeostasis"
+            },
+            "tokens_per_s": 7147.567898355652,
+            "elapsed_s": 0.10744913667440414,
+            "peak_memory_bytes": 28256768,
+            "first_failure": null
+          }
+        ],
+        "valid_dense": {
+          "ce": 4.053271293640137,
+          "bpc": 5.847634394712219,
+          "loss_breakdown": {
+            "ce": 4.053271293640137,
+            "route_supervision": 0.0,
+            "homeostasis": 0.0,
+            "total": 4.053271293640137,
+            "aux_applied": false
+          },
+          "loss_provenance": {
+            "ce": "model._loss(logits, targets)",
+            "route_supervision": "not_applied_eval_or_missing_diagnostics",
+            "homeostasis": "not_applied_eval_or_missing_diagnostics",
+            "total": "ce_only"
+          },
+          "tokens_per_s": 33122.38541601397,
+          "elapsed_s": 0.007728911936283112,
+          "peak_memory_bytes": 24754688,
+          "first_failure": null
+        },
+        "valid_sparse": {
+          "ce": 4.053271293640137,
+          "bpc": 5.847634394712219,
+          "loss_breakdown": {
+            "ce": 4.053271293640137,
+            "route_supervision": 0.0,
+            "homeostasis": 0.0,
+            "total": 4.053271293640137,
+            "aux_applied": false
+          },
+          "loss_provenance": {
+            "ce": "model._loss(logits, targets)",
+            "route_supervision": "not_applied_eval_or_missing_diagnostics",
+            "homeostasis": "not_applied_eval_or_missing_diagnostics",
+            "total": "ce_only"
+          },
+          "tokens_per_s": 33323.54280449425,
+          "elapsed_s": 0.0076822564005851746,
+          "peak_memory_bytes": 23961088,
+          "first_failure": null
+        }
+      },
+      "fe2h_tile_sparse": {
+        "ce": 4.025757312774658,
+        "bpc": 5.8079401109624795,
+        "loss_breakdown": {
+          "ce": 4.025757312774658,
+          "route_supervision": 0.0,
+          "homeostasis": 0.0,
+          "total": 4.025757312774658,
+          "aux_applied": false
+        },
+        "loss_provenance": {
+          "ce": "model._loss(logits, targets)",
+          "route_supervision": "not_applied_eval_or_missing_diagnostics",
+          "homeostasis": "not_applied_eval_or_missing_diagnostics",
+          "total": "ce_only"
+        },
+        "tokens_per_s": 32888.18922913173,
+        "elapsed_s": 0.007783949375152588,
+        "peak_memory_bytes": 23928832,
+        "first_failure": null
+      }
+    },
+    "first_failure": null,
+    "notes": [
+      "Sparse variants are evaluated only under eval+no_grad route_override.",
+      "The first non-finite or unsupported evidence is preserved verbatim."
+    ]
+  },
+  "memory": {
+    "status": "PASS",
+    "launch_gate": {
+      "status": "ALLOW",
+      "can_launch": true,
+      "predicted_gib": 0.004566967487335205,
+      "message": "predicted memory 0.005 GiB is within launch threshold"
+    },
+    "variants": {
+      "base_e3": {
+        "core_total_gib": null,
+        "core_forward_only_gib": null,
+        "model_total_gib": 0.0028486251831054688,
+        "core": null,
+        "launch_gate": {
+          "status": "ALLOW",
+          "can_launch": true,
+          "predicted_gib": 0.0028486251831054688,
+          "message": "predicted memory 0.003 GiB is within launch threshold"
+        },
+        "observed": {
+          "train_peak_memory_bytes": 27433472,
+          "valid_peak_memory_bytes": 22962176
+        }
+      },
+      "fe2h_dense_mask": {
+        "core_total_gib": 0.003707706928253174,
+        "core_forward_only_gib": 0.0013600736856460571,
+        "model_total_gib": 0.004811108112335205,
+        "projection_bytes": 524288,
+        "core": {
+          "parameter_bytes": 534288,
+          "state_bytes": 8192,
+          "route_bytes": 384,
+          "raw_trace_bytes": 524288,
+          "output_bytes": 131072,
+          "active_projection_bytes": 262144,
+          "forward_only_bytes": 1460368,
+          "forward_only_gib": 0.0013600736856460571,
+          "total_bytes": 3981120,
+          "total_gib": 0.003707706928253174,
+          "notes": [
+            "forward_only_gib is the materialised forward footprint for this core only.",
+            "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+            "Output projection remains dense and is not claimed as sparse speedup."
+          ]
+        },
+        "launch_gate": {
+          "status": "ALLOW",
+          "can_launch": true,
+          "predicted_gib": 0.004811108112335205,
+          "message": "predicted memory 0.005 GiB is within launch threshold"
+        },
+        "observed": {
+          "train_peak_memory_bytes": 27981824,
+          "valid_peak_memory_bytes": 24299520
+        }
+      },
+      "fe2h_low_rank_tile_sparse": {
+        "core_total_gib": 0.003036320209503174,
+        "core_forward_only_gib": 0.0011922270059585571,
+        "model_total_gib": 0.003895580768585205,
+        "projection_bytes": 262144,
+        "core": {
+          "parameter_bytes": 354064,
+          "state_bytes": 8192,
+          "route_bytes": 384,
+          "raw_trace_bytes": 524288,
+          "output_bytes": 131072,
+          "active_projection_bytes": 262144,
+          "forward_only_bytes": 1280144,
+          "forward_only_gib": 0.0011922270059585571,
+          "total_bytes": 3260224,
+          "total_gib": 0.003036320209503174,
+          "notes": [
+            "forward_only_gib is the materialised forward footprint for this core only.",
+            "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+            "Output projection remains dense and is not claimed as sparse speedup."
+          ]
+        },
+        "launch_gate": {
+          "status": "ALLOW",
+          "can_launch": true,
+          "predicted_gib": 0.003895580768585205,
+          "message": "predicted memory 0.004 GiB is within launch threshold"
+        },
+        "observed": {
+          "valid_sparse_peak_memory_bytes": 23961088
+        }
+      },
+      "fe2h_tile_sparse": {
+        "core_total_gib": 0.003707706928253174,
+        "core_forward_only_gib": 0.0013600736856460571,
+        "model_total_gib": 0.004566967487335205,
+        "projection_bytes": 262144,
+        "core": {
+          "parameter_bytes": 534288,
+          "state_bytes": 8192,
+          "route_bytes": 384,
+          "raw_trace_bytes": 524288,
+          "output_bytes": 131072,
+          "active_projection_bytes": 262144,
+          "forward_only_bytes": 1460368,
+          "forward_only_gib": 0.0013600736856460571,
+          "total_bytes": 3981120,
+          "total_gib": 0.003707706928253174,
+          "notes": [
+            "forward_only_gib is the materialised forward footprint for this core only.",
+            "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+            "Output projection remains dense and is not claimed as sparse speedup."
+          ]
+        },
+        "launch_gate": {
+          "status": "ALLOW",
+          "can_launch": true,
+          "predicted_gib": 0.004566967487335205,
+          "message": "predicted memory 0.005 GiB is within launch threshold"
+        },
+        "observed": {
+          "valid_peak_memory_bytes": 23928832
+        }
+      }
+    },
+    "nvidia_device": {
+      "name": "Tesla T4",
+      "total_memory_bytes": 15642329088,
+      "multi_processor_count": 40,
+      "compute_capability": [
+        7,
+        5
+      ]
+    },
+    "notes": [
+      "Thresholds are evaluated in GiB, not MiB.",
+      "Core estimates come from FE2H's conservative upper bound; model estimates add wrapper parameters and logits."
+    ]
+  },
+  "speed": {
+    "status": "FAIL",
+    "benchmarks": {
+      "base_e3": {
+        "status": "PASS",
+        "median_step_s": 0.002203080803155899,
+        "tokens_per_s": 115651.34169704893,
+        "peak_memory_bytes": 23986176,
+        "warmup_steps": 10,
+        "benchmark_steps": 50
+      },
+      "fe2h_dense_mask": {
+        "status": "PASS",
+        "median_route_step_s": 0.0005956068634986877,
+        "median_core_step_s": 0.006473030894994736,
+        "median_lm_head_step_s": 0.0002451390027999878,
+        "median_full_step_s": 0.007465895265340805,
+        "tokens_per_s": 34273.949301939276,
+        "peak_memory_bytes": 24776704,
+        "warmup_steps": 10,
+        "benchmark_steps": 50,
+        "notes": [
+          "route timing is measured separately before route_override execution",
+          "core timing includes active projection plus the still-dense FE2H core output projection",
+          "lm_head timing isolates the remaining dense wrapper output projection"
+        ]
+      },
+      "fe2h_tile_sparse": {
+        "status": "PASS",
+        "median_route_step_s": 0.0005939379334449768,
+        "median_core_step_s": 0.006534487009048462,
+        "median_lm_head_step_s": 0.00024696066975593567,
+        "median_full_step_s": 0.007536709308624268,
+        "tokens_per_s": 34000.8922709545,
+        "peak_memory_bytes": 24517632,
+        "warmup_steps": 10,
+        "benchmark_steps": 50,
+        "notes": [
+          "route timing is measured separately before route_override execution",
+          "core timing includes active projection plus the still-dense FE2H core output projection",
+          "lm_head timing isolates the remaining dense wrapper output projection"
+        ],
+        "speedup_over_base_e3": 0.2939947930740011
+      },
+      "fe2h_low_rank_tile_sparse": {
+        "status": "PASS",
+        "median_route_step_s": 0.0005947649478912354,
+        "median_core_step_s": 0.006552368402481079,
+        "median_lm_head_step_s": 0.00024570152163505554,
+        "median_full_step_s": 0.00753447413444519,
+        "tokens_per_s": 33803.94672150477,
+        "peak_memory_bytes": 24550400,
+        "warmup_steps": 10,
+        "benchmark_steps": 50,
+        "notes": [
+          "route timing is measured separately before route_override execution",
+          "core timing includes active projection plus the still-dense FE2H core output projection",
+          "lm_head timing isolates the remaining dense wrapper output projection"
+        ],
+        "speedup_over_base_e3": 0.2922918681743866
+      }
+    },
+    "best_sparse_variant": "fe2h_tile_sparse",
+    "best_sparse_speedup_over_base_e3": 0.2939947930740011,
+    "retained_negative_result": true,
+    "notes": [
+      "A speed result below 1.0x is retained as a negative conclusion rather than hidden.",
+      "Dense-mask timing is reported separately and is never labelled as sparse speed evidence."
+    ]
+  },
+  "quality": {
+    "status": "NOT_RUN",
+    "mode": "smoke",
+    "reason": "quality is gated on mechanism, numerics, memory, and speed passing first",
+    "variants": {}
+  },
+  "decision": {
+    "gate_order": [
+      "mechanism",
+      "numerics",
+      "memory",
+      "speed",
+      "quality"
+    ],
+    "mechanism_gate": "PASS",
+    "numerics_gate": "PASS",
+    "memory_gate": "PASS",
+    "speed_gate": "FAIL",
+    "quality_gate": "NOT_RUN",
+    "overall": "NEGATIVE",
+    "first_blocker": "speed",
+    "quality_executed": false,
+    "retained_negative_result": true,
+    "path_honesty_errors": [],
+    "summary": "mechanism, numerics, and memory passed, but sparse speedup stayed below 1.0x; preserve negative result"
+  }
+}

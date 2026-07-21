@@ -1,0 +1,397 @@
+{
+  "schema_version": 1,
+  "experiment": "e3_fe2h_scale_train",
+  "label": "cal_d2048_b16_t256",
+  "configuration": {
+    "out": "results/e3_scan/e3_fe2h_scale_cal_d2048_b16_t256.json",
+    "cache_dir": "/root/vpsc/results/e3_sg29_cache",
+    "checkpoint": null,
+    "label": "cal_d2048_b16_t256",
+    "d_model": 2048,
+    "state_dim": 2048,
+    "tile_size": 512,
+    "active_tiles": 2,
+    "block_size": 32,
+    "rank": 256,
+    "batch_size": 16,
+    "seq_len": 256,
+    "max_steps": 6,
+    "warmup_steps": 2,
+    "valid_steps": 2,
+    "log_every": 2,
+    "finite_check_every": 6,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.01,
+    "seed": 0,
+    "amp": true,
+    "low_rank_output": true,
+    "sample_interval_ms": 200,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "save_optimizer": false,
+    "precision": "fp16_autocast_fp32_master"
+  },
+  "data": {
+    "name": "cyberlangke/Nana-catgirl-dataset-110k",
+    "vocab_size": 8192,
+    "train_tokens": 15035242,
+    "valid_tokens": 811815,
+    "train_sequences": 58731,
+    "valid_sequences": 3171,
+    "tokenizer_path": "/root/vpsc/results/e3_sg29_cache/bpe/catgirl_bpe_8192.json"
+  },
+  "model": {
+    "parameter_stats": {
+      "model_total": 52996676,
+      "model_trainable": 52996676,
+      "core_total": 19429956,
+      "core_trainable": 19429956,
+      "embedding_total": 16777216,
+      "embedding_trainable": 16777216,
+      "output_norm_total": 4096,
+      "output_norm_trainable": 4096,
+      "lm_head_total": 16785408,
+      "lm_head_trainable": 16785408,
+      "wrapper_unique_total": 33566720,
+      "wrapper_unique_trainable": 33566720,
+      "shared_embedding_head": 0,
+      "tied_weights": false,
+      "core_type": "FE2HNeuronTileCore"
+    },
+    "provenance": {
+      "path_label": "low_rank_dense_mask_training",
+      "supported": true,
+      "hardware_executed_sparsity": false,
+      "dense_input_projection_retained": true,
+      "input_projection_kind": "dense",
+      "router_projection_kind": "dense_router_mlp",
+      "output_projection_kind": "low_rank",
+      "output_projection_provenance": {
+        "init_mode": "random",
+        "rank": 256,
+        "source_name": null,
+        "source_shape": null,
+        "allow_test_rank": true
+      },
+      "output_projection_cost": {
+        "in_features": 8192,
+        "out_features": 2048,
+        "rank": 256,
+        "bias": true,
+        "dense_parameters": 16779264,
+        "low_rank_parameters": 2623488,
+        "dense_macs": 16777216,
+        "low_rank_macs": 2621440,
+        "parameter_reduction": 14155776,
+        "mac_reduction": 14155776,
+        "parameter_ratio": 0.1563529842548517,
+        "mac_ratio": 0.15625
+      },
+      "non_formal_scaling_rank": true,
+      "unsupported_reason": null,
+      "notes": [
+        "Training uses the differentiable dense-mask path; no hardware sparse speedup is claimed.",
+        "Ranks outside {16, 32} are isolated to this scaling runner and marked non-formal."
+      ]
+    }
+  },
+  "preflight": {
+    "status": "ALLOW",
+    "can_launch": true,
+    "reason": "estimate is within both user and physical launch limits",
+    "raw_estimate_gib": 1.6649675965309143,
+    "estimator_factor": 1.5,
+    "estimator_overhead_gib": 0.75,
+    "calibrated_estimate_gib": 3.2474513947963715,
+    "user_warning_gib": 16.0,
+    "user_refuse_gib": 32.0,
+    "physical_total_gib": 14.56805419921875,
+    "physical_headroom_gib": 0.5,
+    "physical_launch_limit_gib": 14.06805419921875,
+    "architecture_estimate": {
+      "core_total_gib": 0.7272844910621643,
+      "core_forward_only_gib": 0.2913820892572403,
+      "model_total_gib": 1.6649675965309143,
+      "projection_bytes": 134217728,
+      "core": {
+        "parameter_bytes": 77719824,
+        "state_bytes": 262144,
+        "route_bytes": 6144,
+        "raw_trace_bytes": 134217728,
+        "output_bytes": 33554432,
+        "active_projection_bytes": 67108864,
+        "forward_only_bytes": 312869136,
+        "forward_only_gib": 0.2913820892572403,
+        "total_bytes": 780915776,
+        "total_gib": 0.7272844910621643,
+        "notes": [
+          "forward_only_gib is the materialised forward footprint for this core only.",
+          "total_gib adds gradients, Adam-style optimizer state, and one extra activation reserve for launch gating.",
+          "Output projection remains dense and is not claimed as sparse speedup."
+        ]
+      }
+    }
+  },
+  "status": "COMPLETED",
+  "training": {
+    "completed_steps": 6,
+    "requested_steps": 6,
+    "tokens": 24576,
+    "elapsed_s": 1.8598662763834,
+    "tokens_per_s": 13213.853228087572,
+    "mean_ce": 7.818813482920329,
+    "mean_bpc": 11.280163437444923,
+    "mean_objective": 7.937891483306885,
+    "windows": [
+      {
+        "step_start": 0,
+        "step_end": 2,
+        "elapsed_s": 1.1186706721782684,
+        "tokens": 8192,
+        "tokens_per_s": 7322.97735494271,
+        "ce": 8.757381916046143,
+        "bpc": 12.634231461450458,
+        "objective": 8.876318454742432,
+        "route_supervision_loss": 11.89335584640503,
+        "homeostasis_loss": 0.00032015495526138693,
+        "grad_norm": {
+          "mean": 4.639693856239319,
+          "p50": 4.639693856239319,
+          "p90": 5.20037682056427,
+          "max": 5.340547561645508
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5284751355648041,
+            0.49677859246730804,
+            0.4790460765361786,
+            0.4957002103328705
+          ],
+          "entropy": 1.385658323764801,
+          "gini": 0.009335347451269627,
+          "p99_tile_load": 0.5284921228885651,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5284751355648041,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 2,
+        "step_end": 4,
+        "elapsed_s": 0.3507973775267601,
+        "tokens": 8192,
+        "tokens_per_s": 23352.512090473323,
+        "ce": 7.665112257003784,
+        "bpc": 11.05841944103657,
+        "objective": 7.7845001220703125,
+        "route_supervision_loss": 11.93848705291748,
+        "homeostasis_loss": 0.0003061152820009738,
+        "grad_norm": {
+          "mean": 3.142300009727478,
+          "p50": 3.142300009727478,
+          "p90": 3.3953890562057496,
+          "max": 3.4586613178253174
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.5285331308841705,
+            0.495168536901474,
+            0.4808812290430069,
+            0.49541711807250977
+          ],
+          "entropy": 1.385687232017517,
+          "gini": 0.008965478278696537,
+          "p99_tile_load": 0.5285529792308807,
+          "block_fill": 0.5,
+          "hotspot_share": 0.5285331308841705,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      },
+      {
+        "step_start": 4,
+        "step_end": 6,
+        "elapsed_s": 0.3887815400958061,
+        "tokens": 8192,
+        "tokens_per_s": 21070.95927955137,
+        "ce": 7.03394627571106,
+        "bpc": 10.14783940984774,
+        "objective": 7.15285587310791,
+        "route_supervision_loss": 11.890631675720215,
+        "homeostasis_loss": 0.00030967529164627194,
+        "grad_norm": {
+          "mean": 1.930801808834076,
+          "p50": 1.930801808834076,
+          "p90": 2.161837661266327,
+          "max": 2.2195966243743896
+        },
+        "homeostasis": {
+          "activation_rate": [
+            0.528722733259201,
+            0.49581368267536163,
+            0.4808393716812134,
+            0.49462415277957916
+          ],
+          "entropy": 1.3856801986694336,
+          "gini": 0.009052478708326817,
+          "p99_tile_load": 0.5287396609783173,
+          "block_fill": 0.5,
+          "hotspot_share": 0.528722733259201,
+          "dead_tile_ratio": 0.0,
+          "target_activation_rate": 0.5
+        }
+      }
+    ],
+    "homeostasis": {
+      "activation_rate": [
+        0.5285769999027252,
+        0.4959202706813812,
+        0.4802555590867996,
+        0.49524716039498645
+      ],
+      "entropy": 1.3856752514839172,
+      "gini": 0.00911776814609766,
+      "p99_tile_load": 0.5285949210325877,
+      "block_fill": 0.5,
+      "hotspot_share": 0.5285769999027252,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    },
+    "finite_check_protocol": {
+      "loss": "every step",
+      "gradient_global_norm": "every step after AMP unscale",
+      "parameters_gradients_optimizer": "step 0 and every 6 steps",
+      "amp_overflow": "fail closed on any scale drop"
+    }
+  },
+  "validation": {
+    "steps": 2,
+    "tokens": 8192,
+    "elapsed_s": 0.10028649121522903,
+    "tokens_per_s": 81685.9768522443,
+    "ce": 6.864222049713135,
+    "bpc": 9.902979110681816,
+    "finite": true,
+    "homeostasis": {
+      "activation_rate": [
+        0.5289683938026428,
+        0.4961979389190674,
+        0.48089320957660675,
+        0.49394044280052185
+      ],
+      "entropy": 1.3856720924377441,
+      "gini": 0.009155193343758583,
+      "p99_tile_load": 0.5289947986602783,
+      "block_fill": 0.5,
+      "hotspot_share": 0.5289683938026428,
+      "dead_tile_ratio": 0.0,
+      "target_activation_rate": 0.5
+    }
+  },
+  "memory": {
+    "torch_peak_allocated_bytes": 2185995776,
+    "torch_peak_allocated_gib": 2.035867214202881,
+    "torch_peak_reserved_bytes": 2608857088,
+    "torch_peak_reserved_gib": 2.4296875,
+    "device_samples_full_training": {
+      "sample_count": 9,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 35.666666666666664,
+        "p50": 36.0,
+        "p90": 74.0,
+        "max": 74.0
+      },
+      "memory_used_mib": {
+        "mean": 1709.4444444444443,
+        "p50": 1789.0,
+        "p90": 2629.0,
+        "max": 2629.0
+      },
+      "memory_util_percent": {
+        "mean": 28.88888888888889,
+        "p50": 23.0,
+        "p90": 62.4,
+        "max": 64.0
+      },
+      "power_w": {
+        "mean": 43.77111111111111,
+        "p50": 39.74,
+        "p90": 67.566,
+        "max": 79.51
+      },
+      "error": null
+    }
+  },
+  "gpu_utilization": {
+    "full_training": {
+      "sample_count": 9,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 35.666666666666664,
+        "p50": 36.0,
+        "p90": 74.0,
+        "max": 74.0
+      },
+      "memory_used_mib": {
+        "mean": 1709.4444444444443,
+        "p50": 1789.0,
+        "p90": 2629.0,
+        "max": 2629.0
+      },
+      "memory_util_percent": {
+        "mean": 28.88888888888889,
+        "p50": 23.0,
+        "p90": 62.4,
+        "max": 64.0
+      },
+      "power_w": {
+        "mean": 43.77111111111111,
+        "p50": 39.74,
+        "p90": 67.566,
+        "max": 79.51
+      },
+      "error": null
+    },
+    "post_warmup": {
+      "sample_count": 3,
+      "interval_ms": 200,
+      "gpu_util_percent": {
+        "mean": 73.0,
+        "p50": 74.0,
+        "p90": 74.0,
+        "max": 74.0
+      },
+      "memory_used_mib": {
+        "mean": 2629.0,
+        "p50": 2629.0,
+        "p90": 2629.0,
+        "max": 2629.0
+      },
+      "memory_util_percent": {
+        "mean": 61.666666666666664,
+        "p50": 62.0,
+        "p90": 63.6,
+        "max": 64.0
+      },
+      "power_w": {
+        "mean": 69.23666666666666,
+        "p50": 64.58,
+        "p90": 76.524,
+        "max": 79.51
+      },
+      "error": null
+    }
+  },
+  "saturation": {
+    "utilization_target": "p50>=90 and p90>=95",
+    "memory_target": "device max between 13.0 and 14.5 GiB",
+    "utilization_pass": false,
+    "memory_pass": false,
+    "learning_signal_pass": true,
+    "homeostasis_pass": true
+  },
+  "checkpoint": null,
+  "failure": null
+}

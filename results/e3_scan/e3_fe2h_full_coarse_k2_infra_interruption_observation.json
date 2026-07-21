@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "experiment": "e3_fe2h_full_matched",
+  "variant": "coarse_k2",
+  "record_type": "external_monitor_observation",
+  "rank_eligible": false,
+  "training_complete": false,
+  "model_failure_observed": false,
+  "remote": {
+    "host": "region-9.autodl.pro",
+    "port": 25520,
+    "last_observed_at": "2026-07-21T14:20:00+08:00",
+    "connection_closed_at_approximately": "2026-07-21T14:20:00+08:00",
+    "subsequent_error": "ssh: connect to host region-9.autodl.pro port 25520: Connection refused"
+  },
+  "last_completed_window": {
+    "step_start": 12750,
+    "step_end": 13000,
+    "requested_steps": 14683,
+    "completion_fraction": 0.8853776476196963,
+    "tokens": 256000,
+    "tokens_per_s": 12692.082840550815,
+    "bpc": 5.766181940467963,
+    "grad_norm_mean": 1.3320520043373107,
+    "grad_norm_max": 1.7073173522949219,
+    "soft_hotspot_share": 0.567651602268219,
+    "soft_dead_tile_ratio": 0.0,
+    "block_fill": 0.5
+  },
+  "interpretation": "The remote host became unreachable during an otherwise finite training run. This is infrastructure-interruption evidence, not a model failure and not a full-epoch result. Resume only from an authoritative remote process/artifact state; if the process was lost, rerun this variant from step zero."
+}

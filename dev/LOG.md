@@ -4,6 +4,574 @@
 
 ---
 
+
+## 2026-07-21：FE-2H 根因 Replay 与 Constrained Soft-k 反证（COMPLETE；路线 5+6 失败）
+
+### 状态与来源
+
+- **状态：`COMPLETE`**。根因 replay 探针完成，d1024 V0/V1/V2 因果消融完成。
+- 来源：`results/e3_scan/root_cause_replay.json`、`results/e3_scan/d1024_ablation.json`、`experiments/e3_fe2h_root_cause_replay.py`、`experiments/e3_fe2h_d1024_ablation.py`。
+
+### 根因 Replay 证据
+
+对 micro-16/8/4 最终 checkpoint 的同一验证样本做只读 forward/autograd probe（不做 optimizer step），结果：
+
+| 配置 | hard dead | masked energy dead | CF energy dead | SmoothL1 饱和比 | inactive tile 梯度 |
+|---|---:|---:|---:|---:|---:|
+| micro-16 | 11/32 | 11/32 | **0/32** | 1.0 | 0.0000 |
+| micro-8 | 24/32 | 24/32 | **0/32** | 1.0 | 0.0000 |
+| micro-4 | 28/32 | 28/32 | **0/32** | 1.0 | 0.0000 |
+
+**关键发现：**
+1. Masked energy oracle 精确对应 dead tile（energy = -18.42 = log(1e-8)），证实了"masked target 污染"假设。
+2. Counterfactual oracle（未乘 mask 的 writes 计算能量）**完全消除死亡**（CF dead = 0），证实了"若激活该 tile 会产生什么"的反事实能量是正常的。
+3. SmoothL1 100% 饱和（所有 |residual| >= 1），辅助 loss 不改变 router 的相对排序。
+4. Inactive tile 的内容投影梯度精确为 0 — 证实了"赢家内容继续学习、输家保持接近随机"的结构性正反馈。
+
+### d1024 V0/V1/V2 因果消融
+
+配置：`d=state=1024`、`tile=32`（32 tiles）、`k=4`、`block=32`、`rank=128`、`batch=128`、`seq=128`、400 train steps、完整 validation。seed 0。
+
+| 变体 | 描述 | val bits/token | hard dead | hotspot | unique routes |
+|---|---|---:|---:|---:|---:|
+| V0 | legacy hard-ST（基线） | 6.5972 | 27/32 | 1.0000 | 2 |
+| V1 | constrained soft-k，无关 masked route loss | 8.4934 | 28/32 | 1.0000 | 1 |
+| V2 | V1 + counterfactual KL | 8.3913 | 28/32 | 1.0000 | 1 |
+
+### 假设判定
+
+- **H-ROOT（masked target 污染 + 内容梯度饥饿是主因）：部分证实。** 根因 replay 确认了 masked energy 与死亡精确对应、CF oracle 消除死亡、inactive 梯度为零。但 V1/V2 实验表明，**仅仅给所有 tile 梯度（soft-k）不足以解决 eval 时的硬路由死亡**。
+- **H-SURVIVE（新模式 hard_dead_tile_ratio = 0）：反证。** 所有变体仍然 27-28/32 dead。
+- **H-QUALITY（恶化不超过 0.5%）：反证。** V1/V2 的质量从 6.597 恶化到 8.493（+28.7%），远超门限。
+
+### 观察与解释
+
+1. **Soft-k 在训练时确实给了所有 tile 梯度**：诊断探针确认 `soft_k_annealed` 模式下所有 32 个 tile 的 input projection 梯度均非零（mask 值 0.124-0.126，接近均匀 4/32=0.125）。
+2. **但 eval 时的 hard top-k 仍然选择固定子集**：router score 的排序在训练中没有被有效改变 — 初始化偏置 + 早期锁定仍然主导了 eval 时的离散选择。
+3. **V1 完全坍缩为 1 个 route**：去掉 masked route supervision 后，router 失去了唯一的排序信号来源，完全退化。
+4. **V2 的 CF KL 没有帮助**：counterfactual KL 试图对齐 router score 与反事实能量的相对排序，但 400 steps 内未能打破早期锁定，且引入了额外的不稳定。
+
+### 根因修正
+
+原根因分析正确识别了 **masked energy 污染** 和 **梯度饥饿** 两个现象，但因果链不完整。真正的因果链是：
+
+1. 初始化时 router 有小的随机偏置（bias=0 但 weight 是随机的）→ 某些 tile 排名靠前
+2. Top-k 是离散的 → 排名靠后的 tile 永远不被选中
+3. 不被选中 → write=0 → 该 tile 的 trace 只是 lazy decay → 能量恒为 log(1e-8)
+4. 低能量 → router score 无法通过辅助 loss 被纠正（因为 SmoothL1 饱和 + 共同平移不变性）
+5. 同时，该 tile 的内容投影没有 task 梯度 → 表示不改善 → 即使偶尔被选中也无法竞争
+
+**核心问题：router score 的排序在训练中缺乏有效的"探索-轮换"机制**。soft-k 给了梯度但没有改变 score 排序；CF KL 试图改变 score 排序但太弱。
+
+### 决定
+
+- **路线 5+6（constrained soft-k + counterfactual energy）被反证**。不继续此路线。
+- **下一步方向：路线 2（独立负载偏置 / 对偶控制）或路线 3（capacity / balanced assignment）**。这两个路线直接操作 hard dispatch 比例，不依赖 router score 的自我纠正。
+- **优先尝试路线 2（Loss-Free Balancing 风格）**：维护 per-tile EMA hard load，通过无梯度偏置调整 router score，强制 under-utilized tile 被更多选择。
+- 保留 constrained soft-k 代码（已合入 `fe2h_tile_sparse.py`），标记为 `soft_k_annealed` 模式，供未来参考。
+
+### 可复现信息
+
+- 根因 replay：`experiments/e3_fe2h_root_cause_replay.py` → `results/e3_scan/root_cause_replay.json`
+- 消融实验：`experiments/e3_fe2h_d1024_ablation.py` → `results/e3_scan/d1024_ablation.json`
+- 实现修改：`vpsc/world_model/fe2h_tile_sparse.py`（新增 `_solve_constrained_soft_k`、`soft_k_annealed` 模式、`counterfactual_energy` 参数）
+- 实验日志：`results/e3_scan/d1024_ablation.log`
+
+---
+## 2026-07-21：FE-2H 全量 matched V100/32GiB 协议修订（预注册，待正式运行）
+
+### 修订原因与证据边界
+
+原 d1024/batch8 全量 coarse 在 T4 上两次因外部 SSH/实例中断只运行到 `13,000/14,683` 与 `10,250/14,683 steps`，均没有完成 validation 或生成正式 artifact/checkpoint，因此不得进入四配置排名。用户随后更换到 `Tesla V100-PCIE-32GB`，明确要求提高 GPU 利用率、每 1,000 step 保存权重，并将显存约束从 16 GiB 调整为 32 GiB。旧中断日志保留为基础设施证据，不作为模型失败或质量结果。
+
+新服务器：`ssh -p 36517 root@region-46.seetacloud.com`。环境为 Python `3.12.3`、PyTorch `2.5.1+cu124`，V100 可用显存 `32,768 MiB`。物理启动门仍保留 `0.5 GiB` headroom；预计超过 32 GiB 或超过物理门的配置拒绝启动。
+
+### 语料缓存修订与冻结
+
+旧 T4 在迁移时不可访问，新机因此用同一仓库语料管线从 `cyberlangke/Nana-catgirl-dataset-110k` 的 110,216 条对话重建 BPE-8192。新缓存 token 数为 `15,008,971 train / 810,338 valid`，与旧缓存 `15,035,242 / 811,815` 相差约 0.17%；即使 tokenizers 同为 `0.23.1`，缺少旧 tokenizer JSON 时也不能声称字节等价。本轮把新缓存作为独立协议冻结，四配置共用它，绝对 BPC 不与旧 cache 混排。
+
+- raw text：`54,065,200 bytes`，SHA256 `952da799141f8b90186de94457bcaf67eb1a5ee15fb1e934f85fb884437cef30`
+- BPE JSON：`173,307 bytes`，SHA256 `680e5bee5f4cd1ddc3f354de2b98e4cf9752e6bb4ab17d00e602e9a90e4cc06d`
+- train tensor：`120,072,974 bytes`，SHA256 `89dd303ee3cbbae49b77a7ea99ffe46f7923d877ebdb118594caf5b73265970e`
+- valid tensor：`6,483,908 bytes`，SHA256 `8cbd41805e3f6605ec5a55623c376c36bff390d5367994296b9b02861b91a1b7`
+- `seq_len=128` 后为 `117,257 train / 6,330 valid sequences`；完整目标数为每配置 `15,008,896 train / 810,240 valid tokens`。
+
+### GPU 利用率校准
+
+所有校准均为 FP16 autocast、FP32 master、ranked output、真实猫娘缓存、30–40 random steps；只用于选择系统配置，不进入 full quality 排名。GPU 数字为 warmup 后 `nvidia-smi` 采样。
+
+| 配置 | route | GPU p50/p90 | device peak | train tok/s | finite |
+|---|---|---:|---:|---:|---|
+| d1024 / b112 | 2-of-4 | 68% / 74% | 4,876 MiB | 117,717 | PASS |
+| d2048 / b96 | 2-of-4 | 90% / 93% | 6,356 MiB | 71,153 | PASS |
+| d2048 / b96 | 16-of-32 | 35% / 40% | 6,150 MiB | 17,500 | PASS |
+| d4096 / b96 | 2-of-4 | 97% / 99% | 10,710 MiB | 40,146 | PASS |
+| d4096 / b96 | 16-of-32 | 54.5% / 64% | 10,822 MiB | 15,926 | PASS |
+| d6144 / b96 | 16-of-32 | 80% / 88% | 16,110 MiB | 14,738 | PASS |
+| d8192 / b96 | 16-of-32 | 89% / 99% | 23,398 MiB | 12,414 | PASS |
+| **d8192 / b112** | **2-of-4** | **99% / 100%** | **25,396 MiB** | **18,671** | **PASS** |
+| **d8192 / b112** | **16-of-32** | **99% / 100%** | **25,700 MiB** | **13,957** | **PASS** |
+
+观察：只增 batch 时 d1024 仍不能吃满 V100；增宽后 coarse 很快饱和，但 32-tile micro 受小算子/循环限制，直到 d8192/b112 才达到 p50/p90 `99/100%`。解释：这证明可以用更大的有效 GEMM 隐藏一部分细粒度调度开销，不等价于已经实现硬件 sparse kernel；micro 吞吐仍低于 coarse。
+
+### 冻结后的正式 matched 协议
+
+- 共同参数：`d_model=state_dim=8192`、low-rank output `rank=512`、`batch=112`、`seq_len=128`、`block=32`、AdamW `lr=3e-4 / wd=0.01`、seed 0、AMP init scale 256/growth interval 100000、homeostasis 1.0、route supervision 0.01。
+- 四个唯一自变量保持 active fraction/route granularity：coarse `tile=2048 / 2-of-4`；micro `tile=256 / {16,8,4}-of-32`。
+- 每配置完整一轮：`1,047 optimizer steps / 15,008,896 train tokens`；完整验证 `57 batches / 810,240 tokens`。最后 partial batch 保留。
+- 共享初始化规则不变；所有同名同 shape 参数必须匹配，三个 micro router final layer 共用相同 seed/init。
+- 每 `1,000 steps` 原子覆盖滚动 checkpoint，包含 model+optimizer；本协议一轮会在 step 1,000 留下一次滚动权重，并在 step 1,047 validation 后原子写最终 checkpoint。最终 artifact 必须记录 `periodic_steps=[1000]`、`last_saved_step=1047`、`atomic_replace=true`。
+- `tqdm` 写入独立 `*.tqdm.log`，JSON 窗口写入独立 `*.log`；监督命令读取 tqdm 文件最后一个 carriage-return frame，避免进度条污染机器可读训练证据。
+- checkpoint 估算约 `4.74 GiB/variant`（含 optimizer），共享初始化约 `1.58 GiB`；四个最终 checkpoint 加共享初始化预计约 20.5 GiB，低于新机约 29 GiB 可用磁盘。滚动文件覆盖而非保留全部 1,000-step 历史，避免磁盘爆满。
+- 原质量、hard load、专门化与完整覆盖判定继续生效，但只能在本次冻结的新 cache/大模型协议内部比较。
+
+### 启动门
+
+- 远端定向测试已通过：scale trainer `5/5`，FE-2H core/low-rank `14/14`。
+- 正式启动前还必须通过一次真实 `tqdm + periodic checkpoint` 小 smoke、远端全测试、共享初始化/磁盘/GPU 空闲检查。
+- 本条是用户授权后的协议修订与校准证据，**不是四配置 full result**；正式结果必须另写倒序条目。
+
+---
+
+## 2026-07-21：FE-2H 全量 attempt-1 数值失败与 v2 稳定性校准（混合结果，已重启）
+
+### attempt-1 失败证据
+
+按下条全量 matched 预注册启动 coarse `2-of-4` 后，attempt-1 在 `3,927/14,683` step 被 finite guard 截停：CE/total loss 仍有限，但 AMP unscale 后 global grad norm 为 `inf`，artifact 状态 `FAILED_CLOSED`。在失败前约 step 1,500 起，soft routing 已塌缩为 activation rate 约 `[0.017, 0.017, 0.017, 1.0]`、hotspot `1.0`、block fill `~0.263`；原 `homeostasis_weight=0.01` 无法恢复。
+
+- 保留产物：
+  - `results/e3_scan/e3_fe2h_full_coarse_k2_attempt1_gradinf.json`
+  - `results/e3_scan/e3_fe2h_full_coarse_k2_attempt1_gradinf.log`
+  - `results/e3_scan/e3_fe2h_full_suite_attempt1_gradinf.log`
+- suite 使用 `set -e`，因此 coarse fail-closed 后没有启动或污染三个 micro 配置。
+
+### 数值与路由修正
+
+本轮没有绕过 finite guard，而是冻结三项针对性修正后重新校准：
+
+1. AMP `init_scale: 65536 -> 256`，`growth_interval=100000`；任一 scale drop 仍 fail-closed。
+2. `homeostasis_weight: 0.01 -> 1.0`，route supervision 保持 `0.01`；artifact 显式记录真实 loss 权重。
+3. FE-2H router 两个 Linear 的 bias 初始化为 0，避免小幅 block-statistics 信号被随机 bias 淹没而固定 top-k；权重仍正常训练。
+
+所有四个 matched 配置将共同使用同一修正，不改变相对公平性。旧 attempt-1 不覆盖、不删除，也不进入最终质量排名。
+
+### 4,500-step v2 校准
+
+命令沿用 d1024/2-of-4/batch8/seq128/rank128，但只随机训练 `4,500 steps`，故它是稳定性校准，不是全量质量结果。
+
+- 完成 `4,500 steps / 4,608,000 tokens`；failure `null`。
+- AMP scale 全程保持 `256`；原失败点 3,927 已越过，step 4,000 grad norm `1.80`，末窗口 `1.76`。
+- train mean BPC `6.518`，末窗口 BPC `6.037`；16-batch validation BPC `5.995`、finite。
+- soft homeostasis：mean activation `[0.485, 0.487, 0.466, 0.562]`，hotspot `0.562`，block fill `0.5`，dead `0`；修复了 attempt-1 的 soft collapse。
+- hard validation：观察到 `2/6` 种 route，top-route share `0.625`、route entropy `0.662 nats`；token-route MI `0.1486`，shuffle baseline `0.0687`，excess MI `0.0799`。
+- **仍保留的负面结果**：hard activation `[0.375, 0.625, 0.0, 1.0]`，hard dead-tile ratio `0.25`、hard hotspot `1.0`。因此 soft load gate PASS，但 hard load gate FAIL；专门化统计初步为正，不等价于所有专家都存活。
+
+### 决定
+
+- **采用 v2 数值配置重启完整四配置 suite**：它已经越过原 gradient-inf 点且不再 soft collapse。
+- 不再追加“让结果更好看”的硬均衡机制；完整实验将真实判定 2-of-4、16/8/4-of-32 的 hard dead tile、质量和专门化。
+- v2 校准 artifact：`results/e3_scan/e3_fe2h_full_v2_stability_cal.json`。
+
+---
+
+## 2026-07-21：FE-2H 全量 matched 自专家质量实验预注册（进行中，未运行）
+
+### 背景 / 用户授权
+
+上一轮只用 `6–8 steps / 2,048 validation tokens` 比较 2-of-4 与 16-of-32，足以确认细粒度吞吐负担和负载不塌缩，但训练预算不等，不能判断 validation 质量。用户要求“进行全量的”，本轮因此升级为完整语料 matched 实验：所有配置无放回遍历完整训练 sequence 一轮，并评估完整 validation，不再用短跑外推质量。
+
+### 研究问题与可证伪假设
+
+1. **质量假设 H1**：细粒度 16-of-32 在相同训练 token、共享初始化和数据顺序下，完整 validation BPC 优于 2-of-4，或至少不劣于 `0.5%`。
+2. **稀疏假设 H2**：8-of-32（25% 激活）或 4-of-32（12.5% 激活）可在 validation BPC 相对 16-of-32 恶化不超过 `1%` 的同时保持所有 tile 存活；若成立，说明大部分神经元休眠仍能保留质量。
+3. **专门化假设 H3**：细粒度路线在完整 validation 上使用多种 hard route 组合，并出现非零 token–route mutual information；若所有 token 基本走同一路径、top-route share 过高或 MI≈0，则“自专家专门化”没有证据。
+4. **系统负假设 H4**：纯 PyTorch 32-tile dense-mask training 仍显著慢于 4-tile；本轮保留 wall-clock、GPU、显存与功耗证据，不以质量指标掩盖系统成本。
+
+### 冻结配置与公平性
+
+- 数据：`cyberlangke/Nana-catgirl-dataset-110k` 的现有 BPE-8192 缓存。
+- 完整训练：`seq_len=128` 时 `117,462` 个 non-overlapping train sequences，实际覆盖 `15,035,136` target tokens；`batch_size=8`，每配置 `14,683 optimizer steps`，恰好一轮、无放回，最后 partial batch 保留。
+- 完整验证：`6,342` 个 validation sequences、`811,776` target tokens、`793 batches`，不截断。
+- 共同参数：`d_model=state_dim=1024`、low-rank output `rank=128`、`block_size=32`、FP16 autocast、AdamW `lr=3e-4 / weight_decay=0.01`、seed `0`。
+- 四个唯一自变量：
+  - coarse baseline：`tile_size=256 / 2-of-4 / 50% active`
+  - micro-50：`tile_size=32 / 16-of-32 / 50% active`
+  - micro-25：`tile_size=32 / 8-of-32 / 25% active`
+  - micro-12.5：`tile_size=32 / 4-of-32 / 12.5% active`
+- 共享初始化：先由 coarse baseline 写出 canonical init；后续模型加载所有同名同 shape 参数。32-tile router 的最终 `[32,64]` 层因 shape 不同而独立初始化，但三个 micro 配置之间该层完全相同；artifact 必须报告 matched parameter count/ratio 与 unmatched keys。
+- 数据顺序：每个配置都用独立 CPU generator、相同 seed 生成同一个无放回 `randperm`；不能随机有放回抽样。
+
+### 完整 validation 专门化指标
+
+- quality：CE/BPC、finite、完整 token 数。
+- soft load：activation rate、normalized entropy、Gini、hotspot、dead-tile ratio、block fill。
+- hard route：hard tile activation rate、unique route count、route entropy、top-route share。
+- 内容相关性：把每个 block 的 hard route code 扩展到对应 token，计算 `I(token_id; route)`、route-normalized MI。该指标只证明统计依赖，不直接等价于可解释语义。
+- 系统：train/valid tok/s、device memory、GPU utilization、power、总 wall-clock。
+
+### 成功门 / 反证条件
+
+- 所有配置必须完整执行 `15,035,136 train + 811,776 validation tokens`；少一个 batch、OOM、中断或非 finite 都不得进入 matched 排名。
+- 质量主判：相对 coarse 的 full-validation BPC；`micro-50 <= coarse*1.005` 为不劣，`micro-50 < coarse` 为正提升。
+- 稀疏保持：`micro-25` 或 `micro-12.5 <= micro-50*1.01`，且 hard/soft dead-tile ratio 均为 0。
+- 负载 cap 随目标激活率缩放：soft hotspot 不超过 `1.4 * active_fraction`（分别 `0.70/0.35/0.175`）；超过则判路由集中，即使 BPC 好也不能称负载均衡成功。
+- 专门化只在 `unique routes > 1`、top-route share `<0.70`、token–route MI `>0` 时成立；不预设 MI 必须很大，需结合 route entropy 报告。
+- 任一预计或实测 `>16 GiB`：暂停并预警；预计 `>32 GiB`：不启动。本轮此前同宽度实测约 `0.74 GiB`，预计四配置均远低于 16 GiB。
+- 预计总 T4 wall-clock 约 `6–8 小时`；运行时间长不是更改训练 token 或提前停止的理由。
+
+### 产物与执行顺序
+
+- 初始化：远端 `results/e3_scan/checkpoints/e3_fe2h_full_shared_init.pt`
+- 原始 artifact：
+  - `results/e3_scan/e3_fe2h_full_coarse_k2.json`
+  - `results/e3_scan/e3_fe2h_full_micro_k16.json`
+  - `results/e3_scan/e3_fe2h_full_micro_k8.json`
+  - `results/e3_scan/e3_fe2h_full_micro_k4.json`
+- checkpoint：远端 `results/e3_scan/checkpoints/e3_fe2h_full_{coarse_k2,micro_k16,micro_k8,micro_k4}.pt`
+- 汇总：`results/e3_scan/e3_fe2h_full_matched.json`
+- 顺序：coarse → micro-16 → micro-8 → micro-4；单卡串行，任何时刻只驻留一个模型。
+
+### 当前状态
+
+- **本条只完成预注册，尚未启动全量运行。** 后续代码、smoke、完整结果和失败必须另写证据条目，不回填本条。
+
+---
+
+## 2026-07-21：FE-2H 真实任务 GPU 饱和缩放（PASS，含细粒度并行负结果）
+
+### 执行摘要
+
+按上一条预注册，在远端 `Tesla T4 15360 MiB` 上使用完整猫娘 BPE 缓存运行单模型 FE-2H 缩放。最终找到并长跑的安全点是：
+
+- `d_model=state_dim=4096`
+- `tile_size=1024`，即 `4 tiles`，每 block 激活 `2 tiles`
+- low-rank output projection `rank=512`；input projection 仍为 dense，训练走 differentiable dense-mask，不宣称硬件 sparse training
+- `batch_size=68`、`seq_len=256`、`block_size=32`
+- FP16 autocast + FP32 master parameters/loss/trace 数值路径
+
+100-step 真实学习同时通过四个本轮 gate：GPU utilization、device memory、learning signal、homeostasis。没有触发 `>16 GiB` 用户预警，也没有 CUDA OOM、AMP scale drop 或 non-finite。
+
+### 训练器与数值/监控协议
+
+新增 `experiments/e3_fe2h_scale_train.py`：
+
+- 单进程只把一个 FE-2H 模型放上 GPU，避免三份模型驻留制造假占用。
+- 启动前同时检查 `16/32 GiB` 用户门和当前物理卡 `total - 0.5 GiB` 门；所有配置均先在 CPU 构建并估算，再决定是否 `.to(cuda)`。
+- `nvidia-smi` 每 `200 ms` 独立采样 device memory、GPU utilization、memory-controller utilization、power 和温度；训练热路径不因采样同步。
+- 每 step 检查所有 loss 与 unscaled global grad norm；step 0 和每 25 step 完整检查 parameter/gradient/optimizer states；任一 AMP scale drop fail-closed。
+- 真实学习使用完整缓存 `15,035,242 train tokens / 811,815 validation tokens / vocab 8192`，随机采样训练 sequence，验证使用缓存真实 validation token。
+- low-rank rank `128/256/512` 仅在 scaling runner 中显式标记 `non_formal_scaling_rank=true`；旧 FE-2H formal 的 `{16,32}` 契约未被静默放宽。首个 `rank=128` 尝试曾被旧门 `SETUP_FAILED` 拒绝，随后才用隔离的 scaling 构造器重跑成功。
+- 回归验证：`python3 -m unittest discover -s tests -p 'test_fe2h*.py'` 为 `14/14 PASS`；`python3 -m unittest discover -s tests -p 'test_e3_fe2h_neuron_tile.py'` 为 `11/11 PASS`。长跑 JSON 的 status、四个 saturation gate、finite validation、BPC 下降和显存区间断言均通过。
+
+### 校准阶梯
+
+| label | width / batch / seq | tiles | device peak | steady GPU p50/p90 | train tok/s | valid BPC | gate |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `cal_d1024_b8_t128` | 1024 / 8 / 128 | 2-of-4 | 751 MiB | 47% / 55% | 6,002 | 10.532 | util/memory fail |
+| `cal_d2048_b16_t256` | 2048 / 16 / 256 | 2-of-4 | 2,629 MiB | 74% / 74% | 13,214 | 9.903 | util/memory fail |
+| `cal_d4096_b32_t256` | 4096 / 32 / 256 | 2-of-4 | 7,615 MiB | 99% / 100% | 10,652 | 9.936 | util pass, memory fail |
+| `cal_d4096_b64_t256` | 4096 / 64 / 256 | 2-of-4 | 12,949 MiB | 100% / 100% | 12,501 | 9.930 | util pass, memory just below target |
+| `cal_d4096_b68_t256` | 4096 / 68 / 256 | 2-of-4 | 13,799 MiB | 100% / 100% | 12,768 | 9.922 | all calibration gates pass |
+
+最终校准点的启动估算是 `13.552 GiB`，低于 T4 物理启动门 `14.068 GiB` 和用户 `16 GiB` 预警线；短跑实测 PyTorch allocated/reserved `11.872/13.338 GiB`，device peak `13,799 MiB`。
+
+### 100-step 真实学习结果
+
+命令：
+
+```bash
+ssh -p 25520 root@region-9.autodl.pro \
+  "cd /root/vpsc && /root/miniconda3/bin/python experiments/e3_fe2h_scale_train.py \
+   --label real_d4096_b68_t256_100step \
+   --out results/e3_scan/e3_fe2h_scale_real_train.json \
+   --checkpoint results/e3_scan/checkpoints/e3_fe2h_scale_real_train.pt \
+   --d-model 4096 --state-dim 4096 --tile-size 1024 --active-tiles 2 \
+   --block-size 32 --rank 512 --batch-size 68 --seq-len 256 \
+   --max-steps 100 --warmup-steps 3 --valid-steps 10 \
+   --log-every 10 --finite-check-every 25 --learning-rate 3e-4"
+```
+
+- 参数量：`144,781,892`。
+- 训练：`100 steps / 1,740,800 tokens / 113.835 s / 15,292 tok/s`。
+- 学习信号：首个 10-step 窗口 `BPC=10.340`，最后窗口 `BPC=6.642`；10 个窗口总体持续下降。全程 mean BPC `7.857`。
+- validation：`174,080 tokens`，`BPC=6.515`，finite。
+- GPU：warmup 后 `526` 个 200-ms 样本，utilization mean `99.279%`、p50 `100%`、p90 `100%`、max `100%`。
+- 显存：device p50/max 均 `14,343 MiB`（约 `14.01 GiB`）；PyTorch allocated peak `11.873 GiB`、reserved peak `13.869 GiB`。T4 训练结束后恢复 `1 MiB / 0%`。
+- 负载：全程均值 activation rate `[0.551, 0.415, 0.518, 0.516]`，mean hotspot `0.551`，最后窗口 hotspot `0.586`，validation hotspot `0.593`；`dead_tile_ratio=0`，block fill `0.5`。均低于 prereg 的 `0.70` cap。
+- 数值：无 loss/grad/parameter/optimizer non-finite，无 AMP scale drop，failure 为 `null`。
+- checkpoint：远端 `results/e3_scan/checkpoints/e3_fe2h_scale_real_train.pt`，`579,135,175 bytes`，model-only，SHA256 `703ae199a2a8bd1b3e911bf92251746ebd856bd315f3090ccaa7d28579393958`。为避免把约 552 MiB 权重文件直接塞入当前工作树，本地只同步 JSON；checkpoint 保留在远端。
+
+### 细粒度自专家对照：负载均衡有效，但并行折损明显
+
+为回答“每个神经元都可作专家时，并行与负载均衡是否还有效”，在同一 `d=1024 / batch=8 / seq=128 / rank=128` 下比较：
+
+- 粗粒度：`tile_size=256`，`2-of-4`；稳态窗口吞吐均值 `12,242 tok/s`，GPU p50 `47%`。
+- 细粒度：`tile_size=32`，`16-of-32`；稳态窗口吞吐均值 `2,015 tok/s`，GPU p50 `35%`。
+- **并行折损**：粗粒度约为细粒度的 `6.08x`；参数量与 device peak 几乎相同（`21.65M`、约 `0.74 GiB`），所以差异主要来自 Python/PyTorch tile 循环和大量小算子，而不是容量或显存。
+- **负载均衡仍有效**：32-tile 路线 mean hotspot `0.628 < 0.70`，`dead_tile_ratio=0`，mean activation 贴近目标 `0.5`；BPC 也在短跑中下降。因此“多数神经元低功耗/只激活一半”的路由语义没有塌缩，但当前执行后端不能把这种细粒度稀疏变成高效并行。
+- 证据边界：`tile_size=32` 仍是 32 神经元一组，不是逐神经元 `tile_size=1`；4 个大 tile 的 GPU 饱和结果只证明 coarse execution 能吃满 T4，不能替代逐神经元硬件稀疏结论。细粒度运行仅 6 step，GPU p50 有 10 个采样点；吞吐负结论清晰，但质量差异不作正式判定。
+
+### 结论 / 决定
+
+- **GPU/显存饱和：PASS**。在不越过 16 GiB 红线的 T4 上，真实 FE-2H 学习已达到 device peak `14.01 GiB`、warmup 后 GPU p50/p90 `100/100%`。
+- **真实学习：PASS**。1.74M sampled tokens 上训练 BPC `10.34 -> 6.64`，validation BPC `6.515`，全程 finite。
+- **负载均衡：PASS**。粗粒度长跑和 32-tile 细粒度对照都无 dead tile，hotspot 均低于 `0.70`。
+- **逐神经元式并行效率：NEGATIVE**。当前纯 PyTorch 路径在 32 tiles 上约慢 `6.08x`；生物式稀疏的负载均衡可以工作，但 GPU 需要 tile fusion / grouped GEMM / 自定义 kernel 才能避免大量小算子折损。
+- **下一轮方向**：保持当前安全点不再增加 T4 显存；若继续优化，应把 32-tile 路由编译为 grouped/fused projection，或做“两级路由：4 个硬件大 tile + tile 内细粒度神经元 mask”，再用相同 d1024 matched protocol 判断能否收回这 `6.08x` 折损。
+
+### 产物
+
+- 汇总：`results/e3_scan/e3_fe2h_scale_calibration.json`
+- 长跑：`results/e3_scan/e3_fe2h_scale_real_train.json`
+- 各级原始 artifact：`results/e3_scan/e3_fe2h_scale_{wiring_d256,cal_d1024_b8_t128,cal_d2048_b16_t256,cal_d4096_b32_t256,cal_d4096_b64_t256,cal_d4096_b68_t256,microtile_d1024_tile32_k16}.json`
+- 远端 checkpoint：`/root/vpsc/results/e3_scan/checkpoints/e3_fe2h_scale_real_train.pt`
+
+---
+
+## 2026-07-21：FE-2H 真实任务 GPU 饱和缩放预注册（进行中，未运行）
+
+### 背景 / 用户授权
+
+上一轮 T4 smoke 已证明机制、数值与小规模显存门成立，但仅占约 `27 MiB`，且当前 PyTorch tile-sparse 路径只有约 `0.29x base_e3` 吞吐。用户随后明确授权：使用更大数据集与更多显存运行真实学习任务，持续扩规模直到逼近 GPU 利用率与显存上限；原先“speed gate FAIL 后不跑 formal quality”的停止决定因此只保留为上一轮结论，不再阻止本轮独立的缩放/学习实验。
+
+显存硬约束保持不变：任一配置预计或实测 `>16 GiB` 必须暂停并预警，预计 `>32 GiB` 不启动。当前远端卡是 `Tesla T4 15360 MiB`，因此本轮不会设计超过 `16 GiB` 的配置。
+
+### 五条候选缩放路线与选择
+
+1. **宽度阶梯 + 4 个执行 tile**：逐级增大 `d_model=state_dim`，同步增大 `tile_size=state_dim/4`，保持 `active_tiles=2`。优势是矩阵更大、Python tile 循环固定为 4，最可能提高 Tensor Core 利用率；代价是 tile 内语义更粗。
+2. **固定 `tile_size=32` 的细粒度阶梯**：宽度增大时增加微专家数，并激活约一半 tile。最忠于“每个神经元皆可为专家”的细粒度近似，但 Python tile 循环会随宽度增长，预计 GPU 利用率较差。
+3. **扩大 `batch_size × seq_len`**：在中等宽度下扩大激活工作集，直接提高真实 token 学习吞吐和激活显存；风险是 FE-2H scan 中间张量增长快。
+4. **梯度累积长跑**：提高有效 batch 和学习稳定性，但不会提高单步激活显存，也未必提高瞬时 GPU 利用率，故只作为优化手段，不作为“吃满 GPU”主证据。
+5. **扩大 vocab/logits 或无效缓存灌显存**：可以轻易占满显存，但占用不来自 FE-2H 有效学习容量，拒绝作为成功证据。
+
+**本轮选择**：以路线 1+3 做主校准；路线 2 在相同宽度/近似 token 预算下做一次语义忠实度对照。采用 mixed precision 仅用于 CUDA 张量核加速；交叉熵、辅助 loss、梯度裁剪和 finite 判定保留 FP32 数值路径或显式检查。首轮 low-rank 采用直接替代式 output projection，rank 随宽度设置为不超过投影最小维的有效值；不把 additive LoRA 算作减算。
+
+### 真实任务与冻结协议
+
+- 数据：已有完整 `cyberlangke/Nana-catgirl-dataset-110k` BPE 缓存，`15,035,242` train tokens、`811,815` validation tokens、vocab `8192`；不使用 synthetic smoke 作为最终学习证据。
+- 单进程只驻留一个 FE-2H 模型，避免三模型同时驻留造成“假显存占用”。
+- 校准阶梯：从中等宽度开始，逐级扩大 width、batch 或 seq；每级先跑短 warmup/calibration，记录 PyTorch allocated/reserved 峰值与 `nvidia-smi` 设备显存、GPU utilization 时间序列。
+- 安全目标：设备显存峰值 `13.0–14.5 GiB`（T4 总显存约 `15 GiB`，保留 allocator/driver 余量）；若达到 `>=13.0 GiB` 即视为显存饱和目标达成，不追求会诱发 OOM 的 100%。
+- 利用率目标：warmup 后采样的 GPU utilization 中位数 `>=90%`，且 p90 `>=95%`；同时报告均值、p50、p90、峰值和采样数，不能只引用一个瞬时 `100%`。
+- 每级至少记录：配置、参数量、tokens/s、train CE/BPC、目标总 loss、梯度范数、finite 状态、homeostasis 的 activation rate/entropy/Gini/hotspot/dead-tile、allocated/reserved/device memory、GPU utilization。
+- 选定安全点后，在真实训练集上持续运行，不少于 `100` optimizer steps；保存 checkpoint 与机器可读 JSON。只有 train CE/BPC 在多个窗口总体下降、validation BPC 有限，才算“真实学习”而不是单纯 burn GPU。
+
+### 停止 / 反证条件
+
+- 预估 `>16 GiB`：暂停并向用户预警；预估 `>32 GiB`：拒绝启动。
+- 实测设备显存逼近物理上限且余量 `<512 MiB`、CUDA OOM、driver reset 或系统已有其他 GPU 任务：立即停止该级并退回上一安全点。
+- loss、gradient、parameter 或 optimizer state 任一非 finite：fail-closed，保留首个失败 step，不继续长跑。
+- 持续窗口 `hotspot_share >0.70` 或 `dead_tile_ratio >0`：负载均衡失败；即使 GPU 很忙也不能判为 FE-2H 成功。
+- GPU utilization 达标但 CE/BPC 不下降，或显存主要被无效 logits/缓存占据：只能判为压力测试成功，不能判为真实学习成功。
+- 固定 tile=32 对照若显著降低利用率，必须保留“细粒度专家并行折损”的负面证据；不得用 4 个大 tile 的结果替代神经元级语义结论。
+
+### 预定产物
+
+- 训练器：`experiments/e3_fe2h_scale_train.py`
+- 校准汇总：`results/e3_scan/e3_fe2h_scale_calibration.json`
+- 真实长跑：`results/e3_scan/e3_fe2h_scale_real_train.json`
+- checkpoint：`results/e3_scan/checkpoints/e3_fe2h_scale_real_train.pt`
+
+### 当前状态
+
+- **只完成预注册，尚未启动本轮缩放运行。** 后续结果必须以新条目倒序追加，不回填本条。
+
+---
+
+## 2026-07-21：FE-2H neuron-tile T4 smoke（混合结果，speed gate FAIL）
+
+### 背景 / 动机
+
+承接上一条 FE-2H prereg，本轮只做 **远端受控 smoke**，验证四件事：`25` 个定向测试是否通过、`mechanism/numerics/memory` 三门是否通过、`rank16/32` 是否都安全落在 `16 GiB` 以内、以及在 T4 + PyTorch 无自定义 CUDA kernel 的前提下真实 tile-sparse 是否带来 wall-clock 加速。按 prereg，`speed` 未过则 **不进入 formal/catgirl quality**。
+
+### 远端执行 / 命令
+
+```bash
+rsync -av --relative -e 'ssh -p 25520' \
+  vpsc/world_model/fe2h_tile_sparse.py \
+  vpsc/world_model/fe2h_low_rank.py \
+  experiments/e3_fe2h_neuron_tile.py \
+  tests/test_fe2h_tile_sparse_core.py \
+  tests/test_fe2h_low_rank.py \
+  tests/test_e3_fe2h_neuron_tile.py \
+  root@region-9.autodl.pro:/root/vpsc/
+
+ssh -p 25520 root@region-9.autodl.pro \
+  "nvidia-smi --query-gpu=name,memory.total,memory.used,utilization.gpu --format=csv,noheader && \
+   nvidia-smi --query-compute-apps=pid,process_name,used_gpu_memory --format=csv,noheader || true"
+
+ssh -p 25520 root@region-9.autodl.pro \
+  "cd /root/vpsc && /root/miniconda3/bin/python experiments/e3_fe2h_neuron_tile.py \
+   --mode smoke --device cuda \
+   --out /root/vpsc/results/e3_scan/e3_fe2h_neuron_tile_smoke.json \
+   --cache-dir /root/vpsc/results/e3_sg29_cache \
+   --d-model 128 --state-dim 128 --tile-size 32 --active-tiles 2 --block-size 32 \
+   --rank 16 --batch-size 8 --seq-len 32 --epochs 1 --seed 0 \
+   --warmup-steps 10 --benchmark-steps 50 \
+   --smoke-train-sequences 24 --smoke-valid-sequences 8 --svd-init"
+
+ssh -p 25520 root@region-9.autodl.pro \
+  "cd /root/vpsc && /root/miniconda3/bin/python experiments/e3_fe2h_neuron_tile.py \
+   --mode smoke --device cuda \
+   --out /root/vpsc/results/e3_scan/e3_fe2h_neuron_tile_rank32_smoke.json \
+   --cache-dir /root/vpsc/results/e3_sg29_cache \
+   --d-model 128 --state-dim 128 --tile-size 32 --active-tiles 2 --block-size 32 \
+   --rank 32 --batch-size 8 --seq-len 32 --epochs 1 --seed 0 \
+   --warmup-steps 10 --benchmark-steps 50 \
+   --smoke-train-sequences 24 --smoke-valid-sequences 8 --svd-init"
+```
+
+- 远端 Python / Torch / GPU：`/root/miniconda3/bin/python 3.12.3`，`torch 2.5.1+cu124`，`Tesla T4 15360 MiB`。
+- GPU 启动前空闲确认：`nvidia-smi` 显示 `Tesla T4, 15360 MiB, 1 MiB, 0 %`，`COMPUTE_APPS` 为空。
+- 定向测试：远端内联 `unittest` loader 加载 `tests/test_fe2h_low_rank.py`、`tests/test_fe2h_tile_sparse_core.py`、`tests/test_e3_fe2h_neuron_tile.py`，共 `25` tests，全部 `PASS`。
+
+### 结果
+
+- **显存预检**：
+  - `rank16`：总 launch gate 读的是 `fe2h_tile_sparse model_total_gib = 0.0045669675 GiB`；`fe2h_dense_mask = 0.0048111081 GiB`；`fe2h_low_rank_tile_sparse = 0.0037429929 GiB`。全部远低于 `16 GiB`，因此允许启动。
+  - `rank32`：总 launch gate 同样是 `0.0045669675 GiB`；`fe2h_low_rank_tile_sparse = 0.0038955808 GiB`。同样远低于 `16 GiB`。
+- **mechanism / equivalence**：
+  - `rank16` 与 `rank32` 都满足 `route_budget_ok = true`，每块固定 `2-of-4 tiles`。
+  - `fe2h_tile_sparse` 与 `fe2h_low_rank_tile_sparse` 在两次 smoke 中都给出 `max_abs_logit_diff = 0.0`、`max_abs_state_diff = 0.0`、`loss_diff = 0.0`；本轮 dense-mask / true sparse 等价门通过。
+- **windowed homeostasis**：
+  - `rank16 / tile_sparse`：activation rate `[0.4765, 0.4456, 0.5029, 0.5750]`，mean `0.5000`，entropy `1.3818`，Gini `0.0259`，`p99_tile_load = 0.5752`，`hotspot_share = 0.5750`，`dead_tile_ratio = 0.0`。
+  - `rank32 / tile_sparse`：activation rate `[0.5934, 0.4742, 0.4823, 0.4501]`，mean `0.5000`，entropy `1.3804`，Gini `0.0274`，`p99_tile_load = 0.5934`，`hotspot_share = 0.5934`，`dead_tile_ratio = 0.0`。
+  - `rank16/32` 都明显低于 prereg 的 `hotspot_share <= 0.70`，且没有 dead tile。
+- **aux loss 证据**：
+  - artifact 明确记了训练总 loss 是 `ce + 0.01*route_supervision + 0.01*homeostasis`，但 `ce/bpc` 报告保持 cross-entropy only。
+  - `rank16 / dense FE2H`：train `ce = 4.19497`，route supervision `10.53416`，homeostasis `0.00233`，total `4.30033`。
+  - `rank16 / low-rank sparse`：train `ce = 4.26741`，route supervision `10.49852`，homeostasis `0.00037`，total `4.37240`。
+  - `rank32 / dense FE2H`：train `ce = 4.27596`，route supervision `10.59259`，homeostasis `0.00267`，total `4.38191`。
+  - `rank32 / low-rank sparse`：train `ce = 4.25017`，route supervision `10.77801`，homeostasis `0.00728`，total `4.35802`。
+- **observed peak memory**：
+  - `rank16`：`base_e3` train/valid `26.12 / 21.86 MiB`；`fe2h_dense_mask` train/valid `26.65 / 23.13 MiB`；`fe2h_tile_sparse` valid `22.74 MiB`；`fe2h_low_rank_tile_sparse` valid sparse `22.76 MiB`。
+  - `rank32`：`base_e3` train/valid `26.16 / 21.90 MiB`；`fe2h_dense_mask` train/valid `26.69 / 23.17 MiB`；`fe2h_tile_sparse` valid `22.82 MiB`；`fe2h_low_rank_tile_sparse` valid sparse `22.85 MiB`。
+- **smoke BPC（只作为 smoke 证据，不推进 formal quality）**：
+  - `rank16`：`base_e3 valid_bpc = 5.67575`，`fe2h_dense_mask / tile_sparse = 5.66364`，`fe2h_low_rank_tile_sparse = 6.07027`。
+  - `rank32`：`base_e3 valid_bpc = 5.64110`，`fe2h_dense_mask / tile_sparse = 5.80794`，`fe2h_low_rank_tile_sparse = 5.84763`。
+- **速度门（负面结果保留）**：
+  - `rank16`：`base_e3 = 117585 tok/s`；`fe2h_dense_mask = 34071 tok/s`；`fe2h_tile_sparse = 33854 tok/s`；`fe2h_low_rank_tile_sparse = 33703 tok/s`。最佳 sparse 仅 `0.2879x` `base_e3`，`speed gate = FAIL`。
+  - `rank32`：`base_e3 = 115651 tok/s`；`fe2h_dense_mask = 34274 tok/s`；`fe2h_tile_sparse = 34001 tok/s`；`fe2h_low_rank_tile_sparse = 33804 tok/s`。最佳 sparse 仅 `0.2940x` `base_e3`，`speed gate = FAIL`。
+- **low-rank / router honest accounting**：
+  - `fe2h_low_rank_tile_sparse` 本轮只把 **output projection** 做成 low-rank；`input_projection_kind = dense`，`router_projection_kind = dense_router_mlp`，并显式记录 `dense_input_projection_retained = true`。`--svd-init` provenance 也被写入：source 是 `output_projection`，shape `[128, 512]`，rank 分别为 `16/32`。
+  - `all_lowrank_dense_mask` 在 `rank16` 与 `rank32` 都保持 `supported = false`，原因是 router 两层线性维度太小，触发 `rank must be strictly smaller than min(in_features, out_features)`；artifact 明确写了这不是 true sparse，只是 honest dense-mask accounting。
+  - `rank16` 的 low-rank 直接替代参数/MAC 报告：
+    - input proj：params `66048 -> 10752`，MACs `65536 -> 10240`。
+    - output proj：params `65664 -> 10368`，MACs `65536 -> 10240`。
+  - `rank32` 的 low-rank 直接替代参数/MAC 报告：
+    - input proj：params `66048 -> 20992`，MACs `65536 -> 20480`。
+    - output proj：params `65664 -> 20608`，MACs `65536 -> 20480`。
+
+### 观察与解释
+
+- **观察**：本轮 `mechanism / numerics / memory` 三门都过了，且 dense-mask 与 true sparse 的 logits/state 差都是 `0.0`；说明 FE-2H prereg 的等价门、finite guard、windowed homeostasis 和 16 GiB 显存门在 smoke 级别成立。
+- **观察**：两次 smoke 的最佳 sparse 吞吐都只有 `~0.29x base_e3`，明显没有 wall-clock 加速；dense-mask 与 true sparse 的速度几乎重合，说明当前 T4 + PyTorch 路径主要还是被 route + active projection + 仍保留的 dense wrapper/output projection 吞掉。
+- **解释**：这与 prereg 里的负面预测一致：在没有自定义 CUDA kernel、且 sparse slicing 仍要求 `nn.Linear` 的前提下，semantic/hardware sparsity 不会自动变成速度优势。
+- **观察**：`rank16` 的 dense-mask/tile-sparse smoke BPC 比 base 略好，`rank32` 和 low-rank 版本则更差；但因为 `speed gate FAIL`，本轮 `quality = NOT_RUN`，这些 smoke BPC 只保留为辅助证据，**不提升为 catgirl 质量结论**。
+
+### 结论 / 决定
+
+- **结论**：`GROUP-6` 远端 smoke 完成，`25` 个定向测试 `PASS`，`rank16` 与 `rank32` 都安全运行并回写 artifact，但两者都在 `speed` 门失败，overall decision 都是 `NEGATIVE`。
+- **决定**：按 prereg 停在 smoke，不跑 full catgirl/formal quality；artifact 中的 `quality_gate = NOT_RUN` 与 `retained_negative_result = true` 保持原样，不粉饰成“真实 sparse 已加速”。
+- **保留的负面边界**：当前 FE-2H 实现在 T4 / PyTorch / 无自定义 CUDA kernel 条件下，机制可行、显存安全，但 wall-clock 明显慢于 `base_e3`；这是有效负结果，不应被 dense-mask 或 low-rank 叙述掩盖。
+
+### 可复现信息
+
+- 本地 artifact：
+  - `results/e3_scan/e3_fe2h_neuron_tile_smoke.json`
+  - `results/e3_scan/e3_fe2h_neuron_tile_rank32_smoke.json`
+- 远端路径：
+  - `/root/vpsc/results/e3_scan/e3_fe2h_neuron_tile_smoke.json`
+  - `/root/vpsc/results/e3_scan/e3_fe2h_neuron_tile_rank32_smoke.json`
+- 关联源码 / 测试：
+  - `experiments/e3_fe2h_neuron_tile.py`
+  - `vpsc/world_model/fe2h_tile_sparse.py`
+  - `vpsc/world_model/fe2h_low_rank.py`
+  - `tests/test_fe2h_tile_sparse_core.py`
+  - `tests/test_fe2h_low_rank.py`
+  - `tests/test_e3_fe2h_neuron_tile.py`
+
+## 2026-07-21：FE-2H 预注册 — neuron-tile 多选 gated-trace 核心（待实现，未运行）
+
+### 背景 / 动机
+
+用户已批准 FE-2H 方向：把 FE-1 的块级宏观专家路由细化为 **neuron-tile 微专家多选路由**，并要求在任何代码实现或正式实验前先做 NoA 预注册，冻结对象、门、阈值、显存红线、artifact 路径与反证条件。本条 **只做预注册**；不声称已实现、不声称已运行、也不启动 formal catgirl 对照。
+
+### 冻结对象 / 主配置
+
+- **研究对象**：单个 E3 population 的 FE-2H neuron-tile 核心；语义上每个神经元都可被视作微专家，但 GPU/张量执行仍按 tile 组织。
+- **主配置冻结**：`d_model=128`，`tile_size=32`，故每个 population 固定为 `4 tiles`；每个 token block 默认 `active_tiles=2`；`block_size=32`。
+- **路由机制**：router 对每个 token block 预测各 tile 的局部 `log-F` 或等价 soft score，训练使用 **hard-forward / soft-backward** 多选 0/1 mask；主配置要求每块恰好激活 2 个 tile，既不能退化为单 tile 常开，也不能退化为 4 tile 全开。
+- **三条执行路径必须显式区分**：
+  - `dense reference`：全 tile 执行，作为语义参考。
+  - `dense-mask oracle`：全 tile 执行后再对 inactive tile 做零写/零读屏蔽，只能作为等价 oracle，**不能**作为真实稀疏加速证据。
+  - `true tile-sparse`：仅 active tiles 参与真实执行；若后端做不到，就标记 `unsupported`/fail-closed，**不得**静默回退 dense 后仍宣称 sparse。
+
+### 机制假设 / 等价门
+
+- **多选 tile 预算**：formal artifact 必须记录 `tile_count=4`、`active_tiles=2`、`block_size=32` 与 route budget；任何 `active_tiles=1`、`active_tiles=4` 或长期单 tile 垄断都视为与本预注册对象不符。
+- **惰性衰减等价**：inactive tile 只做解析 lazy decay；其状态推进与 dense zero-write 参考路径的最大绝对误差必须满足 `atol < 1e-5`。若冻结路由后 `dense-mask oracle` 与 `true tile-sparse` 的输出或最终状态超出预注册的 float32 容差，同样判为机制门失败。
+- **tile 内执行约束**：tile 内允许用向量化 dense 张量算子，但不允许退回逐神经元 Python 循环；tile-sparse 的真实执行边界必须清楚可审计。
+
+### 稳态 / 数值门
+
+- **windowed homeostasis**：负载均衡与稳态损失只读取可微 soft probabilities 或其窗口聚合，不对 hard argmin/0-1 usage 直接施加无梯度损失。
+- **稳态指标冻结**：artifact 必须报告 `activation rate`、`entropy`、`Gini`、`p99 tile load`、`block fill`、`hotspot share` 与 `dead-tile ratio`；主 gate 冻结为 `hotspot share <= 70%`、`dead-tile ratio = 0`，并要求平均激活率接近目标预算。
+- **detached F target**：真实局部 F target 必须 `detach`；辅助 loss 不能通过 target 反向推动专家状态。
+- **stable log-energy**：预注册冻结 `log_energy = log(epsilon + energy_proxy)`，其中 `epsilon = 1e-8`；后续实现若需改动该常数，必须新增日志条目说明原因，不能静默修改。
+- **finite fail-closed**：至少完整覆盖 `loss`、`gradients`、`parameters`、`optimizer states` 四层 finite 检查；任一非 finite 都必须 fail-closed，记录首个 step、tensor、loss 项与上下文，不得带病继续训练。
+
+### 低秩替代投影 / 减算声明
+
+- **替代式 low-rank**：输入事件投影、路由投影、输出投影都必须支持 `dense` / `low-rank` 独立切换；首轮只冻结 `rank in {16, 32}`。
+- **SVD provenance**：若存在可分解 dense 来源矩阵，可选 `truncated-SVD` 初始化，但 artifact 必须记录来源矩阵、rank 与初始化 provenance；若不存在来源矩阵，则明确标记为随机初始化。
+- **减算边界**：只有 **直接替代 dense matmul** 的 low-rank bottleneck 才算减参/减算；**additive LoRA、旁路 adapter 或保持原 dense 主干不变的增量模块，一律不计入减算结论**。
+
+### 正式执行顺序 / 显存与速度门
+
+- **正式门顺序冻结为**：`mechanism -> numerics -> memory -> speed -> quality`。前一门未通过，不推进后一门；quality 结论不能越过前四门偷跑。
+- **显存门**：
+  - 当前 `d=128` 主配置 **预计** 峰值显存 `< 2 GiB`，这只是预估，不算通过证据。
+  - 任一配置 **预计或实测** `> 16 GiB`：立即暂停扩规模并预警。
+  - 任一配置 **预计** `> 32 GiB`：不启动。
+- **速度负结论保留**：T4 + PyTorch、且无自定义 CUDA kernel 的前提下，`true tile-sparse` 很可能没有 wall-clock 加速，甚至更慢；这不是可忽略噪声，而是本轮必须保留的有效负结论。formal artifact 必须把 dense-mask、true tile-sparse 与 low-rank-tile-sparse 的 `tokens/s`、峰值显存和可观测开销分解分开记录。
+
+### 反证条件
+
+- router 长期退化为单 tile 常开、全 tile 常开或无法稳定维持 `2-of-4` 预算。
+- lazy decay 与 dense zero-write 参考误差不满足 `atol < 1e-5`。
+- 冻结路由后 `dense-mask oracle` 与 `true tile-sparse` 的输出/最终状态不等价，或后端只能 silent dense fallback。
+- 任一长窗口 `hotspot share > 70%`，或 `dead-tile ratio > 0`。
+- 任何 `loss`、`gradients`、`parameters`、`optimizer states` 出现非 finite 且无法 fail-closed 定位。
+- low-rank 版本参数量或理论 projection MACs 不低于 matched dense，或仅以 additive LoRA 冒充减算。
+- 任一配置预计 `> 32 GiB` 仍被启动，或预计/实测 `> 16 GiB` 未暂停预警。
+- 在 T4/PyTorch 无自定义 CUDA 的条件下没有加速，却仍把结果表述成“真实 sparse 已加速”。
+
+### artifact 路径 / 可复现边界
+
+- 计划 artifact 路径冻结为：
+  - `results/e3_scan/e3_fe2h_neuron_tile_smoke.json`
+  - `results/e3_scan/e3_fe2h_neuron_tile_formal.json`
+- 计划实现/测试入口冻结为：
+  - `experiments/e3_fe2h_neuron_tile.py`
+  - `vpsc/world_model/fe2h_tile_sparse.py`
+  - `vpsc/world_model/fe2h_low_rank.py`
+  - `tests/test_fe2h_tile_sparse_core.py`
+  - `tests/test_fe2h_low_rank.py`
+  - `tests/test_e3_fe2h_neuron_tile.py`
+- formal artifact 至少应覆盖 `configuration`、`provenance`、`mechanism`、`numerics`、`memory`、`speed`、`quality`、`decision` 八块信息，并显式保留 `unsupported backend`、`memory stop`、`no speedup`、`collapse`、`NaN/non-finite` 等负面结果。
+
+### 结论 / 当前决定
+
+- **本条完成的唯一动作是预注册**：冻结 FE-2H 的对象、主配置、门、显存红线、artifact 路径和反证条件。
+- **本条不包含实现、不包含测试通过声明、不包含 formal run**。后续任何代码实现、smoke 结果或 formal catgirl 对照，都必须在本条之后追加独立证据记录。
+
+### 可复现信息
+
+- 基准背景：保持现有 E3 public API 与 SG25-SG29 基线不变；本轮只冻结 FE-2H 的 prereg 契约。
+- 目标硬件背景：AutoDL T4 / PyTorch 路线允许出现“机制成立但 wall-clock 不加速”的有效负结果。
+- 当前状态：未启动 FE-2H formal 实验，未产出新的 results artifact。
+
 ## 2026-07-21：FE-1 实现进展与未解决问题（进行中，已暂停）
 
 ### 背景

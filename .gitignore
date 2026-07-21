@@ -39,3 +39,9 @@ lab/tinystories_scaling/checkpoints/
 lab/tinystories_scaling/comparison_checkpoints/
 lab/tinystories_scaling/data_cache/
 lab/tinystories_scaling/results/*.png
+
+
+*.pt
+.pipeline-workspace/
+.codex/
+.claude/
