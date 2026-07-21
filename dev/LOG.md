@@ -4,6 +4,60 @@
 
 ---
 
+## 2026-07-21：FE-1 实现进展与未解决问题（进行中，已暂停）
+
+### 背景
+
+执行 FE-1 预注册（自由能门控分块稀疏时序 SNN）。用户要求在 AutoDL T4 上真实验证 G1-G6，完成 FE-1a（F-PC）/FE-1b（F-inertial）双线。本条记录实现进展、已验证部分、未解决的 NaN 问题与暂停状态。
+
+### 已实现
+
+- `vpsc/world_model/fe_block_sparse.py`：`BlockSparseFECore`（FE-1b，F-inertial）+ `BlockSparseFEPCCore`（FE-1a，F-PC，加 W_down）。块硬路由（q_φ 预测 F̂）、惰性衰减（d^Δ z）、straight-through 训练、sparse_inference 推理、logsumexp log-F（用户建议的 log-add 等价，防平方和溢出）。
+- `experiments/e3_fe1_block_sparse.py`：G1-G6 驱动（dense vs sparse wall-clock、route_acc、usage 熵、BPC、load-balance loss）。
+- 本地 CPU 验证：两线 forward+backward+grad 通；G2 惰性衰减数学精确（diff 7.4e-9 < 1e-5）。
+
+### 已验证（T4 CUDA，catgirl 20k BPE 语料）
+
+- **G3 路由有效性：PASS**。run1/run3/run4 一致：q_φ argmin F̂ 与真实 F argmin 一致率 0.91-1.00（ep1 0.91-0.93，ep2+ 1.00）。路由预测器有效。
+- **log-F 数值稳定**：logsumexp 版本 f_true 有限（~5-40 log 域），无单步溢出。用户建议的"log-add 替换平方和"成功防止单步 NaN。
+- **300-batch 稳定性测试：PASS**。FE-1b 全量 20k 语料，300 batch 连续训练 CE 9.16→5.18 稳定下降，F-loss 39.6→4.8，无 NaN。
+
+### 未解决问题
+
+- **全 epoch 训练 NaN（G6 无法判定）**。run1/run3/run4 在完整 epoch（1836 batch）下 train_bpc=valid_bpc=nan。300-batch 测试稳定，但完整 epoch 在 batch 300-1836 之间出现 NaN。
+  - **已排除**：单步溢出（log-F 修复）、F-loss 爆炸（mean-center + 0.01 权重）、grad clip（1.0 已加）。
+  - **已尝试**：log-F logsumexp、mean-centered F-loss、权重 0.01、grad clip 1.0、NaN-guard 跳过坏 batch。
+  - **仍 NaN**：run4（NaN-guard 版）仍 nan——说明 NaN 不是偶发 batch，而是累积性训练不稳定（权重漂移→某步爆炸→guard 跳过后状态仍坏）。
+  - **疑似原因**：straight-through 路由梯度 + load-balance loss + F-loss 三项耦合，长训练下 q_φ 或 W_down 权重漂移；或 sparse_inference eval 路径（惰性专家 50.0 log-F）产生 NaN output 污染 valid_bpc。
+- **G5 使用崩溃**：run1-4 均 ep2+ usage→[1.0, 0.0, 0.0]（专家 0 垄断）。load-balance loss（0.1 权重）未阻止崩溃。需更强约束（硬最小使用率、温度退火）。
+- **G1 速度未测准**：训练 tok/s ~65k（FE-1）vs ~890k（LSTM/Transformer）——但这是 dense 训练（所有专家跑），非 sparse 推理。G1 需 dense vs sparse eval 对比，run4 的 JSON 因 PosixPath bug 未落盘（已修，但 run5 未跑完即停）。
+
+### 已记录的代码状态（推送）
+
+- `fe_block_sparse.py`：log-F logsumexp 版（FE-1a/b），non-streaming 默认（规避 E3 [0,1] 流式陷阱），streaming 可选标志。
+- `e3_fe1_block_sparse.py`：NaN-guard + mean-centered F-loss + load-balance + PosixPath JSON 修复。
+
+### 暂停状态
+
+- **服务器进程已全部停止**（T4 GPU 0%）。用户指示停止实验并记录。
+- **无活跃训练**。代码已同步服务器 + 本地。
+- **下一步（待恢复）**：(1) 诊断完整 epoch NaN——加权重 grad clip 到 q_φ/W_down 单独、降学习率、或 sparse eval 路径隔离；(2) G5 崩溃——硬最小使用率约束；(3) G1 速度——dense vs sparse eval wall-clock 单独测。
+
+### 结论 / 决定
+
+- **暂停 FE-1 实验**（用户指示）。实现与机制验证完成（G2 PASS、G3 PASS、log-F 稳定、300-batch 稳定）；全 epoch NaN 与 G5 崩溃未解决。
+- **不声称** FE-1 速度/质量结论——G1/G6 未得有效数据。
+- **保留** FE-1 代码与已验证机制（惰性衰减精确、路由有效、log-F 稳定）作为后续基础。
+
+### 可复现信息
+
+- 代码：`vpsc/world_model/fe_block_sparse.py`、`experiments/e3_fe1_block_sparse.py`（已同步服务器 + 本地）。
+- 已跑 run1-5（run5 未完成即停），日志在服务器 `results/e3_scan/e3_fe1_run{1,3,4}.log`。
+- 300-batch 稳定性测试脚本：`/tmp/fe1_nan3.py`（服务器 `~/vpsc/_fe1_nan3.py`）。
+- 关联：FE-1 预注册（2026-07-20，理论设计 + G1-G6 定义）、SG29（d4 基线）。
+
+---
+
 ## 2026-07-20：FE-1 预注册 — 自由能门控分块稀疏时序 SNN（理论设计 + 双 F 线，待实现）
 
 ### 背景 / 动机
