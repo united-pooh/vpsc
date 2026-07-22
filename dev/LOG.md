@@ -4,6 +4,59 @@
 
 ---
 
+## 2026-07-22：CRWM-0 已知事实编译、未知动力学学习 — 开题预注册（PENDING）
+
+### 背景 / 动机
+
+SG22R 已在七轮独立 TextWorld 数据上支持“past-observation episodic edge spikes + public-plan topology constraints + weighted closed-form residual”：相同 graph/constraint 输入下质量与匹配 LSTM/Transformer 打平，训练分别快 `3.50x/6.70x`，存储更小。但现有结论只覆盖 typed-action 两步预测，第二步 candidate 仍由 evaluator oracle 提出，尚不能证明真实闭环世界模型。
+
+本课题把该工程基底重述为可证伪的世界模型原则：**已经直接观察或可由公开约束严格推出的确定性转移不再由神经网络近似；神经分支只学习不可约的不确定残差，并由校准的不确定性门选择执行路径。** 本方向在分支 `codex/research-causal-residual-world-model` 独立推进，未通过晋级门前不进入 `main`。
+
+### 冻结研究问题与假设
+
+- **RQ1（epistemic partition）**：把 transition 分为 `observed / entailed / uncertain / contradicted`，能否降低长闭环中的非法转移与事实遗忘，而不损害任务成功率？
+- **RQ2（correction）**：当环境规则改变或观察相互冲突时，版本化事实与 uncertainty gate 能否撤销旧确定性，而不是把错误永久固化？
+- **H1（closed loop）**：完全移除 evaluator oracle 后，在 horizon `2/8/32` 上，compiled+residual 相对参数/数据/预算匹配的纯神经模型把非法或虚构转移率降低 `>=30%`。
+- **H2（OOD）**：在新地图、未见组合或规则变化上，任务成功率提高 `>=5` 个百分点，且 horizon=32 仍保持方向一致。
+- **H3（cost）**：确定性事实准确率接近 `100%`，端到端推理延迟不超过纯神经基线 `1.20x`，存储与训练成本分别报告。
+
+### 冻结架构边界
+
+- `observed`：由过去 observation/action/next-observation 三元组写入版本化 episodic transition graph，不训练。
+- `entailed`：由公开拓扑/目标语法严格推出，进入可审计 constraint executor，不训练。
+- `uncertain`：交给 learned residual dynamics；禁止把测试环境真值或未来观察写入 graph。
+- `contradicted`：降低旧事实置信度、保留 provenance，并触发重学习；禁止 silent overwrite。
+- uncertainty gate 必须只使用当前与过去信息，并报告 ECE/Brier；不得用任务结果或 evaluator oracle 当路由标签。
+
+### 协议
+
+- 第一阶段复现 SG22R 并移除第二候选 oracle；第二阶段扩到至少一个非 TextWorld 环境（优先 MiniGrid/HomeGrid）。
+- rollout horizon 固定扫 `{2, 8, 32}`；加入 observation 缺失/冲突、地图变化、未见对象组合三类压力测试。
+- 基线至少包括 pure neural、episodic graph retrieval、constraint-only、compiled+residual；统一输入可见性，匹配参数、训练样本和总计算预算。
+- 指标包括 task success、transition validity、known-fact accuracy、contradiction recovery、NLL、ECE/Brier、训练/推理延迟、存储；不得用单一质量指标宣称总体替代 ANN。
+- 所有 graph snapshot、规则版本、数据 split 与 rollout trajectory 落盘并哈希；人工规则必须逐条列出来源和适用域。
+
+### 反证与停机门
+
+- 去掉 oracle 后 SG22R 优势消失，先判定当前机制依赖候选生成，不扩大架构。
+- 非法转移下降仅来自更严格 action mask、但任务成功率或覆盖率显著下降，则 H1 FAIL。
+- 在规则改变时无法撤销旧事实，或 graph 污染比纯神经模型更难恢复，则 RQ2 FAIL。
+- 只在单一 TextWorld 模板成立、无法迁移到第二环境，则 Broader 主张关闭，降级为 TextWorld 工程方法。
+
+### 预定产物
+
+- 无 oracle 的长闭环数据/runner 与逐步 transition audit；
+- versioned causal graph、constraint executor、learned residual 与 calibrated gate；
+- TextWorld + 第二环境的匹配对照和错误分类；
+- 最终 verdict：`GO / NARROW / NO-GO`，保留反例与失败轨迹。
+
+### 当前状态
+
+- **PENDING / PRE-REGISTERED**：本条不把 SG22R 的两步结果外推为通用世界模型成功。
+- 最近邻风险：knowledge-graph memory 与 neuro-symbolic world model 已很拥挤；新颖性必须落在“按认识论状态拆分 transition learning + 可撤销的确定性编译 + 校准 residual gate”。
+
+---
+
 ## 2026-07-20：SG29 猫娘 BPE 大语料长训练 — d4 MoE-SNN 超 Transformer（正面结果，决定性）
 
 ### 背景 / 动机
