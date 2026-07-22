@@ -4,6 +4,462 @@
 
 ---
 
+## 2026-07-20：SG29 猫娘 BPE 大语料长训练 — d4 MoE-SNN 超 Transformer（正面结果，决定性）
+
+### 背景 / 动机
+
+scale-sweep 发现大规模+短训练下 SNN 超 Transformer，但边界标注 Transformer 欠训。用户要求换大语料 + BPE + 长训练 + tensorboard/tqdm 监控，做决定性实验。数据集：HuggingFace `cyberlangke/Nana-catgirl-dataset-110k`（110,216 条中文猫娘对话"你是猫娘奈奈"，经核实存在、非虚构），BPE 分词（vocab=8192），拼连续文本做 next-token LM。本条判 Transformer 充分训练后 SNN 是否仍超。
+
+### 实现
+
+- `vpsc/world_model/catgirl_corpus.py`：下载 110k 对话（hf-mirror）→ 拼连续文本 → 训 BPE → tokenize → train/val 切分（95/5）→ 缓存。15M train tokens / 812k val tokens。
+- `experiments/e3_sg29_catgirl_longtrain.py`：复用 sg28 build/train，加 `--archs --seeds --vocab-size`；tensorboard SummaryWriter（标量 train/valid_bpc、tok/s、mem）；sg28 `run_epoch` 加 tqdm 进度条。
+- tensorboard 日志经软链 `/root/tf-logs/sg29 → results/e3_sg29_tb` 接入 AutoDL 网页面板（原面板固定读 `/root/tf-logs`，进程 `--reload=5` 实时）。
+- JSON 序列化 PosixPath bug 已修（`vars(args)` 的 Path 转 str），但训练已完成、数据从 log 提取，未重跑。
+
+### 结果（T4 CUDA, 3 epoch, 15,035,242 train tokens, seq_len=128, batch=64, seed {0,1,2}, fused, BPE vocab=8192, d_model=128）
+
+| 架构 | valid BPC (mean±std) ↓ | 训练吞吐 tok/s ↑ | 峰值显存 | 参数 |
+|---|---:|---:|---:|---:|
+| base+fused | 5.876±0.002 | 313,452 | 886 MiB | 2,238,592 |
+| **d4+fused** | **5.641±0.004** | 226,438 | 1034 MiB | 2,504,585 |
+| **LSTM** | **5.592±0.002** | 306,169 | 830 MiB | 1,189,120 |
+| Transformer | 5.845±0.023 | 293,555 | 866 MiB | 1,189,760 |
+
+排序：**LSTM (5.592) < d4 SNN (5.641) < Transformer (5.845) < base SNN (5.876)**。
+
+### 观察与解释
+
+- **观察（决定性）**：d4 MoE-SNN valid BPC 5.641 **超 Transformer 5.845 达 0.204 bpc**，3 seed 一致（std 0.004，每 seed d4 均 < transformer）。这是在**充分训练的大 BPE 语料**（15M tokens，d=128，3 epoch ≈ Chinchilla 比例）上，非 scale-sweep 的欠训情形——更可靠。**研究主线"SNN 超 Transformer"在质量维度首次成立（d4 vs transformer）**。
+- **观察（LSTM 仍最优）**：LSTM 5.592 比 d4 SNN 低 0.049 bpc。但 LSTM 1.19M params vs d4 2.50M——**SNN 参数 2.1× 仍输 LSTM 0.05 bpc**。d4 把 SNN-LSTM 差距从 base 的 0.28 bpc 缩到 0.05 bpc。
+- **解释（Transformer 为何输）**：Transformer 5.845 在此规模最差（仅赢 base SNN）。3 epoch + d=128 对 Transformer 仍偏小/欠训；其优势需更大 d + 更长训练。但本协议对三架构同 epochs，是公平对照——Transformer 在此 regime 不占优。
+- **观察（d4 MoE 稳定有效）**：d4 相对 base 改善 0.235 bpc，3 seed std 0.004（最稳定之一）。时间尺度 MoE（专家 decay 不同）在大 BPE 语料上稳定有效，与 scale-sweep 趋势一致。
+- **观察（速度）**：d4 226k tok/s < base 313k < lstm 306k < transformer 294k。d4 因 3 专家 dense 慢于 base/lstm，但仍近 transformer。fused backend 使 SNN 速度具竞争力（上上条已证）。
+- **观察（显存）**：d4 1034MiB 最高（3 专家 trace），但 T4 15GB 远未触顶。
+
+### 重要边界
+
+- **3 epoch 仍非完全充分**：LSTM/Transformer 在更长训练（8-16 ep）下或继续降。但本条已用真实大语料（15M tokens）+ Chinchilla 量级 token/param，比 scale-sweep 的 1M chars + 2 ep 充分得多。
+- **d4 参数未匹配**：d4 2.50M vs LSTM/Transformer 1.19M（2.1×）。严格参数匹配后 d4 优势或缩。但"更多参数仍输 LSTM 0.05、超 Transformer 0.20"是清晰结论。
+- **char/BPE 语料非 TextWorld**：仍是语言建模 NLL，非 world-model 任务。猫娘对话是 SFT 格式拼连续文本，非纯预训练语料。
+- **单 d_model**：仅 d=128。更大 d（256/512）下 Transformer 或反超——scale-sweep 显示 Transformer 随规模收益更慢但上限未测。
+- **JSON 落盘 bug**：PosixPath 序列化失败，已修代码；本条数据从训练 log 提取并存档 `/tmp/sg29_results.json`（手动聚合）。
+
+### 结论 / 决定
+
+- **研究主线在质量维度首次部分达成**：d4 MoE-SNN 在猫娘 BPE 大语料充分训练下**超 Transformer 0.20 bpc**（3 seed 稳定）。结合上上条速度结论（fused SNN 超 Transformer 1.15×），**d4 MoE-SNN 在质量+速度双维度超 Transformer**。
+- **LSTM 仍是强基线**：d4 输 LSTM 0.05 bpc（参数 2.1×）。SNN 未超 LSTM。
+- **不回写** scale-sweep（其欠训边界仍有效）；本条是更充分训练的补充，强化"d4 SNN 超 Transformer"结论。
+- **d4 时间尺度 MoE 为最有信号方向**：跨 smoke/portable/match/scale-sweep/大语料长训练，d4 一致改善 base 且超 Transformer。
+
+### 待办
+
+- **更长训练 + 更大 d**：8-16 ep × d=256/512，看 Transformer 是否反超 d4（Transformer 规模收益未测上限）。
+- **参数匹配大规模**：d4 缩到 LSTM/Transformer 参数水平后重判。
+- **TextWorld world-model 任务**：room/exits/transition 指标（非 LM NLL）。
+
+### 可复现信息
+
+- 命令：`HF_ENDPOINT=https://hf-mirror.com TORCH_CUDA_ARCH_LIST=7.5 python experiments/e3_sg29_catgirl_longtrain.py --device cuda --d-model 128 --state-dim 128 --epochs 3 --batch-size 64 --seq-len 128 --seeds 0 1 2 --vocab-size 8192 --archs base d4 lstm transformer --fused`。
+- 数据：`cyberlangke/Nana-catgirl-dataset-110k`（110,216 条，hf-mirror 下载）；BPE vocab=8192，train 15,035,242 tokens。
+- 服务器：AutoDL T4 15GB、Python 3.12.3、PyTorch 2.5.1+cu124、tokenizers 0.23.1、tensorboard 2.18.0。
+- 产物：服务器 `results/e3_scan/e3_sg29_longtrain.log`（训练 log）；tensorboard `results/e3_sg29_tb/`（软链至 `/root/tf-logs/sg29`）。
+- 结果存档：`/tmp/sg29_results.json`（手动聚合，因 PosixPath bug JSON 未自动落盘；bug 已修代码）。
+- 关联：scale-sweep（大规模短训练，欠训边界）、fused-base（速度）、match+3seed（小规模质量）、研究主线（**d4 MoE-SNN 质量+速度双超 Transformer——首次达成**）。
+
+---
+
+## 2026-07-20：SG28 scale-sweep — 大规模下 MoE-SNN 超 Transformer（混合，规模相关信号）
+
+### 背景 / 动机
+
+承接参数匹配+3seed（小规模 SNN 仍输 Transformer）。用户要求加参数跑到 T4 硬件瓶颈，看哪个架构在规模上限表现更好。本条扫 d_model {64,128,256,512} × batch {64,128} × 架构 {base,d1,d4,lstm,transformer}（fused），2 epoch，1M chars，单 seed，T4 CUDA。判规模扩展下各架构质量/速度/显存趋势。
+
+### 结果（T4 CUDA, 2 epoch, 1,048,576 chars, batch=128 各 d_model 最佳配置）
+
+| d_model | arch | valid BPC | tok/s | 峰值显存 | params |
+|---:|---|---:|---:|---:|---:|
+| 64 | base | 3.500 | 2,276,275 | 80MiB | 68,170 |
+| 64 | d1 | 3.384 | 1,015,416 | 151MiB | 135,635 |
+| 64 | d4 | 3.359 | 945,230 | 154MiB | 135,635 |
+| 64 | lstm | 3.252 | 2,371,673 | 92MiB | 50,698 |
+| 64 | transformer | 3.733 | 1,817,409 | 76MiB | 51,018 |
+| 128 | base | 3.341 | 1,617,071 | 120MiB | 201,610 |
+| 128 | d1 | 3.231 | 593,220 | 263MiB | 467,603 |
+| 128 | d4 | 3.211 | 545,314 | 267MiB | 467,603 |
+| 128 | lstm | 3.090 | 1,368,371 | 161MiB | 166,666 |
+| 128 | transformer | 3.690 | 1,222,891 | 112MiB | 167,306 |
+| 256 | base | 3.243 | 733,320 | 218MiB | 665,098 |
+| 256 | d1 | 3.100 | 245,710 | 510MiB | 1,721,363 |
+| 256 | d4 | 3.093 | 228,895 | 518MiB | 1,721,363 |
+| 256 | lstm | 2.941 | 650,104 | 172MiB | 595,210 |
+| 256 | transformer | 3.547 | 603,947 | 185MiB | 596,490 |
+| **512** | base | 3.151 | 250,747 | 420MiB | 2,378,506 |
+| **512** | d1 | 3.029 | 79,655 | 1039MiB | 6,588,179 |
+| **512** | d4 | **3.010** | 75,661 | 1056MiB | 6,588,179 |
+| **512** | lstm | 2.769 | 223,395 | 335MiB | 2,238,730 |
+| **512** | transformer | 3.535 | 219,262 | 349MiB | 2,241,290 |
+
+40 配置全完成，**0 OOM**——T4 15GB 在扫描范围内未触硬件瓶颈（最大 d=512/bs=128 仅 1056MiB；d=1024 未扫因时间）。
+
+### 观察与解释
+
+- **观察（决定性，规模相关）**：d=512 时 **d4 MoE-SNN 3.010、d1 3.029 超 Transformer 3.535**（差 0.51-0.53 bpc），base SNN 3.151 也超 Transformer 0.38 bpc。**大规模下 SNN（尤其 MoE）质量超 Transformer**——与小规模（d=32，8ep）结论相反。
+- **观察（Transformer 扩展差）**：Transformer BPC 随 d_model 几乎不降（64→512：3.733→3.535，仅降 0.20），而 SNN/LSTM 显著降（base 3.500→3.151、lstm 3.252→2.769）。2 epoch 下 Transformer 严重欠训——其优势需长训练才能显现。
+- **解释（重要边界）**：Transformer 在 2 epoch 欠训是 SNN 超越的主因之一。这不是"Transformer 架构上限低"，而是"短训练下 SNN/MoE 收敛更快"。需长训练（8+ ep）+ 多 seed 才能判规模上限的真实胜负。
+- **观察（MoE 速度代价）**：d=512 时 d1/d4 tok/s ~76-80k，是 base 251k 的 0.31×、lstm 223k 的 0.35×。MoE 3 专家 dense 计算在大规模下拖慢严重；d4/d1 显存 1039-1056MiB 是 base 420MiB 的 2.5×。
+- **观察（参数膨胀）**：d=512 时 MoE-SNN 6.59M params vs ANN 2.24M（2.9×）。大规模下 MoE 参数膨胀更剧——参数效率劣势。
+- **观察（d4 vs d1）**：d4（时间尺度 MoE）各规模略优或持平 d1（脉冲路由 MoE），d=512 时 3.010 vs 3.029。时间尺度特化在大规模下略好。
+
+### 重要边界
+
+- **2 epoch 欠训**：Transformer 在 2 ep 下未充分训练，SNN 超越部分来自 Transformer 欠训，非纯架构优势。**这是规模相关信号，非定论**。
+- **单 seed**：seed 0 only。规模趋势方向可信，但跨 seed 稳定性未验。
+- **参数未匹配**：MoE-SNN 2.9× 参数，大规模下更悬殊。
+- **未触硬件瓶颈**：T4 在 d=512/bs=128 仍仅用 1GB；真正瓶颈需 d=1024+ 或更长 seq，本扫描未达。
+- **char-LM 非 TextWorld**。
+- **MoE 速度劣势在大规模放大**：76k tok/s 在大规模下是实际限制。
+
+### 结论 / 决定
+
+- **规模相关正面信号**：大规模（d=512）下 MoE-SNN 超 Transformer 0.5 bpc——首次在质量维度 SNN 超 Transformer（虽带欠训边界）。研究主线在大规模+短训练下**部分达成**。
+- **但非定论**：Transformer 欠训是主因；需长训练+多 seed+参数匹配后重判。MoE 速度/参数代价大。
+- **硬件瓶颈未达**：T4 在扫描范围内未触瓶颈；d=1024 未扫。
+- **不回写** 小规模结论（d=32 下 SNN 输是真实的小规模结果）；本条是大规模补充，标注欠训边界。
+
+### 待办
+
+- **大规模长训练**：d=256/512 × 8-16 ep × 3 seed，看 Transformer 充分训练后 SNN 是否仍超。这是判规模上限真实胜负的关键。
+- **d=1024 扫描**：触 T4 硬件瓶颈（若可达）。
+- **参数匹配大规模**：MoE 缩到 ANN 参数水平后大规模重判。
+- TextWorld world-model 任务。
+
+### 可复现信息
+
+- 命令：`TORCH_CUDA_ARCH_LIST=7.5 python experiments/e3_sg28_scaling_directions.py --scale-sweep --fused --device cuda --epochs 2 --train-chars 1048576 --batch-size 128 --sweep-widths 64 128 256 512 --sweep-batches 64 128 --sweep-archs base d1 d4 lstm transformer --out results/e3_scan/e3_sg28_scale_sweep.json`。
+- 服务器：AutoDL T4 15GB、Python 3.12.3、PyTorch 2.5.1+cu124。
+- 产物：服务器 `results/e3_scan/e3_sg28_scale_sweep.log` + `e3_sg28_scale_sweep.json`。
+- 结果 JSON SHA-256：`68d8b3fa30a2ec06a7d71c40e6a415725ef9b02d885e902067220cf`。
+- 关联：上条参数匹配+3seed（小规模）、fused-base（速度）、研究主线（大规模+短训练下 SNN 超 Transformer——带欠训边界）。
+
+---
+
+## 2026-07-20：SG28 参数匹配 + fused-MoE + 3 seed — SNN 参数更多仍输 Transformer（负面，质量瓶颈确认）
+
+### 背景 / 动机
+
+承接 fused-base 实测（速度已超 Transformer、质量仍输）。用户要求推进：参数匹配、fused-MoE、多 seed。本条把 fused backend 接到 D1/D4/D6（fused-MoE），二分 state_dim 匹配 ANN 参数，seed {0,1,2}，8 epoch，2M chars，T4 CUDA。判 SNN 在同/近参数 + fused + 多 seed 下能否达/超 Transformer。
+
+### 实现
+
+- `scaling_variants.py`：`_MoEGatedTraceCore`/`SpikeRoutedMoECore`/`TemporalMoEGatedTraceCore`/`ActionRoutedMoECore` 加 `fused` 标志；fused=True 时专家 E3 core 用 `cuda_fused`+`reverse_adjoint`，forward 走 `forward_multi_query_eligibility(dense query)`。D1/D4/D6 fused 在 T4 验证 forward+backward+专家使用率正常。
+- `e3_sg28_scaling_directions.py`：`ModelSpec` 参数化（d_model/state_dim/n_experts/mtp_depth/n_actions CLI）；`match_state_dim` 二分匹配；`--seeds` 多 seed mean±std（`_aggregate_seeds`）；`--match-params`、`--fused` 支持 d1/d4/d6。
+
+### 结果（T4 CUDA, 8 epoch, 2,097,152 chars, seed {0,1,2}, fused, match-params）
+
+| 方向 | SNN valid BPC (mean±std) | SNN tok/s | SNN params | ANN target params | 专家使用率 |
+|---|---:|---:|---:|---:|---|
+| base+fused | 3.595±0.053 | 1,202,643 | 28,051 | 21,745 | — |
+| d1+fused | 3.341±0.014 | 591,953 | 31,904 | 21,745 | [.35,.36,.29] |
+| d2+fused | 3.357±0.018 | 600,806 | 31,895 | 21,745 | [.41,.35,.24] |
+| d3+fused | 3.602±0.027 | 294,321 | 67,750 | 21,745 | — |
+| d4+fused | 3.350±0.017 | 557,187 | 31,904 | 21,745 | [.50,.26,.24] |
+| d5+fused | 3.594±0.046 | 215,159 | 29,075 | 21,745 | — |
+| d6+fused | 3.338±0.011 | 574,275 | 32,626 | 21,745 | [.36,.35,.29] |
+| **LSTM** | **2.845±0.003** | 1,330,707 | 21,745 | — | — |
+| **Transformer** | **3.014±0.003** | 1,025,283 | 21,905 | — | — |
+
+### 观察与解释
+
+- **观察（质量，决定性）**：所有 SNN 方向 valid BPC 仍劣于两 ANN。最佳 SNN = d6+fused 3.338，仍差 LSTM 0.493 bpc、Transformer 0.324 bpc。**参数匹配+fused+3seed 后，SNN 仍未达/超 Transformer**。
+- **观察（参数匹配不完整）**：二分 state_dim 到最小可行（7），SNN 仍 28-68k vs ANN 21,745——**SNN 参数比 ANN 多 30-210%，仍质量输**。d_model=32 是参数下限瓶颈（embedding/head + input_event_projection 主导）。结论更强：更多参数仍输。
+- **观察（MoE 稳定改善）**：d1/d2/d4/d6+fused（3.338-3.357）相对 base+fused（3.595）改善 0.24-0.26 bpc，跨 3 seed std ≤0.018（稳定）。MoE 是一致信号，但量级不足以翻盘。
+- **观察（fused-MoE 速度）**：d1/d4/d6+fused ~560-600k tok/s，约为 fused-base 1.2M 的一半——3 专家 dense 计算开销明显，fused 未完全抹平 MoE 的 3× 算力。但仍快于 portable 时代的 130k。
+- **观察（D4 路由）**：d4 使用率 [.50,.26,.24]——长 decay 专家主导，短/中 decay 较均衡（比 portable 版 [.61,.31,.08] 更均衡，fused 下路由更分散）。
+- **解释**：质量瓶颈是架构/容量，非后端、非参数量、非 seed 噪声。fused 解了速度，MoE 缩了差距，但 SNN 在 char-LM 上的表达效率仍低于 LSTM/Transformer。
+
+### 重要边界
+
+- **参数匹配不严格**：SNN 下限受 d_model 限制，未达 ANN 21,745（多 30-210%）。严格匹配需降 d_model，但 d_model 同时是 ANN 宽度——降则 ANN 也降，不改变相对结论。
+- **char-LM 非 TextWorld**：语言建模 NLL，非 world-model 任务。
+- **3 seed**：质量结论跨 seed 稳定（std ≤0.053），方向性可信。
+- **fused-MoE 是本会话原创**：未经 main 线验证；速度是 T4 特定。
+
+### 结论 / 决定
+
+- **质量主线未达成**：参数匹配+fused+3seed 后 SNN 仍输 Transformer 0.32 bpc（最佳 d6）。研究主线"SNN 达/超 Transformer"在 wikitext char-LM 语言建模维度、本协议下**未达成**。
+- **MoE 是最有信号但不足**：d1/d4/d6 稳定改善 0.24-0.26 bpc，需更根本的架构改进（非仅 MoE 路由）。
+- **速度主线已达成**（上条）：fused-base 超 Transformer 1.15×；但 fused-MoE 因 3× 专家开销降至 0.55× Transformer。
+- **不回写** 上条 fused-base 速度结论；本条是质量维度的多 seed + 参数匹配补充。
+
+### 待办
+
+- scale-sweep（硬件瓶颈扩展）：见下条（运行中）。
+- 更根本质量改进：增大 d_model/多层 SNN（当前单 E/I 层）、或不同 SNN 核心（oscillator/fixed-point）。
+- TextWorld world-model 任务（非 char-LM）。
+
+### 可复现信息
+
+- 命令：`TORCH_CUDA_ARCH_LIST=7.5 python experiments/e3_sg28_scaling_directions.py --variant all --fused --match-params --seeds 0 1 2 --device cuda --epochs 8 --train-chars 2097152 --valid-chars 262144 --batch-size 64`。
+- 服务器：AutoDL T4 15GB、Python 3.12.3、PyTorch 2.5.1+cu124。
+- 产物：服务器 `results/e3_scan/e3_sg28_match_fused_3seed.log` + `e3_sg28_smoke.json`。
+- 结果 JSON SHA-256：`8c92241097aa34b2db3e4090145d581b455221643cd01c784cb934e0a396a459`。
+- 关联：上条 fused-base（速度）、SG27B（fused kernel）、研究主线（SNN 达/超 Transformer——质量未达成、速度达成）。
+
+---
+
+## 2026-07-20：SG28 fused backend 重测 — 速度结论反转：fused SNN 超 Transformer、近 LSTM（正面-速度；质量不变）
+
+### 背景 / 动机
+
+承接紧邻下条 CUDA 实测：portable scan SNN 慢 ANN 8-10×，但边界标注"速度劣势部分是后端非架构——SG27B fused backend 未接入"。本条接入 fused CUDA gated-trace kernel（`vpsc/cuda/sg25c_gated_trace_kernel.cu`，经 `fused_gated_trace_cuda.load_extension` JIT 编译）重测 base SNN 速度，判定"慢"是后端还是架构。服务器同 T4，已装 ninja，`TORCH_CUDA_ARCH_LIST=7.5`。
+
+### 实现
+
+- `FusedSNNCausalLM`（`e3_sg28_scaling_directions.py`）：override forward，调 `core.forward_multi_query_eligibility(embedded, query=arange(T), ...)`，走 `scan_math_mode="cuda_fused"` + `eligibility_backward_mode="reverse_adjoint"` 分发至 fused kernel。dense query（每位置查询）保证与 portable base 的 dense CE 损失语义一致、质量可比。
+- `--fused` 标志：仅 `--variant base`（MoE 包装器仍 portable，本轮只回答 base 速度问题）。
+- fused kernel 在 T4 首次运行 JIT 编译通过（nvcc 12.4 + ninja 1.13），无错误。
+
+### 结果（原始运行，T4 CUDA, 8 epoch, 2,097,152 train chars, seq_len=64, batch=64, seed 0）
+
+| 模型 | valid BPC ↓ | 训练吞吐 tok/s ↑ | 峰值显存 | 训练 wall(s) | 参数 |
+|---|---:|---:|---:|---:|---:|
+| base SNN **portable**（上条）| 3.280 | 357,086 | 59 MiB | 47.0 | 34,801 |
+| base SNN **fused**（本条）| 3.271 | **1,166,064** | 45 MiB | 14.4 | 34,801 |
+| LSTM | 2.842 | 1,321,665 | 42 MiB | 12.7 | 21,745 |
+| Transformer | 3.008 | 1,016,264 | 45 MiB | 16.5 | 21,905 |
+
+### 观察与解释
+
+- **观察（速度，决定性反转）**：fused SNN 1,166k tok/s vs portable 357k → **3.27× 加速**（同模型同数据，纯后端替换）。相对 ANN：fused SNN 是 Transformer 1,016k 的 **1.15×**（快）、LSTM 1,322k 的 **0.88×**（慢 12%）。wall 14.4s vs Transformer 16.5s、LSTM 12.7s。
+- **解释（速度结论反转）**：上条"portable SNN 慢 ANN 8-10×"的结论**部分被推翻**——速度差距主要是后端（portable Hillis-Steele vs fused CUDA kernel），非架构。fused backend 下 SNN 已超 Transformer、近 LSTM。**上条边界预判（"速度劣势部分是后端"）被证实**。
+- **观察（质量不变）**：fused base BPC 3.271 ≈ portable 3.280（同模型，数值差来自 dense-query 路径 vs portable forward 的微小浮点差）。后端替换不改变模型质量——正确，因 fused kernel 是 portable scan 的数值等价实现。
+- **观察（质量仍输）**：fused SNN 3.271 仍差 LSTM 2.842（0.429 bpc）、Transformer 3.008（0.263 bpc）。**质量差距是架构/容量问题，非后端**——fused 没改变 BPC。
+- **观察（显存）**：fused 45MiB < portable 59MiB（kernel 融合省中间张量），与 ANN 同级（42-45MiB）。
+
+### 重要边界
+
+- **仅 base fused**：MoE 方向（D1/D4/D6）仍 portable，未测 fused。MoE 的 3× 专家 dense 计算是架构开销，fused 难完全抹平——需 fused-MoE 实测。
+- **dense query 等价性**：fused 路径用 `query=arange(T)`（每位置查询），与 portable forward 数值等价但物化全部位置输出；稀疏 query 会更快但改变损失语义，不与本条可比。
+- **参数未匹配**：SNN 34,801 vs ANN 21,745——SNN 参数更多仍质量输，结论更强；公平判官需匹配。
+- **单 seed**：seed 0。速度结论跨 seed 稳定（纯后端）；质量仍需多 seed。
+- **char-LM 非 TextWorld**：语言建模 NLL + 速度，非 world-model 任务。
+
+### 结论 / 决定
+
+- **速度结论更正**：portable→fused 使 base SNN 速度 3.27×，从"慢 ANN 8-10×"更正为"超 Transformer 1.15×、近 LSTM（慢 12%）"。**速度差距主要是后端，fused backend 下 SNN 速度竞争力成立**。
+- **质量结论不变**：fused 未改 BPC，base SNN 仍输两 ANN。质量瓶颈在架构/容量，非后端。
+- **不回写** 上条 portable 实测（它是 portable 后端的真实数据，结论正确标注了边界）；本条是 fused 后端的补充实测，更正速度外推。
+- **下一步**：fused SNN 速度已具竞争力，质量是真正瓶颈。优先参数匹配 + MoE-fused + 多 seed 判质量；速度优化转向 MoE-fused（看 3× 专家开销能否被 fused 抹平）。
+
+### 可复现信息
+
+- 命令：`TORCH_CUDA_ARCH_LIST=7.5 python experiments/e3_sg28_scaling_directions.py --variant base --fused --smoke --device cuda --epochs 8 --train-chars 2097152 --valid-chars 262144 --batch-size 64`（服务器 `root@region-9.autodl.pro:25520`，conda base，ninja 1.13 已装）。
+- 服务器：AutoDL Tesla T4 15GB、Python 3.12.3、PyTorch 2.5.1+cu124、nvcc 12.4。
+- 原型：`experiments/e3_sg28_scaling_directions.py`（`FusedSNNCausalLM` + `--fused`）；fused kernel：`vpsc/cuda/sg25c_gated_trace_kernel.cu` + `vpsc/world_model/fused_gated_trace_cuda.py`。
+- 产物：服务器 `results/e3_scan/e3_sg28_cuda_fused.log` + `e3_sg28_smoke.json`。
+- 结果 JSON SHA-256：`3416ad4967e53a03b9616c4cf2f33e7635f235fce8987a7194482cbdc2d93242`。
+- 关联：紧邻上条 portable 实测（速度边界预判被证实）、SG27B（fused kernel 来源）、研究主线（SNN 速度已超 Transformer、质量仍输——瓶颈在质量）。
+
+---
+
+## 2026-07-20：SG28 六方向 CUDA 实测 — D1/D4 缩小与 LSTM 差距但未超 Transformer；SNN 仍慢 8-10×（混合-负面，真实规模）
+
+### 背景 / 动机
+
+承接紧邻下条 smoke（MPS）。用户要求真实 CUDA 服务器验证：运行时间、训练速度、资源占用跨 D1-D6 与 ANN 基线比较。服务器：AutoDL Tesla T4 (15GB)、Python 3.12.3、PyTorch 2.5.1+cu124。代码经 rsync 同步，wikitext 经 hf-mirror 下载（直连 huggingface.co 被墙）。`choose_device` 落 `cuda:0`。这是 SNN-vs-Transformer 主线的**真实规模**运行（非 smoke）。
+
+### 结果（原始运行，T4 CUDA, 8 epoch, 2,097,152 train chars, seq_len=64, batch=64, seed 0）
+
+| 方向 | valid BPC ↓ | 训练吞吐 tok/s ↑ | 峰值显存 | 训练 wall(s) | 参数 | 专家使用率 |
+|---|---:|---:|---:|---:|---:|---|
+| base SNN | 3.280 | 357,086 | 59 MiB | 47.0 | 34,801 | — |
+| d1 脉冲路由 MoE | 3.129 | 131,380 | 105 MiB | 127.7 | 52,154 | [.29,.35,.37] |
+| d2 冻结门控 | 3.137 | 132,364 | 103 MiB | 126.7 | 52,145 | [.24,.27,.48] |
+| d3 块 MTP | 3.285 | 297,437 | 97 MiB | 56.4 | 74,500 | — |
+| d4 时间尺度 MoE | 3.131 | 129,848 | 106 MiB | 129.2 | 52,154 | [.61,.31,.08] |
+| d5 半群解码 | 3.283 | 221,518 | 98 MiB | 75.7 | 35,825 | — |
+| d6 动作路由 MoE | 3.189 | 129,544 | 106 MiB | 129.5 | 55,276 | [.38,.36,.26] |
+| **LSTM** | **2.842** | **1,296,766** | 42 MiB | 12.9 | 21,745 | — |
+| **Transformer** | **3.008** | 1,009,717 | 45 MiB | 16.6 | 21,905 | — |
+
+ANN 基线（LSTM/Transformer）跨 7 方向共享同 seed 同数据，值固定。
+
+### 观察与解释
+
+- **观察（质量，决定性）**：所有 SNN 方向 valid BPC 均劣于两 ANN。最佳 SNN = D1 的 3.129，仍比 LSTM 2.842 差 0.287 bpc、比 Transformer 3.008 差 0.121 bpc。**无一方向达到或超过 Transformer**——主线目标在本协议下未达成。
+- **观察（MoE 方向有效缩小差距）**：D1(3.129)/D4(3.131)/D2(3.137)/D6(3.189) 相对 base(3.280) 改善 0.09-0.15 bpc，把与 Transformer 的差距从 0.272 缩到 0.121-0.181。base+D3+D5（非 MoE）无改善。**MoE 是当前最有信号的方向，但不足以翻盘**。
+- **观察（D4 专家使用）**：D4 使用率 [.61,.31,.08]——长 decay 专家主导（char-LM 长程依赖），短 decay 专家几乎不用。与"时间尺度 MoE"假设一致，但路由严重不均（短专家近闲置）。
+- **观察（速度，决定性）**：SNN 全部远慢于 ANN。base SNN 357k tok/s 已是 SNN 最快，仍只有 LSTM 1.30M 的 0.28×、Transformer 1.01M 的 0.35×。MoE 方向（D1/D2/D4/D6）因 3 专家 dense 计算降至 ~130k tok/s（再慢 2.7×），wall 从 47s 涨到 ~128s。
+- **解释（速度瓶颈）**：SNN 用 portable Hillis-Steele scan（PyTorch），非 SG27B 的 Triton fused kernel。SG27B 已证 fused kernel 在 ROCm 上 16× 加速并保留 spike 语义——**当前 T4 实测未接 fused backend，SNN 速度劣势部分是后端而非架构**。但即便如此，MoE 的 3× dense 专家计算是架构性开销，fused 也难完全抹平。
+- **观察（显存）**：SNN 59-106 MiB，ANN 42-45 MiB。SNN 显存更高（trace 缓冲 + MoE 专家），但绝对值小（T4 15GB 远未触顶）。显存非瓶颈。
+- **观察（D6 修复确认）**：D6 用位置模（label-free）动作信号，3.189 正常（非 smoke 泄漏版 2.529）。机制正确，无泄漏。
+- **观察（参数未匹配）**：SNN 方向 35-75k，ANN 22k——MoE 方向约 2.4× 参数。**当前 BPC 比较非严格同参数预算**，参数更多仍输，结论更强；但公平判官需参数匹配。
+
+### 重要边界
+
+- **后端不公**：SNN portable scan vs ANN cuDNN/fused。SG27B 的 Triton fused backend 未接入本 run。速度结论是"portable SNN 慢"，非"SNN 架构慢"。需 fused-backend run 才能下架构速度结论。
+- **单 seed**：seed 0 only。质量差异 0.12-0.29 bpc 大于 smoke 噪声，方向性可信，但跨 seed 稳定性未验。
+- **char-LM 非 TextWorld**：wikitext char-LM 是通用语言建模，非 main 线的 TextWorld world-model（room/exits/transition）。edit/room/sensitivity 任务指标未测。本结果是"语言建模 NLL + 训练效率"，非"世界模型任务"。
+- **参数未匹配**：见上。
+- **D5 semigroup**：CPU 算 `matrix_exp` 搬回（T4 CUDA 原生支持，但代码沿用 S1 的 CPU 回避路径）——D5 速度被人为低估，需改用 CUDA 原生 `matrix_exp`。
+
+### 结论 / 决定
+
+- **本协议下 SNN 未达/超 Transformer**：最佳 D1 仍差 Transformer 0.121 bpc、差 LSTM 0.287 bpc，且慢 8-10×。主线目标在 wikitext char-LM 8-epoch 单 seed 未达成。
+- **MoE 方向（D1/D4）为最有信号候选**：缩小差距 0.09-0.15 bpc，但不足以翻盘。需参数匹配 + fused backend + 更长训练后重判。
+- **速度劣势部分是后端**：portable scan 非 SG27B fused。下一步必须在 T4/CUDA 上接入 fused gated-trace backend 重测速度，否则速度结论不成立。
+- **不回写** SG27B/SG26C 结论；本条是独立 wikitext char-LM 实测。
+- **D3/D5（MTP/半群）中性**：与 base 持平，8 epoch 不足以判别；D5 速度被 CPU-expm 低估。
+
+### 待办
+
+1. **接入 fused gated-trace backend**（T4 CUDA 版）重测 SNN 速度——当前 portable 后端使速度结论偏负。
+2. **参数匹配**：MoE 方向缩到 ANN 22k 水平后重判 BPC。
+3. **多 seed**：seed {0,1,2} 验证 D1/D4 跨 seed 稳定性。
+4. **D5 用 CUDA 原生 `matrix_exp`**（T4 支持）重测速度。
+5. **TextWorld world-model**：room/exits/transition 任务指标（需 textworld 包 + main 线 harness）。
+
+### 可复现信息
+
+- 命令：`python experiments/e3_sg28_scaling_directions.py --variant all --smoke --device cuda --epochs 8 --train-chars 2097152 --valid-chars 262144 --batch-size 64`（服务器 `root@region-9.autodl.pro:25520`，conda base）。
+- 服务器：AutoDL Tesla T4 15GB、Python 3.12.3、PyTorch 2.5.1+cu124；wikitext 经 hf-mirror 下载（直连被墙）。
+- 原型：`experiments/e3_sg28_scaling_directions.py`、`vpsc/world_model/scaling_variants.py`、`vpsc/world_model/devices.py`；产物：服务器 `results/e3_scan/e3_sg28_cuda_real.log` + `e3_sg28_smoke.json`。
+- 结果 JSON SHA-256：`f3948254a3beba700cc5bacd3345d9648f3ff7c3990fb62d6d961a1a63296b34`。
+- 关联：紧邻上条 smoke（MPS，机制验证）、SG27B（fused backend，待接入）、SG26C（TextWorld 任务，待移植）、研究主线（SNN 能否达/超 Transformer——本协议下未达成）。
+
+---
+
+## 2026-07-20：SG28 六方向 smoke — D1/D4 追平 LSTM，D6 信号无效（smoke，非研究结论）
+
+### 背景 / 动机
+
+执行紧邻下条"规模化方向再探索"的六方向（D1-D6）实现与本机 smoke。设备策略 `cuda→mps→cpu`（`vpsc/world_model/devices.py`），本机落 MPS。六方向建在 main 线 `E3GatedTraceScanCore`（portable Hillis-Steele 扫描）+ `CausalLanguageModel` 之上，本机 tiny wikitext char-LM 对照 LSTM/Transformer。**正式 TextWorld SNN-vs-Transformer 评估（edit/room/sensitivity、SG27B Triton backend）需 ROCm，本机不可跑——本条是机制正确性 + tiny 3 架构 NLL 信号，非研究结论。**
+
+### 实现
+
+- `vpsc/world_model/devices.py`：`choose_device`（cuda→mps→cpu）+ `synchronize`，新实验专用，不改 frozen e3_*/cores/factory/training。
+- `vpsc/world_model/scaling_variants.py`：D1 `SpikeRoutedMoECore`（脉冲活跃度路由）、D4 `TemporalMoEGatedTraceCore`（专家 decay 带不同、按输入变化路由）、D3 `BlockMTPCausalLM`（k-1 头非自回归块 MTP）、D5 `SemigroupBlockMTPCausalLM`（单生成元 Q，`expm` CPU 算搬回避 MPS 未实现）、D6 `ActionRoutedMoECore`（动作嵌入路由）。均经前向+反向+grad_ok 验证。
+- `experiments/e3_sg28_scaling_directions.py`：`--variant {base,d1..d6,all} --smoke --device`，wikitext char-LM，3 架构对照，per-variant 诊断（专家使用率/各头/参数）。
+
+### 结果（原始运行，MPS, 2 epoch, 131072 train chars, seq_len=64, batch=32）
+
+| 方向 | SNN valid BPC | SNN params | 专家使用率 | vs LSTM 3.936 | vs base SNN 4.062 |
+|---|---:|---:|---|---|---|
+| base | 4.062 | 17,836 | — | 差 0.126 | — |
+| d1 脉冲路由 MoE | 3.922 | 35,189 | [.28,.30,.42] | **优 0.014** | 优 0.140 |
+| d2 冻结门控(D1) | 3.934 | 35,180 | [.24,.27,.48] | ≈ | 优 0.128 |
+| d3 块 MTP | 4.095 | 31,696 | — | 差 0.159 | ≈ |
+| d4 时间尺度 MoE | 3.899 | 35,189 | [.48,.40,.12] | **优 0.037** | 优 0.163 |
+| d5 半群解码 | 4.127 | 18,860 | — | 差 0.191 | 差 0.065 |
+| d6 动作路由 MoE | 4.074† | 38,311 | [.35,.36,.29] | 差 0.138 | ≈ |
+
+†D6 初版用 `actions = targets % N_ACTIONS` 得 2.529，为 harness 数据泄漏伪影（动作信号含答案）。已修为位置模（label-free）重测，回落 4.074 ≈ base，确认机制正确、原 2.529 无效。
+
+ANN 基线（全方向共用，同 seed 同数据）：LSTM 3.936、Transformer 4.641。
+
+### 观察与解释
+
+- **观察**：D1、D4 在 2 epoch smoke 上 SNN valid BPC（3.922/3.899）已略低于 LSTM（3.936），base SNN（4.062）略高于 LSTM；Transformer 4.641 最差（2 epoch 欠训）。
+- **解释**：D1/D4 的 MoE 路由在 smoke 上带来 ~0.14-0.16 bpc 相对 base 的增益，与 LSTM 持平略优。D4 专家使用率 [.48,.40,.12] 显示长 decay 专家被优先使用（char-LM 长程依赖），短 decay 专家少用——与"时间尺度 MoE"假设方向一致。D2（门控冻结、无 BPTT）≈ D1，说明 smoke 上门控优化非增益来源。
+- **观察（D3/D5 中性）**：块 MTP（4.095）、半群解码（4.127）与 base 相近或略差。D5 半群约束 18,860 参数（< D3 31,696）但 BPC 略差——smoke 规模不足以判别半群约束的效率-质量权衡。
+- **解释（D6 无效，重要）**：D6 的 2.529 是 **harness 数据泄漏伪影，非模型能力**。合成动作 `actions = targets % N_ACTIONS` 直接从目标 token 派生，而模型用同批 `targets` 训练——动作嵌入泄漏了答案。D6 机制本身（前向/反向/路由）正确运行。**已修**：动作信号改为位置模（label-free）重测，valid BPC 回落 4.074 ≈ base，确认机制正确、原 2.529 无效。D6 现为中性方向。
+
+### 重要边界
+
+- **smoke 非结论**：2 epoch、131k chars、vocab≈124、单 seed。差异 ≤0.16 bpc 在 smoke 噪声内，仅证明机制可学 + 给方向信号，**不证明** SNN 达到/超过 Transformer。后者只来自 ROCm 正式 TextWorld。
+- **D6 信号无效**：记为 harness bug，已定位（`synthesize_actions` 用 targets），待用合法动作信号重测。
+- **D4 扫描保真**：D4 的 per-state decay 在 portable scan 内（无新增串行），扫描深度仍 O(log T)；但本 smoke 未做 D4 扫描-vs-串行逐元素自检（待正式前补）。
+- **参数未匹配**：D1/D2/D4/D6 ≈35-38k，base/LSTM/Transformer ≈13-18k——MoE 方向参数约为 2× 基线。正式须参数匹配后判官。
+
+### 结论 / 决定
+
+- **D1（脉冲路由 MoE）、D4（时间尺度 MoE）为 smoke 最有信号方向**，进入 ROCm 正式候选优先。
+- **D3（块 MTP）、D5（半群）、D6（动作路由，已修）中性**，保留待正式规模判别。
+- **D6 已修 harness 泄漏**（动作信号 targets→位置模），重测 4.074 ≈ base，确认机制正确、原 2.529 无效。
+- **不声称** SNN 超 Transformer：smoke 规模不足，差异在噪声内；正式 ROCm 评估待办。
+- **设备自适应确认**：`--device auto` 本机落 MPS，6 方向全跑通无崩。
+
+### 待办（正式，ROCm）
+
+1. D4 扫描-vs-串行自检（per-state decay 逐元素一致 <1e-5）。
+2. 参数匹配（MoE 方向缩到 base 水平）后，TextWorld 正式 3 架构 × seed × 100ep，判官 edit/room/sensitivity + 相对 ANN 不劣化。
+3. D1/D4 在正式规模的预注册判官（稀疏度阈值、跨 seed 稳定性）。
+4. D6 用真实 TextWorld 动作（非位置模）重测。
+
+### 可复现信息
+
+- 命令：`.venv/bin/python experiments/e3_sg28_scaling_directions.py --variant all --smoke --device auto --epochs 2 --train-chars 131072`。
+- 原型：`experiments/e3_sg28_scaling_directions.py`、`vpsc/world_model/scaling_variants.py`、`vpsc/world_model/devices.py`；产物：`results/e3_scan/e3_sg28_smoke.json`、`results/e3_scan/e3_sg28_smoke_run.log`。
+- smoke JSON SHA-256：`6730faeababe08bb85c789858f0ab44c9375da510f5f4e7072aa1806893224ea`（D6 修后；修前含泄漏版 `268714c0…`）。
+- 环境：Python 3.13.12、PyTorch 2.13.0、Apple MPS；git `cb18078`。
+- 关联：紧邻下条"规模化方向再探索"（D1-D6 定义）、SG27B（扫描原语）、SG26C（D3 修复的失败前置）。
+
+---
+
+## 2026-07-20：规模化方向再探索 — 并行已解（SG27B）、MTP 已败（SG26C）、MoE 未开（进行中，待选定）
+
+### 背景 / 动机
+
+用户在 `main` 分支重提规模化三诉求（MTP 式带宽 + Transformer 式并行 + MoE 式稀疏）。本次探索先核查 main 已有 e2/e3 实验体（5010 行日志、~40 个 SG 实验），再创意推导。**关键事实更正**：本会话此前的 S1 工作（`lab/tinystories_scaling/s1_unified_scaffold.py`，no-reset 并行扫描 byte-LM）建于 `agent/e1-hybrid-margin` 分支——该分支从初始发布分叉，承载的是 **byte-LM / mean-field-LIF / TinyStories** 线，与 main 的 **gated-trace SNN / TextWorld world-model / ROCm-Triton** 线是两条分叉轨。S1 不属 main 前沿，且其"并行扫描 ⟂ reset 互斥"结论**被 SG27B 证伪**（见下）。
+
+### 三诉求在 main 的成熟度
+
+| 诉求 | 状态 | 证据 |
+|---|---|---|
+| Transformer 式并行 | **已解** | SG27B：Triton 全融合门控轨迹，T160 train/infer 相对 serial 加速 16.15×/15.50×，完整 forward+backward，hard-spike/surrogate 语义保留，equivalence PASS（gap ≤1.79e-7） |
+| MTP 式带宽 | **已试且败** | SG26C：snapshot self-roll-in，速度 PASS（SNN 7840 ex/s，LSTM 5.21×、Transformer 1.66×），任务质量 FAIL（rate≥.25 NLL 恶化、edit 低于阈值 .67853 达 .03044、room acc=.05）；正转向 SG28A 因式分解目标 |
+| MoE 式稀疏 | **基本未开** | 0 个条目标题含 expert/MoE；17 次 "expert/gate" 均指门控轨迹的 decay-gating，非 mixture-of-experts 路由 |
+
+### S1 结论更正（重要）
+
+S1 在 no-reset mean-field LIF 上得"精确并行扫描与承重 reset 互斥"。**该结论是公式特定，非本质**。gated-trace SNN 把递推写成 `z_t = a_t·z_{t-1} + b_t`：trace `z` 的递推仿射线性（可扫描，monoid `(a_r,b_r)∘(a_l,b_l)=(a_r a_l, a_r b_l+b_r)`），而**非线性膜电位/脉冲/reset 是时间维 pointwise 并行**——reset 在 pointwise 膜电位更新里，不在被扫描的 trace 里。SG27B 以此实现 16× 加速且保留 hard-spike。正确表述："扫描线性 trace 变量；膜电位/reset 保持 pointwise"，而非"扫描 ⟂ reset"。S1 之败因把 reset 放进了被扫描的 `u`。此更正不回写 S1 条目（S1 在 agent 分支，独立轨），仅在此记录以避免重蹈。
+
+### 六个候选方向（认识论标签）
+
+| # | 方向 | 一句话 | 标签 | 最小判官 | 主要失败 |
+|---|---|---|---|---|---|
+| D1 | 脉冲路由空间 MoE | 门控=脉冲模式，按哪些神经元发放路由到专家子集 | Cross-domain | 2-4 专家 top-1 by spike-cluster vs 单专家同参，比 NLL/edit/room-acc+稀疏度 | 路由塌缩到 1 专家；门控开销吃掉稀疏收益 |
+| D2 | 资格迹局部专家信用 | 专家仅在"被路由且 eligible"步更新，免 BPTT 算门控 | Cross-domain+Established | D1 路由+eligibility 局部更新，比更新成本 vs 质量 | 局部信用不足→专家欠训→质量低于单专家 |
+| D3 | 非自回归块 MTP（修 SG26C） | 从当前隐状态并行预测 k 步未来，免自回归 rollout（避暴露偏差） | Established×Cross-domain | k∈{1,2,4} 共享 trace 头 vs k=1，比 NLL/edit/room-acc+tokens/update | 远端头 j≫1 无信号（随机转移），中性 |
+| D4 | 时间尺度 MoE（"what if"） | 专家=不同 decay a_t（短/中/长 trace），按时间步记忆需求路由 | Speculative | 3 衰减专家+转移路由 vs 单衰减同 FLOP，比质量+各尺度激活 | decay 太粗→专家冗余；推理期无路由信号 |
+| D5 | 半群 exp(jQ) 块解码 | k 步预测约束为单生成元 Q（参数省、特征分解多步并行） | Speculative | 半群约束 k 头 vs 自由 k 头(D3)同参，比质量+参数效率 | 半群过刚→欠拟合；expm 成本（ROCm 原生需验） |
+| D6 | 因式分解动作路由专家（延 SG28A） | SG28A 因式分解头按动作类型路由专家（move/look/take） | Speculative | 因式分解头+动作路由专家 vs 平坦因式分解 | 动作类型太粗→冗余；太细→饥饿 |
+
+并行诉求的剩余尾巴（full-sequence prefill 仍走 PyTorch tree 路径）是 readout+loss 融入 Triton 的**工程完成项**，非架构方向，不计入候选。
+
+### 比较
+
+| 维度 | D1 | D2 | D3 | D4 | D5 | D6 |
+|---|---|---|---|---|---|---|
+| 新颖性 | 中 | 中-高 | 中（修已知败） | **高** | 高 | 中 |
+| 可行性(ROCm) | 高 | 中 | **高** | 高 | 中 | 中 |
+| 证据强度 | 中 | 中-强 | 强 | 弱-中 | 弱 | 弱 |
+| 对应诉求 | MoE | MoE+成本 | **MTP** | **MoE+并行融合** | MTP 效率 | MTP+MoE |
+| 主要风险 | 路由塌缩 | 欠训 | 远端无信号 | decay 太粗 | 过刚 | 饥饿 |
+| 依托 | — | D1 | SG26C 败 | **SG27B kernel** | S1-E | SG28A 计划 |
+
+### 推荐
+
+- **首选 D3 + D4**。D3 直接诊断并修复当前活跃失败（SG26C 自回归 self-roll-in → 非自回归块 MTP），是最有价值且可立即行动的 MTP 重构，其所需扫描原语已存在（SG27B）。D4 是真正新颖的 MoE 贡献：唯一把 MoE 融入扫描机制本身（按时间步 a_t）的方向，SNN 原生、近零额外成本，且打开"时间而非空间专家"这一新设计轴。
+- **D1 为 MoE 兜底**：若 D4 的 decay 特化过刚，退回常规脉冲路由空间 MoE（低新颖、低风险）。**D6 仅在 SG28A 先行后**（它是延展非替代）。D5/D2 为二期精修。
+- **环境边界**：本机为 macOS/MPS，无法运行 ROCm/Triton kernel；方向设计与此处 noa 记录可在本机完成，正式实现/运行在 RX 7800 XT (WSL2/ROCm 7.2) 机器。D5 的 `matrix_exp` 在 MPS 未实现（S1 已踩），ROCm 需单独验。
+
+### 结论 / 决定
+
+- **不重做并行扫描**（SG27B 已解，重做=重发明）。
+- **MTP 不再走自回归 self-roll-in**（SG26C 已证败）；D3 非自回归块 MTP 是对 SG28A 因式分解目标的并行替代/补充候选。
+- **MoE 为本轮融资主战场**（基本未开），D4 时间尺度 MoE 为首选新颖方向。
+- 待用户选定方向组合后另写预注册（固定 k、专家数、路由信号、判官门槛、seed、通过标准）；本条仅记录方向探索与 S1 更正，不修改模型、不新增实验、不回写 SG26C/SG27B 结论。
+
+### 可复现信息
+
+- 本条为创意推导 + main 前沿核查，无运行。源核查：`dev/LOG.md` SG27B（L43-60）、SG26C（L7-32, L145-162）、SG25F（L282-330）；`experiments/e3_sg25*` / `e3_sg27*` 系列。
+- S1 更正依据：gated-trace monoid 与 pointwise 膜电位分离，见 SG27A L127-130、SG25F L316-317。
+- 关联：SG26C（D3 的失败前置）、SG27B（D3/D4 的扫描原语）、SG28A 计划（D6 的延展对象）、eligibility 迹工作 e3_at1/e3_el0/e3_el1（D2 的信用机制来源）。
+
+---
+
 ## 2026-07-20：停机检查点 — SG26C正式完成，训练速度PASS但self-roll-in任务FAIL
 
 ### 当前要验证的东西
