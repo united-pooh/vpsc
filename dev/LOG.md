@@ -4,6 +4,47 @@
 
 ---
 
+## 2026-07-22：LDAA-2A non-VPSC diagonal SSM + event-token LM — 正式协议（PENDING）
+
+### 研究问题与第二核心边界
+
+LDAA-1 已在 E3 gated trace 上通过 exact sparse crossover，但尚不能说明收益是否迁移到非 VPSC recurrence，也没有模型级 quality。LDAA-2A 新增最小实值 diagonal linear SSM：`h_t = decay ⊙ h_{t-1} + W x_t`，输出稀疏 query states。它没有 E/I、spike、hard reset、surrogate、MoE 或 VPSC 路由；若 segmented adjoint 在这里仍精确且更快，才支持“对角递推 + 稀疏 loss”的 broader operator 解释。
+
+segmented backward 只在 K 个 query anchors（以及存在 final-state gradient 时的 final anchor）上反向组合 `decay^distance`，随后解析填充完整 input gradient；decay gradient 仍逐时刻累加，禁止靠丢弃 dense input/parameter gradient获得收益。
+
+### 冻结 operator 与模型协议
+
+| 项目 | 冻结值 |
+|---|---|
+| operator | `B=2,T=2048,H=32,K/T=1/64`，CPU threads=4，warmup=1，interleaved repeats=5 |
+| exactness | query/final/input/initial/decay gradients 对 BPTT `atol=2e-5,rtol=1e-4` |
+| sparse crossover | segmented p50 speedup `>=1.5x` 且 unique saved storage `<=25% BPTT` |
+| real corpus | SG22R 本地 frozen `train/valid/token_events.txt`，只由 train 建 vocab，max vocab=512 |
+| model | embedding-32 + diagonal SSM-32 + LayerNorm + decoder；BPTT/segmented 参数完全同构同初值 |
+| sparse LM | seq=128，batch=8，K/T=`1/64`（每序列2个 next-token targets），AdamW lr=`1e-3` |
+| budget | seeds `{0,1,2}`，60 updates，valid 12 batches；相同 batch 顺序 |
+
+模型 H3 冻结为每 seed `abs(segmented valid NLL - BPTT valid NLL) <=.10`，且60步后所有参数 max abs difference `<=1e-3`。更新 p50 与 speedup 全量报告，但不设模型速度门，避免把短 CPU Python runner 当部署结论。
+
+### 证据等级与已知 smoke
+
+- 结构测试覆盖 final query 有/无、完整 final-state loss、input/initial/decay gradient，当前 `3 passed`。
+- 正式预注册前做过一次同 shape feasibility smoke（repeats=3）：exactness PASS、speedup 约 `31.6x`，但 raw unique saved storage ratio 约 `50.45%`，已预示继承自 LDAA-1 的 `25%` 门可能 FAIL。**不因 smoke 放宽门槛**；因此本轮 formal 是固定阈值确认，不是完全 blind 的存储发现。
+- 50% 的可能原因是最小 recurrence 的 BPTT 只需 input+state 两份主存储，而 segmented 至少必须保留完整 input 以计算 decay/input gradients；若 formal 重现，只能判 broader memory claim 不迁移，不能改成“扣除共同 input 后”追认 PASS。
+
+### 冻结 verdict
+
+- 全部 operator exact/speed/storage 与模型 quality/trajectory 门通过：`SECOND_CORE_MODEL_GO_DISPATCHER_REQUIRED`，之后才做未见 timing cells 上的 train/holdout dispatcher。
+- exact 或模型 quality 失败：`NARROW_OR_NO_GO_SECOND_CORE`，broader 主张关闭。
+- 仅 storage `>25%`、其余通过：机器 verdict 仍按冻结规则为 FAIL；解释上可保留“速度与模型质量迁移、内存比例不迁移”的 **NARROW** 子结论，不得升级 GO。
+- 正式命令：`python3 experiments/e3_ldaa2_diagonal_model_validation.py --operator-length 2048 --operator-state-dim 32 --density 0.015625 --model-dim 32 --sequence-length 128 --batch-size 8 --steps 60 --eval-batches 12 --learning-rate 0.001 --max-vocab 512 --seeds 0 1 2 --threads 4 --repeats 5 --out results/e3_scan/e3_ldaa2_diagonal_model_validation.json`。
+
+### 当前状态
+
+- **PENDING / PROTOCOL FROZEN**：先提交并推送实现、测试与本协议，再运行正式命令；不会依据 formal 调整 `.25/.10/1e-3` 门。
+
+---
+
 ## 2026-07-22：LDAA-1 native segmented-adjoint operator crossover — 正式结果（operator 正面，模型验证待完成）
 
 ### 背景 / 动机
