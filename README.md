@@ -143,6 +143,13 @@ across 3 seeds) and the fused base SNN is 1.15× faster than the Transformer
 
 ## Repository
 
+Branch policy: `main` is the stable baseline and accepts only validated,
+non-regressing mechanisms. New architecture, routing, sparse-compute, and
+training-rule experiments must be developed on a dedicated
+`codex/research-<topic>` branch and promoted as minimal atomic commits only after
+their preregistered gates pass. See
+[`docs/research_workflow.md`](docs/research_workflow.md) for the full workflow.
+
 ```
 vpsc/
   neurons.py        Mean-field LIF: m = tanh(β(u−θ)), hard spike, spectral_radius
