@@ -4,7 +4,7 @@
 
 ---
 
-## 2026-07-22：TBC-1 factorised Phase-A grid — 正式预注册（PENDING）
+## 2026-07-22：TBC-1 factorised Phase-A grid — 正式结果（负面，NO_MECHANISM_SIGNAL）
 
 ### 背景 / 动机
 
@@ -63,7 +63,60 @@ parameter-matched base 的 paired accuracy/NLL 同时报告但不纳入 G1：若
 
 ### 当前状态
 
-- **PENDING / PRE-REGISTERED**：尚未执行冻结命令；本条先提交并推送，再开始正式网格。
+- **预注册版本已先提交并推送**：commit=`aef7347`，在正式命令执行前已包含冻结网格、阈值、semantics 和 verdict 逻辑；以下结果未回改判官。
+
+### 正式运行与产物审计
+
+- 执行命令与上文冻结命令逐字一致；process wall=`23.99 s`。
+- 环境：macOS arm64、Python `3.9.6`、PyTorch `2.8.0`、CPU；吞吐不用于 GPU/正式效率结论。
+- 产物：`results/e3_scan/e3_tbc1_temporal_basis_phase_a_grid.json`，`180,605 bytes`，SHA-256=`91c14a500072fd26b4759bc9d5ebc770673f3e9d01b57adf6784e29e6a361de2`。
+- 完整性：`9/9 cells`、每 cell `15` rows、共 `135` 次训练；seeds=`0/1/2`，所有 normal NLL/accuracy 有限。
+- valid query count=`126..921`，实际 event density=`0.03076..0.22485`，名义 event probability 成功形成分离区间。
+- 每 cell temporal params=`7,235`、matched-base=`7,194`，最大 relative gap=`0.5667%`，远低于 `5%`。
+
+### 逐 cell 配对结果
+
+正号约定：accuracy 列正值表示 temporal 优于 homogeneous；NLL 列正值表示 temporal NLL 更低；intervention drop 正值表示干预损害 temporal。
+
+| horizon | event p | 实际 density | temporal-homogeneous acc | homogeneous-temporal NLL | uniform acc drop | reverse acc drop |
+|---:|---:|---:|---:|---:|---:|---:|
+| 2 | .05 | .0459 | +5.674pp | -.0161 | +11.702pp | +.532pp |
+| 2 | .15 | .1255 | -3.048pp | +.0243 | +7.588pp | -.713pp |
+| 2 | .30 | .2249 | -1.665pp | -.0719 | +10.532pp | +1.773pp |
+| 8 | .05 | .0427 | +2.095pp | +.0049 | +4.381pp | +1.524pp |
+| 8 | .15 | .1169 | +1.183pp | +.0109 | -.557pp | -.626pp |
+| 8 | .30 | .2097 | -1.203pp | +.0003 | -1.048pp | -.039pp |
+| 24 | .05 | .0308 | -1.587pp | +.0011 | -.529pp | -.794pp |
+| 24 | .15 | .0896 | -.272pp | +.0045 | -.636pp | +.091pp |
+| 24 | .30 | .1641 | +.446pp | +.0004 | +.347pp | +.446pp |
+
+### 冻结 gate 结果
+
+| gate | 冻结门 | 结果 | 判定 |
+|---|---:|---:|---|
+| G1 paired effect | NLL `>=.10` 或 accuracy `>=5pp` | NLL=`-.004625`；accuracy=`+.1803pp` | **FAIL** |
+| G2 cell consistency | `>=6/9` | `8/9` | PASS |
+| G3 router intervention | uniform/reverse 任一 `>=3pp` | uniform=`3.531pp`；reverse=`.244pp` | PASS |
+| G4 parameter audit | gap `<=5%` | max=`.5667%` | PASS |
+| short semantics | high-p short usage `>=+.02`，至少2/3 | `-.0301/-.0315/-.0226`，`0/3` | **FAIL** |
+| long semantics | h24 long usage `>=+.02`，至少2/3 | `+.0115/+.0075/+.0042`，`0/3` | **FAIL** |
+
+补充容量对照 grand mean：temporal accuracy 比 parameter-matched base 低 `3.498pp`；temporal NLL 仅低 `.004872`。这既不是明确质量优势，也不足以排除单 core 容量解释。
+
+### 观察与解释
+
+- **观察**：temporal 对 homogeneous 的 grand-mean accuracy 只高 `.180pp`，NLL 反而高 `.004625`，远离冻结效应量门；G1 不是“临界未过”，而是基本无整体效应。
+- **观察**：uniform router 在 grand mean 上影响 `3.531pp`，但收益集中在 horizon=2 的三个 cell；horizon=8/24 多数 cell 干预接近零或反向。G3 只能证明部分短程 regime 使用了动态权重，不能证明普遍时间尺度路由。
+- **观察**：event probability 增大时 short-expert usage 在三个 horizon 全部下降，且绝对量 `2.26..3.15pp`；方向与“变化密集→短尺度”假设相反。long-horizon 对 long expert 的使用虽为正，但只有 `.42..1.15pp`，全部低于 `.02` 门。
+- **解释**：当前 change router 可能学习了与 token-change 强度相关的一般混合权重，但没有形成预注册的 short/medium/long 语义；SG29 的 d4 增益更可能来自额外容量、优化差异或特定语料统计，而不是本实验所定义的时间尺度专门化。
+- **边界**：这是 d=16、2 epochs、synthetic recall 的机制反证，不推翻 SG29 在猫娘 BPE 上测得的 d4 质量；它否定的是“已有 d4 增益已被因果归因为时间尺度专家”这一解释，以及按当前机制直接进入 Phase-B 的资格。
+
+### 结论 / 决定
+
+- 机器 verdict 与人工审计一致：**`NO_MECHANISM_SIGNAL`**。
+- 按预注册立即停止 TBC synthetic 扩张：不加 epoch、不加 width、不调阈值，不进入真实语料 Phase-B，不向 `main` 晋级。
+- 保留 SG29 的有界工程结论“dense d4 在该协议改善 base”；撤销/冻结更强的“短中长专家产生该增益”机制主张。
+- 方向三在当前设计下关闭；若未来重启，必须提出新的可区分机制（例如共享投影的显式 pole basis 与路由监督），重新开题和预注册，不能把本次 grid 当作待调参 smoke。
 
 ---
 

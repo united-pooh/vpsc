@@ -1,0 +1,5323 @@
+{
+  "experiment": "TBC-1 factorised temporal-basis Phase-A grid",
+  "status": "FORMAL_PHASE_A_GRID",
+  "device": "cpu",
+  "base_task": {
+    "train_sequences": 128,
+    "valid_sequences": 64,
+    "seq_len": 64,
+    "payload_values": 8,
+    "horizons": [
+      2,
+      8,
+      24
+    ],
+    "gap_min": 1,
+    "gap_max": 4,
+    "event_probability": null
+  },
+  "model": {
+    "d_model": 16,
+    "state_dim": 16,
+    "n_experts": 3
+  },
+  "training": {
+    "epochs": 2,
+    "batch_size": 16,
+    "learning_rate": 0.002,
+    "grad_clip": 1.0
+  },
+  "grid_horizons": [
+    2,
+    8,
+    24
+  ],
+  "grid_event_probabilities": [
+    0.05,
+    0.15,
+    0.3
+  ],
+  "variants": [
+    "base_same_width",
+    "base_param_matched",
+    "temporal",
+    "homogeneous",
+    "uniform"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "cells": [
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          2
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.05
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 376,
+        "valid_queries": 188,
+        "train_event_density": 0.0458984375,
+        "valid_event_density": 0.0458984375
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.05720904199999999,
+            "train_tokens_per_s": 286388.29505307926,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.98889548220533,
+            "query_accuracy": 0.35638297872340424,
+            "query_count": 188.0,
+            "elapsed_s": 0.0037243339999999403,
+            "tokens_per_s": 1099793.9497370713
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.042848959000000075,
+            "train_tokens_per_s": 382366.3487367329,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.028727816140398,
+            "query_accuracy": 0.15425531914893617,
+            "query_count": 188.0,
+            "elapsed_s": 0.0030387080000000566,
+            "tokens_per_s": 1347941.2961034505
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.043107958,
+            "train_tokens_per_s": 380069.03504916653,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.8100538520102805,
+            "query_accuracy": 0.48936170212765956,
+            "query_count": 188.0,
+            "elapsed_s": 0.003043874999999918,
+            "tokens_per_s": 1345653.1559279242
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3504395,
+            "train_tokens_per_s": 46752.72051238516,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0148399459554795,
+            "query_accuracy": 0.2074468085106383,
+            "query_count": 188.0,
+            "elapsed_s": 0.014724250000000216,
+            "tokens_per_s": 278180.552489936
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3567214590000001,
+            "train_tokens_per_s": 45929.39277028466,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.002489925699031,
+            "query_accuracy": 0.4095744680851064,
+            "query_count": 188.0,
+            "elapsed_s": 0.014315832999999945,
+            "tokens_per_s": 286116.7771375941
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3451153750000002,
+            "train_tokens_per_s": 47473.97881070928,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0217891715942544,
+            "query_accuracy": 0.46808510638297873,
+            "query_count": 188.0,
+            "elapsed_s": 0.014493332999999886,
+            "tokens_per_s": 282612.7019920147
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12469270799999999,
+            "train_tokens_per_s": 131395.01309090186,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.086554409341609,
+            "query_accuracy": 0.30851063829787234,
+            "query_count": 188.0,
+            "elapsed_s": 0.008524500000000046,
+            "tokens_per_s": 480497.3898762365
+          },
+          "uniform_intervention": {
+            "query_nll": 2.030266520824838,
+            "query_accuracy": 0.22340425531914893,
+            "query_count": 188.0,
+            "elapsed_s": 0.008220833000000205,
+            "tokens_per_s": 498246.3455953792
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.0692298653277943,
+            "query_accuracy": 0.35106382978723405,
+            "query_count": 188.0,
+            "elapsed_s": 0.007804500000000214,
+            "tokens_per_s": 524825.4212313265
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9316126057210921,
+            "short_weight_event_minus_filler": -0.056537821888923645,
+            "normalised_usage_entropy": 0.9052914977073669,
+            "mean_usage": [
+              0.15616849064826965,
+              0.3226052522659302,
+              0.521226167678833
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12039637499999989,
+            "train_tokens_per_s": 136083.831427649,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0059268163873796,
+            "query_accuracy": 0.25,
+            "query_count": 188.0,
+            "elapsed_s": 0.008242624999999837,
+            "tokens_per_s": 496929.07295917027
+          },
+          "uniform_intervention": {
+            "query_nll": 2.002583718046229,
+            "query_accuracy": 0.17553191489361702,
+            "query_count": 188.0,
+            "elapsed_s": 0.008245499999999684,
+            "tokens_per_s": 496755.8061973388
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.989373559647418,
+            "query_accuracy": 0.30851063829787234,
+            "query_count": 188.0,
+            "elapsed_s": 0.008134333000000105,
+            "tokens_per_s": 503544.6667845965
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9943604670155877,
+            "short_weight_event_minus_filler": -0.18267512321472168,
+            "normalised_usage_entropy": 0.8348829746246338,
+            "mean_usage": [
+              0.4556063413619995,
+              0.08044994622468948,
+              0.4639435112476349
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11914129200000012,
+            "train_tokens_per_s": 137517.39405344022,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.8842387947630375,
+            "query_accuracy": 0.3191489361702128,
+            "query_count": 188.0,
+            "elapsed_s": 0.008064000000000071,
+            "tokens_per_s": 507936.50793650345
+          },
+          "uniform_intervention": {
+            "query_nll": 2.0821282495843603,
+            "query_accuracy": 0.1276595744680851,
+            "query_count": 188.0,
+            "elapsed_s": 0.008250750000000195,
+            "tokens_per_s": 496439.71760141844
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.912040887994969,
+            "query_accuracy": 0.20212765957446807,
+            "query_count": 188.0,
+            "elapsed_s": 0.008101334000000016,
+            "tokens_per_s": 505595.7450958067
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9587807937571816,
+            "short_weight_event_minus_filler": 0.06320029497146606,
+            "normalised_usage_entropy": 0.8704455494880676,
+            "mean_usage": [
+              0.5896410942077637,
+              0.1727542132139206,
+              0.23760457336902618
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12036087500000026,
+            "train_tokens_per_s": 136123.96885615832,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.073054611682892,
+            "query_accuracy": 0.2393617021276596,
+            "query_count": 188.0,
+            "elapsed_s": 0.008134042000000008,
+            "tokens_per_s": 503562.681382761
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9416204741660585,
+            "query_accuracy": 0.35638297872340424,
+            "query_count": 188.0,
+            "elapsed_s": 0.008184416000000194,
+            "tokens_per_s": 500463.3195575473
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.0412617452601167,
+            "query_accuracy": 0.24468085106382978,
+            "query_count": 188.0,
+            "elapsed_s": 0.008423792000000319,
+            "tokens_per_s": 486241.82553413534
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9286608360372793,
+            "short_weight_event_minus_filler": -0.057388775050640106,
+            "normalised_usage_entropy": 0.9012572765350342,
+            "mean_usage": [
+              0.15636350214481354,
+              0.31332263350486755,
+              0.5303138494491577
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11937150000000019,
+            "train_tokens_per_s": 137252.19168729533,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9062373156243182,
+            "query_accuracy": 0.32978723404255317,
+            "query_count": 188.0,
+            "elapsed_s": 0.008521750000000328,
+            "tokens_per_s": 480652.4481473691
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9071050742839246,
+            "query_accuracy": 0.30851063829787234,
+            "query_count": 188.0,
+            "elapsed_s": 0.008194542000000027,
+            "tokens_per_s": 499844.8967617698
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.906554321659372,
+            "query_accuracy": 0.31382978723404253,
+            "query_count": 188.0,
+            "elapsed_s": 0.008081874999999794,
+            "tokens_per_s": 506813.0848349058
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.995064118624752,
+            "short_weight_event_minus_filler": -0.18523749709129333,
+            "normalised_usage_entropy": 0.8352804780006409,
+            "mean_usage": [
+              0.44646212458610535,
+              0.08089352399110794,
+              0.4726443290710449
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12433850000000035,
+            "train_tokens_per_s": 131769.3232586846,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9491509960052815,
+            "query_accuracy": 0.13829787234042554,
+            "query_count": 188.0,
+            "elapsed_s": 0.008466499999999932,
+            "tokens_per_s": 483789.05096557405
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9971278886845771,
+            "query_accuracy": 0.11702127659574468,
+            "query_count": 188.0,
+            "elapsed_s": 0.008254041999999906,
+            "tokens_per_s": 496241.72011725244
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.9524295907071296,
+            "query_accuracy": 0.12234042553191489,
+            "query_count": 188.0,
+            "elapsed_s": 0.00793854199999977,
+            "tokens_per_s": 515963.76261536666
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9510441113361129,
+            "short_weight_event_minus_filler": 0.05451709032058716,
+            "normalised_usage_entropy": 0.8828231692314148,
+            "mean_usage": [
+              0.5757970213890076,
+              0.17720675468444824,
+              0.24699613451957703
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11701487500000018,
+            "train_tokens_per_s": 140016.38680552345,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9522506626362497,
+            "query_accuracy": 0.425531914893617,
+            "query_count": 188.0,
+            "elapsed_s": 0.008949707999999834,
+            "tokens_per_s": 457668.56304139487
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11556529200000032,
+            "train_tokens_per_s": 141772.669946613,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9741571678760204,
+            "query_accuracy": 0.26595744680851063,
+            "query_count": 188.0,
+            "elapsed_s": 0.00817387500000022,
+            "tokens_per_s": 501108.71526661346
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11513666700000025,
+            "train_tokens_per_s": 142300.45412031916,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9084383452192266,
+            "query_accuracy": 0.4946808510638298,
+            "query_count": 188.0,
+            "elapsed_s": 0.008470250000000235,
+            "tokens_per_s": 483574.86496855307
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.0130396810829216,
+          "normal_query_accuracy_mean": 0.3617021276595745,
+          "train_tokens_per_s_mean": 46718.69736445971
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 1.9425590501186694,
+          "normal_query_accuracy_mean": 0.3333333333333333,
+          "train_tokens_per_s_mean": 349607.89294632623
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9761476411041639,
+          "normal_query_accuracy_mean": 0.23581560283687944,
+          "train_tokens_per_s_mean": 135048.49460071276,
+          "uniform_accuracy_delta_mean": 0.02482269503546099,
+          "reverse_time_accuracy_delta_mean": -0.008865248226950362
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9922400068306754,
+          "normal_query_accuracy_mean": 0.2925531914893617,
+          "train_tokens_per_s_mean": 134998.7461906637,
+          "uniform_accuracy_delta_mean": -0.11702127659574468,
+          "reverse_time_accuracy_delta_mean": -0.0053191489361702204
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9449487252438322,
+          "normal_query_accuracy_mean": 0.3953900709219858,
+          "train_tokens_per_s_mean": 141363.17029081853
+        }
+      },
+      "grid_horizon": 2,
+      "grid_event_probability": 0.05
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          2
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.15
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 1063,
+        "valid_queries": 514,
+        "train_event_density": 0.1297607421875,
+        "valid_event_density": 0.12548828125
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04287658399999961,
+            "train_tokens_per_s": 382119.9935144122,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0277496738656486,
+            "query_accuracy": 0.2529182879377432,
+            "query_count": 514.0,
+            "elapsed_s": 0.0031832920000001153,
+            "tokens_per_s": 1286718.2778079584
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04087899999999989,
+            "train_tokens_per_s": 400792.5829888218,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.050083456336292,
+            "query_accuracy": 0.16926070038910507,
+            "query_count": 514.0,
+            "elapsed_s": 0.0030338749999998527,
+            "tokens_per_s": 1350088.583082757
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04058924999999958,
+            "train_tokens_per_s": 403653.6767740269,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9962666127468363,
+            "query_accuracy": 0.3132295719844358,
+            "query_count": 514.0,
+            "elapsed_s": 0.003137208000000058,
+            "tokens_per_s": 1305619.519011785
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.34762420800000005,
+            "train_tokens_per_s": 47131.35513278177,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.916409181713594,
+            "query_accuracy": 0.49416342412451364,
+            "query_count": 514.0,
+            "elapsed_s": 0.015074958000000471,
+            "tokens_per_s": 271708.8830363489
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3516179580000003,
+            "train_tokens_per_s": 46596.027384926645,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.966475449647421,
+            "query_accuracy": 0.4669260700389105,
+            "query_count": 514.0,
+            "elapsed_s": 0.014346667000000757,
+            "tokens_per_s": 285501.85210263706
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.347875417,
+            "train_tokens_per_s": 47097.320475508044,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9894167328623018,
+            "query_accuracy": 0.4785992217898833,
+            "query_count": 514.0,
+            "elapsed_s": 0.01494241699999943,
+            "tokens_per_s": 274118.9728542682
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1229083339999999,
+            "train_tokens_per_s": 133302.59606317675,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.071243193362937,
+            "query_accuracy": 0.21595330739299612,
+            "query_count": 514.0,
+            "elapsed_s": 0.008627209000000136,
+            "tokens_per_s": 474776.9527781158
+          },
+          "uniform_intervention": {
+            "query_nll": 2.0566984048613315,
+            "query_accuracy": 0.2782101167315175,
+            "query_count": 514.0,
+            "elapsed_s": 0.007720040999999789,
+            "tokens_per_s": 530567.1304077416
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.064962790633918,
+            "query_accuracy": 0.23540856031128404,
+            "query_count": 514.0,
+            "elapsed_s": 0.009512166999999572,
+            "tokens_per_s": 430606.4012543287
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8951382975926586,
+            "short_weight_event_minus_filler": -0.05170993506908417,
+            "normalised_usage_entropy": 0.885653555393219,
+            "mean_usage": [
+              0.1428014039993286,
+              0.31368350982666016,
+              0.5435150265693665
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12395866700000013,
+            "train_tokens_per_s": 132173.08959929348,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9884918255564767,
+            "query_accuracy": 0.2490272373540856,
+            "query_count": 514.0,
+            "elapsed_s": 0.008804167000000085,
+            "tokens_per_s": 465234.246465334
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9929757994900417,
+            "query_accuracy": 0.26459143968871596,
+            "query_count": 514.0,
+            "elapsed_s": 0.008356167000000525,
+            "tokens_per_s": 490176.8956986789
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.9803416524879662,
+            "query_accuracy": 0.26459143968871596,
+            "query_count": 514.0,
+            "elapsed_s": 0.007917832999999597,
+            "tokens_per_s": 517313.2598275574
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9907561166176188,
+            "short_weight_event_minus_filler": -0.15488919615745544,
+            "normalised_usage_entropy": 0.8454235196113586,
+            "mean_usage": [
+              0.39989373087882996,
+              0.09126344323158264,
+              0.5088428854942322
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12511100000000042,
+            "train_tokens_per_s": 130955.71132834,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.6752461143968633,
+            "query_accuracy": 0.5097276264591439,
+            "query_count": 514.0,
+            "elapsed_s": 0.008432416999999859,
+            "tokens_per_s": 485744.47871826886
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9791644435912255,
+            "query_accuracy": 0.20428015564202334,
+            "query_count": 514.0,
+            "elapsed_s": 0.00827483299999976,
+            "tokens_per_s": 494994.8838846801
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.6771904731075125,
+            "query_accuracy": 0.4961089494163424,
+            "query_count": 514.0,
+            "elapsed_s": 0.00787066699999972,
+            "tokens_per_s": 520413.32710431603
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9428576189363176,
+            "short_weight_event_minus_filler": 0.06300956010818481,
+            "normalised_usage_entropy": 0.8368105888366699,
+            "mean_usage": [
+              0.62273108959198,
+              0.15834833681583405,
+              0.21892055869102478
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1230834999999999,
+            "train_tokens_per_s": 133112.8867801128,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9964691010894478,
+            "query_accuracy": 0.29766536964980544,
+            "query_count": 514.0,
+            "elapsed_s": 0.008479791999999264,
+            "tokens_per_s": 483030.71584778914
+          },
+          "uniform_intervention": {
+            "query_nll": 2.031473584676067,
+            "query_accuracy": 0.2782101167315175,
+            "query_count": 514.0,
+            "elapsed_s": 0.008495250000000176,
+            "tokens_per_s": 482151.7907065613
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.9985923238301555,
+            "query_accuracy": 0.29961089494163423,
+            "query_count": 514.0,
+            "elapsed_s": 0.008432625000000193,
+            "tokens_per_s": 485732.4972947221
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8953479796757319,
+            "short_weight_event_minus_filler": -0.05180395394563675,
+            "normalised_usage_entropy": 0.8813042640686035,
+            "mean_usage": [
+              0.14150714874267578,
+              0.3083071708679199,
+              0.5501856207847595
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12129008299999988,
+            "train_tokens_per_s": 135081.11788496358,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9748454525313024,
+            "query_accuracy": 0.321011673151751,
+            "query_count": 514.0,
+            "elapsed_s": 0.008527166000000364,
+            "tokens_per_s": 480347.16340690746
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9669369551922098,
+            "query_accuracy": 0.2821011673151751,
+            "query_count": 514.0,
+            "elapsed_s": 0.007902333000000539,
+            "tokens_per_s": 518327.941887506
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.976874357995356,
+            "query_accuracy": 0.2782101167315175,
+            "query_count": 514.0,
+            "elapsed_s": 0.008458375000000018,
+            "tokens_per_s": 484253.7721489046
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9908265736000716,
+            "short_weight_event_minus_filler": -0.15518447756767273,
+            "normalised_usage_entropy": 0.8461806774139404,
+            "mean_usage": [
+              0.40444308519363403,
+              0.0911358892917633,
+              0.5044209957122803
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12074220800000024,
+            "train_tokens_per_s": 135694.05654731748,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.8364182107643394,
+            "query_accuracy": 0.4474708171206226,
+            "query_count": 514.0,
+            "elapsed_s": 0.008242458000000674,
+            "tokens_per_s": 496939.1412124472
+          },
+          "uniform_intervention": {
+            "query_nll": 1.8557346836602178,
+            "query_accuracy": 0.29571984435797666,
+            "query_count": 514.0,
+            "elapsed_s": 0.008289916999999924,
+            "tokens_per_s": 494094.2110759417
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.823911799994888,
+            "query_accuracy": 0.4377431906614786,
+            "query_count": 514.0,
+            "elapsed_s": 0.008296834000000253,
+            "tokens_per_s": 493682.2889309193
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9162101078866719,
+            "short_weight_event_minus_filler": 0.048344314098358154,
+            "normalised_usage_entropy": 0.8687715530395508,
+            "mean_usage": [
+              0.5892747640609741,
+              0.16657190024852753,
+              0.24415336549282074
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11699195799999984,
+            "train_tokens_per_s": 140043.81395172497,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.995016519197694,
+            "query_accuracy": 0.2898832684824903,
+            "query_count": 514.0,
+            "elapsed_s": 0.008436750000000437,
+            "tokens_per_s": 485495.0069635568
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11743104199999976,
+            "train_tokens_per_s": 139520.17900002992,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.968098408981056,
+            "query_accuracy": 0.3463035019455253,
+            "query_count": 514.0,
+            "elapsed_s": 0.00845412500000009,
+            "tokens_per_s": 484497.21289902343
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11730829099999962,
+            "train_tokens_per_s": 139666.17244470856,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.866197443657812,
+            "query_accuracy": 0.3560311284046693,
+            "query_count": 514.0,
+            "elapsed_s": 0.008430041999999638,
+            "tokens_per_s": 485881.3277561578
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 1.9574337880744388,
+          "normal_query_accuracy_mean": 0.4798962386511025,
+          "train_tokens_per_s_mean": 46941.567664405484
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.0246999143162587,
+          "normal_query_accuracy_mean": 0.24513618677042803,
+          "train_tokens_per_s_mean": 395522.0844257536
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9359109214616967,
+          "normal_query_accuracy_mean": 0.3553826199740597,
+          "train_tokens_per_s_mean": 134629.3537374646,
+          "uniform_accuracy_delta_mean": -0.07003891050583659,
+          "reverse_time_accuracy_delta_mean": -0.01686121919584956
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9116603777720922,
+          "normal_query_accuracy_mean": 0.32490272373540857,
+          "train_tokens_per_s_mean": 132143.79899693673,
+          "uniform_accuracy_delta_mean": -0.07587548638132295,
+          "reverse_time_accuracy_delta_mean": 0.007133592736705589
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9431041239455205,
+          "normal_query_accuracy_mean": 0.33073929961089493,
+          "train_tokens_per_s_mean": 139743.38846548783
+        }
+      },
+      "grid_horizon": 2,
+      "grid_event_probability": 0.15
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          2
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.3
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 1890,
+        "valid_queries": 921,
+        "train_event_density": 0.230712890625,
+        "valid_event_density": 0.224853515625
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04242800000000013,
+            "train_tokens_per_s": 386160.0829640791,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0432160773054657,
+            "query_accuracy": 0.21932681867535286,
+            "query_count": 921.0,
+            "elapsed_s": 0.003070000000000128,
+            "tokens_per_s": 1334201.9543973384
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04115924999999976,
+            "train_tokens_per_s": 398063.6187491292,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0416190743316918,
+            "query_accuracy": 0.1997828447339848,
+            "query_count": 921.0,
+            "elapsed_s": 0.002817041000000131,
+            "tokens_per_s": 1454007.9466361369
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04122550000000036,
+            "train_tokens_per_s": 397423.92451273743,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9501152140827573,
+            "query_accuracy": 0.3583061889250814,
+            "query_count": 921.0,
+            "elapsed_s": 0.003057166999999694,
+            "tokens_per_s": 1339802.503428962
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.34612175,
+            "train_tokens_per_s": 47335.944649534445,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.8513837928492394,
+            "query_accuracy": 0.5320304017372421,
+            "query_count": 921.0,
+            "elapsed_s": 0.014591042000000165,
+            "tokens_per_s": 280720.18434323976
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3484861660000007,
+            "train_tokens_per_s": 47014.77877316934,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.888538515917253,
+            "query_accuracy": 0.5309446254071661,
+            "query_count": 921.0,
+            "elapsed_s": 0.014691832999999654,
+            "tokens_per_s": 278794.347852994
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.34650383399999996,
+            "train_tokens_per_s": 47283.74809266902,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0389437258696583,
+            "query_accuracy": 0.18783930510314875,
+            "query_count": 921.0,
+            "elapsed_s": 0.014761959000000324,
+            "tokens_per_s": 277469.9482636356
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1207432500000003,
+            "train_tokens_per_s": 135692.88552362105,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0329390418646,
+            "query_accuracy": 0.3322475570032573,
+            "query_count": 921.0,
+            "elapsed_s": 0.00825158299999984,
+            "tokens_per_s": 496389.60184973956
+          },
+          "uniform_intervention": {
+            "query_nll": 2.0315612822479845,
+            "query_accuracy": 0.18783930510314875,
+            "query_count": 921.0,
+            "elapsed_s": 0.00876941699999989,
+            "tokens_per_s": 467077.8000407611
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.029341332687229,
+            "query_accuracy": 0.3279044516829533,
+            "query_count": 921.0,
+            "elapsed_s": 0.0080582920000003,
+            "tokens_per_s": 508296.29901719216
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8179372122580565,
+            "short_weight_event_minus_filler": -0.048292987048625946,
+            "normalised_usage_entropy": 0.8623501062393188,
+            "mean_usage": [
+              0.12600651383399963,
+              0.31050723791122437,
+              0.5634862184524536
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12135537499999938,
+            "train_tokens_per_s": 135008.44111766852,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0355687180248845,
+            "query_accuracy": 0.23561346362649294,
+            "query_count": 921.0,
+            "elapsed_s": 0.008789500000000672,
+            "tokens_per_s": 466010.58080660866
+          },
+          "uniform_intervention": {
+            "query_nll": 2.0382519314524665,
+            "query_accuracy": 0.24104234527687296,
+            "query_count": 921.0,
+            "elapsed_s": 0.008328834000000285,
+            "tokens_per_s": 491785.5248405551
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.0317814619352195,
+            "query_accuracy": 0.21715526601520088,
+            "query_count": 921.0,
+            "elapsed_s": 0.00791495799999975,
+            "tokens_per_s": 517501.16677815974
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9841286241771252,
+            "short_weight_event_minus_filler": -0.11214974522590637,
+            "normalised_usage_entropy": 0.8481985926628113,
+            "mean_usage": [
+              0.35606926679611206,
+              0.10158971697092056,
+              0.5423409938812256
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11822479199999947,
+            "train_tokens_per_s": 138583.45379876054,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.8713692113449727,
+            "query_accuracy": 0.4201954397394137,
+            "query_count": 921.0,
+            "elapsed_s": 0.008379791000000303,
+            "tokens_per_s": 488795.0069398929
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9313495447788382,
+            "query_accuracy": 0.24321389793702497,
+            "query_count": 921.0,
+            "elapsed_s": 0.008165167000000473,
+            "tokens_per_s": 501643.13846854115
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.8654711044572463,
+            "query_accuracy": 0.38979370249728557,
+            "query_count": 921.0,
+            "elapsed_s": 0.007797000000000054,
+            "tokens_per_s": 525330.2552263655
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.8904192115828082,
+            "short_weight_event_minus_filler": 0.04842883348464966,
+            "normalised_usage_entropy": 0.8285465240478516,
+            "mean_usage": [
+              0.6289363503456116,
+              0.1509871631860733,
+              0.22007645666599274
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12139195800000024,
+            "train_tokens_per_s": 134967.75461847289,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9665156156310042,
+            "query_accuracy": 0.34310532030401736,
+            "query_count": 921.0,
+            "elapsed_s": 0.008646749999999592,
+            "tokens_per_s": 473703.99282969825
+          },
+          "uniform_intervention": {
+            "query_nll": 1.9741596313563543,
+            "query_accuracy": 0.30618892508143325,
+            "query_count": 921.0,
+            "elapsed_s": 0.008400500000000477,
+            "tokens_per_s": 487590.0244032816
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.9652605399764451,
+            "query_accuracy": 0.3322475570032573,
+            "query_count": 921.0,
+            "elapsed_s": 0.007960750000000516,
+            "tokens_per_s": 514524.3852651741
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8271382622388137,
+            "short_weight_event_minus_filler": -0.0461416020989418,
+            "normalised_usage_entropy": 0.8557978868484497,
+            "mean_usage": [
+              0.12353400141000748,
+              0.3048674166202545,
+              0.5715985298156738
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11877629199999973,
+            "train_tokens_per_s": 137939.98553179315,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.009867705946766,
+            "query_accuracy": 0.2888165038002172,
+            "query_count": 921.0,
+            "elapsed_s": 0.008272207999999281,
+            "tokens_per_s": 495151.9594285293
+          },
+          "uniform_intervention": {
+            "query_nll": 2.017655774902443,
+            "query_accuracy": 0.23235613463626492,
+            "query_count": 921.0,
+            "elapsed_s": 0.007916417000000564,
+            "tokens_per_s": 517405.7910289097
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.011515583458734,
+            "query_accuracy": 0.2909880564603692,
+            "query_count": 921.0,
+            "elapsed_s": 0.008291542000000263,
+            "tokens_per_s": 493997.37708617654
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.985467942879089,
+            "short_weight_event_minus_filler": -0.11308065056800842,
+            "normalised_usage_entropy": 0.8463031053543091,
+            "mean_usage": [
+              0.3549468219280243,
+              0.10063453018665314,
+              0.5444186329841614
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12331820799999882,
+            "train_tokens_per_s": 132859.5368495799,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.7478438976921553,
+            "query_accuracy": 0.40608034744842564,
+            "query_count": 921.0,
+            "elapsed_s": 0.008390792000000147,
+            "tokens_per_s": 488154.15755746636
+          },
+          "uniform_intervention": {
+            "query_nll": 1.827998030198643,
+            "query_accuracy": 0.3507057546145494,
+            "query_count": 921.0,
+            "elapsed_s": 0.008212583000000606,
+            "tokens_per_s": 498746.86197992734
+          },
+          "reverse_time_intervention": {
+            "query_nll": 1.73608588408699,
+            "query_accuracy": 0.41259500542888167,
+            "query_count": 921.0,
+            "elapsed_s": 0.008289999999998798,
+            "tokens_per_s": 494089.26417377486
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.876176734898459,
+            "short_weight_event_minus_filler": 0.043056368827819824,
+            "normalised_usage_entropy": 0.8413932919502258,
+            "mean_usage": [
+              0.6141605377197266,
+              0.1493416577577591,
+              0.2364978790283203
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1140907500000008,
+            "train_tokens_per_s": 143604.98112248263,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9176804373499883,
+            "query_accuracy": 0.3713355048859935,
+            "query_count": 921.0,
+            "elapsed_s": 0.008374749999999764,
+            "tokens_per_s": 489089.22654408973
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11705679199999963,
+            "train_tokens_per_s": 139966.2481780643,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.9592719282570672,
+            "query_accuracy": 0.41259500542888167,
+            "query_count": 921.0,
+            "elapsed_s": 0.008358250000000567,
+            "tokens_per_s": 490054.7363383151
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11607550000000089,
+            "train_tokens_per_s": 141149.51044794012,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 1.8466138333632296,
+            "query_accuracy": 0.36047774158523344,
+            "query_count": 921.0,
+            "elapsed_s": 0.008468249999999955,
+            "tokens_per_s": 483689.0738936642
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 1.9262886782120503,
+          "normal_query_accuracy_mean": 0.4169381107491857,
+          "train_tokens_per_s_mean": 47211.49050512427
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.0116501219066385,
+          "normal_query_accuracy_mean": 0.2591386174448063,
+          "train_tokens_per_s_mean": 393882.54207531526
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.908075739756642,
+          "normal_query_accuracy_mean": 0.3460007238508867,
+          "train_tokens_per_s_mean": 135255.75899994865,
+          "uniform_accuracy_delta_mean": -0.04958378574013753,
+          "reverse_time_accuracy_delta_mean": -0.0007238508867173366
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.979958990411486,
+          "normal_query_accuracy_mean": 0.32935215345638796,
+          "train_tokens_per_s_mean": 136428.26014668337,
+          "uniform_accuracy_delta_mean": -0.10532030401737243,
+          "reverse_time_accuracy_delta_mean": -0.017734346724574735
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 1.9078553996567618,
+          "normal_query_accuracy_mean": 0.3814694173000362,
+          "train_tokens_per_s_mean": 141573.57991616233
+        }
+      },
+      "grid_horizon": 2,
+      "grid_event_probability": 0.3
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          8
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.05
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 338,
+        "valid_queries": 175,
+        "train_event_density": 0.041259765625,
+        "valid_event_density": 0.042724609375
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04235179199999983,
+            "train_tokens_per_s": 386854.94110851473,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1243397467476983,
+            "query_accuracy": 0.17714285714285713,
+            "query_count": 175.0,
+            "elapsed_s": 0.002916166000000331,
+            "tokens_per_s": 1404583.964012863
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04167929099999945,
+            "train_tokens_per_s": 393096.8979294829,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.10152776990618,
+            "query_accuracy": 0.18857142857142858,
+            "query_count": 175.0,
+            "elapsed_s": 0.003214583000000104,
+            "tokens_per_s": 1274193.2623920015
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04288766700000046,
+            "train_tokens_per_s": 382021.24634104775,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1097806767054967,
+            "query_accuracy": 0.17714285714285713,
+            "query_count": 175.0,
+            "elapsed_s": 0.0033756670000002487,
+            "tokens_per_s": 1213389.8278472663
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3512769999999996,
+            "train_tokens_per_s": 46641.254622420536,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1265917015075684,
+            "query_accuracy": 0.17714285714285713,
+            "query_count": 175.0,
+            "elapsed_s": 0.015180125000000544,
+            "tokens_per_s": 269826.50011115544
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3494128339999989,
+            "train_tokens_per_s": 46890.092193923396,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1102869919368197,
+            "query_accuracy": 0.13142857142857142,
+            "query_count": 175.0,
+            "elapsed_s": 0.015858040999999545,
+            "tokens_per_s": 258291.67675882016
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.35117854099999946,
+            "train_tokens_per_s": 46654.33130778918,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1451631709507533,
+            "query_accuracy": 0.14857142857142858,
+            "query_count": 175.0,
+            "elapsed_s": 0.017974166000000125,
+            "tokens_per_s": 227882.6177526107
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12282949999999992,
+            "train_tokens_per_s": 133388.15186905433,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.135308963230678,
+            "query_accuracy": 0.1657142857142857,
+            "query_count": 175.0,
+            "elapsed_s": 0.008406750000000685,
+            "tokens_per_s": 487227.5255003023
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1403225816999165,
+            "query_accuracy": 0.10285714285714286,
+            "query_count": 175.0,
+            "elapsed_s": 0.007790375000000793,
+            "tokens_per_s": 525777.0004652642
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1338967541285925,
+            "query_accuracy": 0.14285714285714285,
+            "query_count": 175.0,
+            "elapsed_s": 0.007901250000001525,
+            "tokens_per_s": 518398.9875018775
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.941796473358765,
+            "short_weight_event_minus_filler": -0.0587555393576622,
+            "normalised_usage_entropy": 0.8892114758491516,
+            "mean_usage": [
+              0.14546355605125427,
+              0.31438660621643066,
+              0.5401498079299927
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12138487499999862,
+            "train_tokens_per_s": 134975.63020104595,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.085026934487479,
+            "query_accuracy": 0.21142857142857144,
+            "query_count": 175.0,
+            "elapsed_s": 0.008397041999998578,
+            "tokens_per_s": 487790.8196720576
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1029710974012104,
+            "query_accuracy": 0.1657142857142857,
+            "query_count": 175.0,
+            "elapsed_s": 0.009036041999999966,
+            "tokens_per_s": 453295.81248073163
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.0926722022465296,
+            "query_accuracy": 0.18857142857142858,
+            "query_count": 175.0,
+            "elapsed_s": 0.015597250000000784,
+            "tokens_per_s": 262610.3960633954
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9957073313052849,
+            "short_weight_event_minus_filler": -0.19616469740867615,
+            "normalised_usage_entropy": 0.8317343592643738,
+            "mean_usage": [
+              0.44115549325942993,
+              0.07892117649316788,
+              0.4799233078956604
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.13368345800000014,
+            "train_tokens_per_s": 122558.17021130605,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1215180737631663,
+            "query_accuracy": 0.17714285714285713,
+            "query_count": 175.0,
+            "elapsed_s": 0.008016040999999419,
+            "tokens_per_s": 510975.430390176
+          },
+          "uniform_intervention": {
+            "query_nll": 2.129165030888149,
+            "query_accuracy": 0.15428571428571428,
+            "query_count": 175.0,
+            "elapsed_s": 0.007860292000000157,
+            "tokens_per_s": 521100.2339353192
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.120101684842791,
+            "query_accuracy": 0.17714285714285713,
+            "query_count": 175.0,
+            "elapsed_s": 0.007761374999999404,
+            "tokens_per_s": 527741.5406420015
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9639059656320607,
+            "short_weight_event_minus_filler": 0.06373798847198486,
+            "normalised_usage_entropy": 0.8698269724845886,
+            "mean_usage": [
+              0.5900615453720093,
+              0.17183086276054382,
+              0.2381076216697693
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11457904199999902,
+            "train_tokens_per_s": 142992.9916851647,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1537617833273752,
+            "query_accuracy": 0.12571428571428572,
+            "query_count": 175.0,
+            "elapsed_s": 0.007767084000001034,
+            "tokens_per_s": 527353.6374782936
+          },
+          "uniform_intervention": {
+            "query_nll": 2.148815712247576,
+            "query_accuracy": 0.08,
+            "query_count": 175.0,
+            "elapsed_s": 0.0076245839999984355,
+            "tokens_per_s": 537209.636617662
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1511725534711563,
+            "query_accuracy": 0.12571428571428572,
+            "query_count": 175.0,
+            "elapsed_s": 0.007535332999999866,
+            "tokens_per_s": 543572.5269208504
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9403171483801308,
+            "short_weight_event_minus_filler": -0.05967303365468979,
+            "normalised_usage_entropy": 0.8894534707069397,
+            "mean_usage": [
+              0.14666476845741272,
+              0.31199461221694946,
+              0.5413408279418945
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.121240083,
+            "train_tokens_per_s": 135136.82599507953,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.0854859379359656,
+            "query_accuracy": 0.18857142857142858,
+            "query_count": 175.0,
+            "elapsed_s": 0.008437707999998878,
+            "tokens_per_s": 485439.88485979184
+          },
+          "uniform_intervention": {
+            "query_nll": 2.0918593992505756,
+            "query_accuracy": 0.21142857142857144,
+            "query_count": 175.0,
+            "elapsed_s": 0.007904874999999478,
+            "tokens_per_s": 518161.2612470495
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.0853864479064943,
+            "query_accuracy": 0.18285714285714286,
+            "query_count": 175.0,
+            "elapsed_s": 0.007946125000000137,
+            "tokens_per_s": 515471.3775582349
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9953534311686151,
+            "short_weight_event_minus_filler": -0.1937391459941864,
+            "normalised_usage_entropy": 0.8339146375656128,
+            "mean_usage": [
+              0.44494467973709106,
+              0.08009937405586243,
+              0.4749559462070465
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11935141699999896,
+            "train_tokens_per_s": 137275.28681121685,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1174010372161867,
+            "query_accuracy": 0.17714285714285713,
+            "query_count": 175.0,
+            "elapsed_s": 0.008029207999999954,
+            "tokens_per_s": 510137.488031201
+          },
+          "uniform_intervention": {
+            "query_nll": 2.133067387172154,
+            "query_accuracy": 0.12571428571428572,
+            "query_count": 175.0,
+            "elapsed_s": 0.008632958999999829,
+            "tokens_per_s": 474460.72661761526
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.115999768120902,
+            "query_accuracy": 0.18857142857142858,
+            "query_count": 175.0,
+            "elapsed_s": 0.00785675000000019,
+            "tokens_per_s": 521335.15766696166
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.964013048307502,
+            "short_weight_event_minus_filler": 0.061244428157806396,
+            "normalised_usage_entropy": 0.8741335272789001,
+            "mean_usage": [
+              0.584580659866333,
+              0.17139102518558502,
+              0.24402828514575958
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11676933400000067,
+            "train_tokens_per_s": 140310.8113984782,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.160461301803589,
+            "query_accuracy": 0.10285714285714286,
+            "query_count": 175.0,
+            "elapsed_s": 0.008634291999999988,
+            "tokens_per_s": 474387.47728244605
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11787412500000016,
+            "train_tokens_per_s": 138995.7295547261,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.091764474596296,
+            "query_accuracy": 0.1657142857142857,
+            "query_count": 175.0,
+            "elapsed_s": 0.00942354199999862,
+            "tokens_per_s": 434656.0985243765
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12226579200000032,
+            "train_tokens_per_s": 134003.13965168572,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.116910915374756,
+            "query_accuracy": 0.21142857142857144,
+            "query_count": 175.0,
+            "elapsed_s": 0.008329749999999692,
+            "tokens_per_s": 491731.4445211623
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.127347288131714,
+          "normal_query_accuracy_mean": 0.15238095238095237,
+          "train_tokens_per_s_mean": 46728.55937471103
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.1118827311197914,
+          "normal_query_accuracy_mean": 0.18095238095238095,
+          "train_tokens_per_s_mean": 387324.36179301515
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.118882919493176,
+          "normal_query_accuracy_mean": 0.16380952380952382,
+          "train_tokens_per_s_mean": 138468.36816382036,
+          "uniform_accuracy_delta_mean": -0.02476190476190476,
+          "reverse_time_accuracy_delta_mean": 0.001904761904761909
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.113951323827108,
+          "normal_query_accuracy_mean": 0.18476190476190477,
+          "train_tokens_per_s_mean": 130307.31742713547,
+          "uniform_accuracy_delta_mean": -0.04380952380952382,
+          "reverse_time_accuracy_delta_mean": -0.015238095238095236
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.12304556392488,
+          "normal_query_accuracy_mean": 0.16,
+          "train_tokens_per_s_mean": 137769.89353496334
+        }
+      },
+      "grid_horizon": 8,
+      "grid_event_probability": 0.05
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          8
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.15
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 966,
+        "valid_queries": 479,
+        "train_event_density": 0.117919921875,
+        "valid_event_density": 0.116943359375
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04361008400000088,
+            "train_tokens_per_s": 375692.9245997249,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.153367532319963,
+            "query_accuracy": 0.14613778705636743,
+            "query_count": 479.0,
+            "elapsed_s": 0.00311100000000053,
+            "tokens_per_s": 1316618.450658728
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04164645800000066,
+            "train_tokens_per_s": 393406.8054478904,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1289567678606836,
+            "query_accuracy": 0.12943632567849686,
+            "query_count": 479.0,
+            "elapsed_s": 0.002689999999999415,
+            "tokens_per_s": 1522676.5799259816
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.040394999999998404,
+            "train_tokens_per_s": 405594.751825737,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1215315432538566,
+            "query_accuracy": 0.11482254697286012,
+            "query_count": 479.0,
+            "elapsed_s": 0.0026319170000004277,
+            "tokens_per_s": 1556280.0802606368
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3481481249999998,
+            "train_tokens_per_s": 47060.42866093278,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1431834737542776,
+            "query_accuracy": 0.14822546972860126,
+            "query_count": 479.0,
+            "elapsed_s": 0.014802041000001154,
+            "tokens_per_s": 276718.5957666028
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3624697499999989,
+            "train_tokens_per_s": 45201.01332593975,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1325171859876595,
+            "query_accuracy": 0.12943632567849686,
+            "query_count": 479.0,
+            "elapsed_s": 0.014581416999998709,
+            "tokens_per_s": 280905.48401437
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3492891250000003,
+            "train_tokens_per_s": 46906.699428446234,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1417696391366468,
+            "query_accuracy": 0.15866388308977036,
+            "query_count": 479.0,
+            "elapsed_s": 0.014666250000001213,
+            "tokens_per_s": 279280.6613824025
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11668987499999872,
+            "train_tokens_per_s": 140406.35487869175,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1508239768989896,
+            "query_accuracy": 0.14822546972860126,
+            "query_count": 479.0,
+            "elapsed_s": 0.008553166999998751,
+            "tokens_per_s": 478886.9432808453
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1573474347466965,
+            "query_accuracy": 0.15657620041753653,
+            "query_count": 479.0,
+            "elapsed_s": 0.008061666000001466,
+            "tokens_per_s": 508083.5648610666
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.149972918138126,
+            "query_accuracy": 0.1524008350730689,
+            "query_count": 479.0,
+            "elapsed_s": 0.00850175000000064,
+            "tokens_per_s": 481783.16229008045
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9149306419051477,
+            "short_weight_event_minus_filler": -0.053506217896938324,
+            "normalised_usage_entropy": 0.8727588057518005,
+            "mean_usage": [
+              0.13355043530464172,
+              0.3112097680568695,
+              0.5552397966384888
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12030395799999916,
+            "train_tokens_per_s": 136188.37046076334,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1103800950816876,
+            "query_accuracy": 0.12943632567849686,
+            "query_count": 479.0,
+            "elapsed_s": 0.008406332999999933,
+            "tokens_per_s": 487251.6946449817
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1259255956757293,
+            "query_accuracy": 0.14613778705636743,
+            "query_count": 479.0,
+            "elapsed_s": 0.008164708000000687,
+            "tokens_per_s": 501671.339624106
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1078658661414287,
+            "query_accuracy": 0.1524008350730689,
+            "query_count": 479.0,
+            "elapsed_s": 0.008101708999999957,
+            "tokens_per_s": 505572.3428229799
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9935425799161852,
+            "short_weight_event_minus_filler": -0.1672692894935608,
+            "normalised_usage_entropy": 0.8373847603797913,
+            "mean_usage": [
+              0.39054587483406067,
+              0.08763675391674042,
+              0.5218174457550049
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12144762500000006,
+            "train_tokens_per_s": 134905.89050218143,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1400090209626454,
+            "query_accuracy": 0.12317327766179541,
+            "query_count": 479.0,
+            "elapsed_s": 0.008571707999999845,
+            "tokens_per_s": 477851.088721183
+          },
+          "uniform_intervention": {
+            "query_nll": 2.14925581079933,
+            "query_accuracy": 0.11482254697286012,
+            "query_count": 479.0,
+            "elapsed_s": 0.007981166000000428,
+            "tokens_per_s": 513208.22045297397
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1387666292130825,
+            "query_accuracy": 0.11482254697286012,
+            "query_count": 479.0,
+            "elapsed_s": 0.008084709000000245,
+            "tokens_per_s": 506635.4274470331
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9341927442963385,
+            "short_weight_event_minus_filler": 0.0510517954826355,
+            "normalised_usage_entropy": 0.863552987575531,
+            "mean_usage": [
+              0.5945190787315369,
+              0.16381654143333435,
+              0.24166440963745117
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12045191700000046,
+            "train_tokens_per_s": 136021.08134152764,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1596577491043507,
+            "query_accuracy": 0.12943632567849686,
+            "query_count": 479.0,
+            "elapsed_s": 0.008411291000001597,
+            "tokens_per_s": 486964.48618876963
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1598845936809052,
+            "query_accuracy": 0.1419624217118998,
+            "query_count": 479.0,
+            "elapsed_s": 0.008352166999999966,
+            "tokens_per_s": 490411.650054413
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.158467532199708,
+            "query_accuracy": 0.12943632567849686,
+            "query_count": 479.0,
+            "elapsed_s": 0.008092583999999903,
+            "tokens_per_s": 506142.4138445828
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9139471487397612,
+            "short_weight_event_minus_filler": -0.05300755798816681,
+            "normalised_usage_entropy": 0.8699250817298889,
+            "mean_usage": [
+              0.13311335444450378,
+              0.30699262022972107,
+              0.5598940253257751
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12069216599999955,
+            "train_tokens_per_s": 135750.31870751298,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1307118153024565,
+            "query_accuracy": 0.13778705636743216,
+            "query_count": 479.0,
+            "elapsed_s": 0.008406084000000646,
+            "tokens_per_s": 487266.12772364455
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1341270932573866,
+            "query_accuracy": 0.12526096033402923,
+            "query_count": 479.0,
+            "elapsed_s": 0.0080632499999993,
+            "tokens_per_s": 507983.75344933564
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1314314680955606,
+            "query_accuracy": 0.13778705636743216,
+            "query_count": 479.0,
+            "elapsed_s": 0.00862645800000017,
+            "tokens_per_s": 474818.2857900565
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9933087487236587,
+            "short_weight_event_minus_filler": -0.1666017472743988,
+            "normalised_usage_entropy": 0.8394769430160522,
+            "mean_usage": [
+              0.3955705761909485,
+              0.08814430236816406,
+              0.5162850618362427
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1220509579999991,
+            "train_tokens_per_s": 134239.01187240268,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.143552883681773,
+            "query_accuracy": 0.09812108559498957,
+            "query_count": 479.0,
+            "elapsed_s": 0.008479625000001434,
+            "tokens_per_s": 483040.2287836204
+          },
+          "uniform_intervention": {
+            "query_nll": 2.155215351964835,
+            "query_accuracy": 0.12108559498956159,
+            "query_count": 479.0,
+            "elapsed_s": 0.00795545899999972,
+            "tokens_per_s": 514866.5840651236
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.143055256323924,
+            "query_accuracy": 0.10855949895615867,
+            "query_count": 479.0,
+            "elapsed_s": 0.008390750000000224,
+            "tokens_per_s": 488156.6010189662
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9375934982113886,
+            "short_weight_event_minus_filler": 0.05197906494140625,
+            "normalised_usage_entropy": 0.8627868890762329,
+            "mean_usage": [
+              0.5960344076156616,
+              0.16522657871246338,
+              0.2387390285730362
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11686054200000129,
+            "train_tokens_per_s": 140201.30079492374,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.158871952825399,
+            "query_accuracy": 0.12526096033402923,
+            "query_count": 479.0,
+            "elapsed_s": 0.008515791000000661,
+            "tokens_per_s": 480988.78894511174
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11473212499999974,
+            "train_tokens_per_s": 142802.2012143507,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1222923304691195,
+            "query_accuracy": 0.11899791231732777,
+            "query_count": 479.0,
+            "elapsed_s": 0.00828650000000053,
+            "tokens_per_s": 494297.9545042827
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11692124999999898,
+            "train_tokens_per_s": 140128.50529737017,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.154139241993054,
+            "query_accuracy": 0.1127348643006263,
+            "query_count": 479.0,
+            "elapsed_s": 0.008551875000000209,
+            "tokens_per_s": 478959.29255279107
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.1391567662928614,
+          "normal_query_accuracy_mean": 0.1454418928322895,
+          "train_tokens_per_s_mean": 46389.38047177292
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.1346186144781676,
+          "normal_query_accuracy_mean": 0.1301322199025748,
+          "train_tokens_per_s_mean": 391564.82729111746
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.144640816029527,
+          "normal_query_accuracy_mean": 0.12178148921363952,
+          "train_tokens_per_s_mean": 135336.80397381444,
+          "uniform_accuracy_delta_mean": 0.007654836464857341,
+          "reverse_time_accuracy_delta_mean": 0.003479471120389701
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.133737697647774,
+          "normal_query_accuracy_mean": 0.13361169102296452,
+          "train_tokens_per_s_mean": 137166.87194721217,
+          "uniform_accuracy_delta_mean": 0.005567153792623518,
+          "reverse_time_accuracy_delta_mean": 0.0062630480167014625
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1451011750958577,
+          "normal_query_accuracy_mean": 0.11899791231732776,
+          "train_tokens_per_s_mean": 141044.0024355482
+        }
+      },
+      "grid_horizon": 8,
+      "grid_event_probability": 0.15
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          8
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.3
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 1751,
+        "valid_queries": 859,
+        "train_event_density": 0.2137451171875,
+        "valid_event_density": 0.209716796875
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.043035708999999756,
+            "train_tokens_per_s": 380707.1007009573,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.145386149358694,
+            "query_accuracy": 0.15133876600698487,
+            "query_count": 859.0,
+            "elapsed_s": 0.003073458000001139,
+            "tokens_per_s": 1332700.8210291085
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04140912499999949,
+            "train_tokens_per_s": 395661.5842522681,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.116640437884436,
+            "query_accuracy": 0.14668218859138532,
+            "query_count": 859.0,
+            "elapsed_s": 0.00280429200000043,
+            "tokens_per_s": 1460618.2237796106
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04209800000000108,
+            "train_tokens_per_s": 389187.1347807397,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.11316092605502,
+            "query_accuracy": 0.1210710128055879,
+            "query_count": 859.0,
+            "elapsed_s": 0.002913916999998989,
+            "tokens_per_s": 1405668.0406481796
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.34823483300000113,
+            "train_tokens_per_s": 47048.710948453416,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.135632480814515,
+            "query_accuracy": 0.13736903376018628,
+            "query_count": 859.0,
+            "elapsed_s": 0.015429791000000748,
+            "tokens_per_s": 265460.4978123036
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3493217909999995,
+            "train_tokens_per_s": 46902.313059536624,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1222023117389615,
+            "query_accuracy": 0.1408614668218859,
+            "query_count": 859.0,
+            "elapsed_s": 0.014776582999999732,
+            "tokens_per_s": 277195.34347014286
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.34892695799999984,
+            "train_tokens_per_s": 46955.3860037378,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.15705533715982,
+            "query_accuracy": 0.13969732246798602,
+            "query_count": 859.0,
+            "elapsed_s": 0.01428054199999984,
+            "tokens_per_s": 286823.84744220815
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12185083399999996,
+            "train_tokens_per_s": 134459.4818284133,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1434666577540122,
+            "query_accuracy": 0.13271245634458673,
+            "query_count": 859.0,
+            "elapsed_s": 0.009089250000000604,
+            "tokens_per_s": 450642.2422091732
+          },
+          "uniform_intervention": {
+            "query_nll": 2.158117450019117,
+            "query_accuracy": 0.13736903376018628,
+            "query_count": 859.0,
+            "elapsed_s": 0.008184666000000007,
+            "tokens_per_s": 500448.0329435552
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1428164511537386,
+            "query_accuracy": 0.13271245634458673,
+            "query_count": 859.0,
+            "elapsed_s": 0.008187791999999305,
+            "tokens_per_s": 500256.96793474327
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8449114924008495,
+            "short_weight_event_minus_filler": -0.048428043723106384,
+            "normalised_usage_entropy": 0.846008837223053,
+            "mean_usage": [
+              0.11839655041694641,
+              0.300620436668396,
+              0.58098304271698
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12160474999999948,
+            "train_tokens_per_s": 134731.57915295305,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.120262594800334,
+            "query_accuracy": 0.1210710128055879,
+            "query_count": 859.0,
+            "elapsed_s": 0.008909541999999604,
+            "tokens_per_s": 459731.82459886064
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1282110303050565,
+            "query_accuracy": 0.1280558789289872,
+            "query_count": 859.0,
+            "elapsed_s": 0.007829709000001017,
+            "tokens_per_s": 523135.6618744666
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1189898514775374,
+            "query_accuracy": 0.119906868451688,
+            "query_count": 859.0,
+            "elapsed_s": 0.007830958999999638,
+            "tokens_per_s": 523052.1574688604
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9888643199772483,
+            "short_weight_event_minus_filler": -0.12114822864532471,
+            "normalised_usage_entropy": 0.83803790807724,
+            "mean_usage": [
+              0.351334810256958,
+              0.09627324342727661,
+              0.5523918867111206
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1221947090000004,
+            "train_tokens_per_s": 134081.09184170933,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1392574013320336,
+            "query_accuracy": 0.13271245634458673,
+            "query_count": 859.0,
+            "elapsed_s": 0.008254709000000915,
+            "tokens_per_s": 496201.622613171
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1379374000607045,
+            "query_accuracy": 0.15250291036088476,
+            "query_count": 859.0,
+            "elapsed_s": 0.008251458000000156,
+            "tokens_per_s": 496397.12157535343
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.137472186849059,
+            "query_accuracy": 0.1350407450523865,
+            "query_count": 859.0,
+            "elapsed_s": 0.007747332999999301,
+            "tokens_per_s": 528698.0693872807
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.8914351312457344,
+            "short_weight_event_minus_filler": 0.042979538440704346,
+            "normalised_usage_entropy": 0.8433163166046143,
+            "mean_usage": [
+              0.612369954586029,
+              0.15023541450500488,
+              0.23739460110664368
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12182229099999908,
+            "train_tokens_per_s": 134490.98572608622,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.145568323912526,
+            "query_accuracy": 0.1490104772991851,
+            "query_count": 859.0,
+            "elapsed_s": 0.00850254199999867,
+            "tokens_per_s": 481738.2848565336
+          },
+          "uniform_intervention": {
+            "query_nll": 2.160083129047931,
+            "query_accuracy": 0.1478463329452852,
+            "query_count": 859.0,
+            "elapsed_s": 0.008111208000000758,
+            "tokens_per_s": 504980.26927673625
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1453990408927375,
+            "query_accuracy": 0.15366705471478465,
+            "query_count": 859.0,
+            "elapsed_s": 0.007963875000001508,
+            "tokens_per_s": 514322.48748244095
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8461845261615853,
+            "short_weight_event_minus_filler": -0.04721653461456299,
+            "normalised_usage_entropy": 0.8485521674156189,
+            "mean_usage": [
+              0.11928723752498627,
+              0.30273914337158203,
+              0.5779736042022705
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12146320899999985,
+            "train_tokens_per_s": 134888.58177623167,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1245995003630314,
+            "query_accuracy": 0.11874272409778813,
+            "query_count": 859.0,
+            "elapsed_s": 0.008103582999998693,
+            "tokens_per_s": 505455.4263219937
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1363280688231425,
+            "query_accuracy": 0.12456344586728754,
+            "query_count": 859.0,
+            "elapsed_s": 0.007776959000000971,
+            "tokens_per_s": 526684.0162072976
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.12348598068335,
+            "query_accuracy": 0.11874272409778813,
+            "query_count": 859.0,
+            "elapsed_s": 0.008241208000001166,
+            "tokens_per_s": 497014.51534767967
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9893162756465739,
+            "short_weight_event_minus_filler": -0.12166115641593933,
+            "normalised_usage_entropy": 0.8377102017402649,
+            "mean_usage": [
+              0.3515390157699585,
+              0.09601455926895142,
+              0.5524464249610901
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1181107499999996,
+            "train_tokens_per_s": 138717.26324657202,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1338339809488778,
+            "query_accuracy": 0.1548311990686845,
+            "query_count": 859.0,
+            "elapsed_s": 0.00896320899999914,
+            "tokens_per_s": 456979.19126959925
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1414541279478594,
+            "query_accuracy": 0.14435389988358557,
+            "query_count": 859.0,
+            "elapsed_s": 0.0082588329999993,
+            "tokens_per_s": 495953.8472324537
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1333205674940827,
+            "query_accuracy": 0.15017462165308498,
+            "query_count": 859.0,
+            "elapsed_s": 0.00810283400000067,
+            "tokens_per_s": 505502.14900115953
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.8946504429673164,
+            "short_weight_event_minus_filler": 0.0437811017036438,
+            "normalised_usage_entropy": 0.8403951525688171,
+            "mean_usage": [
+              0.6154649257659912,
+              0.1496804654598236,
+              0.234854593873024
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1167366249999997,
+            "train_tokens_per_s": 140350.12576387267,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1372675765240707,
+            "query_accuracy": 0.14551804423748546,
+            "query_count": 859.0,
+            "elapsed_s": 0.008496666999999292,
+            "tokens_per_s": 482071.38163709856
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1169062080000014,
+            "train_tokens_per_s": 140146.53524644134,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.119121076064282,
+            "query_accuracy": 0.13154831199068684,
+            "query_count": 859.0,
+            "elapsed_s": 0.008441874999999044,
+            "tokens_per_s": 485200.26652852166
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11796066699999841,
+            "train_tokens_per_s": 138893.75515314966,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1354348121061313,
+            "query_accuracy": 0.15366705471478465,
+            "query_count": 859.0,
+            "elapsed_s": 0.0084444579999996,
+            "tokens_per_s": 485051.8529431012
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.138296709904432,
+          "normal_query_accuracy_mean": 0.1393092743500194,
+          "train_tokens_per_s_mean": 46968.80333724261
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.1250625044327167,
+          "normal_query_accuracy_mean": 0.13969732246798602,
+          "train_tokens_per_s_mean": 388518.6065779883
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.134667268408145,
+          "normal_query_accuracy_mean": 0.1408614668218859,
+          "train_tokens_per_s_mean": 136032.27691629666,
+          "uniform_accuracy_delta_mean": -0.0019402405898331365,
+          "reverse_time_accuracy_delta_mean": 9.25185853854297e-18
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1343288846287933,
+          "normal_query_accuracy_mean": 0.12883197516492045,
+          "train_tokens_per_s_mean": 134424.05094102523,
+          "uniform_accuracy_delta_mean": 0.010477299185098965,
+          "reverse_time_accuracy_delta_mean": 0.00038804811796662914
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.130607821564828,
+          "normal_query_accuracy_mean": 0.14357780364765232,
+          "train_tokens_per_s_mean": 139796.80538782122
+        }
+      },
+      "grid_horizon": 8,
+      "grid_event_probability": 0.3
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          24
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.05
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 241,
+        "valid_queries": 126,
+        "train_event_density": 0.0294189453125,
+        "valid_event_density": 0.03076171875
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.042533875000000165,
+            "train_tokens_per_s": 385198.8562057874,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.176201165668548,
+            "query_accuracy": 0.15873015873015872,
+            "query_count": 126.0,
+            "elapsed_s": 0.003100792000001462,
+            "tokens_per_s": 1320952.840434982
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.04023579199999716,
+            "train_tokens_per_s": 407199.6395647228,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.142823713166373,
+            "query_accuracy": 0.09523809523809523,
+            "query_count": 126.0,
+            "elapsed_s": 0.003049500000003036,
+            "tokens_per_s": 1343171.0116399154
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.040519124999999434,
+            "train_tokens_per_s": 404352.2657510553,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.14383522101811,
+            "query_accuracy": 0.15873015873015872,
+            "query_count": 126.0,
+            "elapsed_s": 0.0028024590000015337,
+            "tokens_per_s": 1461573.5680692415
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3512994589999998,
+            "train_tokens_per_s": 46638.27279050837,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1652129472248136,
+            "query_accuracy": 0.12698412698412698,
+            "query_count": 126.0,
+            "elapsed_s": 0.014417374999997179,
+            "tokens_per_s": 284101.64818497136
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.35008679099999895,
+            "train_tokens_per_s": 46799.82341864492,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1269487596693493,
+            "query_accuracy": 0.1746031746031746,
+            "query_count": 126.0,
+            "elapsed_s": 0.014264416999999696,
+            "tokens_per_s": 287148.08323397214
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3670580000000001,
+            "train_tokens_per_s": 44635.99758076379,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1695174924911016,
+            "query_accuracy": 0.09523809523809523,
+            "query_count": 126.0,
+            "elapsed_s": 0.014708333000001517,
+            "tokens_per_s": 278481.5927134351
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.13402529100000038,
+            "train_tokens_per_s": 122245.58423081471,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1908474820000783,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.009416208000001092,
+            "tokens_per_s": 434994.63903086307
+          },
+          "uniform_intervention": {
+            "query_nll": 2.2083679248416233,
+            "query_accuracy": 0.11904761904761904,
+            "query_count": 126.0,
+            "elapsed_s": 0.009076291999999597,
+            "tokens_per_s": 451285.6131116299
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.189155268290686,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.0089547500000009,
+            "tokens_per_s": 457410.87132522836
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9432866349394783,
+            "short_weight_event_minus_filler": -0.05845308303833008,
+            "normalised_usage_entropy": 0.8891640305519104,
+            "mean_usage": [
+              0.14611682295799255,
+              0.31271934509277344,
+              0.5411636829376221
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1550817500000008,
+            "train_tokens_per_s": 105647.50526738263,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.10501952398391,
+            "query_accuracy": 0.1746031746031746,
+            "query_count": 126.0,
+            "elapsed_s": 0.009859999999999758,
+            "tokens_per_s": 415415.8215010244
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1144911618459794,
+            "query_accuracy": 0.1746031746031746,
+            "query_count": 126.0,
+            "elapsed_s": 0.009414249999998958,
+            "tokens_per_s": 435085.11033809953
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1070280699502852,
+            "query_accuracy": 0.1984126984126984,
+            "query_count": 126.0,
+            "elapsed_s": 0.009620000000001738,
+            "tokens_per_s": 425779.62577954883
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9959907138977877,
+            "short_weight_event_minus_filler": -0.20209115743637085,
+            "normalised_usage_entropy": 0.8309000730514526,
+            "mean_usage": [
+              0.4489482343196869,
+              0.07811825722455978,
+              0.47293350100517273
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12705150000000032,
+            "train_tokens_per_s": 128955.58100455295,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1535927076188344,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.008588332999998727,
+            "tokens_per_s": 476926.0809985602
+          },
+          "uniform_intervention": {
+            "query_nll": 2.18581163504767,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.008073959000000741,
+            "tokens_per_s": 507309.9826243388
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1574462860349626,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.008157458000003004,
+            "tokens_per_s": 502117.20366791857
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9642755830596036,
+            "short_weight_event_minus_filler": 0.0598716139793396,
+            "normalised_usage_entropy": 0.8775628209114075,
+            "mean_usage": [
+              0.5816848278045654,
+              0.17502529919147491,
+              0.24328985810279846
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12524558300000166,
+            "train_tokens_per_s": 130814.99249358584,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1797915413266136,
+            "query_accuracy": 0.11904761904761904,
+            "query_count": 126.0,
+            "elapsed_s": 0.008897458999999941,
+            "tokens_per_s": 460356.15336918406
+          },
+          "uniform_intervention": {
+            "query_nll": 2.195667446605743,
+            "query_accuracy": 0.1111111111111111,
+            "query_count": 126.0,
+            "elapsed_s": 0.007676792000001598,
+            "tokens_per_s": 533556.2042060209
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1782318978082564,
+            "query_accuracy": 0.11904761904761904,
+            "query_count": 126.0,
+            "elapsed_s": 0.00813208300000312,
+            "tokens_per_s": 503683.9884686898
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9418157021509928,
+            "short_weight_event_minus_filler": -0.05811592936515808,
+            "normalised_usage_entropy": 0.8935916423797607,
+            "mean_usage": [
+              0.14888715744018555,
+              0.3150833249092102,
+              0.536029577255249
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12404395900000154,
+            "train_tokens_per_s": 132082.20805013002,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.129140167009263,
+            "query_accuracy": 0.1746031746031746,
+            "query_count": 126.0,
+            "elapsed_s": 0.008520374999999802,
+            "tokens_per_s": 480730.0148174341
+          },
+          "uniform_intervention": {
+            "query_nll": 2.121101245047554,
+            "query_accuracy": 0.1746031746031746,
+            "query_count": 126.0,
+            "elapsed_s": 0.008105583999999055,
+            "tokens_per_s": 505330.6461324042
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.134293928978935,
+            "query_accuracy": 0.1746031746031746,
+            "query_count": 126.0,
+            "elapsed_s": 0.007833915999999164,
+            "tokens_per_s": 522854.7255294079
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9959711477324765,
+            "short_weight_event_minus_filler": -0.2006712257862091,
+            "normalised_usage_entropy": 0.8311179280281067,
+            "mean_usage": [
+              0.44720274209976196,
+              0.07830513268709183,
+              0.47449225187301636
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12194116699999924,
+            "train_tokens_per_s": 134359.87536514312,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1437153021494546,
+            "query_accuracy": 0.1349206349206349,
+            "query_count": 126.0,
+            "elapsed_s": 0.008552916999999383,
+            "tokens_per_s": 478900.9410473989
+          },
+          "uniform_intervention": {
+            "query_nll": 2.169759824162438,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.008034500000000833,
+            "tokens_per_s": 509801.4811126486
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1476563839685348,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.008127375000000825,
+            "tokens_per_s": 503975.7609313689
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9640978480323684,
+            "short_weight_event_minus_filler": 0.05855917930603027,
+            "normalised_usage_entropy": 0.8780387043952942,
+            "mean_usage": [
+              0.5809122920036316,
+              0.17458045482635498,
+              0.24450725317001343
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11642900000000012,
+            "train_tokens_per_s": 140720.9544013947,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.176839060253567,
+            "query_accuracy": 0.11904761904761904,
+            "query_count": 126.0,
+            "elapsed_s": 0.008072750000000184,
+            "tokens_per_s": 507385.95893591485
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11817270799999946,
+            "train_tokens_per_s": 138644.53372770365,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.10856903166998,
+            "query_accuracy": 0.15079365079365079,
+            "query_count": 126.0,
+            "elapsed_s": 0.008445249999997628,
+            "tokens_per_s": 485006.36452457303
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11803704200000098,
+            "train_tokens_per_s": 138803.88497027793,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.150066105146257,
+            "query_accuracy": 0.10317460317460317,
+            "query_count": 126.0,
+            "elapsed_s": 0.008286082999998001,
+            "tokens_per_s": 494322.8302203813
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.153893066461755,
+          "normal_query_accuracy_mean": 0.13227513227513227,
+          "train_tokens_per_s_mean": 46024.69792997235
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.1542866999510104,
+          "normal_query_accuracy_mean": 0.13756613756613756,
+          "train_tokens_per_s_mean": 398916.9205071885
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1508823368284435,
+          "normal_query_accuracy_mean": 0.14285714285714282,
+          "train_tokens_per_s_mean": 132419.025302953,
+          "uniform_accuracy_delta_mean": -0.013227513227513227,
+          "reverse_time_accuracy_delta_mean": -0.010582010582010581
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.149819904534274,
+          "normal_query_accuracy_mean": 0.12698412698412698,
+          "train_tokens_per_s_mean": 118949.5568342501,
+          "uniform_accuracy_delta_mean": 0.005291005291005291,
+          "reverse_time_accuracy_delta_mean": 0.007936507936507936
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1451580656899347,
+          "normal_query_accuracy_mean": 0.12433862433862435,
+          "train_tokens_per_s_mean": 139389.7910331254
+        }
+      },
+      "grid_horizon": 24,
+      "grid_event_probability": 0.05
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          24
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.15
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 729,
+        "valid_queries": 367,
+        "train_event_density": 0.0889892578125,
+        "valid_event_density": 0.089599609375
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.042172083000000526,
+            "train_tokens_per_s": 388503.45618450467,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.174811285912828,
+            "query_accuracy": 0.11171662125340599,
+            "query_count": 367.0,
+            "elapsed_s": 0.0028136249999981544,
+            "tokens_per_s": 1455773.2462580076
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.042055250000000655,
+            "train_tokens_per_s": 389582.751261727,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.145700072722474,
+            "query_accuracy": 0.07901907356948229,
+            "query_count": 367.0,
+            "elapsed_s": 0.003336209000000423,
+            "tokens_per_s": 1227740.8279875393
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.041777542000001944,
+            "train_tokens_per_s": 392172.42603691807,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.126045733771467,
+            "query_accuracy": 0.1226158038147139,
+            "query_count": 367.0,
+            "elapsed_s": 0.0028084170000006736,
+            "tokens_per_s": 1458472.8692352374
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.354166124999999,
+            "train_tokens_per_s": 46260.7766341291,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.193298155995091,
+            "query_accuracy": 0.11444141689373297,
+            "query_count": 367.0,
+            "elapsed_s": 0.01437320800000208,
+            "tokens_per_s": 284974.6556231154
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3503897080000016,
+            "train_tokens_per_s": 46759.36429046006,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1298817893139996,
+            "query_accuracy": 0.10354223433242507,
+            "query_count": 367.0,
+            "elapsed_s": 0.014569999999999084,
+            "tokens_per_s": 281125.6005490911
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.3523825830000007,
+            "train_tokens_per_s": 46494.91998303437,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.147766803850595,
+            "query_accuracy": 0.1335149863760218,
+            "query_count": 367.0,
+            "elapsed_s": 0.01559750000000193,
+            "tokens_per_s": 262606.186888892
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12343654200000032,
+            "train_tokens_per_s": 132732.1693765527,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.180170412609298,
+            "query_accuracy": 0.09809264305177112,
+            "query_count": 367.0,
+            "elapsed_s": 0.008645917000002612,
+            "tokens_per_s": 473749.63234076416
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1876006210857257,
+            "query_accuracy": 0.12806539509536785,
+            "query_count": 367.0,
+            "elapsed_s": 0.007972582999997258,
+            "tokens_per_s": 513760.7222152982
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.180058628077078,
+            "query_accuracy": 0.10626702997275204,
+            "query_count": 367.0,
+            "elapsed_s": 0.00813858300000092,
+            "tokens_per_s": 503281.7137823054
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9230210487462794,
+            "short_weight_event_minus_filler": -0.05334729701280594,
+            "normalised_usage_entropy": 0.879655659198761,
+            "mean_usage": [
+              0.13709856569766998,
+              0.31580764055252075,
+              0.54709392786026
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1198986249999976,
+            "train_tokens_per_s": 136648.77307809266,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1323297536990298,
+            "query_accuracy": 0.09264305177111716,
+            "query_count": 367.0,
+            "elapsed_s": 0.008301874999997239,
+            "tokens_per_s": 493382.5190094241
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1489621105246064,
+            "query_accuracy": 0.08719346049046321,
+            "query_count": 367.0,
+            "elapsed_s": 0.008145875000000302,
+            "tokens_per_s": 502831.1875642393
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1368316174852753,
+            "query_accuracy": 0.08991825613079019,
+            "query_count": 367.0,
+            "elapsed_s": 0.007823667000000256,
+            "tokens_per_s": 523539.66496782977
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9943342183249305,
+            "short_weight_event_minus_filler": -0.17322313785552979,
+            "normalised_usage_entropy": 0.8361657857894897,
+            "mean_usage": [
+              0.4077620804309845,
+              0.08443915843963623,
+              0.5077987313270569
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12051558299999954,
+            "train_tokens_per_s": 135949.22409328644,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1509756743095876,
+            "query_accuracy": 0.10899182561307902,
+            "query_count": 367.0,
+            "elapsed_s": 0.008594916999999924,
+            "tokens_per_s": 476560.7393300059
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1617541735438626,
+            "query_accuracy": 0.10354223433242507,
+            "query_count": 367.0,
+            "elapsed_s": 0.008280458000001545,
+            "tokens_per_s": 494658.62878589996
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1512278490560255,
+            "query_accuracy": 0.1008174386920981,
+            "query_count": 367.0,
+            "elapsed_s": 0.00806104200000135,
+            "tokens_per_s": 508122.8952782176
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9442589140912802,
+            "short_weight_event_minus_filler": 0.052941322326660156,
+            "normalised_usage_entropy": 0.8606646060943604,
+            "mean_usage": [
+              0.5977597236633301,
+              0.16322112083435059,
+              0.23901915550231934
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12680395900000008,
+            "train_tokens_per_s": 129207.32230450305,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1923583937600783,
+            "query_accuracy": 0.08719346049046321,
+            "query_count": 367.0,
+            "elapsed_s": 0.008646916000000004,
+            "tokens_per_s": 473694.8988517985
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1939742597637126,
+            "query_accuracy": 0.12806539509536785,
+            "query_count": 367.0,
+            "elapsed_s": 0.008404167000001905,
+            "tokens_per_s": 487377.2736785301
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1911580822448316,
+            "query_accuracy": 0.08991825613079019,
+            "query_count": 367.0,
+            "elapsed_s": 0.008429499999998313,
+            "tokens_per_s": 485912.568954365
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9217014465384499,
+            "short_weight_event_minus_filler": -0.05346730351448059,
+            "normalised_usage_entropy": 0.8763242363929749,
+            "mean_usage": [
+              0.1373927891254425,
+              0.30863407254219055,
+              0.5539730787277222
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12462008299999994,
+            "train_tokens_per_s": 131471.58632529565,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1349644251675306,
+            "query_accuracy": 0.08719346049046321,
+            "query_count": 367.0,
+            "elapsed_s": 0.008783083000000858,
+            "tokens_per_s": 466351.0523582209
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1509225439960367,
+            "query_accuracy": 0.08991825613079019,
+            "query_count": 367.0,
+            "elapsed_s": 0.008538375000000542,
+            "tokens_per_s": 479716.5737039823
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.137658467409721,
+            "query_accuracy": 0.1008174386920981,
+            "query_count": 367.0,
+            "elapsed_s": 0.00827549999999988,
+            "tokens_per_s": 494954.9876140486
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9932601757175074,
+            "short_weight_event_minus_filler": -0.17154178023338318,
+            "normalised_usage_entropy": 0.8411054611206055,
+            "mean_usage": [
+              0.4190211594104767,
+              0.0862790197134018,
+              0.49469971656799316
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12651937499999732,
+            "train_tokens_per_s": 129497.95238871791,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1495983386234627,
+            "query_accuracy": 0.1335149863760218,
+            "query_count": 367.0,
+            "elapsed_s": 0.008978250000001964,
+            "tokens_per_s": 456213.62737717305
+          },
+          "uniform_intervention": {
+            "query_nll": 2.174317575605429,
+            "query_accuracy": 0.11444141689373297,
+            "query_count": 367.0,
+            "elapsed_s": 0.008492750000002047,
+            "tokens_per_s": 482293.72111495247
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1508030014401887,
+            "query_accuracy": 0.1008174386920981,
+            "query_count": 367.0,
+            "elapsed_s": 0.008121207999998603,
+            "tokens_per_s": 504358.46489841223
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9494347072890188,
+            "short_weight_event_minus_filler": 0.05230438709259033,
+            "normalised_usage_entropy": 0.8639411330223083,
+            "mean_usage": [
+              0.5938211679458618,
+              0.16330841183662415,
+              0.24287045001983643
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12366191699999973,
+            "train_tokens_per_s": 132490.26375678807,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1778041907162367,
+            "query_accuracy": 0.1335149863760218,
+            "query_count": 367.0,
+            "elapsed_s": 0.00841649999999916,
+            "tokens_per_s": 486663.10223969683
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12116687499999657,
+            "train_tokens_per_s": 135218.47452119619,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.135911137921284,
+            "query_accuracy": 0.08174386920980926,
+            "query_count": 367.0,
+            "elapsed_s": 0.00897254100000211,
+            "tokens_per_s": 456503.9045237059
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1194119580000006,
+            "train_tokens_per_s": 137205.68923256345,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.153783247321438,
+            "query_accuracy": 0.10354223433242507,
+            "query_count": 367.0,
+            "elapsed_s": 0.008478084000000052,
+            "tokens_per_s": 483128.0275118735
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.156982249719895,
+          "normal_query_accuracy_mean": 0.11716621253405994,
+          "train_tokens_per_s_mean": 46505.020302541176
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.14885236413559,
+          "normal_query_accuracy_mean": 0.10445049954586738,
+          "train_tokens_per_s_mean": 390086.21116104996
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1589737191836904,
+          "normal_query_accuracy_mean": 0.10263396911898275,
+          "train_tokens_per_s_mean": 130058.95367283886,
+          "uniform_accuracy_delta_mean": 0.008174386920980927,
+          "reverse_time_accuracy_delta_mean": -0.005449591280653948
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1544919468726382,
+          "normal_query_accuracy_mean": 0.09990917347865576,
+          "train_tokens_per_s_mean": 135110.05551597726,
+          "uniform_accuracy_delta_mean": 0.006357856494096277,
+          "reverse_time_accuracy_delta_mean": -0.0009082652134423247
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1558328586529867,
+          "normal_query_accuracy_mean": 0.10626702997275206,
+          "train_tokens_per_s_mean": 134971.47583684922
+        }
+      },
+      "grid_horizon": 24,
+      "grid_event_probability": 0.15
+    },
+    {
+      "experiment": "TBC-0 temporal-basis crossover smoke",
+      "status": "SMOKE_ONLY_NOT_A_FORMAL_VERDICT",
+      "device": "cpu",
+      "task": {
+        "train_sequences": 128,
+        "valid_sequences": 64,
+        "seq_len": 64,
+        "payload_values": 8,
+        "horizons": [
+          24
+        ],
+        "gap_min": 1,
+        "gap_max": 4,
+        "event_probability": 0.3
+      },
+      "model": {
+        "d_model": 16,
+        "state_dim": 16,
+        "n_experts": 3
+      },
+      "training": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.002,
+        "grad_clip": 1.0
+      },
+      "variants": [
+        "base_same_width",
+        "base_param_matched",
+        "temporal",
+        "homogeneous",
+        "uniform"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "parameter_match": {
+        "target_temporal_params": 7235,
+        "matched_base_state_dim": 48,
+        "matched_base_params": 7194,
+        "relative_gap": 0.0056668970283344855
+      },
+      "dataset": {
+        "train_queries": 1418,
+        "valid_queries": 672,
+        "train_event_density": 0.173095703125,
+        "valid_event_density": 0.1640625
+      },
+      "rows": [
+        {
+          "variant": "base_same_width",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.042483833999998666,
+            "train_tokens_per_s": 385652.5755185023,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1504809373901006,
+            "query_accuracy": 0.11160714285714286,
+            "query_count": 672.0,
+            "elapsed_s": 0.0030103749999987883,
+            "tokens_per_s": 1360627.8287594232
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.041626999999998304,
+            "train_tokens_per_s": 393590.6983448403,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1179911636170887,
+            "query_accuracy": 0.13392857142857142,
+            "query_count": 672.0,
+            "elapsed_s": 0.0028141250000004447,
+            "tokens_per_s": 1455514.5915690854
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_same_width",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 2650,
+          "params_trainable": 2650,
+          "parameter_gap_to_temporal": 0.6337249481686248,
+          "training": {
+            "train_elapsed_s": 0.040889082999999715,
+            "train_tokens_per_s": 400693.7499674452,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1202565225816907,
+            "query_accuracy": 0.08928571428571429,
+            "query_count": 672.0,
+            "elapsed_s": 0.003064459000000852,
+            "tokens_per_s": 1336614.390990012
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 0,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.37256845799999994,
+            "train_tokens_per_s": 43975.810748853044,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.141131303494885,
+            "query_accuracy": 0.125,
+            "query_count": 672.0,
+            "elapsed_s": 0.014951750000001596,
+            "tokens_per_s": 273947.8656344283
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 1,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.35253854100000126,
+            "train_tokens_per_s": 46474.35129652942,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.135783434268974,
+            "query_accuracy": 0.11755952380952381,
+            "query_count": 672.0,
+            "elapsed_s": 0.014269915999999938,
+            "tokens_per_s": 287037.4289519306
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "base_param_matched",
+          "seed": 2,
+          "state_dim": 48,
+          "params_total": 7194,
+          "params_trainable": 7194,
+          "parameter_gap_to_temporal": 0.0056668970283344855,
+          "training": {
+            "train_elapsed_s": 0.34693904099999884,
+            "train_tokens_per_s": 47224.434450431465,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1541138617765334,
+            "query_accuracy": 0.10863095238095238,
+            "query_count": 672.0,
+            "elapsed_s": 0.01464366599999778,
+            "tokens_per_s": 279711.3782846878
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "temporal",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12212191700000119,
+            "train_tokens_per_s": 134161.0122284589,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1544931648033008,
+            "query_accuracy": 0.12648809523809523,
+            "query_count": 672.0,
+            "elapsed_s": 0.00860716700000097,
+            "tokens_per_s": 475882.4825868417
+          },
+          "uniform_intervention": {
+            "query_nll": 2.160012933469954,
+            "query_accuracy": 0.12202380952380952,
+            "query_count": 672.0,
+            "elapsed_s": 0.007795707999999735,
+            "tokens_per_s": 525417.3193762695
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.1537601408504305,
+            "query_accuracy": 0.12648809523809523,
+            "query_count": 672.0,
+            "elapsed_s": 0.008031583000001064,
+            "tokens_per_s": 509986.6365073308
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8689304784747266,
+            "short_weight_event_minus_filler": -0.04913433641195297,
+            "normalised_usage_entropy": 0.8582464456558228,
+            "mean_usage": [
+              0.12453803420066833,
+              0.3067271113395691,
+              0.568734884262085
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12983066600000015,
+            "train_tokens_per_s": 126195.14714651453,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1307573311385655,
+            "query_accuracy": 0.12202380952380952,
+            "query_count": 672.0,
+            "elapsed_s": 0.008876833000002193,
+            "tokens_per_s": 461425.8260799756
+          },
+          "uniform_intervention": {
+            "query_nll": 2.14571728734743,
+            "query_accuracy": 0.125,
+            "query_count": 672.0,
+            "elapsed_s": 0.008946124999997807,
+            "tokens_per_s": 457851.86323698855
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.133302240144639,
+            "query_accuracy": 0.1130952380952381,
+            "query_count": 672.0,
+            "elapsed_s": 0.008329666000001623,
+            "tokens_per_s": 491736.4033562933
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.9909458242862291,
+            "short_weight_event_minus_filler": -0.1353486180305481,
+            "normalised_usage_entropy": 0.8390364050865173,
+            "mean_usage": [
+              0.3772052526473999,
+              0.09103899449110031,
+              0.5317557454109192
+            ]
+          }
+        },
+        {
+          "variant": "temporal",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.1354477910000007,
+            "train_tokens_per_s": 120961.73646715224,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.140982402577287,
+            "query_accuracy": 0.13095238095238096,
+            "query_count": 672.0,
+            "elapsed_s": 0.00850520899999907,
+            "tokens_per_s": 481587.2249583106
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1591902925145057,
+            "query_accuracy": 0.12202380952380952,
+            "query_count": 672.0,
+            "elapsed_s": 0.008271374999999637,
+            "tokens_per_s": 495201.82557315804
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.140954322048596,
+            "query_accuracy": 0.12648809523809523,
+            "query_count": 672.0,
+            "elapsed_s": 0.008360500000001991,
+            "tokens_per_s": 489922.85150397994
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9033388302365235,
+            "short_weight_event_minus_filler": 0.04520171880722046,
+            "normalised_usage_entropy": 0.8498115539550781,
+            "mean_usage": [
+              0.6070668697357178,
+              0.15506774187088013,
+              0.2378653734922409
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.130945999999998,
+            "train_tokens_per_s": 125120.2785881222,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1631777098491076,
+            "query_accuracy": 0.12351190476190477,
+            "query_count": 672.0,
+            "elapsed_s": 0.008281708000001942,
+            "tokens_per_s": 494583.9674616685
+          },
+          "uniform_intervention": {
+            "query_nll": 2.166793098761922,
+            "query_accuracy": 0.12202380952380952,
+            "query_count": 672.0,
+            "elapsed_s": 0.008371540999998928,
+            "tokens_per_s": 489276.7054477216
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.162365743801707,
+            "query_accuracy": 0.125,
+            "query_count": 672.0,
+            "elapsed_s": 0.008294124999999042,
+            "tokens_per_s": 493843.5338267115
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.8680591194573216,
+            "short_weight_event_minus_filler": -0.048590660095214844,
+            "normalised_usage_entropy": 0.8552238345146179,
+            "mean_usage": [
+              0.12290270626544952,
+              0.30540603399276733,
+              0.5716912746429443
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12273408300000099,
+            "train_tokens_per_s": 133491.85164808595,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1261938778417453,
+            "query_accuracy": 0.1324404761904762,
+            "query_count": 672.0,
+            "elapsed_s": 0.008182000000001466,
+            "tokens_per_s": 500611.0975310763
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1395606831425713,
+            "query_accuracy": 0.12202380952380952,
+            "query_count": 672.0,
+            "elapsed_s": 0.008080709000001463,
+            "tokens_per_s": 506886.21505851264
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.128442107211976,
+            "query_accuracy": 0.12797619047619047,
+            "query_count": 672.0,
+            "elapsed_s": 0.00809908299999762,
+            "tokens_per_s": 505736.2666861426
+          },
+          "routing": {
+            "change_short_weight_correlation": -0.990136684359245,
+            "short_weight_event_minus_filler": -0.13520625233650208,
+            "normalised_usage_entropy": 0.8418996930122375,
+            "mean_usage": [
+              0.382053941488266,
+              0.09191541373729706,
+              0.5260306596755981
+            ]
+          }
+        },
+        {
+          "variant": "homogeneous",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7235,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.13691620800000237,
+            "train_tokens_per_s": 119664.43008704796,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1380129978060722,
+            "query_accuracy": 0.11011904761904762,
+            "query_count": 672.0,
+            "elapsed_s": 0.009113415999998153,
+            "tokens_per_s": 449447.2764110439
+          },
+          "uniform_intervention": {
+            "query_nll": 2.1555171601829075,
+            "query_accuracy": 0.13095238095238096,
+            "query_count": 672.0,
+            "elapsed_s": 0.00873712499999968,
+            "tokens_per_s": 468804.09745770495
+          },
+          "reverse_time_intervention": {
+            "query_nll": 2.13717784874496,
+            "query_accuracy": 0.11755952380952381,
+            "query_count": 672.0,
+            "elapsed_s": 0.007998500000002906,
+            "tokens_per_s": 512096.0180031896
+          },
+          "routing": {
+            "change_short_weight_correlation": 0.9027162846564063,
+            "short_weight_event_minus_filler": 0.04548323154449463,
+            "normalised_usage_entropy": 0.8529666662216187,
+            "mean_usage": [
+              0.6042665243148804,
+              0.15708568692207336,
+              0.23864778876304626
+            ]
+          }
+        },
+        {
+          "variant": "uniform",
+          "seed": 0,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11720970800000075,
+            "train_tokens_per_s": 139783.64317740555,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.155179817761694,
+            "query_accuracy": 0.1324404761904762,
+            "query_count": 672.0,
+            "elapsed_s": 0.008657542000001683,
+            "tokens_per_s": 473113.5003444631
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 1,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.12108854199999897,
+            "train_tokens_per_s": 135305.94827048245,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1248500123620033,
+            "query_accuracy": 0.11607142857142858,
+            "query_count": 672.0,
+            "elapsed_s": 0.008314458000000968,
+            "tokens_per_s": 492635.8398827107
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        },
+        {
+          "variant": "uniform",
+          "seed": 2,
+          "state_dim": 16,
+          "params_total": 7235,
+          "params_trainable": 7226,
+          "parameter_gap_to_temporal": 0.0,
+          "training": {
+            "train_elapsed_s": 0.11766162500000021,
+            "train_tokens_per_s": 139246.75951058784,
+            "updates": 16.0
+          },
+          "normal": {
+            "query_nll": 2.1492711578806243,
+            "query_accuracy": 0.11160714285714286,
+            "query_count": 672.0,
+            "elapsed_s": 0.008590207999997546,
+            "tokens_per_s": 476821.98149348306
+          },
+          "uniform_intervention": null,
+          "reverse_time_intervention": null,
+          "routing": null
+        }
+      ],
+      "summary": {
+        "base_param_matched": {
+          "seeds": 3.0,
+          "params_total": 7194.0,
+          "normal_query_nll_mean": 2.1436761998467975,
+          "normal_query_accuracy_mean": 0.11706349206349205,
+          "train_tokens_per_s_mean": 45891.53216527131
+        },
+        "base_same_width": {
+          "seeds": 3.0,
+          "params_total": 2650.0,
+          "normal_query_nll_mean": 2.1295762078629603,
+          "normal_query_accuracy_mean": 0.11160714285714286,
+          "train_tokens_per_s_mean": 393312.34127692925
+        },
+        "homogeneous": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.142461528498975,
+          "normal_query_accuracy_mean": 0.12202380952380952,
+          "train_tokens_per_s_mean": 126092.1867744187,
+          "uniform_accuracy_delta_mean": 0.0029761904761904747,
+          "reverse_time_accuracy_delta_mean": 0.0014880952380952328
+        },
+        "temporal": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1420776328397175,
+          "normal_query_accuracy_mean": 0.12648809523809523,
+          "train_tokens_per_s_mean": 127105.96528070855,
+          "uniform_accuracy_delta_mean": -0.0034722222222222238,
+          "reverse_time_accuracy_delta_mean": -0.004464285714285717
+        },
+        "uniform": {
+          "seeds": 3.0,
+          "params_total": 7235.0,
+          "normal_query_nll_mean": 2.1431003293347737,
+          "normal_query_accuracy_mean": 0.12003968253968254,
+          "train_tokens_per_s_mean": 138112.11698615862
+        }
+      },
+      "grid_horizon": 24,
+      "grid_event_probability": 0.3
+    }
+  ],
+  "analysis": {
+    "frozen_thresholds": {
+      "paired_nll_advantage": 0.1,
+      "paired_accuracy_advantage": 0.05,
+      "minimum_consistent_cell_fraction": 0.6666666666666666,
+      "router_accuracy_drop": 0.03,
+      "usage_semantic_delta": 0.02,
+      "parameter_gap": 0.05
+    },
+    "grand_means": {
+      "temporal_minus_homogeneous_accuracy": 0.0018031874805573042,
+      "homogeneous_minus_temporal_nll": -0.004624874955566668,
+      "temporal_uniform_accuracy_drop": 0.03531172202926244,
+      "temporal_reverse_time_accuracy_drop": 0.002438105002076291,
+      "temporal_minus_matched_base_accuracy": -0.03497537757377581,
+      "matched_base_minus_temporal_nll": 0.0048719624847007
+    },
+    "cell_consistency": {
+      "passing_cells": 8,
+      "required_cells": 6,
+      "total_cells": 9
+    },
+    "routing_semantics": {
+      "short_usage_high_minus_low_probability": {
+        "2": -0.030134598414103153,
+        "8": -0.0315264264742533,
+        "24": -0.022646576166152954
+      },
+      "long_usage_long_minus_short_horizon": {
+        "0.05": 0.011537596583366394,
+        "0.15": 0.007544447978337587,
+        "0.3": 0.00415077805519104
+      },
+      "short_passing": 0,
+      "short_required": 2,
+      "long_passing": 0,
+      "long_required": 2
+    },
+    "gates": {
+      "parameter_match": true,
+      "paired_effect": false,
+      "cell_consistency": true,
+      "router_intervention": true,
+      "routing_semantics": false
+    },
+    "cell_effects": [
+      {
+        "horizon": 2,
+        "event_probability": 0.05,
+        "realised_valid_event_density": 0.0458984375,
+        "temporal_minus_homogeneous_accuracy": 0.056737588652482275,
+        "homogeneous_minus_temporal_nll": -0.016092365726511515,
+        "temporal_uniform_accuracy_drop": 0.11702127659574468,
+        "temporal_reverse_time_accuracy_drop": 0.0053191489361702204,
+        "temporal_minus_matched_base_accuracy": -0.06914893617021277,
+        "matched_base_minus_temporal_nll": 0.02079967425224627,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 2,
+        "event_probability": 0.15,
+        "realised_valid_event_density": 0.12548828125,
+        "temporal_minus_homogeneous_accuracy": -0.030479896238651123,
+        "homogeneous_minus_temporal_nll": 0.02425054368960411,
+        "temporal_uniform_accuracy_drop": 0.07587548638132295,
+        "temporal_reverse_time_accuracy_drop": -0.007133592736705589,
+        "temporal_minus_matched_base_accuracy": -0.15499351491569394,
+        "matched_base_minus_temporal_nll": 0.04577341030234653,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 2,
+        "event_probability": 0.3,
+        "realised_valid_event_density": 0.224853515625,
+        "temporal_minus_homogeneous_accuracy": -0.01664857039449874,
+        "homogeneous_minus_temporal_nll": -0.07188325065484398,
+        "temporal_uniform_accuracy_drop": 0.10532030401737243,
+        "temporal_reverse_time_accuracy_drop": 0.017734346724574735,
+        "temporal_minus_matched_base_accuracy": -0.08758595729279768,
+        "matched_base_minus_temporal_nll": -0.05367031219943552,
+        "direction_consistent": false
+      },
+      {
+        "horizon": 8,
+        "event_probability": 0.05,
+        "realised_valid_event_density": 0.042724609375,
+        "temporal_minus_homogeneous_accuracy": 0.020952380952380945,
+        "homogeneous_minus_temporal_nll": 0.004931595666068045,
+        "temporal_uniform_accuracy_drop": 0.04380952380952382,
+        "temporal_reverse_time_accuracy_drop": 0.015238095238095236,
+        "temporal_minus_matched_base_accuracy": 0.03238095238095238,
+        "matched_base_minus_temporal_nll": 0.01339596430460599,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 8,
+        "event_probability": 0.15,
+        "realised_valid_event_density": 0.116943359375,
+        "temporal_minus_homogeneous_accuracy": 0.01183020180932498,
+        "homogeneous_minus_temporal_nll": 0.010903118381752583,
+        "temporal_uniform_accuracy_drop": -0.005567153792623518,
+        "temporal_reverse_time_accuracy_drop": -0.0062630480167014625,
+        "temporal_minus_matched_base_accuracy": -0.011830201809324986,
+        "matched_base_minus_temporal_nll": 0.005419068645087084,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 8,
+        "event_probability": 0.3,
+        "realised_valid_event_density": 0.209716796875,
+        "temporal_minus_homogeneous_accuracy": -0.012029491656965463,
+        "homogeneous_minus_temporal_nll": 0.000338383779351729,
+        "temporal_uniform_accuracy_drop": -0.010477299185098965,
+        "temporal_reverse_time_accuracy_drop": -0.00038804811796662914,
+        "temporal_minus_matched_base_accuracy": -0.010477299185098954,
+        "matched_base_minus_temporal_nll": 0.00396782527563877,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 24,
+        "event_probability": 0.05,
+        "realised_valid_event_density": 0.03076171875,
+        "temporal_minus_homogeneous_accuracy": -0.015873015873015872,
+        "homogeneous_minus_temporal_nll": 0.0010624322941694686,
+        "temporal_uniform_accuracy_drop": -0.005291005291005291,
+        "temporal_reverse_time_accuracy_drop": -0.007936507936507936,
+        "temporal_minus_matched_base_accuracy": -0.005291005291005291,
+        "matched_base_minus_temporal_nll": 0.004073161927480602,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 24,
+        "event_probability": 0.15,
+        "realised_valid_event_density": 0.089599609375,
+        "temporal_minus_homogeneous_accuracy": -0.002724795640326974,
+        "homogeneous_minus_temporal_nll": 0.004481772311052179,
+        "temporal_uniform_accuracy_drop": -0.006357856494096277,
+        "temporal_reverse_time_accuracy_drop": 0.0009082652134423247,
+        "temporal_minus_matched_base_accuracy": -0.01725703905540418,
+        "matched_base_minus_temporal_nll": 0.002490302847256783,
+        "direction_consistent": true
+      },
+      {
+        "horizon": 24,
+        "event_probability": 0.3,
+        "realised_valid_event_density": 0.1640625,
+        "temporal_minus_homogeneous_accuracy": 0.004464285714285712,
+        "homogeneous_minus_temporal_nll": 0.0003838956592573754,
+        "temporal_uniform_accuracy_drop": 0.0034722222222222238,
+        "temporal_reverse_time_accuracy_drop": 0.004464285714285717,
+        "temporal_minus_matched_base_accuracy": 0.009424603174603174,
+        "matched_base_minus_temporal_nll": 0.0015985670070797948,
+        "direction_consistent": true
+      }
+    ],
+    "verdict": "NO_MECHANISM_SIGNAL"
+  }
+}
