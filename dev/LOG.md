@@ -4,6 +4,38 @@
 
 ---
 
+## 2026-07-22：CRWM-2A public-objective constraint sufficiency — benchmark 可识别性预注册（PENDING）
+
+### 为什么先做这一门
+
+CRWM-1 已证明 SG22R 两步 candidate generation 不依赖 evaluator oracle，按冻结 next-route 应进入 live horizon `{2,8,32}` 与 pure-neural / retrieval / constraint-only / compiled+residual 对照。但在实现完整矩阵前审计发现：SG19 的 frozen compiler 只读 public objective 中按词序出现的 compass directions 并追加 `take coin`，而 SG22R 48 个游戏的 parsed plan 与官方 walkthrough 已记录为 `48/48` 完全相等。
+
+这使 CRWM-0 的 H2 可能不可识别：若零参数 objective-only policy 已在 live environment 100% 通关，任何模型都不可能再相对 constraint-only 提高 `>=5pp` task success。故本轮先以真实 `.z8` 做 benchmark sufficiency audit；若天花板成立，停止在该 TextWorld 模板上堆 matched model，不用 transition/NLL 的局部优势替代任务成功率主张。
+
+### 冻结输入与无 oracle 协议
+
+- 引用 SG22R SHA-256 `1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92` 与 CRWM-1 SHA-256 `64CA1BDDAAC177E9AEA51831EA586B14A73B2FB34807726D37BDA132415A56DE`；test seeds 固定 `20270209..20270216`。
+- 用 TextWorld `1.7.0` / `tw-make` 按 level-5 与相同 seed 重生成本地 ignored `.z8`；8 个 binary 的 size/SHA 必须逐个等于 SG22R frozen manifest，否则 `STOP_DATA_IDENTITY_FAILURE`，不运行策略。
+- policy 每局只读取 live `adapter.objective`，用 frozen `parse_objective_plan` 产生 action tape；不读 stored walkthrough、graph、residual、训练集、future observation 或 admissible candidates。
+- 每步先由 `(plan, step)` 固化 proposed action，然后 evaluator 才可读取当前 admissible actions 判断 validity，并执行 action 取得 outcome。candidate-oracle selection calls 必须为 `0`；stored walkthrough 只在整局完成后审计 equality。
+- horizon 固定 `{2,8,32}`，每个 horizon 都从全新 reset 开始跑 8 个 test games；逐轨迹落盘 proposed action、validity、reward、done、won。
+
+### 冻结判官与 verdict
+
+- **DATA IDENTITY**：8/8 `.z8` size/SHA 与 frozen manifest 相同。
+- **CONSTRAINT SUFFICIENCY**：horizon 8 与 32 的 win rate 均 `1.0`、invalid action rate 均 `0`、parsed-plan/walkthrough exact rate 均 `1.0`。
+- 若 sufficiency 成立：机器 verdict=`STOP_TEXTWORLD_TASK_CEILING_PIVOT_ENVIRONMENT`。这是否证 benchmark 对“residual 带来任务成功率增益”的可识别性，不是否证 compiled residual 的 transition prediction；停止完整 four-baseline TextWorld 矩阵，转到 objective 不泄露解路径、含隐藏/变化动力学的第二环境。
+- 若 sufficiency 不成立且 data identity PASS：`PROCEED_CRWM2_MATCHED_MATRIX`，继续原四类 baseline。
+- 正式命令：`venv/bin/python experiments/e3_crwm2a_constraint_sufficiency.py --horizons 2 8 32 --output results/e3_scan/e3_crwm2a_constraint_sufficiency.json`。
+
+### 环境准备状态
+
+- 系统 Python 缺少 TextWorld，首次 `textworld==1.7.0` 安装因旧 pip 选择最新 spaCy 源码依赖、镜像缺少匹配 thinc 而中止；未修改仓库、未生成结果。
+- 随后在已被 `.gitignore` 排除的 `venv/` 中升级 pip，固定可用 arm64 wheel `spacy==3.8.7`，再安装 TextWorld `1.7.0`。环境变更不提交；安装完成后先做单 seed binary identity，再决定是否生成全部8局。
+- **PENDING / PRE-REGISTERED**：正式 live outcome 尚未读取，以上 stop/go 判官不得按结果更改。
+
+---
+
 ## 2026-07-22：CRWM-1 SG22R no-oracle candidate generation — 正式结果（PASS，长闭环待完成）
 
 ### 本轮问题与边界
