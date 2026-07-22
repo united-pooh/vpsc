@@ -4,6 +4,43 @@
 
 ---
 
+## 2026-07-22：CRWM-1 SG22R no-oracle candidate generation — 正式预注册（PENDING）
+
+### 本轮问题与边界
+
+CRWM-0 的第一条停机门是“移除第二候选 oracle 后，SG22R 优势是否消失”。本轮只做该最小反证：冻结 SG22R seventh-fresh 的 corpus、exhaustive/tree cache、past-only episodic graph、plan constraint 与 closed-form residual，不重新采数据、不改变阈值；唯一变化是第二步候选必须由第一步 projected next-affordance mask 自己生成。
+
+这不是 CRWM 的长闭环结论：cache 仍只覆盖两步，官方 tree 仍在 proposal 完成后提供评分 target。本轮即使 PASS，也只允许进入 horizon `{2,8,32}` 的 live runner 与 matched pure-neural/graph/constraint/residual 对照，不能声称 H1/H2/H3 已成立。
+
+### 冻结信息屏障
+
+1. 对每个 frozen first branch，模型先用 `context + current_mask + first_action + public plan + past-only graph` 预测 transition 与 next-affordance mask。
+2. `proposed_second_actions` 只能由该 projected binary mask 和冻结 `action_order` 生成；此时不得读取 `first["seconds"]`、official branch admissible actions、第二步 target 或 teacher context。
+3. proposal 固化并生成 fingerprint 后，evaluator 才读取 official second records，且只用于计算 candidate precision/recall/set-exact 和 transition exactness。
+4. 第二步状态只使用 `imagined_context_after(first_prediction)`；teacher-context call 必须为 `0`。漏提 official action 计 false negative，多提 action 计 invalid/false positive；禁止只在交集上报告准确率。
+
+### 冻结输入与判官
+
+- SG22R reference：`results/e3_scan/e3_sg22r_seventh_fresh_confirmation.json`，SHA-256 `1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92`。
+- frozen cache：`results/e3_scan/e3_sg22r_fresh_exhaustive_tree_cache.json`，SHA-256 `2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E`；预期 test `8 games / 40 roots / 160 first branches / 616 legal second pairs`。
+- **DATA**：reference/cache SHA、manifest、tree、graph no-leak、constraint 与 vocabulary/action-order identity 全部 PASS。
+- **FLOW**：proposal 在 evaluator target materialization 前冻结，future-oracle proposal calls=`0`，teacher-context calls=`0`。
+- **CANDIDATE**：micro precision、recall、per-first set-exact accuracy 均 `>=.95`。
+- **TRANSITION**：以 proposed∪official 为分母的 no-oracle self second exact `>=.95`，invalid transition rate `<=.05`；漏提、非法提议与 premature stop 都不得从分母删除。
+
+### 冻结 verdict 与命令
+
+- 全门通过：`PHASE1_GO_LONG_HORIZON_REQUIRED`，只进入 CRWM-2。
+- 任一门失败：`STOP_ORACLE_DEPENDENCE`，停止扩展并保留“SG22R 依赖 evaluator candidate proposal”的负结论。
+- 正式命令：`python3 experiments/e3_crwm1_no_oracle_candidates.py --threads 4 --output results/e3_scan/e3_crwm1_no_oracle_candidates.json`。
+- 预定产物：`results/e3_scan/e3_crwm1_no_oracle_candidates.json`；先提交并推送本预注册、实现与测试，再执行正式命令。
+
+### 当前状态
+
+- **PENDING / PRE-REGISTERED**：尚未读取本 runner 的正式结果；不会依据运行结果改变 `.95/.05` 门槛。
+
+---
+
 ## 2026-07-22：CRWM-0 已知事实编译、未知动力学学习 — 开题预注册（PENDING）
 
 ### 背景 / 动机
