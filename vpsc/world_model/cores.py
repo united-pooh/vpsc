@@ -45,7 +45,11 @@ FeedbackPolicy = Literal[
 E2ExecutionMode = Literal["reference", "fused"]
 E3ExecutionMode = Literal["serial", "scan"]
 E3EligibilityForwardMode = Literal["segment", "scan_aligned"]
-E3EligibilityBackwardMode = Literal["forward_eligibility", "reverse_adjoint"]
+E3EligibilityBackwardMode = Literal[
+    "forward_eligibility",
+    "reverse_adjoint",
+    "segmented_adjoint",
+]
 E3ScanMathMode = Literal["hillis_steele", "blocked_cumsum", "cuda_fused"]
 E3FixedPointMode = Literal["serial", "fixed_point"]
 E3OscillatorMode = Literal["serial", "scan"]
@@ -1889,7 +1893,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         spike_threshold: float,
         surrogate_scale: float,
         scan_aligned: bool,
-        reverse_adjoint: bool,
+        adjoint_mode: int,
         blocked_scan_size: int,
     ) -> Tuple[Tensor, Tensor, Tensor]:
         ctx.set_materialize_grads(False)
@@ -1987,6 +1991,11 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
                 running_decay.clone(),
             )
 
+        reverse_adjoint = int(adjoint_mode) != 0
+        segmented_adjoint = int(adjoint_mode) == 2
+        if int(adjoint_mode) not in (0, 1, 2):
+            raise ValueError(f"unknown adjoint mode: {adjoint_mode}")
+
         if reverse_adjoint:
             write_pair = torch.cat((write_e, write_i), dim=-1)
             decay_pair = torch.cat((decay_e, decay_i), dim=0)
@@ -2063,6 +2072,7 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
         )
         ctx.input_requires_grad = bool(ctx.needs_input_grad[0])
         ctx.reverse_adjoint = bool(reverse_adjoint)
+        ctx.segmented_adjoint = bool(segmented_adjoint)
         ctx.blocked_scan_size = int(blocked_scan_size)
         ctx.query_positions = query_positions
         ctx.query_indices = query_indices
@@ -2309,7 +2319,70 @@ class _GatedTraceMultiQueryEligibility(torch.autograd.Function):
                         offset *= 2
                 return prefix.flip(1)
 
-            adjoint_pair = parallel_reverse_adjoint(learning_pair, decay_pair)
+            def segmented_reverse_adjoint(
+                impulses: Tensor, decay: Tensor
+            ) -> Tensor:
+                """Exact query-anchor scan followed by analytic segment fill.
+
+                The dense reverse scan materialises a zero impulse at every
+                non-query timestep and scans all T positions.  Here the suffix
+                recurrence is first solved only at the K query anchors (plus
+                the final-state anchor), then each timestep gathers its next
+                anchor and applies the closed-form ``decay ** distance``.
+                Parameter and input gradients still materialise at every
+                timestep, so this changes the adjoint algorithm rather than
+                silently dropping dense gradients.
+                """
+
+                query_indices = ctx.query_indices
+                if int(query_indices[-1]) == ctx.time_steps - 1:
+                    anchors = query_indices
+                    anchor_impulses = impulses.clone()
+                    anchor_impulses[:, -1] += final_pair
+                else:
+                    anchors = torch.cat(
+                        (
+                            query_indices,
+                            query_indices.new_tensor([ctx.time_steps - 1]),
+                        )
+                    )
+                    anchor_impulses = torch.cat(
+                        (impulses, final_pair.unsqueeze(1)), dim=1
+                    )
+
+                gaps = (anchors[1:] - anchors[:-1]).to(dtype=decay.dtype)
+                gap_retention = decay.unsqueeze(0).pow(gaps.unsqueeze(1))
+                reverse_coefficient = torch.cat(
+                    (
+                        torch.zeros_like(decay).unsqueeze(0),
+                        gap_retention.flip(0),
+                    ),
+                    dim=0,
+                ).unsqueeze(0).expand(anchor_impulses.shape[0], -1, -1)
+                reverse_bias = anchor_impulses.flip(1)
+                reverse_anchor_adjoint = E3GatedTraceScanCore._affine_prefix_scan(
+                    reverse_coefficient,
+                    reverse_bias,
+                    torch.zeros_like(anchor_impulses[:, 0]),
+                )
+                anchor_adjoint = reverse_anchor_adjoint.flip(1)
+
+                time_index = torch.arange(
+                    ctx.time_steps, device=anchors.device, dtype=anchors.dtype
+                )
+                next_anchor_index = torch.searchsorted(anchors, time_index)
+                next_anchor = anchors.index_select(0, next_anchor_index)
+                distance = (next_anchor - time_index).to(dtype=decay.dtype)
+                selected = anchor_adjoint.index_select(1, next_anchor_index)
+                return selected * decay.view(1, 1, -1).pow(
+                    distance.view(1, ctx.time_steps, 1)
+                )
+
+            adjoint_pair = (
+                segmented_reverse_adjoint(learning_pair, decay_pair)
+                if ctx.segmented_adjoint
+                else parallel_reverse_adjoint(learning_pair, decay_pair)
+            )
             adjoint_e, adjoint_i = adjoint_pair.chunk(2, dim=-1)
             adjoint_rows = torch.cat(
                 (adjoint_e, adjoint_i, adjoint_e, adjoint_i), dim=-1
@@ -2708,10 +2781,11 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
         if eligibility_backward_mode not in (
             "forward_eligibility",
             "reverse_adjoint",
+            "segmented_adjoint",
         ):
             raise ValueError(
-                "eligibility_backward_mode must be 'forward_eligibility' "
-                "or 'reverse_adjoint'"
+                "eligibility_backward_mode must be 'forward_eligibility', "
+                "'reverse_adjoint', or 'segmented_adjoint'"
             )
         if scan_math_mode not in (
             "hillis_steele",
@@ -3171,7 +3245,11 @@ class E3GatedTraceScanCore(TemporalCore[E3ScanState]):
             self.spike_threshold,
             self.surrogate_scale,
             self.eligibility_forward_mode == "scan_aligned",
-            self.eligibility_backward_mode == "reverse_adjoint",
+            {
+                "forward_eligibility": 0,
+                "reverse_adjoint": 1,
+                "segmented_adjoint": 2,
+            }[self.eligibility_backward_mode],
             self.scan_block_size if self.scan_math_mode == "blocked_cumsum" else 0,
         )
         sequence = self.output_projection(self.output_norm(raw))

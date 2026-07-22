@@ -4,6 +4,59 @@
 
 ---
 
+## 2026-07-22：LDAA-1 native segmented-adjoint operator crossover — 正式预注册（PENDING）
+
+### 背景 / 动机
+
+LDAA-0 冻结了 loss density 驱动 exact backward 的研究问题，但仓库当时只有 BPTT、forward eligibility 与 RA0 dense reverse scan；所谓 native segmented adjoint 尚无可调用后端。本条先实现可证伪的第四路径，再执行完整 CPU operator matrix，禁止拿原型 Python 分段循环冒充新后端。
+
+新增 `eligibility_backward_mode="segmented_adjoint"`：把 K 个 query learning signals 与 final-state signal 合并为有序 anchors，在 anchor 轴上以 affine prefix scan 精确求 suffix adjoint；随后每个 timestep gather 其下一个 anchor，并乘 `decay**distance` 解析填充完整 T-step adjoint。参数梯度仍在每步累加，`input_gradient=on` 时仍返回完整输入梯度，因此收益不能来自丢弃 dense gradient。
+
+### 冻结矩阵
+
+| 因素 | 冻结取值 |
+|---|---|
+| T | `{512, 2048, 8192, 32768}` |
+| nominal K/T | `{1/1024, 1/256, 1/64, 1/16, 1/4, 1}`；K 至少为1 |
+| state_dim | `{16, 64}` |
+| input gradient | `{off, on}` |
+| backends | `bptt, forward_eligibility, reverse_adjoint, segmented_adjoint` |
+| shared shape | `batch=1, input_dim=hidden_dim=16` |
+| timing | CPU threads=4，interleaved，warmup=1，repeats=5，报告 p50/p95 |
+
+共 `4 × 6 × 2 × 2 = 96` 个 cell。每个 cell 四后端使用同一 input、initial state、query indices 与 state_dict；loss 为固定线性 query probe 加 final E/I state 项，保证 query 和 final-state 信号都进入 backward。
+
+### 冻结判官
+
+- **H1 exactness**：每个 cell 的 forward query、final E/I、输入/初态/全部参数梯度相对 BPTT 均满足 `atol=2e-5, rtol=1e-4`；任一 exact backend 失败即 `NO_GO_EXACTNESS`，停止解释速度。
+- **H2 sparse crossover**：actual `K/T <=1/32` 的 cell 中，segmented 同时达到 `BPTT p50 / segmented p50 >=1.5x` 与 `segmented unique saved storage / BPTT <=25%` 的比例 `>=60%`。
+- **H2 input-gradient audit**：只看 `input_gradient=on` 的 sparse cells，同一组合门通过比例仍须 `>=60%`，防止收益只来自关闭输入梯度。
+- dense reverse 与 segmented 的 sparse speedup、各 backend oracle 次数、autograd nodes、logical/unique saved bytes 全部报告，但不添加看到结果后设计的获胜指标。
+
+### 冻结 static dispatcher 诊断
+
+在结果出现前冻结最简单规则：actual density `<=1/32` 选择 segmented，否则选择 dense reverse-adjoint。报告相对四后端 oracle 的 regret，目标为每 cell `<=1.10x`。该静态规则只是 RQ2 的第一诊断：失败不否定 operator crossover，但说明后续必须用只含运行前特征的训练/留出 selector，不能手工按结果改规则。
+
+### 冻结 verdict
+
+- `NO_GO_EXACTNESS`：H1 任一失败。
+- `OPERATOR_GO_MODEL_VALIDATION_REQUIRED`：H1、H2 overall 与 H2 input-on 全通过；只允许进入第二 recurrent/SSM core 和模型级质量，不能凭 operator 结果晋级 `main`。
+- `NO_GO_SPARSE_CROSSOVER`：H1 通过但任一 H2 门失败；保留实现与负结果，不靠增加 repeats 或删不利 cell 救结论。
+
+### 实现、测试与冻结命令
+
+- `vpsc/world_model/cores.py`：新增 exact `segmented_adjoint` backend；CUDA fused 路径明确拒绝该 portable backend，禁止 CPU 实现被误报为 fused GPU。
+- `experiments/e3_ldaa1_operator_crossover.py`：96-cell exactness/storage/interleaved-latency matrix、冻结 dispatcher 与机器 verdict。
+- `tests/test_e3_ldaa1_operator_crossover.py`：input gradient on/off、末位置有/无 query、K rounding、CUDA guard 与 verdict 逻辑。
+- 冻结命令：`python3 experiments/e3_ldaa1_operator_crossover.py --device cpu --lengths 512 2048 8192 32768 --loss-densities 0.0009765625 0.00390625 0.015625 0.0625 0.25 1.0 --state-dims 16 64 --input-gradients off on --threads 4 --warmup 1 --repeats 5 --out results/e3_scan/e3_ldaa1_operator_crossover.json`。
+- 预定产物：`results/e3_scan/e3_ldaa1_operator_crossover.json`；运行后记录预注册 commit、SHA-256、wall、资源失败、完整 gate 与原样 verdict。
+
+### 当前状态
+
+- **PENDING / PRE-REGISTERED**：segmented 后端结构测试 `5 passed`，小型 input on/off equivalence 已过；正式 96-cell 命令尚未执行。本条先提交并推送，再运行。
+
+---
+
 ## 2026-07-22：LDAA-0 损失密度自适应精确反向扫描 — 开题预注册（PENDING）
 
 ### 背景 / 动机
