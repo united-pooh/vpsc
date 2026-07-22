@@ -63,6 +63,7 @@ class TaskConfig:
     horizons: Tuple[int, ...] = (2, 8, 24)
     gap_min: int = 1
     gap_max: int = 4
+    event_probability: Optional[float] = None
 
     @property
     def fill_token(self) -> int:
@@ -259,6 +260,8 @@ def make_event_recall_dataset(
         raise ValueError("horizons must lie inside (0, seq_len)")
     if task.gap_min < 0 or task.gap_max < task.gap_min:
         raise ValueError("invalid gap range")
+    if task.event_probability is not None and not 0.0 < task.event_probability < 1.0:
+        raise ValueError("event_probability must lie inside (0, 1)")
 
     rng = random.Random(seed)
     inputs = torch.full(
@@ -271,19 +274,44 @@ def make_event_recall_dataset(
     query_mask = torch.zeros_like(event_mask)
 
     for row in range(sequences):
-        event_time = rng.randrange(0, min(4, task.seq_len - 1))
-        while event_time < task.seq_len:
+        if task.event_probability is None:
+            event_time = rng.randrange(0, min(4, task.seq_len - 1))
+            while event_time < task.seq_len:
+                horizon = rng.choice(task.horizons)
+                query_time = event_time + horizon
+                if query_time >= task.seq_len:
+                    break
+                payload = rng.randrange(task.payload_values)
+                inputs[row, event_time] = payload
+                event_mask[row, event_time] = True
+                inputs[row, query_time] = task.query_token
+                targets[row, query_time] = payload
+                query_mask[row, query_time] = True
+                event_time = query_time + 1 + rng.randint(task.gap_min, task.gap_max)
+            continue
+
+        # Factorised grid mode: event proposals are Bernoulli and can overlap
+        # in flight.  A due query owns its timestep, so its input is always the
+        # answer-independent QUERY token.  This makes event probability an
+        # independent control rather than forcing the next event to wait for
+        # the previous query, as the original gap-based smoke generator did.
+        scheduled_queries: Dict[int, int] = {}
+        for time_index in range(task.seq_len):
+            if time_index in scheduled_queries:
+                inputs[row, time_index] = task.query_token
+                targets[row, time_index] = scheduled_queries[time_index]
+                query_mask[row, time_index] = True
+                continue
+            if rng.random() >= task.event_probability:
+                continue
             horizon = rng.choice(task.horizons)
-            query_time = event_time + horizon
-            if query_time >= task.seq_len:
-                break
+            query_time = time_index + horizon
+            if query_time >= task.seq_len or query_time in scheduled_queries:
+                continue
             payload = rng.randrange(task.payload_values)
-            inputs[row, event_time] = payload
-            event_mask[row, event_time] = True
-            inputs[row, query_time] = task.query_token
-            targets[row, query_time] = payload
-            query_mask[row, query_time] = True
-            event_time = query_time + 1 + rng.randint(task.gap_min, task.gap_max)
+            inputs[row, time_index] = payload
+            event_mask[row, time_index] = True
+            scheduled_queries[query_time] = payload
 
     if not bool(query_mask.any()):
         raise RuntimeError("event-recall dataset contains no queries")
@@ -575,6 +603,247 @@ def run_study(
     return payload
 
 
+def analyse_phase_a_grid(cells: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+    """Apply the frozen paired-effect, intervention, and routing gates."""
+
+    cell_effects: List[Dict[str, Any]] = []
+    all_accuracy_advantages: List[float] = []
+    all_nll_advantages: List[float] = []
+    all_uniform_drops: List[float] = []
+    all_reverse_drops: List[float] = []
+    all_base_accuracy_advantages: List[float] = []
+    all_base_nll_advantages: List[float] = []
+
+    routing_usage: Dict[Tuple[int, float], List[List[float]]] = {}
+    parameter_gaps: List[float] = []
+    for cell in cells:
+        rows = {
+            (str(row["variant"]), int(row["seed"])): row for row in cell["rows"]
+        }
+        seeds = sorted({seed for _variant, seed in rows})
+        accuracy_advantages = []
+        nll_advantages = []
+        uniform_drops = []
+        reverse_drops = []
+        base_accuracy_advantages = []
+        base_nll_advantages = []
+        for seed in seeds:
+            temporal = rows[("temporal", seed)]
+            homogeneous = rows[("homogeneous", seed)]
+            base = rows[("base_param_matched", seed)]
+            accuracy_advantages.append(
+                temporal["normal"]["query_accuracy"]
+                - homogeneous["normal"]["query_accuracy"]
+            )
+            nll_advantages.append(
+                homogeneous["normal"]["query_nll"]
+                - temporal["normal"]["query_nll"]
+            )
+            uniform_drops.append(
+                temporal["normal"]["query_accuracy"]
+                - temporal["uniform_intervention"]["query_accuracy"]
+            )
+            reverse_drops.append(
+                temporal["normal"]["query_accuracy"]
+                - temporal["reverse_time_intervention"]["query_accuracy"]
+            )
+            base_accuracy_advantages.append(
+                temporal["normal"]["query_accuracy"]
+                - base["normal"]["query_accuracy"]
+            )
+            base_nll_advantages.append(
+                base["normal"]["query_nll"]
+                - temporal["normal"]["query_nll"]
+            )
+            routing = temporal["routing"]
+            routing_usage.setdefault(
+                (int(cell["grid_horizon"]), float(cell["grid_event_probability"])), []
+            ).append(routing["mean_usage"])
+            parameter_gaps.append(float(base["parameter_gap_to_temporal"]))
+
+        effect = {
+            "horizon": int(cell["grid_horizon"]),
+            "event_probability": float(cell["grid_event_probability"]),
+            "realised_valid_event_density": float(cell["dataset"]["valid_event_density"]),
+            "temporal_minus_homogeneous_accuracy": float(np.mean(accuracy_advantages)),
+            "homogeneous_minus_temporal_nll": float(np.mean(nll_advantages)),
+            "temporal_uniform_accuracy_drop": float(np.mean(uniform_drops)),
+            "temporal_reverse_time_accuracy_drop": float(np.mean(reverse_drops)),
+            "temporal_minus_matched_base_accuracy": float(
+                np.mean(base_accuracy_advantages)
+            ),
+            "matched_base_minus_temporal_nll": float(np.mean(base_nll_advantages)),
+        }
+        effect["direction_consistent"] = bool(
+            effect["temporal_minus_homogeneous_accuracy"] > 0.0
+            or effect["homogeneous_minus_temporal_nll"] > 0.0
+        )
+        cell_effects.append(effect)
+        all_accuracy_advantages.extend(accuracy_advantages)
+        all_nll_advantages.extend(nll_advantages)
+        all_uniform_drops.extend(uniform_drops)
+        all_reverse_drops.extend(reverse_drops)
+        all_base_accuracy_advantages.extend(base_accuracy_advantages)
+        all_base_nll_advantages.extend(base_nll_advantages)
+
+    horizons = sorted({int(cell["grid_horizon"]) for cell in cells})
+    probabilities = sorted({float(cell["grid_event_probability"]) for cell in cells})
+    mean_usage = {
+        key: np.asarray(values, dtype=np.float64).mean(axis=0)
+        for key, values in routing_usage.items()
+    }
+    short_probability_deltas = {
+        str(horizon): float(
+            mean_usage[(horizon, probabilities[-1])][0]
+            - mean_usage[(horizon, probabilities[0])][0]
+        )
+        for horizon in horizons
+    }
+    long_horizon_deltas = {
+        str(probability): float(
+            mean_usage[(horizons[-1], probability)][-1]
+            - mean_usage[(horizons[0], probability)][-1]
+        )
+        for probability in probabilities
+    }
+
+    effect_accuracy = float(np.mean(all_accuracy_advantages))
+    effect_nll = float(np.mean(all_nll_advantages))
+    uniform_drop = float(np.mean(all_uniform_drops))
+    reverse_drop = float(np.mean(all_reverse_drops))
+    consistent_cells = sum(bool(cell["direction_consistent"]) for cell in cell_effects)
+    required_cells = math.ceil(len(cell_effects) * 2.0 / 3.0)
+    short_semantic_cells = sum(delta >= 0.02 for delta in short_probability_deltas.values())
+    long_semantic_cells = sum(delta >= 0.02 for delta in long_horizon_deltas.values())
+    required_short = math.ceil(len(horizons) * 2.0 / 3.0)
+    required_long = math.ceil(len(probabilities) * 2.0 / 3.0)
+
+    gates = {
+        "parameter_match": max(parameter_gaps, default=float("inf")) <= 0.05,
+        "paired_effect": effect_nll >= 0.10 or effect_accuracy >= 0.05,
+        "cell_consistency": consistent_cells >= required_cells,
+        "router_intervention": max(uniform_drop, reverse_drop) >= 0.03,
+        "routing_semantics": (
+            short_semantic_cells >= required_short
+            and long_semantic_cells >= required_long
+        ),
+    }
+    if all(gates.values()):
+        verdict = "GO"
+    elif (
+        gates["parameter_match"]
+        and gates["paired_effect"]
+        and gates["cell_consistency"]
+        and gates["router_intervention"]
+    ):
+        verdict = "NARROW_ROUTER_EFFECT_WITHOUT_TIMESCALE_SEMANTICS"
+    else:
+        verdict = "NO_MECHANISM_SIGNAL"
+
+    return {
+        "frozen_thresholds": {
+            "paired_nll_advantage": 0.10,
+            "paired_accuracy_advantage": 0.05,
+            "minimum_consistent_cell_fraction": 2.0 / 3.0,
+            "router_accuracy_drop": 0.03,
+            "usage_semantic_delta": 0.02,
+            "parameter_gap": 0.05,
+        },
+        "grand_means": {
+            "temporal_minus_homogeneous_accuracy": effect_accuracy,
+            "homogeneous_minus_temporal_nll": effect_nll,
+            "temporal_uniform_accuracy_drop": uniform_drop,
+            "temporal_reverse_time_accuracy_drop": reverse_drop,
+            "temporal_minus_matched_base_accuracy": float(
+                np.mean(all_base_accuracy_advantages)
+            ),
+            "matched_base_minus_temporal_nll": float(
+                np.mean(all_base_nll_advantages)
+            ),
+        },
+        "cell_consistency": {
+            "passing_cells": consistent_cells,
+            "required_cells": required_cells,
+            "total_cells": len(cell_effects),
+        },
+        "routing_semantics": {
+            "short_usage_high_minus_low_probability": short_probability_deltas,
+            "long_usage_long_minus_short_horizon": long_horizon_deltas,
+            "short_passing": short_semantic_cells,
+            "short_required": required_short,
+            "long_passing": long_semantic_cells,
+            "long_required": required_long,
+        },
+        "gates": gates,
+        "cell_effects": cell_effects,
+        "verdict": verdict,
+    }
+
+
+def run_phase_a_grid(
+    base_task: TaskConfig,
+    model_cfg: ModelConfig,
+    train_cfg: TrainConfig,
+    *,
+    horizons: Sequence[int],
+    event_probabilities: Sequence[float],
+    variants: Sequence[VariantName],
+    seeds: Sequence[int],
+    device: torch.device,
+) -> Dict[str, Any]:
+    required = {"base_param_matched", "temporal", "homogeneous"}
+    if not required.issubset(set(variants)):
+        raise ValueError(f"phase-A grid requires variants {sorted(required)}")
+    if len(set(seeds)) < 3:
+        raise ValueError("phase-A grid requires at least three distinct seeds")
+    if len(set(horizons)) < 2 or len(set(event_probabilities)) < 2:
+        raise ValueError("phase-A grid requires at least two horizons and event probabilities")
+
+    cells = []
+    for horizon in horizons:
+        for probability in event_probabilities:
+            task = TaskConfig(
+                train_sequences=base_task.train_sequences,
+                valid_sequences=base_task.valid_sequences,
+                seq_len=base_task.seq_len,
+                payload_values=base_task.payload_values,
+                horizons=(int(horizon),),
+                gap_min=base_task.gap_min,
+                gap_max=base_task.gap_max,
+                event_probability=float(probability),
+            )
+            cell = run_study(
+                task,
+                model_cfg,
+                train_cfg,
+                variants=variants,
+                seeds=seeds,
+                device=device,
+            )
+            cell["grid_horizon"] = int(horizon)
+            cell["grid_event_probability"] = float(probability)
+            cells.append(cell)
+            print(
+                f"cell horizon={horizon} event_p={probability:.2f} "
+                f"density={cell['dataset']['valid_event_density']:.4f} complete"
+            )
+
+    return {
+        "experiment": "TBC-1 factorised temporal-basis Phase-A grid",
+        "status": "FORMAL_PHASE_A_GRID",
+        "device": device_label(device),
+        "base_task": asdict(base_task),
+        "model": asdict(model_cfg),
+        "training": asdict(train_cfg),
+        "grid_horizons": [int(horizon) for horizon in horizons],
+        "grid_event_probabilities": [float(value) for value in event_probabilities],
+        "variants": list(variants),
+        "seeds": [int(seed) for seed in seeds],
+        "cells": cells,
+        "analysis": analyse_phase_a_grid(cells),
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", choices=("auto", "cpu", "mps", "cuda"), default="auto")
@@ -595,13 +864,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--horizons", nargs="+", type=int, default=[2, 8, 24])
     parser.add_argument("--gap-min", type=int, default=1)
     parser.add_argument("--gap-max", type=int, default=4)
+    parser.add_argument("--event-probability", type=float)
+    parser.add_argument("--phase-a-grid", action="store_true")
+    parser.add_argument("--grid-horizons", nargs="+", type=int, default=[2, 8, 24])
+    parser.add_argument(
+        "--grid-event-probabilities",
+        nargs="+",
+        type=float,
+        default=[0.05, 0.15, 0.30],
+    )
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--learning-rate", type=float, default=2e-3)
     parser.add_argument(
         "--out",
         type=Path,
-        default=REPO_ROOT / "results/e3_scan/e3_tbc0_temporal_basis_crossover.smoke.json",
+        default=None,
     )
     args = parser.parse_args()
     allowed = {
@@ -626,6 +904,7 @@ def main() -> None:
         horizons=tuple(args.horizons),
         gap_min=args.gap_min,
         gap_max=args.gap_max,
+        event_probability=args.event_probability,
     )
     model_cfg = ModelConfig(
         d_model=args.d_model,
@@ -638,25 +917,46 @@ def main() -> None:
         learning_rate=args.learning_rate,
     )
     device = choose_device(args.device)
-    payload = run_study(
-        task,
-        model_cfg,
-        train_cfg,
-        variants=args.variants,
-        seeds=args.seeds,
-        device=device,
-    )
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"device={payload['device']} output={args.out}")
-    print(json.dumps(payload["parameter_match"], ensure_ascii=False))
-    for variant, row in payload["summary"].items():
-        print(
-            f"{variant:20s} params={int(row['params_total']):7d} "
-            f"nll={row['normal_query_nll_mean']:.4f} "
-            f"acc={row['normal_query_accuracy_mean']:.3f} "
-            f"tok/s={row['train_tokens_per_s_mean']:.0f}"
+    if args.phase_a_grid:
+        payload = run_phase_a_grid(
+            task,
+            model_cfg,
+            train_cfg,
+            horizons=args.grid_horizons,
+            event_probabilities=args.grid_event_probabilities,
+            variants=args.variants,
+            seeds=args.seeds,
+            device=device,
         )
+        output = args.out or (
+            REPO_ROOT / "results/e3_scan/e3_tbc1_temporal_basis_phase_a_grid.json"
+        )
+    else:
+        payload = run_study(
+            task,
+            model_cfg,
+            train_cfg,
+            variants=args.variants,
+            seeds=args.seeds,
+            device=device,
+        )
+        output = args.out or (
+            REPO_ROOT / "results/e3_scan/e3_tbc0_temporal_basis_crossover.smoke.json"
+        )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"device={payload['device']} output={output}")
+    if args.phase_a_grid:
+        print(json.dumps(payload["analysis"], ensure_ascii=False, indent=2))
+    else:
+        print(json.dumps(payload["parameter_match"], ensure_ascii=False))
+        for variant, row in payload["summary"].items():
+            print(
+                f"{variant:20s} params={int(row['params_total']):7d} "
+                f"nll={row['normal_query_nll_mean']:.4f} "
+                f"acc={row['normal_query_accuracy_mean']:.3f} "
+                f"tok/s={row['train_tokens_per_s_mean']:.0f}"
+            )
 
 
 if __name__ == "__main__":

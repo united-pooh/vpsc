@@ -4,6 +4,69 @@
 
 ---
 
+## 2026-07-22：TBC-1 factorised Phase-A grid — 正式预注册（PENDING）
+
+### 背景 / 动机
+
+TBC-0 单 seed smoke 的结构审计通过，但机制门为 MIXED：temporal 相对 homogeneous 的 accuracy 仅高 `4.745pp`（未到 `5pp`），NLL 反向；uniform intervention 有 `4.38pp` 影响，parameter-matched base 仍有最佳 NLL。按冻结决定，本条不放大模型、不修改 H1，进入 `3 seeds × horizon × event-density` 网格。
+
+TBC-0 的 gap generator 会强制下一事件等待上一 query，导致 event density 与 horizon 机械耦合。本条在正式运行前冻结 factorised generator：每步以 Bernoulli `event_probability` 提议事件，多个 payload→query 可同时 pending；到期 query 独占该时间步并输入统一 QUERY token，目标只来自对应的过去 payload。这样 event probability 是外生控制，实际 event density 仍逐 cell 报告，禁止用名义概率代替观测密度。
+
+### 冻结网格与固定条件
+
+| 因素 | 冻结取值 |
+|---|---|
+| memory horizon | `{2, 8, 24}` |
+| event probability | `{0.05, 0.15, 0.30}` |
+| seeds | `{0, 1, 2}` |
+| variants | `base_same_width, base_param_matched, temporal, homogeneous, uniform` |
+| train / valid sequences | `128 / 64` |
+| seq_len | `64` |
+| model | `d_model=16, state_dim=16, n_experts=3` |
+| optimisation | `2 epochs, batch=16, AdamW lr=2e-3` |
+| backend | 本机 CPU；吞吐只作运行诊断，不进入机制 verdict |
+
+共 `9 cells × 3 seeds × 5 variants = 135` 次模型训练；每个 cell 的 train/valid 数据分别固定 seed `701/1701`，模型 seed 单独变化。temporal 与 homogeneous 必须同总参数；parameter-matched base 相对 temporal gap 必须 `<=5%`。
+
+### 冻结主判官
+
+所有 effect 先在同 cell、同 seed 内配对，再对 27 个 paired runs 求 grand mean：
+
+- **G1 paired effect**：`homogeneous NLL - temporal NLL >=0.10`，或 `temporal accuracy - homogeneous accuracy >=5pp`。
+- **G2 cell consistency**：9 个 cell 中至少 6 个在 accuracy 或 NLL 至少一项方向支持 temporal；只统计方向，不用它替代 G1 效应量。
+- **G3 router intervention**：temporal 正常 accuracy 减去 uniform/reverse-time intervention accuracy 的 grand mean，至少一种 `>=3pp`。
+- **G4 parameter audit**：所有 paired base 的 parameter gap `<=5%`。
+
+### 冻结 timescale-semantics 判官
+
+专家索引按 decay band 固定为 short→middle→long：
+
+- 在每个 horizon 内，`p=0.30` 相对 `p=0.05` 的 short-expert mean usage 增量 `>=0.02`；三个 horizon 至少两个成立。
+- 在每个 event probability 内，`h=24` 相对 `h=2` 的 long-expert mean usage 增量 `>=0.02`；三个概率至少两个成立。
+
+该门区分“router 确实影响输出”与“router 具有所宣称的时间尺度语义”。change/short correlation 继续记录，但不在看到 TBC-0 负相关后临时改成主门。
+
+### 冻结 verdict
+
+- `GO`：G1-G4 与 timescale semantics 全通过；只允许进入真实语料 Phase-B，不代表 H2/H3 已通过。
+- `NARROW_ROUTER_EFFECT_WITHOUT_TIMESCALE_SEMANTICS`：G1-G4 通过、semantics 失败；只保留一般动态路由解释，关闭“短中长专门化”主张。
+- `NO_MECHANISM_SIGNAL`：其余情况；停止 synthetic 扩张，不通过增加 epoch/width 或修改阈值救结果。
+
+parameter-matched base 的 paired accuracy/NLL 同时报告但不纳入 G1：若 temporal 不优于 matched base，则即使 G1 通过，也只能说明异质 decay 优于同容量 homogeneous MoE，不能说明优于容量匹配单 core。
+
+### 实现、命令与预定产物
+
+- runner 更新：`experiments/e3_tbc0_temporal_basis_crossover.py --phase-a-grid`，新增 Bernoulli factorised dataset、cell 汇总、paired gates、timescale semantics 与机器可读 verdict。
+- 测试新增：事件概率能控制实际 density、query 输入不泄漏 payload、冻结判官对构造正例返回 `GO`。
+- 冻结命令：`python3 experiments/e3_tbc0_temporal_basis_crossover.py --phase-a-grid --device cpu --seeds 0 1 2 --grid-horizons 2 8 24 --grid-event-probabilities 0.05 0.15 0.30 --epochs 2 --train-sequences 128 --valid-sequences 64 --seq-len 64 --out results/e3_scan/e3_tbc1_temporal_basis_phase_a_grid.json`。
+- 预定产物：`results/e3_scan/e3_tbc1_temporal_basis_phase_a_grid.json`；正式运行后记录 SHA-256、环境、wall time、逐 cell 表、grand means、全部 gate 与原样 verdict。
+
+### 当前状态
+
+- **PENDING / PRE-REGISTERED**：尚未执行冻结命令；本条先提交并推送，再开始正式网格。
+
+---
+
 ## 2026-07-22：TBC-0 时间尺度专家 crossover — 开题预注册与 Phase-A 启动（SMOKE MIXED）
 
 ### 组合决策与分支隔离
