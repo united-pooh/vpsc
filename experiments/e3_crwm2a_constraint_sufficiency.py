@@ -77,6 +77,15 @@ def _percentile(values: Sequence[float], q: float) -> float:
 def decide(
     data_identity: bool, horizon_metrics: Mapping[str, Mapping[str, Any]]
 ) -> Dict[str, Any]:
+    if not data_identity:
+        return {
+            "data_identity_gate": False,
+            "constraint_sufficiency_gate": None,
+            "residual_value_task_identifiable": None,
+            "crwm0_success_improvement_feasible": None,
+            "overall": "FAIL",
+            "verdict": "STOP_DATA_IDENTITY_FAILURE",
+        }
     horizon_8 = horizon_metrics["8"]
     horizon_32 = horizon_metrics["32"]
     constraint_sufficient = bool(
@@ -87,21 +96,17 @@ def decide(
         and horizon_8["plan_walkthrough_exact_rate"] == 1.0
         and horizon_32["plan_walkthrough_exact_rate"] == 1.0
     )
-    task_identifiable = bool(data_identity and not constraint_sufficient)
+    task_identifiable = not constraint_sufficient
     return {
         "data_identity_gate": data_identity,
         "constraint_sufficiency_gate": constraint_sufficient,
         "residual_value_task_identifiable": task_identifiable,
         "crwm0_success_improvement_feasible": task_identifiable,
-        "overall": "PASS" if data_identity else "FAIL",
+        "overall": "PASS",
         "verdict": (
             "STOP_TEXTWORLD_TASK_CEILING_PIVOT_ENVIRONMENT"
-            if data_identity and constraint_sufficient
-            else (
-                "PROCEED_CRWM2_MATCHED_MATRIX"
-                if data_identity
-                else "STOP_DATA_IDENTITY_FAILURE"
-            )
+            if constraint_sufficient
+            else "PROCEED_CRWM2_MATCHED_MATRIX"
         ),
     }
 
@@ -248,16 +253,19 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         seed = int(episode["seed"])
         expected = expected_games[seed]
         game_path = _game_path(games_root, expected)
-        digest = file_sha256(game_path).upper()
-        size = game_path.stat().st_size
+        exists = game_path.is_file()
+        digest = file_sha256(game_path).upper() if exists else None
+        size = game_path.stat().st_size if exists else None
         passed = bool(
-            digest == str(expected["sha256"]).upper()
+            exists
+            and digest == str(expected["sha256"]).upper()
             and size == int(expected["size_bytes"])
         )
         identity_records.append(
             {
                 "seed": seed,
                 "path": str(game_path),
+                "exists": exists,
                 "sha256": digest,
                 "expected_sha256": str(expected["sha256"]).upper(),
                 "size_bytes": size,
@@ -267,22 +275,20 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         )
         game_paths[seed] = game_path
     data_identity = all(record["passed"] for record in identity_records)
-    if not data_identity:
-        raise ValueError("CRWM-2A game binary identity failed")
-
     by_horizon = {}
     raw_records = {}
-    for horizon in args.horizons:
-        records = tuple(
-            run_game(
-                game_paths[int(episode["seed"])],
-                episode,
-                horizon=horizon,
+    if data_identity:
+        for horizon in args.horizons:
+            records = tuple(
+                run_game(
+                    game_paths[int(episode["seed"])],
+                    episode,
+                    horizon=horizon,
+                )
+                for episode in episodes
             )
-            for episode in episodes
-        )
-        raw_records[str(horizon)] = records
-        by_horizon[str(horizon)] = _aggregate(records)
+            raw_records[str(horizon)] = records
+            by_horizon[str(horizon)] = _aggregate(records)
     decision = decide(data_identity, by_horizon)
     return {
         "schema_version": 1,

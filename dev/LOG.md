@@ -32,6 +32,8 @@ CRWM-1 已证明 SG22R 两步 candidate generation 不依赖 evaluator oracle，
 
 - 系统 Python 缺少 TextWorld，首次 `textworld==1.7.0` 安装因旧 pip 选择最新 spaCy 源码依赖、镜像缺少匹配 thinc 而中止；未修改仓库、未生成结果。
 - 随后在已被 `.gitignore` 排除的 `venv/` 中升级 pip，固定可用 arm64 wheel `spacy==3.8.7`，再安装 TextWorld `1.7.0`。环境变更不提交；安装完成后先做单 seed binary identity，再决定是否生成全部8局。
+- 单 seed `20270209` identity probe 已触发冻结停机门：macOS Inform 6 生成文件 size=`384,000` 与 reference 相同，但 SHA-256=`8BE32FA2C18B0A8B9B5E9469B14C38DC9819C18E1398C7ADEC5E217C0F494AE7`，不等于 WSL/Linux reference `EBC17573765A6C59CFEFA97AF9245984CBF60285185A8921DCE8CC67859455C6`。本机无 Docker/Podman/Lima/QEMU，也未找到旧 binary，不能做相同 Linux compiler identity。
+- 该 probe 已足以否证 `8/8 SHA identity`，所以不浪费资源生成其余7局、不运行 live policy。runner 仅做 fail-closed 仪器修复：缺失/mismatch binary 写入正式 JSON 并返回 `STOP_DATA_IDENTITY_FAILURE`，不再抛异常导致负证据丢失；所有 success/ceiling 判官保持不变。
 - **PENDING / PRE-REGISTERED**：正式 live outcome 尚未读取，以上 stop/go 判官不得按结果更改。
 
 ---

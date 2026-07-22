@@ -56,13 +56,6 @@ def test_nontrivial_task_proceeds_to_matched_matrix(h8, h32) -> None:
 
 
 def test_data_identity_is_a_hard_failure() -> None:
-    decision = decide(
-        False,
-        {
-            "2": _metrics(win_rate=0.0),
-            "8": _metrics(win_rate=1.0),
-            "32": _metrics(win_rate=1.0),
-        },
-    )
+    decision = decide(False, {})
     assert decision["overall"] == "FAIL"
     assert decision["verdict"] == "STOP_DATA_IDENTITY_FAILURE"
