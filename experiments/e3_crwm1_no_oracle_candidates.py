@@ -33,7 +33,6 @@ from experiments import e3_sg21_episodic_edge_graph as sg21  # noqa: E402
 from experiments import e3_sg21r_sixth_fresh_matched_ann as sg21r  # noqa: E402
 from experiments import e3_sg22_plan_path_constraints as sg22  # noqa: E402
 from experiments import e3_sg22r_seventh_fresh_confirmation as sg22r  # noqa: E402
-from experiments import e3_tw0_sparse_event_lm as tw0  # noqa: E402
 from experiments.e3_sg12_spike_delay_rls import (  # noqa: E402
     build_action_alphabet,
 )
@@ -390,9 +389,7 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
     reference, reference_digest = sg16._load_reference(
         args.reference.expanduser().resolve(),
         REFERENCE_SHA256,
-        sg22r.EXPERIMENT if hasattr(sg22r, "EXPERIMENT") else (
-            "E3-SG22R seventh-fresh constrained matched confirmation"
-        ),
+        "E3-SG22R seventh-fresh constrained matched confirmation",
     )
     if reference["decision"]["overall"] != "PASS":
         raise ValueError("CRWM-1 requires passing SG22R reference")
@@ -404,9 +401,22 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         )
     cache = json.loads(cache_path.read_text(encoding="utf-8"))
     corpus_root = args.corpus_dir.expanduser().resolve()
-    manifest = tw0._manifest_provenance(
-        corpus_root, expected_seeds_by_split=sg22r.EXPECTED_SEEDS
-    )
+    artifact_hashes = sg21r._artifact_hashes(corpus_root)
+    artifacts_equal = artifact_hashes == reference["dataset"]["artifact_hashes"]
+    manifest = {
+        "mode": "offline_frozen_artifact_identity",
+        "reference_manifest_verified": bool(
+            reference["dataset"]["manifest"]["verified"]
+        ),
+        "cross_split_seed_disjoint": bool(
+            reference["dataset"]["manifest"]["cross_split_seed_disjoint"]
+        ),
+        "reference_fingerprint_sha256": reference["dataset"]["manifest"][
+            "fingerprint_sha256"
+        ],
+        "artifact_hashes_equal_reference": artifacts_equal,
+        "game_binary_revalidation": "not_required_for_offline_frozen_cache",
+    }
     corpus = load_event_corpus(corpus_root)
     examples, vocabulary = sg10.build_multichannel_examples(corpus_root, corpus)
     data_audit = sg10.audit_multichannel_examples(
@@ -462,7 +472,9 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         and tree["all_counterfactuals_non_mutating"]
     )
     data_passed = bool(
-        manifest
+        manifest["reference_manifest_verified"]
+        and manifest["cross_split_seed_disjoint"]
+        and artifacts_equal
         and data_audit["passed"]
         and tree_ok
         and repair_audit["changed_pair_count"] == 0
@@ -500,6 +512,7 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, Any]:
         },
         "dataset": {
             "manifest": manifest,
+            "artifact_hashes": artifact_hashes,
             "data_audit": data_audit,
             "tree_audit_passed": tree_ok,
             "tree_repair_audit": repair_audit,
