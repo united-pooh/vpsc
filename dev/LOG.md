@@ -4,7 +4,7 @@
 
 ---
 
-## 2026-07-22：LDAA-2A non-VPSC diagonal SSM + event-token LM — 正式协议（PENDING）
+## 2026-07-22：LDAA-2A non-VPSC diagonal SSM + event-token LM — 混合结果（NARROW）
 
 ### 研究问题与第二核心边界
 
@@ -41,7 +41,31 @@ segmented backward 只在 K 个 query anchors（以及存在 final-state gradien
 
 ### 当前状态
 
-- **PENDING / PROTOCOL FROZEN**：先提交并推送实现、测试与本协议，再运行正式命令；不会依据 formal 调整 `.25/.10/1e-3` 门。
+- 协议、实现与测试在正式运行前由 commit `5d51992` 提交并推送；artifact 记录 clean-tree commit `5d5199204073bd3ec30f9283fc323bbd1ad393cc`。
+
+### 正式证据
+
+- 命令与上方冻结命令完全一致；wall=`3.59s`，macOS arm64 / Python `3.9.6` / PyTorch `2.8.0` / CPU threads=4。
+- real event-token corpus：train=`27,989` tokens、valid=`7,153`，train-only vocab=`512`，valid unknown rate=`3.173%`。
+- 产物：`results/e3_scan/e3_ldaa2_diagonal_model_validation.json`，`4,495 bytes`，SHA-256 `3c7282d7eaa2c531749269389ca425e91479ca975c6ac81f452d1c419f5790ee`。
+
+| gate | 冻结要求 | 正式结果 | 判定 |
+|---|---:|---:|---|
+| H1 second-core exactness | 全组件 `atol=2e-5,rtol=1e-4` | 最大误差为 decay grad `5.066e-7`；query/final bit-equal | **PASS** |
+| H2 speed | segmented `>=1.5x BPTT` | `15.618x`（p50 `11.646 vs 181.883 ms`） | **PASS** |
+| H2 raw unique storage | segmented `<=25% BPTT` | `533,376 / 1,057,152 = 50.454%` | **FAIL** |
+| H3 valid NLL | 每 seed absolute delta `<=.10` | seed 0/1/2 delta=`1.36e-7 / 0 / 6.81e-8` | **PASS** |
+| H3 training trajectory | 参数 max diff `<=1e-3` | `2.38e-7 / 8.34e-7 / 2.98e-7` | **PASS** |
+
+模型 update speed 虽未设门，三个 seed 的 segmented/BPTT p50 speedup 为 `2.241x / 2.371x / 2.206x`；final train loss 各 seed 在显示精度内相等。operator saved tensor count 从 BPTT `4,099` 降到 segmented `6`，但 raw unique bytes 只减半，因此不能以 node/tensor 数替代冻结内存门。
+
+### 观察、解释与决定
+
+- **观察**：segmented adjoint 的数学与训练轨迹完整迁移到非 VPSC diagonal SSM；不只单步 gradient，60次 AdamW 更新后的参数和 held-out NLL 也近乎相同。operator 与实际 LM update 都显著更快。
+- **观察**：broader storage ratio 没有迁移。最小 diagonal BPTT 的主要 unique storage 近似是完整 input + recurrent states 两份，而 segmented 为计算完整 input/decay gradient 仍必须保存 input，故只能从约两份降到一份，形成约50%的结构下界。
+- **解释**：LDAA-1 的 `<=25%` 来自 E3 gated trace 更复杂的 dense BPTT 图；“segmented 必然带来四倍内存压缩”不是通用 diagonal recurrence 性质。若用“扣除共同 input”可得到更好数字，但这是 formal 后换分母，明确不采用。
+- 机器 verdict 原样为 **`NARROW_OR_NO_GO_SECOND_CORE`**。研究上保留窄结论：**exact sparse segmented adjoint 的速度和模型质量具有跨核心迁移性，raw end-to-end saved-storage 比例依赖 core 图复杂度。**
+- 不进入 dispatcher 阶段：冻结 GO 要求 speed+storage 同时过门，本轮没有达到。若未来重启，应把主张重述为 latency-aware exact sparse backward，并为不可避免的 input storage 建立预先冻结的理论/实测分解；不能沿用当前 GO 口径。
 
 ---
 

@@ -1,0 +1,166 @@
+{
+  "configuration": {
+    "batch_size": 8,
+    "corpus_dir": "results/e3_scan/textworld_sg22r_l5",
+    "density": 0.015625,
+    "eval_batches": 12,
+    "learning_rate": 0.001,
+    "max_vocab": 512,
+    "model_dim": 32,
+    "operator_length": 2048,
+    "operator_state_dim": 32,
+    "out": "results/e3_scan/e3_ldaa2_diagonal_model_validation.json",
+    "repeats": 5,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sequence_length": 128,
+    "steps": 60,
+    "threads": 4
+  },
+  "corpus": {
+    "train_tokens": 27989,
+    "valid_tokens": 7153,
+    "valid_unknown_rate": 0.03173493593931198,
+    "vocab_size": 512
+  },
+  "decision": {
+    "H1_second_core_exactness": true,
+    "H2_second_core_sparse_crossover": false,
+    "H3_model_quality": true,
+    "H3_training_trajectory": true,
+    "overall": "FAIL",
+    "verdict": "NARROW_OR_NO_GO_SECOND_CORE"
+  },
+  "environment": {
+    "cpu_model": null,
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "5d5199204073bd3ec30f9283fc323bbd1ad393cc",
+    "git_executable": "git",
+    "git_status_porcelain": [],
+    "logical_cpu_count": 14,
+    "mkldnn_available": false,
+    "mkldnn_enabled": true,
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.9.6",
+    "torch": "2.8.0",
+    "torch_interop_threads": 14
+  },
+  "experiment": "E3-LDAA2 diagonal SSM and event-token LM validation",
+  "operator": {
+    "backends": {
+      "bptt": {
+        "logical_saved_bytes": 795136,
+        "p50_ms": 181.882708,
+        "p95_ms": 184.04364220000002,
+        "samples_ms": [
+          184.243084,
+          179.476709,
+          177.714958,
+          181.882708,
+          183.245875
+        ],
+        "saved_tensor_count": 4099,
+        "unique_storage_bytes": 1057152
+      },
+      "segmented_adjoint": {
+        "logical_saved_bytes": 533376,
+        "p50_ms": 11.64575,
+        "p95_ms": 11.800791400000001,
+        "samples_ms": [
+          11.021833,
+          11.554208,
+          11.818333,
+          11.730625,
+          11.64575
+        ],
+        "saved_tensor_count": 6,
+        "unique_storage_bytes": 533376
+      }
+    },
+    "density": 0.015625,
+    "exactness": {
+      "component_max_abs": {
+        "final": 0.0,
+        "gradient:decay": 5.066394805908203e-07,
+        "gradient:initial": 9.094947017729282e-13,
+        "gradient:inputs": 4.656612873077393e-10,
+        "queries": 0.0
+      },
+      "passed": true
+    },
+    "query_count": 32,
+    "segmented_speedup_vs_bptt": 15.61794714810124,
+    "segmented_storage_ratio_to_bptt": 0.5045405012713403,
+    "state_dim": 32,
+    "time_steps": 2048
+  },
+  "schema_version": 1,
+  "training": [
+    {
+      "actual_density": 0.015625,
+      "final_train_loss": {
+        "bptt": 5.248375415802002,
+        "segmented_adjoint": 5.248375415802002
+      },
+      "parameter_max_abs_after_training": 2.384185791015625e-07,
+      "query_count": 2,
+      "seed": 0,
+      "segmented_minus_bptt_valid_nll": 1.3623918793115308e-07,
+      "segmented_update_speedup": 2.2407873449892644,
+      "update_p50_ms": {
+        "bptt": 3.196063,
+        "segmented_adjoint": 1.4263124999999999
+      },
+      "valid_nll": {
+        "bptt": 5.599616186959403,
+        "segmented_adjoint": 5.599616323198591
+      }
+    },
+    {
+      "actual_density": 0.015625,
+      "final_train_loss": {
+        "bptt": 5.183365345001221,
+        "segmented_adjoint": 5.1833648681640625
+      },
+      "parameter_max_abs_after_training": 8.344650268554688e-07,
+      "query_count": 2,
+      "seed": 1,
+      "segmented_minus_bptt_valid_nll": 0.0,
+      "segmented_update_speedup": 2.3709045993686804,
+      "update_p50_ms": {
+        "bptt": 3.0299165,
+        "segmented_adjoint": 1.277958
+      },
+      "valid_nll": {
+        "bptt": 5.737252712249756,
+        "segmented_adjoint": 5.737252712249756
+      }
+    },
+    {
+      "actual_density": 0.015625,
+      "final_train_loss": {
+        "bptt": 5.158639907836914,
+        "segmented_adjoint": 5.158639907836914
+      },
+      "parameter_max_abs_after_training": 2.980232238769531e-07,
+      "query_count": 2,
+      "seed": 2,
+      "segmented_minus_bptt_valid_nll": 6.811959440966575e-08,
+      "segmented_update_speedup": 2.206244743592095,
+      "update_p50_ms": {
+        "bptt": 3.3682914999999998,
+        "segmented_adjoint": 1.526708
+      },
+      "valid_nll": {
+        "bptt": 5.663528101784842,
+        "segmented_adjoint": 5.663528169904437
+      }
+    }
+  ]
+}
