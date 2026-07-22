@@ -4,7 +4,7 @@
 
 ---
 
-## 2026-07-22：CRWM-2A public-objective constraint sufficiency — benchmark 可识别性预注册（PENDING）
+## 2026-07-22：CRWM-2A public-objective constraint sufficiency — DATA identity 负结果（BLOCKED）
 
 ### 为什么先做这一门
 
@@ -34,7 +34,20 @@ CRWM-1 已证明 SG22R 两步 candidate generation 不依赖 evaluator oracle，
 - 随后在已被 `.gitignore` 排除的 `venv/` 中升级 pip，固定可用 arm64 wheel `spacy==3.8.7`，再安装 TextWorld `1.7.0`。环境变更不提交；安装完成后先做单 seed binary identity，再决定是否生成全部8局。
 - 单 seed `20270209` identity probe 已触发冻结停机门：macOS Inform 6 生成文件 size=`384,000` 与 reference 相同，但 SHA-256=`8BE32FA2C18B0A8B9B5E9469B14C38DC9819C18E1398C7ADEC5E217C0F494AE7`，不等于 WSL/Linux reference `EBC17573765A6C59CFEFA97AF9245984CBF60285185A8921DCE8CC67859455C6`。本机无 Docker/Podman/Lima/QEMU，也未找到旧 binary，不能做相同 Linux compiler identity。
 - 该 probe 已足以否证 `8/8 SHA identity`，所以不浪费资源生成其余7局、不运行 live policy。runner 仅做 fail-closed 仪器修复：缺失/mismatch binary 写入正式 JSON 并返回 `STOP_DATA_IDENTITY_FAILURE`，不再抛异常导致负证据丢失；所有 success/ceiling 判官保持不变。
-- **PENDING / PRE-REGISTERED**：正式 live outcome 尚未读取，以上 stop/go 判官不得按结果更改。
+- 预注册与 runner commit=`5d6b341`；fail-closed artifact 修复 commit=`6ab9edc`，均在正式命令前推送。
+
+### 正式结果
+
+- 命令：`venv/bin/python experiments/e3_crwm2a_constraint_sufficiency.py --horizons 2 8 32 --output results/e3_scan/e3_crwm2a_constraint_sufficiency.json`；wall=`0.66s`。
+- 产物：`results/e3_scan/e3_crwm2a_constraint_sufficiency.json`，`4,849 bytes`，SHA-256 `2d884d28d4cf155e3ee19635e3b71bf9776bd227df7a3a653317cd2cfe835f7c`。
+- DATA identity=`FAIL`：已生成 probe `20270209` size `384,000` 正确但 SHA mismatch；其余7局按停机规则未生成。`horizon_metrics={}`、`runs={}`，所以没有混入任何不可比 live outcome。
+- machine verdict 原样为 **`STOP_DATA_IDENTITY_FAILURE`**；constraint sufficiency、residual value identifiability 与 CRWM-0 success-improvement feasibility 全为 `null`，不是 PASS/FAIL。
+
+### 决定
+
+- **不放宽 SHA、不使用 macOS recompile 结果冒充 SG22R frozen test。** CRWM-2A 在当前机器上 blocked；要恢复只能取得原始8个 `.z8`，或在 Linux/WSL + TextWorld 1.7.0/同 compiler 上重新生成并达到 manifest identity。
+- 该阻塞不否定 CRWM-1 的 frozen-cache two-step no-oracle 正结果，也不回答 objective-only 是否形成 100% live ceiling。后者仍是恢复资产后的首个判官。
+- 为继续用户要求的实验推进，当前转到独立分支 LDAA-2；CRWM 分支保留完整环境失败与 artifact，不在 `main` 合并。
 
 ---
 

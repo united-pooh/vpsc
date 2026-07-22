@@ -1,0 +1,127 @@
+{
+  "configuration": {
+    "candidate_oracle_allowed_for_selection": false,
+    "constraint_sufficient_threshold": {
+      "horizon_32_win_rate": 1.0,
+      "horizon_8_win_rate": 1.0,
+      "invalid_action_rate": 0.0,
+      "plan_walkthrough_exact_rate": 1.0
+    },
+    "corpus_dir": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/textworld_sg22r_l5",
+    "games_dir": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5",
+    "horizons": [
+      2,
+      8,
+      32
+    ],
+    "policy_input": "live public objective text only"
+  },
+  "data_identity": {
+    "all_passed": false,
+    "games": [
+      {
+        "exists": true,
+        "expected_sha256": "EBC17573765A6C59CFEFA97AF9245984CBF60285185A8921DCE8CC67859455C6",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270209.z8",
+        "seed": 20270209,
+        "sha256": "8BE32FA2C18B0A8B9B5E9469B14C38DC9819C18E1398C7ADEC5E217C0F494AE7",
+        "size_bytes": 384000
+      },
+      {
+        "exists": false,
+        "expected_sha256": "36624D4AEBC3D5D075DA9742C1FDD8DEDDCAE4A2968ACF16C1C4BABDAA8317F9",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270210.z8",
+        "seed": 20270210,
+        "sha256": null,
+        "size_bytes": null
+      },
+      {
+        "exists": false,
+        "expected_sha256": "3AA32CDB26EAF79B224756A5AD3C11C584F921E2205BC9D3A38049569BEB0313",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270211.z8",
+        "seed": 20270211,
+        "sha256": null,
+        "size_bytes": null
+      },
+      {
+        "exists": false,
+        "expected_sha256": "D1193B967FBB6CFDE817C7D748822651DA69DEBD7C758B5B485622260D27CB9F",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270212.z8",
+        "seed": 20270212,
+        "sha256": null,
+        "size_bytes": null
+      },
+      {
+        "exists": false,
+        "expected_sha256": "828E7FF42F459599A818341CDB3DD9277346079F5917E1D0827FC77EE4C223DC",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270213.z8",
+        "seed": 20270213,
+        "sha256": null,
+        "size_bytes": null
+      },
+      {
+        "exists": false,
+        "expected_sha256": "E3DB3225F0B506819C8BCA565B75C55B78F30B401CDA40F79C7BE23F03ECE1A9",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270214.z8",
+        "seed": 20270214,
+        "sha256": null,
+        "size_bytes": null
+      },
+      {
+        "exists": false,
+        "expected_sha256": "C7AD0C2793F4467E3E24DDDE6EDC48320BA0E7498C221E0FF068B03670A344A6",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270215.z8",
+        "seed": 20270215,
+        "sha256": null,
+        "size_bytes": null
+      },
+      {
+        "exists": false,
+        "expected_sha256": "EAD3500A07C5C71F6E492DED03B46E3B0F301DFD42A25FD1B32931A8822E391E",
+        "expected_size_bytes": 384000,
+        "passed": false,
+        "path": "/Users/united_pooh/PyProjects/vpsc/data/e3_scan/textworld/games_sg22r_l5/tw_coin_collector_l005_s0020270216.z8",
+        "seed": 20270216,
+        "sha256": null,
+        "size_bytes": null
+      }
+    ]
+  },
+  "decision": {
+    "constraint_sufficiency_gate": null,
+    "crwm0_success_improvement_feasible": null,
+    "data_identity_gate": false,
+    "overall": "FAIL",
+    "residual_value_task_identifiable": null,
+    "verdict": "STOP_DATA_IDENTITY_FAILURE"
+  },
+  "experiment": "E3-CRWM2A public-objective constraint sufficiency",
+  "generated_at_utc": "2026-07-22T10:24:24.961015+00:00",
+  "horizon_metrics": {},
+  "references": {
+    "crwm1": {
+      "path": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/e3_crwm1_no_oracle_candidates.json",
+      "sha256": "64CA1BDDAAC177E9AEA51831EA586B14A73B2FB34807726D37BDA132415A56DE"
+    },
+    "sg22r": {
+      "path": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/e3_sg22r_seventh_fresh_confirmation.json",
+      "sha256": "1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92"
+    }
+  },
+  "runs": {},
+  "schema_version": 1
+}
