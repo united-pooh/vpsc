@@ -1,0 +1,3143 @@
+{
+  "configuration": {
+    "candidate_precision_min": 0.95,
+    "candidate_recall_min": 0.95,
+    "candidate_set_exact_min": 0.95,
+    "corpus_dir": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/textworld_sg22r_l5",
+    "invalid_transition_rate_max": 0.05,
+    "second_exact_min": 0.95,
+    "threads": 4
+  },
+  "dataset": {
+    "action_order": [
+      "examine coin",
+      "go east",
+      "go north",
+      "go south",
+      "go west",
+      "inventory",
+      "look",
+      "take coin"
+    ],
+    "artifact_hashes": {
+      "test": {
+        "episodes.jsonl": "DC8C92D0F91316331975A2EB499911B7976F2AF450185FD9264ACA0766E6D293",
+        "manifest.json": "57CE7CC0FFF26A2EAE9C9577C59C109F4EA943B5ACB90102AEFF45C3D07F366B",
+        "token_events.txt": "850746007AC78A61930FD067B4225699E4E2B841687F8A1FE6045253A44E53AF"
+      },
+      "train": {
+        "episodes.jsonl": "2399F060AAC410CE11216E059918FC3DBB6F00EA9C814A2E5140D654C4E6997D",
+        "manifest.json": "31CCA6B192FFD9C73C35401A51E781C6872E6A8BCAF51C1C415D38D228DA0D48",
+        "token_events.txt": "638E27D86E9B06332D804EE1FB10F7B70360A24CEA3D869202D74FD734292C22"
+      },
+      "valid": {
+        "episodes.jsonl": "D57ADA05E7ADDC876B6144F957C5BA9E99654E6A88DB1D8C320E1AC3C1AFFD36",
+        "manifest.json": "9CECBE00C95B66B4E27DEDC6B01184BA34744FDEE272C126F26251E7F43724CF",
+        "token_events.txt": "2CE4E4BDAE2B8A5761D45B3970998BAF85613C373A390212099876E24144702C"
+      }
+    },
+    "constraint_audit": {
+      "all_counts_match": true,
+      "all_targets_match": true,
+      "expected_plan_move_counts": {
+        "test": 32,
+        "train": 128,
+        "valid": 32
+      },
+      "source": "public objective plan plus compass inverse algebra",
+      "splits": {
+        "test": {
+          "constraint_error_count": 0,
+          "errors_first_100": [],
+          "plan_move_count": 32
+        },
+        "train": {
+          "constraint_error_count": 0,
+          "errors_first_100": [],
+          "plan_move_count": 128
+        },
+        "valid": {
+          "constraint_error_count": 0,
+          "errors_first_100": [],
+          "plan_move_count": 32
+        }
+      }
+    },
+    "data_audit": {
+      "channels": {
+        "done": [
+          "<continue>",
+          "<done>"
+        ],
+        "move_exit_count_after": [
+          "<exit_count_0>",
+          "<exit_count_1>",
+          "<exit_count_2>"
+        ],
+        "reward": [
+          "<reward_zero>",
+          "<reward_positive>"
+        ],
+        "room_relation": [
+          "<room_no_observation>",
+          "<room_novel>",
+          "<room_previous>",
+          "<room_same>"
+        ]
+      },
+      "expected_counts": {
+        "test": 120,
+        "train": 480,
+        "valid": 120
+      },
+      "expected_groups": {
+        "test": 40,
+        "train": 160,
+        "valid": 40
+      },
+      "expected_length_group_counts": {
+        "test": {
+          "2": 8,
+          "3": 8,
+          "4": 8,
+          "5": 8,
+          "6": 8
+        },
+        "train": {
+          "2": 32,
+          "3": 32,
+          "4": 32,
+          "5": 32,
+          "6": 32
+        },
+        "valid": {
+          "2": 8,
+          "3": 8,
+          "4": 8,
+          "5": 8,
+          "6": 8
+        }
+      },
+      "heldout_full_input_coverage": {
+        "test": {
+          "covered": 83,
+          "total": 120
+        },
+        "valid": {
+          "covered": 91,
+          "total": 120
+        }
+      },
+      "label_sources": {
+        "done": "recorded transition done",
+        "move_exit_count_after": "counterfactual admissible_actions_after or next factual step",
+        "reward": "recorded transition reward",
+        "room_relation": "normalized next_obs room vs current/prior rooms"
+      },
+      "passed": true,
+      "splits": {
+        "test": {
+          "ambiguous_input_count": 0,
+          "channel_label_counts": {
+            "done": {
+              "<continue>": 112,
+              "<done>": 8
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 8,
+              "<exit_count_1>": 40,
+              "<exit_count_2>": 72
+            },
+            "reward": {
+              "<reward_positive>": 8,
+              "<reward_zero>": 112
+            },
+            "room_relation": {
+              "<room_no_observation>": 48,
+              "<room_novel>": 32,
+              "<room_previous>": 32,
+              "<room_same>": 8
+            }
+          },
+          "exact_vector_count": 8,
+          "exact_vector_majority_accuracy": 0.2,
+          "example_count": 120,
+          "game_count": 8,
+          "groups_valid": true,
+          "length_group_counts": {
+            "2": 8,
+            "3": 8,
+            "4": 8,
+            "5": 8,
+            "6": 8
+          },
+          "passed": true,
+          "prompt_length": {
+            "max": 6,
+            "mean": 4.0,
+            "min": 2,
+            "p50": 4.0,
+            "p95": 6.0
+          },
+          "prompt_unknown_count": 0,
+          "step_group_count": 40
+        },
+        "train": {
+          "ambiguous_input_count": 0,
+          "channel_label_counts": {
+            "done": {
+              "<continue>": 448,
+              "<done>": 32
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 32,
+              "<exit_count_1>": 160,
+              "<exit_count_2>": 288
+            },
+            "reward": {
+              "<reward_positive>": 32,
+              "<reward_zero>": 448
+            },
+            "room_relation": {
+              "<room_no_observation>": 192,
+              "<room_novel>": 128,
+              "<room_previous>": 128,
+              "<room_same>": 32
+            }
+          },
+          "exact_vector_count": 8,
+          "exact_vector_majority_accuracy": 0.2,
+          "example_count": 480,
+          "game_count": 32,
+          "groups_valid": true,
+          "length_group_counts": {
+            "2": 32,
+            "3": 32,
+            "4": 32,
+            "5": 32,
+            "6": 32
+          },
+          "passed": true,
+          "prompt_length": {
+            "max": 6,
+            "mean": 4.0,
+            "min": 2,
+            "p50": 4.0,
+            "p95": 6.0
+          },
+          "prompt_unknown_count": 0,
+          "step_group_count": 160
+        },
+        "valid": {
+          "ambiguous_input_count": 0,
+          "channel_label_counts": {
+            "done": {
+              "<continue>": 112,
+              "<done>": 8
+            },
+            "move_exit_count_after": {
+              "<exit_count_0>": 8,
+              "<exit_count_1>": 40,
+              "<exit_count_2>": 72
+            },
+            "reward": {
+              "<reward_positive>": 8,
+              "<reward_zero>": 112
+            },
+            "room_relation": {
+              "<room_no_observation>": 48,
+              "<room_novel>": 32,
+              "<room_previous>": 32,
+              "<room_same>": 8
+            }
+          },
+          "exact_vector_count": 8,
+          "exact_vector_majority_accuracy": 0.2,
+          "example_count": 120,
+          "game_count": 8,
+          "groups_valid": true,
+          "length_group_counts": {
+            "2": 8,
+            "3": 8,
+            "4": 8,
+            "5": 8,
+            "6": 8
+          },
+          "passed": true,
+          "prompt_length": {
+            "max": 6,
+            "mean": 4.0,
+            "min": 2,
+            "p50": 4.0,
+            "p95": 6.0
+          },
+          "prompt_unknown_count": 0,
+          "step_group_count": 40
+        }
+      },
+      "task": "multichannel action-conditioned real TextWorld event delta"
+    },
+    "graph_audit": {
+      "all_binding_steps_precede_snapshot_root": true,
+      "all_masks_match_exhaustive_cache": true,
+      "all_rooms_unique_and_present": true,
+      "canonical_snapshot_sha256": "8BD9C2A33BBA805D4D009D232362E4D63E42EB3A078C1E0023F69DE61C640E51",
+      "inverse_binding": "same observed physical edge at binding step",
+      "no_edge_conflicts": true,
+      "source": "past factual observations and executed moves only",
+      "splits": {
+        "test": {
+          "build_seconds": 0.001997583,
+          "edge_conflict_count": 0,
+          "edge_conflicts_first_20": [],
+          "game_count": 8,
+          "leakage_violation_count": 0,
+          "leakage_violations_first_20": [],
+          "mask_mismatch_count": 0,
+          "mask_mismatches_first_20": [],
+          "maximum_edge_count": 8,
+          "maximum_logical_graph_bytes": 189,
+          "maximum_node_count": 5,
+          "room_extraction_failure_count": 0,
+          "room_failures_first_20": [],
+          "snapshot_count": 40
+        },
+        "train": {
+          "build_seconds": 0.00785475,
+          "edge_conflict_count": 0,
+          "edge_conflicts_first_20": [],
+          "game_count": 32,
+          "leakage_violation_count": 0,
+          "leakage_violations_first_20": [],
+          "mask_mismatch_count": 0,
+          "mask_mismatches_first_20": [],
+          "maximum_edge_count": 8,
+          "maximum_logical_graph_bytes": 189,
+          "maximum_node_count": 5,
+          "room_extraction_failure_count": 0,
+          "room_failures_first_20": [],
+          "snapshot_count": 160
+        },
+        "valid": {
+          "build_seconds": 0.002239959,
+          "edge_conflict_count": 0,
+          "edge_conflicts_first_20": [],
+          "game_count": 8,
+          "leakage_violation_count": 0,
+          "leakage_violations_first_20": [],
+          "mask_mismatch_count": 0,
+          "mask_mismatches_first_20": [],
+          "maximum_edge_count": 8,
+          "maximum_logical_graph_bytes": 189,
+          "maximum_node_count": 5,
+          "room_extraction_failure_count": 0,
+          "room_failures_first_20": [],
+          "snapshot_count": 40
+        }
+      }
+    },
+    "manifest": {
+      "artifact_hashes_equal_reference": true,
+      "cross_split_seed_disjoint": true,
+      "game_binary_revalidation": "not_required_for_offline_frozen_cache",
+      "mode": "offline_frozen_artifact_identity",
+      "reference_fingerprint_sha256": "21e4aea7c7f4fe4a82a03804001b9d80056041976697bdbb48bcdde0b8f50bd4",
+      "reference_manifest_verified": true
+    },
+    "objective_plan_audit": {
+      "all_plans_equal_walkthrough_for_audit": true,
+      "compiler": "word-boundary compass directions in text order plus take coin",
+      "game_count": 48,
+      "records": [
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260801,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260802,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260803,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260804,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260805,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260806,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260807,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260808,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260809,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260810,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260811,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260812,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260813,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260814,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260815,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260816,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go east",
+            "go north",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260817,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260818,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20260819,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260820,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260821,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260822,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260823,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260824,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260825,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260826,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260827,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260828,
+          "split": "train",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go south",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260829,
+          "split": "train",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go south",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20260830,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20260831,
+          "split": "train",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20260832,
+          "split": "train",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go east",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20270201,
+          "split": "valid",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go east",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20270202,
+          "split": "valid",
+          "walkthrough": [
+            "go east",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go south",
+            "go west",
+            "take coin"
+          ],
+          "seed": 20270203,
+          "split": "valid",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go south",
+            "go west",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go east",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20270204,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go east",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20270205,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20270206,
+          "split": "valid",
+          "walkthrough": [
+            "go south",
+            "go south",
+            "go west",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20270207,
+          "split": "valid",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20270208,
+          "split": "valid",
+          "walkthrough": [
+            "go west",
+            "go south",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20270209,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go south",
+            "go east",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20270210,
+          "split": "test",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go west",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go east",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ],
+          "seed": 20270211,
+          "split": "test",
+          "walkthrough": [
+            "go east",
+            "go north",
+            "go east",
+            "go north",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go south",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20270212,
+          "split": "test",
+          "walkthrough": [
+            "go south",
+            "go east",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ],
+          "seed": 20270213,
+          "split": "test",
+          "walkthrough": [
+            "go north",
+            "go west",
+            "go south",
+            "go south",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go north",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20270214,
+          "split": "test",
+          "walkthrough": [
+            "go north",
+            "go east",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20270215,
+          "split": "test",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        },
+        {
+          "equal": true,
+          "parsed_plan": [
+            "go west",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ],
+          "seed": 20270216,
+          "split": "test",
+          "walkthrough": [
+            "go west",
+            "go north",
+            "go north",
+            "go east",
+            "take coin"
+          ]
+        }
+      ],
+      "source": "public objective text only"
+    },
+    "tree_audit_passed": true,
+    "tree_repair_audit": {
+      "changed_pair_count": 0,
+      "changed_pair_ids": [],
+      "repaired_tree_sha256": "48C0B8F0E6A2E7A47A5E8F9D2733AE37591988A5FFBA568C46B48C16A7098A27",
+      "rule": "if first delta has no room text, preserve physical current room; a following look is room_same, not room_previous",
+      "source_tree_sha256": "48C0B8F0E6A2E7A47A5E8F9D2733AE37591988A5FFBA568C46B48C16A7098A27"
+    },
+    "vocabulary_fingerprint": "9d31551deae8300719634f1fc584b6ec508348c74b94efd3c456eb2096f1f749"
+  },
+  "decision": {
+    "candidate_generation_gate": true,
+    "data_provenance_gate": true,
+    "information_flow_gate": true,
+    "next_route": "crwm2_live_horizon_2_8_32_matched_baselines",
+    "overall": "PASS",
+    "self_transition_gate": true,
+    "verdict": "PHASE1_GO_LONG_HORIZON_REQUIRED"
+  },
+  "environment": {
+    "cpu_model": null,
+    "cuda_available": false,
+    "cuda_device_name": null,
+    "cuda_version": null,
+    "device": "cpu",
+    "git_commit": "deb6e7c84016044b08c5af0062dfd921e6914aea",
+    "git_executable": "git",
+    "git_status_porcelain": [],
+    "logical_cpu_count": 14,
+    "mkldnn_available": false,
+    "mkldnn_enabled": true,
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.9.6",
+    "torch": "2.8.0",
+    "torch_interop_threads": 14
+  },
+  "experiment": "E3-CRWM1 no-oracle candidate generation",
+  "fit": {
+    "ambiguous_unique_key_count": 0,
+    "compression_ratio": 0.6921875,
+    "deployment_training_wall_seconds": 0.044765666999999995,
+    "expanded_equivalence_audit_seconds_excluded": 0.0087275,
+    "expanded_example_count": 640,
+    "expanded_prediction_equivalent": true,
+    "expanded_train_score_max_abs_difference": 1.887379141862766e-15,
+    "kernel": "affordance_phase_suffix_times_return_edge_and_objective_plan_tape",
+    "mask_decision_threshold": 1e-06,
+    "ridge_lambda": 1e-06,
+    "single_pass_aggregation_seconds": 0.01137575,
+    "unique_kernel_seconds": 0.005832375,
+    "unique_prototype_count": 443,
+    "weighted_cholesky_solve_seconds": 0.010762167
+  },
+  "generated_at_utc": "2026-07-22T09:35:37.281714+00:00",
+  "reference_metrics": {
+    "oracle_candidate_role": "evaluator oracle proposal only",
+    "sg22r_self_second_exact": 1.0
+  },
+  "references": {
+    "cache": {
+      "path": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/e3_sg22r_fresh_exhaustive_tree_cache.json",
+      "sha256": "2016BF42DF694FBE6F4EDCD81E21C03E09F4A92348BDDB8909DD0118A2565A5E"
+    },
+    "sg22r": {
+      "path": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/e3_sg22r_seventh_fresh_confirmation.json",
+      "sha256": "1A75839740A7913E555FBEBD5EB462AA4C50D5324709B11F507A9FB607B7DB92"
+    }
+  },
+  "rollout": {
+    "candidate_precision": 1.0,
+    "candidate_recall": 1.0,
+    "candidate_set_exact_accuracy": 1.0,
+    "counts": {
+      "false_negative": 0,
+      "false_positive": 0,
+      "first_groups": 160,
+      "official_candidates": 616,
+      "proposed_candidates": 616,
+      "second_evaluated": 616,
+      "second_union": 616,
+      "self_context_failures": 0,
+      "true_positive": 616
+    },
+    "errors_first_100": [],
+    "first_latency": {
+      "max_ms": 2.25725,
+      "mean_ms": 0.15048509999999998,
+      "min_ms": 0.133291,
+      "p50_ms": 0.13645800000000002,
+      "p95_ms": 0.14253749999999996,
+      "p99_ms": 0.15205533999999996,
+      "sample_count": 160
+    },
+    "groups": [
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:0:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "26ed7969caf4451b268509a2843058dcca44f8e546603e2cb5806a80f63eba55",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "26ed7969caf4451b268509a2843058dcca44f8e546603e2cb5806a80f63eba55",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:1:go south",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:1:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "26ed7969caf4451b268509a2843058dcca44f8e546603e2cb5806a80f63eba55",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:2:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:2:go north",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:3:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:3:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:4:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270209:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:0:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:1:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:1:go west",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:2:go east",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:2:go west",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:3:go east",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "4f87d4ac12d03f34c1acaf44811c1fc725e2728aa62edc8b07e0075d5f6840ea",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:3:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:4:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270210:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:0:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "26ed7969caf4451b268509a2843058dcca44f8e546603e2cb5806a80f63eba55",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "26ed7969caf4451b268509a2843058dcca44f8e546603e2cb5806a80f63eba55",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:1:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:1:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "26ed7969caf4451b268509a2843058dcca44f8e546603e2cb5806a80f63eba55",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:2:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:2:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:3:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:3:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:4:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "45a2e7fc36f12af08368f38d8a52acd78d3d4bce9948629f57e95209ab22de74",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270211:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:0:go south",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "c8734476a4a9c1ab7fb2f699f59411d113eca4fd86b156b5b287cae39ae88823",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "c8734476a4a9c1ab7fb2f699f59411d113eca4fd86b156b5b287cae39ae88823",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:1:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:1:go north",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "c8734476a4a9c1ab7fb2f699f59411d113eca4fd86b156b5b287cae39ae88823",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:2:go south",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:2:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:3:go north",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:3:go south",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:4:go north",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270212:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:0:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:1:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:1:go west",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:2:go east",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "cdcfa76178b8204731382213e6b36c7d298720eddf032e387009d34ae599e100",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:2:go south",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:3:go north",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:3:go south",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:4:go north",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "482b6dfb7bc5d40e323173f7e04f097fb0ea1addad8b8d9cf5c785721540107e",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270213:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:0:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:1:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:1:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "7126663d3acebbca50ed2bb5e99eb8bf182d35d4621a18d48ab551b0a3bebc0b",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:2:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:2:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:3:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:3:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "37d315118d6ab94e033152af752a88107ec873dae3faf81fd8ee53180d9e0fd6",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:4:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270214:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:0:go west",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "fd40c102241cc221db5af3ed01f95e386b57d603c1eb92be26ca4bf2116e2e4f",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "fd40c102241cc221db5af3ed01f95e386b57d603c1eb92be26ca4bf2116e2e4f",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:1:go east",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "fd40c102241cc221db5af3ed01f95e386b57d603c1eb92be26ca4bf2116e2e4f",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:1:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:2:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:2:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:3:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:3:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:4:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270215:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:0:go west",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:0:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "fd40c102241cc221db5af3ed01f95e386b57d603c1eb92be26ca4bf2116e2e4f",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:0:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 3,
+        "proposal_fingerprint": "fd40c102241cc221db5af3ed01f95e386b57d603c1eb92be26ca4bf2116e2e4f",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:1:go east",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 3,
+        "proposal_fingerprint": "fd40c102241cc221db5af3ed01f95e386b57d603c1eb92be26ca4bf2116e2e4f",
+        "proposed_count": 3,
+        "true_positive": 3
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:1:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:1:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:1:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:2:go north",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:2:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "648388d65043f24b01f851b4187328546bb8c711169c0ab826277c40d34fd708",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:2:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:2:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:3:go east",
+        "first_projection_kind": "plan_path_constraint",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:3:go south",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "43c81d50e39d06824a6ecdcb2a41fa3ab808fa3f309f674000a1438fad0d1a1d",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:3:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:3:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:4:examine coin",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:4:go west",
+        "first_projection_kind": "known_edge_projection",
+        "official_count": 4,
+        "proposal_fingerprint": "a83e9896d180274c9450a146b16b77d469e5c7af807e1ede38edfc0b8659fca3",
+        "proposed_count": 4,
+        "true_positive": 4
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:4:inventory",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:4:look",
+        "first_projection_kind": "stationary_hold",
+        "official_count": 5,
+        "proposal_fingerprint": "d42156430b489b6de99ed57af218bff141fb08b2596cf0af4da92d42633de05b",
+        "proposed_count": 5,
+        "true_positive": 5
+      },
+      {
+        "exact": true,
+        "false_negative": 0,
+        "false_positive": 0,
+        "first_id": "20270216:4:take coin",
+        "first_projection_kind": "terminal",
+        "official_count": 0,
+        "proposal_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "proposed_count": 0,
+        "true_positive": 0
+      }
+    ],
+    "information_flow_audit": {
+      "candidate_source": "projected_first_next_affordance_mask",
+      "future_oracle_candidate_proposal_count": 0,
+      "official_values_used_for_scoring_only": true,
+      "proposal_materialized_before_evaluator_targets": true,
+      "teacher_context_call_count": 0
+    },
+    "invalid_transition_rate": 0.0,
+    "no_oracle_second_exact_accuracy": 1.0,
+    "second_correct": 616,
+    "second_latency": {
+      "max_ms": 0.148,
+      "mean_ms": 0.10879739772727273,
+      "min_ms": 0.104,
+      "p50_ms": 0.108084,
+      "p95_ms": 0.11303125,
+      "p99_ms": 0.12110180000000006,
+      "sample_count": 616
+    }
+  },
+  "schema_version": 1
+}
