@@ -4,6 +4,95 @@
 
 ---
 
+## 2026-07-22：TBC-0 时间尺度专家 crossover — 开题预注册与 Phase-A 启动（SMOKE MIXED）
+
+### 组合决策与分支隔离
+
+三个已评估方向全部立项，但保持独立历史与独立判官，禁止把一个方向的正结果补贴给另一个方向：
+
+| 顺序 | 方向 | 分支 | 当前阶段 |
+|---:|---|---|---|
+| 1（先执行） | Temporal-Basis Crossover | `codex/research-temporal-basis-crossover` | Phase-A 去混淆 smoke |
+| 2 | Loss-Density Adaptive Adjoint | `codex/research-loss-density-adjoint` | 已预注册，待独立推进 |
+| 3 | Causal Residual World Model | `codex/research-causal-residual-world-model` | 已预注册，待独立推进 |
+
+`main` 继续作为 stable 分支；任何研究实现只有在预注册门通过、匹配基线完成、结果可复现后才可提出晋级，失败结果保留在研究分支与本日志。
+
+### 背景 / 动机
+
+SG29 的 d4 时间尺度 MoE 在 15M BPE tokens、d=128、3 seeds 下取得 `5.641±0.004` BPC，相对 base 改善 `0.235`、相对同协议 Transformer 改善 `0.204`；但 d4 有 `2.50M` 参数，LSTM/Transformer 约 `1.19M`，且 d4 吞吐 `226k tok/s` 低于 base/LSTM/Transformer。现有证据只说明“当前 dense d4 在该协议有效”，不能区分收益来自额外容量、异质 decay bands、change router，还是三者组合。
+
+本课题不主张“首次 SNN+MoE”；它冻结为机制问题：**在容量与 active compute 可比时，时间尺度专门化是否存在随 memory horizon / event density / context length 改变的稳定 crossover，且该收益能否通过路由干预被因果归因？**
+
+### 冻结研究问题与假设
+
+- **RQ1（capacity）**：同参数的 `temporal` 与 `homogeneous` MoE 之间是否仍有稳定差距？若没有，SG29 收益优先解释为多专家容量而非时间尺度专门化。
+- **RQ2（routing）**：训练后把 router 改成 uniform 或沿时间反转，是否显著损害 temporal 模型？若不损害，不宣称 change router 学到了记忆需求。
+- **RQ3（crossover）**：memory horizon、event density、context length 改变时，短/中/长专家使用与收益是否按预注册方向变化？
+- **H1（Phase-A mechanism）**：在 synthetic delayed event-recall 上，temporal 相对同容量 homogeneous 至少改善 `0.10` query NLL 或 `5pp` accuracy；uniform/reverse-time 任一干预使 temporal accuracy 下降 `>=3pp`。
+- **H2（formal quality）**：在至少两个真实数据域、`d_model in {128,256,512}`、`seq_len in {128,512,2048}`、3 seeds 下，参数差 `<=5%` 的 temporal basis 相对单专家改善 `>=0.10 BPC`，方向一致。
+- **H3（formal cost）**：后续 shared-projection temporal basis 的 active FLOPs 与参数差 `<=5%`，吞吐不低于单专家 base 的 `90%`；当前 dense d4 不满足此门，不得用于效率成功声明。
+
+### Phase-A 冻结对照
+
+- `base_same_width`：相同 d/state width 的单 gated-trace core；
+- `base_param_matched`：扩大单 core state_dim，使总参数逼近 temporal；
+- `temporal`：短/中/长异质 decay bands + learned change router；
+- `homogeneous`：相同专家数、投影和 router，但所有专家使用相同 broad decay band；
+- `uniform`：异质 decay bands，但 router 固定均匀；
+- 对训练后的 temporal/homogeneous 做 evaluation-only `uniform` 与 `reverse_time` 路由干预。
+
+synthetic delayed event-recall 只用于验证 runner、去除答案泄漏并寻找机制信号：事件位置给 payload，延迟 h 后输入统一 QUERY token，只有 query 位置产生目标；QUERY 输入本身不得包含 payload。任何 Phase-A 正结果都只能触发正式实验，不能回写 SG29 或宣称语言建模成功。
+
+### Phase-A Go/No-Go
+
+- 数据审计、五变体 forward/backward、temporal/homogeneous 参数严格相同、parameter-matched base 相对 gap `<=5%` 必须全部 PASS。
+- 先跑单 seed smoke；若无数值/数据问题，再运行 3 seeds × horizon/event-density 网格。
+- 若 temporal 不优于 homogeneous，或 router 干预无影响，则记录 `NO MECHANISM SIGNAL`，不直接增加模型规模救结果。
+- 若 synthetic 有信号但真实语料消失，结论限定为合成记忆任务，不宣称一般 temporal expert。
+
+### 实现与产物
+
+- 新增 `experiments/e3_tbc0_temporal_basis_crossover.py`：可控 event-recall、五变体、参数匹配、路由干预、routing diagnostics 与 JSON 汇总。
+- 新增 `tests/test_e3_tbc0_temporal_basis_crossover.py`：数据无标签泄漏、容量匹配、decay 对照、干预确定性、全变体有限梯度。
+- smoke 默认产物：`results/e3_scan/e3_tbc0_temporal_basis_crossover.smoke.json`；正式结果需使用非 `.smoke.json` 名称并单独记录哈希。
+
+### 当前状态
+
+- **预注册先于运行完成**：上述协议与成功门冻结后才执行以下 smoke；没有根据结果回改 H1/H2/H3。
+
+### Phase-A 单 seed CPU smoke
+
+- 命令：`python3 experiments/e3_tbc0_temporal_basis_crossover.py --device cpu --seeds 0 --epochs 2 --train-sequences 128 --valid-sequences 64 --seq-len 64 --horizons 2 8 24 --gap-min 1 --gap-max 4`。
+- 环境：macOS arm64、Python `3.9.6`、PyTorch `2.8.0`、CPU；本结果不代表 CUDA/ROCm 吞吐。
+- 数据：train/valid queries=`557/274`，event density=`0.06799/0.06689`；QUERY token 与 payload 分离。
+- 产物：`results/e3_scan/e3_tbc0_temporal_basis_crossover.smoke.json`，SHA-256=`d1f38e2510c5fb2cd1628b818adb4342f39d33105d0d784fd84e8be64abf1471`。
+- 结构测试：`PYTHONPATH=. pytest -q tests/test_e3_tbc0_temporal_basis_crossover.py` → `5 passed`。
+- 参数审计：temporal/homogeneous/uniform 均为 `7,235` total params；parameter-matched base 使用 `state_dim=48`、`7,194` params，相对 gap=`0.5667%`，通过 `<=5%` 门；same-width base=`2,650` params。
+
+| variant | query NLL ↓ | query accuracy ↑ | 训练 tok/s（CPU smoke） |
+|---|---:|---:|---:|
+| base_same_width | 2.1332 | 16.42% | 298,250 |
+| base_param_matched | **2.1089** | 20.07% | 49,760 |
+| temporal | 2.1670 | **20.80%** | 148,048 |
+| homogeneous | 2.1551 | 16.06% | 148,077 |
+| uniform | 2.1303 | 17.52% | 150,571 |
+
+路由干预与诊断：
+
+- temporal → uniform：NLL `+0.0285`、accuracy `-4.38pp`；超过 H1 的单项 `3pp` 干预门。
+- temporal → reverse-time：NLL `+0.0006`、accuracy `-2.55pp`；未过 `3pp` 门。
+- temporal 相对同容量 homogeneous：accuracy `+4.745pp`，略低于冻结的 `5pp`；NLL 反而 `+0.0119`，因此 **H1 总门未通过**。
+- parameter-matched base 相对 temporal：NLL 更低 `0.0582`，accuracy 仅低 `0.73pp`；“额外容量即可解释主要收益”仍是活跃反解释。
+- temporal 的 change 与 short-expert weight 相关为 `-0.930`，event 相对 filler 的 short weight 差 `-0.0542`，方向与“变化大→短尺度专家”叙述相反；在跨 seed/干预复现前不得做专门化解释。
+
+### Smoke verdict / 下一步
+
+- **SMOKE MIXED，H1 未通过，不是正面结果。** 数据、参数与执行审计通过，router 干预出现信号，但 temporal-vs-homogeneous 主门差 `0.255pp` 且 NLL 反向，单 seed 不足以判机制。
+- 按冻结协议，只进入 `3 seeds × horizon × event-density` 的 Phase-A 网格，不增加模型规模、不修改阈值；若均值仍不过门或相关方向不稳定，记录 `NO MECHANISM SIGNAL`，停止 synthetic 扩张。
+
+---
+
 ## 2026-07-20：SG29 猫娘 BPE 大语料长训练 — d4 MoE-SNN 超 Transformer（正面结果，决定性）
 
 ### 背景 / 动机
