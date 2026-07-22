@@ -4,6 +4,51 @@
 
 ---
 
+## 2026-07-22：LDAA-0 损失密度自适应精确反向扫描 — 开题预注册（PENDING）
+
+### 背景 / 动机
+
+RA0 已证明 gated-trace 的正向 trace 与反向 adjoint 可复用同一类常系数 prefix-scan，并在保持精确梯度的同时把 T512/T2048 的 saved storage 压到 BPTT 的 `17.17%/14.18%`。但当前正式路径固定使用 dense reverse scan；早期 sparse segmented adjoint 虽利用了 K 个稀疏监督冲激，却被 Python 分段 dispatch 拖慢。由此产生新的独立问题：**当长度 T 的序列只有 K 个监督时刻时，能否依据 loss density、梯度物化需求和硬件特征，自动选择最快的精确 backward？**
+
+本方向独立于时间尺度 MoE 与 causal residual world model，在分支 `codex/research-loss-density-adjoint` 推进；未通过晋级门前不进入 `main`。
+
+### 冻结研究问题与假设
+
+- **RQ1（crossover）**：BPTT、dense reverse scan、native segmented adjoint 与 forward eligibility 是否存在由 `(T, K/T, state_dim, input_grad, backend)` 决定的稳定性能分区？
+- **RQ2（dispatch）**：仅用运行前可知特征训练的选择器，能否把 p50 延迟控制在 oracle backend 的 `1.10x` 内？
+- **H1（exactness）**：所有 exact 路径对相同 forward 的输出/输入/初态/参数梯度继续满足 `atol=2e-5, rtol=1e-4`。
+- **H2（sparse regime）**：在预注册稀疏区 `K/T <= 1/32`，至少 `60%` 的矩阵单元相对 BPTT 达到 `>=1.5x`，同时 saved storage `<=25% BPTT`。
+- **H3（model level）**：E3 与至少一个非 VPSC diagonal recurrent/SSM core 上，自动调度不改变质量，held-out NLL 相对 exact BPTT 差 `<=0.10`。
+
+### 协议
+
+- `T in {512, 2048, 8192, 32768}`，`K/T in {1/1024, 1/256, 1/64, 1/16, 1/4, 1}`；不足一个 query 时固定 `K=1`。
+- `input_grad in {off, on}`；至少扫描两档 `state_dim`，CPU 与可用 CUDA 后端分别报告，禁止把 CPU 结果外推成 GPU 结论。
+- 对照固定为 exact BPTT、RA0 dense reverse scan、native segmented adjoint、forward eligibility；forward 方程、参数、数据、optimizer 与 query 位置完全一致。
+- 先做 operator exactness/memory/latency，再做真实语言/世界模型 update；不得以 microbenchmark 代替模型级结论。
+- 报告 p50/p95、unique saved storage、autograd node 数、编译/预热时间与 dispatch 开销；所有 speedup 以同硬件同线程交错测量。
+
+### 反证与停机门
+
+- 任一 exact backend 在冻结 case 超过梯度误差门，立即停止速度解释并记录 FAIL。
+- native segmented adjoint 在 `K/T <= 1/32` 仍无法形成稳定 crossover，或其收益完全来自关闭 input gradient，则 H2 FAIL，不把工程优化包装成一般算法贡献。
+- 选择器若需要运行后标签、任务指标或人工调参才能接近 oracle，则 RQ2 FAIL。
+- 只在 E3 成立而无法迁移到第二类 diagonal recurrence 时，Broader 主张关闭，课题降级为 VPSC 专用优化。
+
+### 预定产物
+
+- operator/backend benchmark、可复现 JSON 与 crossover phase diagram；
+- loss-density-aware dispatcher 及精确性测试；
+- E3 + 非 VPSC diagonal model 的模型级训练对照；
+- 最终 verdict：`GO / NARROW / NO-GO`，失败结果保留在本日志。
+
+### 当前状态
+
+- **PENDING / PRE-REGISTERED**：本条只冻结问题、协议和判官，不声称新实现或新结果。
+- 最近邻风险：parallel reverse scan、eligibility 与 event-gradient 已有工作；新颖性必须落在“loss density 驱动的 exact-backward crossover 与调度”，不能写成重新发明 prefix scan。
+
+---
+
 ## 2026-07-20：SG29 猫娘 BPE 大语料长训练 — d4 MoE-SNN 超 Transformer（正面结果，决定性）
 
 ### 背景 / 动机
