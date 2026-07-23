@@ -4,6 +4,65 @@
 
 ---
 
+## 2026-07-23：三线索 deep-research + idea-evaluator 收敛 — 退火 / 加速 / 主线去向与下一步动作
+
+### 背景与动机
+
+紧接上一条（07-23 方向审计，已冻结五个候选方向并采纳 Dir 1/2/3）。本条对用户提出的三条线索——SNN 学习加速、退火、打败 Transformer 主线——补一轮 `supervisor-deep-research` 文献核实 + `idea-evaluator` 复核，目的是回答"三条线索各走到哪了"，并把下一步收敛到可预注册的动作。本条不运行新实验，不晋级 `main`；只固化文献证据边界与判定。
+
+### 文献核实结果（三 subagent 并行 + 补充 Crossref 检索，逐条核实）
+
+| 线索 | 最近邻（已核实） | 空白 / 差异轴 |
+|---|---|---|
+| 学习加速（exact sparse-event + prefix-scan + surrogate gradient） | SparseProp（Engelken 2023, NeurIPS, DOI 10.52202/075280-0161）：exact 事件化稀疏反向，但顺序推进、无 scan；SLAYER（Shrestha-Orchard 2018, NeurIPS, arXiv 1810.08646）；e-prop（Bellec 2020, Nature Comm, DOI 10.1038/s41467-020-17236-y）；FPE（Yin 2023, Nature MI, DOI 10.1038/s42256-023-00650-4）；memory-efficient BPTT 线（Meng ICCV 2023 DOI 10.1109/ICCV51070.2023.00567；ST-BPTT BioCAS 2024 DOI 10.1109/BioCAS61083.2024.10798378；truncated local BP Guo 2023 DOI 10.3389/fnins.2023.1047008） | "exact sparse-event + associative prefix-scan" 组合：Crossref 无重叠（仅命中 associative memory/learning，不同语义）；arXiv API 本轮不可达（HTTP 000），故标"无直接重叠工作检出"，**非新颖性证明** |
+| 退火（mean-field β-annealed surrogate-free forward + 自由能 + Curie 临界） | StochEP（Lin/Jiang/Sengupta 2025, arXiv 2511.11320）：最近邻，mean-field 仅作 stochastic-EP 近似，无 β-schedule、无 Curie β_c；EqSpike（Martin 2020, arXiv 2010.07859）；Equilibrium Propagation（Scellier-Bengio 2017, DOI 10.3389/fncom.2017.00024）；Saponati-Vinck 2023（Nature Comm, DOI 10.1038/s41467-023-40651-w）；Ororbia 2023（Neurocomputing, DOI 10.1016/j.neucom.2023.126292） | **确认空白**：arXiv `"spiking + magnetization + tanh"` / `"beta annealing" + neural` / `"spiking" + "temperature annealing"` 均零结果；无工作组合 mean-field 磁化前向 + β 退火 + 自由能 + Curie 临界 |
+| SNN vs Transformer | Spikformer（Zhou 2022, arXiv 2209.15425）；Spikformer V2（Zhou 2024, arXiv 2401.02020）；Spiking Transformer（CVPR 2025, DOI 10.1109/cvpr52734.2025.02272）；Spikeformer（Li 2024, Neurocomputing, DOI 10.1016/j.neucom.2024.127279）；小规模 SNN scaling（arXiv 2601.14961，作者已撤回） | 无任何"同规模、公平协议、SNN 在质量上击败 Transformer"的已测声称；Spikformer 胜果均为 SNN 类内 SOTA、视觉任务；语言/BPC 区稀疏；Hala Point/Loihi 2 硬件声称无法核实（Nature/Intel/IEEE 均封锁） |
+
+### 三线索去向（对"主线去哪了"的直接回答）
+
+- **学习加速**：最健康。prefix-scan 内核已工作（SG27B fused，推理 1.15× 于 Transformer）。LDAA"4× 内存压缩"已被数据证伪（raw unique storage `50.45% BPTT`，未过 `≤25%` 门）——收窄为 "latency-aware exact sparse backward runtime"，停止通用 4× 主张。scan + sparse-event 组合新颖性可辩护，但须谨慎标注（见诚实边界）。
+- **退火**：作为理论新颖（组合空白已确认），但被**边缘化**——它未产生打败 Transformer 的胜果（d4 用的是 surrogate gradient + prefix-scan，非退火前向）；纯 F 非判别（chance）；STDP-Hebbian 子声称被 anti-Hebbian 直接证伪（审计 Direction 5 已 CRITICAL 关闭）。
+- **打败 Transformer 主线**：**弱胜**（SG29, d4 `5.641±0.004` < Transformer `5.845±0.023` BPC，3 seeds），但参数不匹配（`2.1×` LSTM）且 LSTM 仍胜（`5.592`）。审计已将其降级为非独立方向——它没有丢，落在 SG29，但尚未诚实赢得。
+
+### 判定（idea-evaluator 五维）
+
+| 维度 | 分 | 证据 | 提升条件 |
+|---|---:|---|---|
+| Higher | 5 | SG29 BPC 胜 Transformer 但输 LSTM、参数不匹配；纯 F chance | 匹配参数 + 胜 LSTM 后再主张 |
+| Faster | 7 | SG27B fused 推理 `1.15×` 于 Transformer（已测）；训练吞吐仍 `6–26%` 于 LSTM | 收窄训练吞吐差距，对标 LSTM |
+| Stronger | 5 | 无鲁棒/噪声/泛化证据；LSTM 仍更强 | 加 drift/noise 消融 |
+| Cheaper | 6 | LDAA 内存主张证伪（`50.45%`）；Dir 3 Sigma-Delta write-budget 机制分 8 但未测 | write-budget 实验（≥5 seeds, 4 基线）通过后再主张 |
+| Broader | 6 | 退火 + 自由能 + 势博弈可跨域移植，但无移植证据 | 一个跨域 demo |
+
+范式探针：First Principles 部分 Yes（spike 重定义为零温磁化后验，非 surrogate）；Hamming 部分 Yes（若退火前向变判别将改变 SNN 训练范式，但未达成）；Elephant / Technology Cycle 均为 No。颠覆性：possible，以"解决判别性"为前提。
+
+### 决定与下一步
+
+**判定：Accept with Revisions**（机制分高分 Faster/Cheaper 待 write-budget 验证实验；无维度在数据上稳达 8+，故非 Strong Accept）。
+
+三条可预注册动作，按优先级：
+
+1. **退火线索要么接回要么切割**——目前处于"理论新颖但非判别、且未参与胜果"的悬置。选 (a) 在 mean-field β 前向上加判别读出 / PC inference loop，并在主线内验证，使退火核心真正贡献一次胜基线结果；或 (b) 诚实重新定位为纯理论，不再作为打败 Transformer 的路径。**禁止继续半声称。**
+2. **收紧打败 Transformer 声称**——以匹配参数对 LSTM 与 Transformer 重跑 d4。只有 d4 在等参下胜 **LSTM**，headline 才成立；此前一律写"以参数税胜较弱基线"。
+3. **用 Sigma-Delta write-budget 实验重挣 Cheaper/Faster**（共享初始化, 4 基线, ≥5 seeds, 先小模型）——这是机制分 `Faster=7 / Cheaper=8` 的命名验证实验；通过前不得扩到 35M / 0.8B。
+
+与 07-23 审计的关系：本条不推翻审计已采纳的 Dir 1/2/3；动作 1–3 是对"三线索如何不被审计遗漏地收尾"的补丁——动作 1（退火）与审计 Dir 3（Sigma-Delta 双时间尺度）共享同一 write-budget 实验，可合并预注册；动作 2 是审计"参数匹配 SNN scaling 仍须补齐"一句的具体化；动作 3 与 Dir 3 同源。
+
+### 诚实边界 / 风险
+
+1. scan + sparse-event 组合的"无重叠"受 arXiv API 不可达削弱——正式立项前须在 arXiv 可达时复检，排除仅存于 arXiv 的并行-scan-SNN 论文。
+2. Hala Point / Loihi 2 硬件声称未核实；不引用其数字。
+3. 退火组合空白是"检出空白"非"新颖证明"；F1 仍为 MAJOR。
+4. 生命周期 / 能力匹配为 Yellow：每周可投入时间、团队人数、长期算力尚未冻结，本条判定不含正式 capability match。
+
+### 可复现信息
+
+- 文献核实：三 subagent（RQ1 agentId `af635beeed57463b8` / RQ2 `ae38ec87950af8dbd` / RQ3 `aabe691c9cb9d58c2`），输出存于会话 task 目录；补充 Crossref 检索 inline（`associative scan spiking neural network` 等三查询）。
+- 关键文献：SparseProp DOI 10.52202/075280-0161；SLAYER arXiv 1810.08646；e-prop DOI 10.1038/s41467-020-17236-y；FPE DOI 10.1038/s42256-023-00650-4；StochEP arXiv 2511.11320；EP DOI 10.3389/fncom.2017.00024；Saponati-Vinck DOI 10.1038/s41467-023-40651-w；Spikformer V2 arXiv 2401.02020。
+- 本条无新实验、无 `main` 晋级；仅 LOG 固化。
+
+---
+
 ## 2026-07-23：下一阶段研究方向审计 — 方向筛选（待预注册）
 
 ### 背景与证据边界
