@@ -4,6 +4,121 @@
 
 ---
 
+## 2026-07-23：下一阶段研究方向审计 — 方向筛选（待预注册）
+
+### 背景与证据边界
+
+三条 2026-07-22 独立研究分支已经给出足够的正反证，可以停止从旧标题继续调参，转而审计下一阶段课题。本条使用 Idea Evaluator 的五维框架（Higher / Faster / Stronger / Cheaper / Broader）做方向筛选；分数为 `1..10` 的立项优先级证据，不是实验结果。
+
+本条只汇总已有日志、分支产物与最近邻文献，没有运行新实验，也没有把研究实现晋级 `main`：
+
+| 已有方向 | 分支与审计 commit | 当前证据边界 |
+|---|---|---|
+| Temporal-Basis Crossover | `codex/research-temporal-basis-crossover@67d3a97` | TBC-1 为 `NO_MECHANISM_SIGNAL`：grand temporal-homogeneous accuracy 仅 `+0.1803pp`，NLL 反向；short/long semantics 均失败 |
+| Loss-Density Adaptive Adjoint | `codex/research-loss-density-adjoint@ae291f6` | LDAA-2A exactness、速度、模型轨迹通过，但 raw unique storage=`50.454% BPTT`，未过预注册 `<=25%` 门；机器 verdict=`NARROW_OR_NO_GO_SECOND_CORE` |
+| Causal Residual World Model | `codex/research-causal-residual-world-model@4348cec` | CRWM-1 的两步无 oracle candidate generation 通过；CRWM-2A 因跨平台 `.z8` SHA 不一致为 `STOP_DATA_IDENTITY_FAILURE`，且 public objective 可能直接暴露完整解路径 |
+
+主分支中的补充边界继续保留：SG29 的 d4 在一个 15M-token、d=128 协议上以 `5.641±0.004` BPC 优于该 Transformer 的 `5.845±0.023`，但 LSTM 为 `5.592±0.002`，且参数量不匹配；E1 只在冻结 MI 代理协议上 `ADOPT`，尚未通过真实任务；STDP window shape 已出现，但符号为 anti-Hebbian。
+
+### 第一印象与排序
+
+最有价值的新问题来自失败边界，而不是继续扩大旧模型：SG26 暴露“token CE 与任务状态变化错位”，CRWM 暴露“目标可能让世界模型价值不可识别”，LDAA 暴露“延迟收益可迁移但通用四倍内存主张不成立”。综合新颖性、可证伪性、当前实现基础与最近邻拥挤度，优先级如下：
+
+| 优先级 | 候选方向 | Higher | Faster | Stronger | Cheaper | Broader | 生命周期 / 初步判定 |
+|---:|---|---:|---:|---:|---:|---:|---|
+| 1 | **事件原生的状态变化—表面生成因子化世界模型** | 7 | 8 | 8 | 7 | 7 | 前沿探索，约 4–8 月；**Accept with Revisions** |
+| 2 | **世界模型任务可识别性 / objective-to-solution 泄漏基准** | 7 | 5 | 9 | 7 | 8 | 基准构建，约 6–12 月；**Provisional Accept** |
+| 3 | **VPSC × Sigma-Delta 双时间尺度低比特可塑性** | 6 | 8 | 8 | 8 | 7 | 创新技术，约 9–15 月；**Accept with Revisions** |
+| 4 | **E/I 分段鲁棒控制器的真实任务验证** | 6 | 5 | 8 | 6 | 5 | 应用验证，约 3–6 月；**Accept with Revisions** |
+| 5 | **STDP 符号相图：Hebbian / anti-Hebbian 的条件边界** | 5 | 4 | 7 | 5 | 7 | 理论探索，约 6–12 月；只接受重定义后的新课题 |
+
+生命周期只是按当前仓库的代码、实验与日志基础估计；每周可投入时间、团队人数和长期算力尚未冻结，因此不把它当正式 capability match。
+
+### 方向 1：事件原生的状态变化—表面生成因子化世界模型
+
+核心对象不是再造一个一般语言模型，而是把可预测状态变化设为主损失，把随机语言表面设为条件辅助头：
+
+`(state_t, action_t) -> (delta_state, next_room, exits, features)`
+
+`(state_t, action_t, delta_state) -> text_surface`
+
+- **机制依据**：SG26C 中 SNN update 很快，但 self-rollin 与任务成功失败；这与“全部 token 等价地进入 CE，结构化转移只间接学习”的失配一致。
+- **新颖性风险**：MuZero（Schrittwieser et al., 2020）、Goyal et al. 的 declarative/procedural factorization（2021）以及 Neuro-Symbolic Synergy（Zhao et al., 2026）已经覆盖规划相关表示、结构因子化与神经—符号分工。仅声称“factorized world model”会触发 **F1：核心思想已有近邻**。
+- **可保留差异轴**：状态变化事件是第一训练目标；surface reconstruction 只作条件辅助；使用稀疏事件的 exact backward；在 objective 不泄漏解路径的隐藏动力学环境验证。
+- **首轮反证**：固定参数、数据与 seeds，对比 `token CE / structured delta / dual-head / constraint-only`。若 dual-head 在 task success、transition exact 上均不优于 token CE，或优势完全由 constraint-only 取得，则停止模型扩张。
+- **最小报告集**：task success、transition exact、surface NLL、invalid transition、update latency、吞吐、参数量和 peak memory。
+
+### 方向 2：任务可识别性与 objective-to-solution 泄漏基准
+
+CRWM-2A 暴露的根问题是：如果 public objective 可以零参数编译成完整 action tape，那么“世界模型是否改善 task success”不存在可测剩余空间。这个问题应先于模型排行榜。
+
+- **最近邻**：TextWorld（Côté et al., 2018）、ScienceWorld（Wang et al., 2022）、WorldCloner（Balloch et al., 2023）和 Neuro-Symbolic Synergy（Zhao et al., 2026）。本轮关键词检索没有找到直接以“objective 本身可编译到 exact solution path”为主要审计目标的工作；这不是 novelty 证明，正式立项仍需系统检索。
+- **基准对象**：`objective-only policy ceiling`、`constraint-only ceiling`、无 oracle candidate coverage、隐藏动力学恢复需求、solution leakage rate。
+- **Fatal-flaw gate**：只做 SG19/SG22R 一个 TextWorld 模板会触发 **F6：证据范围不足**；同时提出新基准和新模型会触发 **F8：一篇论文承担过多问题**。
+- **最低立项条件**：至少两个独立环境族；公开 objective 不包含解路径；生成器、规则、目标模板与资产 SHA 全部版本化；benchmark 与新方法分开判断。
+- **范式探针**：约 `6/8`。它可能把问题从“哪个模型分数更高”改成“任务是否有资格检验世界建模”，但在第二环境复现前只记为 strong potential。
+
+### 方向 3：VPSC × Sigma-Delta 双时间尺度低比特可塑性
+
+候选机制把 VPSC 连续事件状态作为快变量，把有限位宽的误差反馈权重残差作为慢变量；只有累计残差越过阈值才进行物理权重写入。
+
+- **最近邻**：Sigma Delta Quantized Networks（O'Connor & Welling, 2016）使用 activation delta；Error Feedback Fixes SignSGD（Karimireddy et al., 2019）研究压缩梯度；e-prop（Bellec et al., 2020）研究局部 eligibility / learning signal。三者均构成强先验。
+- **主要风险**：如果只是把现有 VPSC 与 Sigma-Delta 拼接，会触发 **F1**；如果不与 BF16、标准 error-feedback、当前 ECO 和 event-gated Sigma 同预算比较，会触发 **F3：更强基线缺失**。
+- **必须证明的差异**：减少物理权重写入，同时不恶化量化 regret、遗忘/重学习、free-energy proxy、criticality、STDP 指标和 action latency。
+- **首轮协议边界**：共享初始化，四个基线，至少 5 seeds；先在小模型做 write-budget / continual-learning 决定性实验，不直接扩到 35M 或 0.8B。
+- **范式探针**：约 `4/8`，属于高风险的硬件—学习接口种子，不是当前最短路径。
+
+### 方向 4：E/I 分段鲁棒控制器
+
+E1 的冻结 MI 协议给出 `60/60` 信息案例与较少坍塌，足以进入真实任务验证，但不足以声称任务级鲁棒性。
+
+- **最近邻风险**：Vogels & Abbott（2009）的 E/I gating、Sadeh & Clopath（2021）的 inhibitory stabilization，以及 Srinivasan et al.（2025）的 adaptive E/I reservoir control 已覆盖相近机制，因此独立方法新颖性偏弱。
+- **可检验剩余问题**：带预注册例外区间的分段拓扑控制器，能否在分布漂移下稳定真实 task success，而不仅提高 MI。
+- **停机门**：若在至少两个 drift 强度、3 seeds 上不能同时降低 collapse/forgetting 且保持 task metric，则保留 E1 代理结论，不升级论文主线。
+- **定位**：这是最快获得结论的配套验证，优先级低于前两个独立课题。
+
+### 方向 5：STDP 符号相图
+
+原命题“当前自由能训练自然产生 Hebbian STDP 符号”已被 anti-Hebbian 结果直接反驳，按 fatal-flaw gate 判 **CRITICAL Reject**，不得继续沿用原标题。
+
+仅允许重新开题为条件相图：STDP 符号是否由目标函数符号约定、E/I 身份、pre/post timing、自由相/钳制相次序共同决定。最近邻包括 Equilibrium Propagation（Scellier & Bengio, 2017）与 predictive-learning STDP（Saponati & Vinck, 2023）。该方向理论风险高；若不能先推出可区分的符号预测，不进入参数扫描。
+
+### 已有三分支的合并边界
+
+| 分支 | 决定 |
+|---|---|
+| TBC | **关闭当前机制**。不通过增加 width、epoch 或修改阈值重开“短/中/长专家导致 d4 收益”的主张；显式 pole basis + supervised mechanism 必须作为全新课题预注册。 |
+| LDAA | **保留窄方向**。可重述为 latency-aware exact sparse backward runtime；不得继续宣传通用 `4x` memory compression。研究实现继续留在实验分支。 |
+| CRWM | **换环境后再判**。普通“已知符号 + 未知神经残差”过于拥挤；只保留 versioned/retractable facts、contradiction recovery、calibrated uncertainty 的差异轴。旧 `.z8` identity 未恢复前不运行不可比 live 结果。 |
+
+### 决定与下一步
+
+- **采用为下一阶段候选主线**：方向 1、方向 2、方向 3；三者必须分别预注册、分别建研究分支，禁止正结果互相补贴。
+- **方向 1 先行**：它最直接利用现有 world-model runner 与 SG26 负结果，并能用一个小型四组对照快速证伪。
+- **方向 2 独立成 benchmark 课题**：先冻结 task identifiability spec，再决定数据生成；不与方向 1 合写为一次实验。
+- **方向 3 作为长期高风险路线**：只有完成共享初始化、四基线、5 seeds 的 write-budget 实验后才讨论扩模。
+- **方向 4 为配套任务验证**，不单独包装为核心方法；**方向 5 原主张关闭**，只有获得符号相图的理论预测才可重新立项。
+- 参数匹配 SNN scaling、长上下文和现代强基线仍是必须补齐的证据工程，但不单独视为新方法方向。
+
+### 最近邻检索记录
+
+- Schrittwieser et al., 2020, *Mastering Atari, Go, chess and shogi by planning with a learned model*：<https://www.nature.com/articles/s41586-020-03051-4>
+- Goyal et al., 2021, *Factorizing Declarative and Procedural Knowledge in Structured, Dynamical Environments*：<https://openreview.net/forum?id=VVdmjgu7pKM>
+- Zhao et al., 2026, *Neuro-Symbolic Synergy for Interactive World Modeling*：<https://arxiv.org/abs/2602.10480>
+- Côté et al., 2018, *TextWorld*：<https://arxiv.org/abs/1806.11532>
+- Wang et al., 2022, *ScienceWorld*：<https://arxiv.org/abs/2203.07540>
+- Balloch et al., 2023, *Neuro-Symbolic World Models for Adapting to Open World Novelty*：<https://arxiv.org/abs/2301.06294>
+- O'Connor & Welling, 2016, *Sigma Delta Quantized Networks*：<https://arxiv.org/abs/1611.02024>
+- Karimireddy et al., 2019, *Error Feedback Fixes SignSGD and other Gradient Compression Schemes*：<https://proceedings.mlr.press/v97/karimireddy19a.html>
+- Bellec et al., 2020, *A solution to the learning dilemma for recurrent networks of spiking neurons*：<https://www.nature.com/articles/s41467-020-17236-y>
+- Vogels & Abbott, 2009, *Gating multiple signals through detailed balance of excitation and inhibition in spiking networks*：<https://www.nature.com/articles/nn.2276>
+- Sadeh & Clopath, 2021, *Inhibitory stabilization and cortical computation*：<https://www.nature.com/articles/s41583-020-00390-z>
+- Srinivasan et al., 2025, *Boosting reservoir computing with brain-inspired adaptive control of E-I balance*：<https://www.nature.com/articles/s41467-025-64978-8>
+- Scellier & Bengio, 2017, *Equilibrium Propagation*：<https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2017.00024/full>
+- Saponati & Vinck, 2023, *Sequence anticipation and spike-timing-dependent plasticity emerge from a predictive learning rule*：<https://www.nature.com/articles/s41467-023-40651-w>
+
+---
+
 ## 2026-07-20：SG29 猫娘 BPE 大语料长训练 — d4 MoE-SNN 超 Transformer（正面结果，决定性）
 
 ### 背景 / 动机
