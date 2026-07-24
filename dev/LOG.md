@@ -4,6 +4,74 @@
 
 ---
 
+## 2026-07-24：CCPA 退火修复实验 — 诊断 + 四 Fix + SHD 验证（NEGATIVE on Higher，机制修复成立）
+
+### 背景
+
+紧接 07-23 根因推导与 spec（`docs/superpowers/specs/2026-07-24-ccpa-annealing-design.md`）、plan（`docs/superpowers/plans/2026-07-24-ccpa-annealing.md`）。在 `codex/research-ccpa-annealing` 分支一次性跑完 Phase 0 诊断 + Fix1–4 + SHD 验证，按预注册门判定。本条记录命令、产物 SHA、各门判定与 claim 边界。
+
+### 假设（四根因）
+
+- RC1 非相干同伦：熵按 1/β 标度，跨 β 无 Lyapunov。
+- RC2 饱和抬高预测误差：连续 prior vs ±1 饱和态 → 非判别。
+- RC3 饱和处熵消失 → ρ→∞ 退化。
+- RC4 β_c 处 Hessian/Jacobian 奇异。
+
+### 冻结配置
+
+- 分支 `codex/research-ccpa-annealing`；CPU；γ=1.0、δ≤0.1·β_c、K=8、tol=1e-4、ε=1e-3、ρ_max=0.9、seeds=0/1/2、epochs=60。
+
+### gate0（Phase 0 诊断）— PASS（4/4 RC 确认）
+
+| RC | 判据 | 结果 |
+|---|---|---|
+| RC1 | F 跨 β 非单调 | confirmed |
+| RC2 | 连续 prior 误差地板随 β 上升（0.52→2.47） | confirmed |
+| RC3 | 关 `project_spectral` 后 ρ>0.9（退化） | confirmed |
+| RC4 | ρ(DG)=β·ρ(W_s)→1 于 β_c=1.429（Curie） | confirmed |
+
+产物 SHA：d_rc1 `9770c78775e3`、d_rc2 `7ff842d5de79`、d_rc3 `3f7751b76a5a`、d_rc4 `080207c71fb9`、gate0 `2817d17cb76c`。
+
+### gate1（Fix1+Fix2）— PASS
+
+- Fix1（无量纲 Φ=βE−S）：固定 β 下 Φ 单调非增（Theorem 2 在 Φ 上成立）。`fix1_phi_monotone` `bdb27729a5d0`。
+- Fix2（log-det 谱屏障 `B=−(γ/2)Σ log(1−β²λ²)`）：不靠 `project_spectral`，ρ 全程 ≤0.95 有界。`fix2_rho_bounded` `096b8bfba4eb`。
+- β_c=1/ρ(W) 结构保持（屏障不改不动点映射与 critical_beta 公式）。
+- gate1 `9d74d7ba52a0`。
+
+### Phase 2（Fix3+Fix4）
+
+- Fix3（梯度式 PC 推理回路，`pc_inference`）：对状态做 K 步 Φ 梯度下降，顶层 μ 训练时取 class_prior、评估时取 0。`fix4_continuation` `821bdcefe2e8`。
+- Fix4（`ContinuationAnnealer`）：退火到 β_c−δ，不超 β_c；Tikhonov `(ε/2)‖m‖²` 保 H 正定。
+
+### Phase 3 验证（SHD synthetic，CCPA vs 纯 F，3 seeds）— NEGATIVE on Higher
+
+| 指标 | 值 | 门 | 判定 |
+|---|---|---|---|
+| CCPA acc | 0.033 | >2×chance(>0.10) | FAIL |
+| 纯 F acc | 0.047 | — | ≈chance |
+| chance | 0.05 | — | — |
+| p (CCPA vs 纯 F) | 0.20 | <0.05 | FAIL |
+| ρ 无硬盖有界 | True | ≤0.95 | PASS |
+| higher_pass | **False** | — | — |
+
+产物 `val_shd_ccpa_vs_puref` `910d2a4eb82c`。
+
+### 判定与 claim 边界
+
+- **机制修复成立**：Fix1（相干同伦，Φ 单调）+ Fix2（log-det 屏障，ρ 不靠硬盖有界）+ Fix4（延拓到 β_c−δ，β_c 保持）三项根因（RC1/RC3/RC4）被实证修好。
+- **判别未解决（RC2 未被 Fix3 攻克）**：CCPA 3.3% < 纯 F 4.7% < chance 5%。梯度式 PC（评估时顶层 μ=0，把状态拉向 0）反而塌缩表示、劣于硬前向。RC2 的"连续 prior vs 饱和态"错配未被该 PC 形式解决。
+- **记 NEGATIVE**：按预注册门不为晋级改判据。研究代码留 `codex/research-ccpa-annealing`，**不 cherry-pick 进 `main`**（仅 Fix1/Fix2 的相干自由能 + log-det 屏障是干净的机制修复，可单独评估晋级；Fix3 因负结果不晋级）。
+- **下一步（待用户定，不在本轮范围）**：Fix3 需换形式——候选 (a) 训练时联合判别 readout+CE（但 README 警告 CE 破坏定理 2 单调性，需评估）；(b) 评估时用 readout 而非 μ=0 的 PC；(c) 非梯度的迭代 PC（固定点式，带软 top-down prior）。本轮不实施。
+
+### 可复现信息
+
+- 命令：`python -m experiments.ccpa.gate0`、`gate1`、`fix4_continuation`、`val_shd_ccpa_vs_puref --synthetic --seeds 0 1 2 --epochs 60`。
+- 测试：`pytest tests/test_ccpa_diag.py tests/test_ccpa_fixes.py`（全过）。
+- 本结果仅"退火本身修好没"：机制层是（Fix1/2/4），判别层否（Fix3）。不含等参 LSTM/Transformer 对比（YAGNI，属另一轮）。
+
+---
+
 ## 2026-07-23：三线索 deep-research + idea-evaluator 收敛 — 退火 / 加速 / 主线去向与下一步动作
 
 ### 背景与动机
