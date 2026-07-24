@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-07-24：CCPA Fix3 Pivot1 续测 — split-β 非冗余未证实（深网两轮均不显著）
+
+紧接上一条 Fix3 消融。Pivot 1：在 dynamics 当瓶颈的深网复测 1+6 vs B，验证 split-β 是否 non-redundant。两轮均未证实。
+
+- **深网 v1**（C=20, depth=4, T=64, 3 seeds, 60ep）：B=0.066, 1+6=0.075, **p=0.21**（方向性 +1pp，不显著；两者 <2×chance）。产物 `val_split_ce_deep` `e63a4b216e1a`。
+- **深网 v2**（C=4 可学习任务, depth=4, T=48, 5 seeds, 100ep）：B=0.249, 1+6=0.248, pure-F=0.266，**三者皆 ≈chance(0.25)**，p(1+6 vs B)=0.93。此设置下 CE 根本没学会（β 退火 + barrier + 深网疑似训练不稳，结果受混淆）。产物 `val_split_ce_deepv2` `c71717acbdb7`。
+
+### 判定
+
+split-β 的 non-redundancy **未证实**：浅网冗余（p=0.71）、深网 v1 方向性但不显著（p=0.21）、深网 v2 受混淆三者 chance。**无任何一轮显著胜 B。** 冗余洞见（浅网）成立且更稳。
+
+### 收尾（接受冗余，option 2）
+
+接受冗余作结论：**1 与 6 同解**——CE 的 readout 线性旁路已覆盖 split-β 要修的"饱和抹梯度"场景，组合不叠加。重定位贡献为"**退火自由能 + log-det 屏障作 CE-SNN 正则器**"（Fix1/2/4 存活、判别靠 CE），不再追 split-β 增益。split-β 仅在纯生成（无 CE）才理论上有用，但纯生成已被 chance 证伪，故其适用场景不成立。
+
+### 可复现信息
+
+- 命令：`python -m experiments.ccpa.val_split_ce_deep --depth 4 --T 64`、`val_split_ce_deepv2 --depth 4 --T 48 --seeds 0 1 2 3 4`。
+- 测试：`pytest tests/test_ccpa_diag.py tests/test_ccpa_fixes.py`（10 过）。
+
+---
+
 ## 2026-07-24：CCPA Fix3 判别攻关 — 四变体消融 + 1+6 双温度/CE（深浅两轮，新贡献未证实）
 
 ### 背景
