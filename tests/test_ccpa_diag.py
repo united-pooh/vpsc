@@ -40,3 +40,13 @@ def test_rho_grows_without_cap():
     rhos = d_rc3_rho_degeneracy.train_no_cap(net, epochs=20, lr=0.05, T=8, n_in=8, seed=0)
     assert rhos[-1] > rhos[0]
     assert rhos[-1] > 0.9
+
+
+def test_jacobian_spectral_radius_peaks_near_beta_c():
+    from experiments.ccpa import d_rc4_hessian_jacobian
+    layer = diag_common.build_layer(n=6, rho=0.7, seed=0)
+    beta_c = layer.critical_beta()
+    x = torch.zeros(4, 6)  # paramagnetic m=0 branch
+    rows = d_rc4_hessian_jacobian.sweep(layer, x, [0.2, beta_c, beta_c * 1.05])
+    at_c = min(rows, key=lambda r: abs(r["beta"] - beta_c))
+    assert at_c["rho_DG"] > 0.9  # rho(DG)=beta*rho(Ws)->1 at beta_c
