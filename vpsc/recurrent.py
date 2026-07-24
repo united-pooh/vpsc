@@ -197,6 +197,16 @@ class RecurrentMeanFieldLayer(nn.Module):
             phi = phi + 0.5 * self.tikhonov_eps * (x_l ** 2).sum()
         return phi
 
+    def log_det_barrier(self, gamma: float, eps: float = 1e-8) -> torch.Tensor:
+        """B(W) = -(gamma/2) * sum_i log(1 - beta^2 * lambda_i^2) over eigenvalues
+        lambda_i of Ws. Diverges to +inf as |lambda| -> 1/beta (= beta_c boundary),
+        giving a natural spectral barrier that EMERGES from the free energy (Fix2,
+        RC3) — replacing the external project_spectral hard cap. Stable via clamp."""
+        Ws = _sym(self.W_rec)
+        lam = torch.linalg.eigvalsh(Ws)  # real eigenvalues (Ws symmetric)
+        val = torch.clamp(1.0 - (self.beta ** 2) * lam ** 2, min=eps)
+        return -0.5 * gamma * torch.log(val).sum()
+
     def critical_beta(self) -> float:
         rho = spectral_radius_square(_sym(self.W_rec.data))
         return 1.0 / rho if rho > 0 else float("inf")

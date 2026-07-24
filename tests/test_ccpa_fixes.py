@@ -31,3 +31,21 @@ def test_phi_monotone_at_fixed_beta():
         Phi.backward(); opt.step(); net.project_spectral()
         phis.append(float(Phi.item()))
     assert phis[-1] <= phis[0] + 1e-3
+
+
+def test_rho_bounded_without_cap_via_barrier():
+    """Fix2: with log-det barrier, rho stays bounded WITHOUT project_spectral."""
+    from vpsc.recurrent import RecurrentVPSCNet, _sym, spectral_radius_square
+    torch.manual_seed(0)
+    net = RecurrentVPSCNet([8, 8], n_classes=4, beta=0.5, rec_rho0=0.6, lam_spec=0.0)
+    for l in net.layers:
+        l.use_log_det_barrier = True; l.gamma = 1.0
+    x = torch.randn(8, 32, 8); y = torch.randint(0, 4, (32,))
+    opt = torch.optim.Adam(net.parameters(), lr=0.03)
+    rhos = []
+    for _ in range(40):
+        opt.zero_grad(); out = net(x)
+        loss = net.total_free_energy_phi(out["traj"], labels=y)
+        loss.backward(); opt.step()  # NO project_spectral
+        rhos.append(max(spectral_radius_square(_sym(l.W_rec.data)) for l in net.layers))
+    assert max(rhos) <= 0.95  # bounded without hard cap
