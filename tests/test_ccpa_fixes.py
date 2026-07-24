@@ -49,3 +49,19 @@ def test_rho_bounded_without_cap_via_barrier():
         loss.backward(); opt.step()  # NO project_spectral
         rhos.append(max(spectral_radius_square(_sym(l.W_rec.data)) for l in net.layers))
     assert max(rhos) <= 0.95  # bounded without hard cap
+
+
+def test_pc_inference_differs_from_hard_forward():
+    """Fix3: pc_inference produces finite states that differ from the hard forward."""
+    from vpsc.recurrent import RecurrentVPSCNet
+    torch.manual_seed(0)
+    net = RecurrentVPSCNet([6, 6], n_classes=4, beta=0.7, rec_rho0=0.5)
+    for l in net.layers:
+        l.use_log_det_barrier = True; l.gamma = 1.0
+    x = torch.randn(8, 6, 6)
+    out_hard = net(x)
+    out_pc = net.pc_inference(x, K=8, tol=1e-4)
+    m_hard = out_hard["traj"][-1][-1]
+    m_pc = out_pc["traj"][-1][-1]
+    assert torch.isfinite(m_pc).all()
+    assert not torch.allclose(m_hard, m_pc, atol=1e-3)

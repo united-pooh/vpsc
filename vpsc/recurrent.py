@@ -295,6 +295,38 @@ class RecurrentVPSCNet(nn.Module):
             logits = self.readout(states_t[-1])
         return {"traj": traj, "x_top": x_top, "logits": logits}
 
+    def pc_inference(self, x_seq: torch.Tensor, K: int = 8, tol: float = 1e-4) -> dict:
+        """Predictive-coding inference loop (Fix3, RC2). Bottom-up init, then K
+        rounds of per-layer relaxation. The top layer is NOT clamped to the hard
+        class_prior during inference — its state relaxes freely, so the saturated
+        state is self-consistent rather than forced to a continuous target. The
+        class_prior only enters as the readout metric (classify), not as a hard
+        top-down target."""
+        T, B, _ = x_seq.shape
+        self.reset_state(B, x_seq.device)
+        traj = []
+        for t in range(T):
+            x = x_seq[t]
+            states = [None] * len(self.layers)
+            cur = x
+            for li, layer in enumerate(self.layers):
+                cur = layer(cur); states[li] = cur
+            for _ in range(K):
+                max_delta = 0.0
+                for li, layer in enumerate(self.layers):
+                    x_lower = x if li == 0 else states[li - 1]
+                    I = x_lower @ layer.W_up
+                    Ws = _sym(layer.W_rec)
+                    m_new = torch.tanh(layer.beta * (states[li] @ Ws + I - layer.threshold))
+                    d = (m_new - states[li]).abs().max().item()
+                    max_delta = max(max_delta, d)
+                    states[li] = m_new
+                if max_delta < tol:
+                    break
+            traj.append(states)
+        x_top = traj[-1][-1]
+        return {"traj": traj, "x_top": x_top, "logits": self.readout(x_top)}
+
     @torch.no_grad()
     def classify(self, x_top: torch.Tensor) -> torch.Tensor:
         dists = ((x_top.unsqueeze(1) - self.class_prior.unsqueeze(0)) ** 2).sum(dim=-1)
