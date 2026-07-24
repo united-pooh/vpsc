@@ -70,6 +70,36 @@ class BetaAnnealer:
         return beta
 
 
+class ContinuationAnnealer:
+    """Fix4 (RC4): Hessian-monitored path-following. Anneal beta toward
+    beta_c - delta (delta capped at delta_cap*beta_c), never exceeding beta_c.
+    Warm-starts from the previous beta; small increments. Enables a Tikhonov
+    (eps/2)||m||^2 term in each layer's free_energy_phi (tikhonov_eps) to keep the
+    Hessian positive-definite throughout — the numerical-conditioning fix for the
+    Hessian singularity at beta_c. Training stays well-conditioned near (not at)
+    criticality, where Fisher info is near-peak but the landscape is not singular.
+    """
+
+    def __init__(self, net, start: float, steps: int, delta_cap: float = 0.1, eps: float = 1e-3):
+        self.net = net
+        self.start = start
+        self.beta_c = float(net.critical_beta())
+        self.target = max(self.beta_c - delta_cap * self.beta_c, start)
+        self.steps = max(1, steps)
+        self.eps = eps
+        self._t = 0
+        for l in net.layers:
+            l.tikhonov_eps = eps
+
+    def step(self, traj=None) -> float:
+        self._t = min(self._t + 1, self.steps)
+        frac = self._t / self.steps
+        beta = self.start + (self.target - self.start) * frac
+        beta = min(beta, self.beta_c)  # safety: never exceed beta_c
+        self.net.set_beta(beta)
+        return beta
+
+
 # Backwards-compat alias used by older snippets.
 @dataclass
 class VPSCObjective:

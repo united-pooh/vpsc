@@ -65,3 +65,17 @@ def test_pc_inference_differs_from_hard_forward():
     m_pc = out_pc["traj"][-1][-1]
     assert torch.isfinite(m_pc).all()
     assert not torch.allclose(m_hard, m_pc, atol=1e-3)
+
+
+def test_continuation_annealer_stays_below_beta_c():
+    """Fix4: anneal toward beta_c - delta, never exceeding beta_c."""
+    from vpsc.recurrent import RecurrentVPSCNet
+    from vpsc.free_energy import ContinuationAnnealer
+    torch.manual_seed(0)
+    net = RecurrentVPSCNet([6, 6], n_classes=4, rec_rho0=0.5, beta=0.2)
+    beta_c = net.critical_beta()
+    ann = ContinuationAnnealer(net, start=0.2, steps=20)
+    betas = [ann.step() for _ in range(20)]
+    assert betas[-1] <= beta_c + 1e-6
+    assert betas[-1] >= beta_c - 0.1 * beta_c
+    assert all(b <= beta_c + 1e-6 for b in betas)
