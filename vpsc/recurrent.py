@@ -159,7 +159,17 @@ class RecurrentMeanFieldLayer(nn.Module):
         Ws = _sym(self.W_rec)
         m = self.m
         for _ in range(self.n_relax):
-            m_new = torch.tanh(self.beta * (m @ Ws + I - self.threshold))
+            if getattr(self, "split_beta", False):
+                # Direction 1 (split-beta): forward at beta_dyn (critical, saturated),
+                # backward at beta_grad (linear, gradient survives). STE idiom:
+                # forward value = m_dyn, backward gradient flows through m_lin.
+                bg = getattr(self, "beta_grad", 0.5)
+                field = m @ Ws + I - self.threshold
+                m_lin = torch.tanh(bg * field)
+                m_dyn = torch.tanh(self.beta * field)
+                m_new = m_lin + (m_dyn - m_lin).detach()
+            else:
+                m_new = torch.tanh(self.beta * (m @ Ws + I - self.threshold))
             m = (1.0 - self.leak) * m + self.leak * m_new
         self.m = m.detach() if self.detach_state else m
         return m
