@@ -4,6 +4,67 @@
 
 ---
 
+## 2026-07-24：CCPA Fix3 判别攻关 — 四变体消融 + 1+6 双温度/CE（深浅两轮，新贡献未证实）
+
+### 背景
+
+紧接上一条（CCPA 退火修复：机制 Fix1/2/4 成立、判别 NEGATIVE）。纯生成退火前向无法自组织判别（饱和 tanh 抹梯度，类信号过不去；临界性与可学习性在 β_c 反相关）。本条记录 Fix3 四变体消融 + 1+6（方向 1 split-β + 方向 6 临界正则/CE）在浅网与深网两轮的结果。仍不晋 `main`。
+
+### Fix3 四变体消融（SHD synthetic, 3 seeds, 60 ep）
+
+| 变体 | mean acc | >2×chance? | p vs pure-F | 判定 |
+|---|---:|---|---|---|
+| pure-F | 0.047 | ✗ | — | ≈chance |
+| A 双极 prior | 0.038 | ✗ | 0.44 | FAIL |
+| **B CE+Φ** | **0.120** | **✓** | **0.008** | **PASS** |
+| C 软 prior 场 | 0.052 | ✗ | 0.71 | FAIL |
+| D 能量分类 | 0.054 | ✗ | 0.19 | FAIL（≈classify） |
+
+产物 `val_fix3_ablation` `2d6abded307d`。**只有 B（CE+Φ）判别**（12%, p=0.008）；A/C/D 全 chance。纯生成框架（保定理 2）下，无论 prior 是连续/双极/软场/能量，类信号都过不去饱和 m。
+
+### 1+6（split-β + CE + 临界正则）浅网消融
+
+方向 1（split-β：前向 β_dyn→β_c 临界、后向 β_grad 线性 STE）+ 方向 6（CE + Φ/log-det 屏障正则）。复跑 `val_split_ce` `59c3ed7ed9aa`：
+
+| | pure-F | B(CE+Φ) | 1+6 |
+|---|---:|---:|---:|
+| acc | 0.047 | 0.120 | 0.117 |
+| vs B (p) | 0.008 | — | **0.71** |
+
+**1+6 ≈ B，p=0.71 不显著**。split-β + 临界正则**未在 CE 之上加值**。
+
+### 冗余洞见（核心发现）
+
+1 与 6 是**同一瓶颈的两条冗余解**：split-β 修"生成梯度过饱和 m 被抹"；CE 经 readout 线性旁路修"判别梯度过饱和 m 被抹"。**一旦 CE 上场，readout 旁路已把 split-β 要修的问题解决** → split-β 线性化旁路变冗余 → 1+6 ≈ 6 单独。两方向同解、非叠加。这也解释了纯生成（无 CE）时 split-β 理论该有用——但纯生成已被 chance 证伪，split-β 修的场景本身不成立。
+
+### 1+6 深网复跑（Pivot 1：dynamics 当瓶颈的 regime）
+
+深网 depth=4、T=64、C=20、3 seeds。产物 `val_split_ce_deep` `e63a4b216e1a`：
+
+| | pure-F | B(CE+Φ) | 1+6 |
+|---|---:|---:|---:|
+| acc | 0.050 | 0.066 | 0.075 |
+| vs B (p) | 0.15 | — | **0.21** |
+
+- B 从浅网 12% 掉到深网 6.6%——**CE 在深网吃力**，dynamics 真成瓶颈（如预测）。
+- 1+6 在深网**方向性高于 B（+1pp）但 p=0.21 不显著**；两者都 <2×chance（任务太难）。
+- **冗余在深网有松动迹象（1+6>B，浅网则平），但未证实**——n=3、+1pp 在噪声内。
+
+### 判定与 claim 边界
+
+- **1+6 新贡献（split-β/临界胜过 CE）未证实**：浅网被 B 追平（p=0.71），深网方向性但不显著（p=0.21，且 <2×chance）。
+- **判别本身成立**（靠 CE，B=12% / 深网 6.6%），但增益归于 CE，不归于 split-β/临界。
+- **冗余洞见成立**（浅网）且在深网部分松动——是本条可发表的负面/边界结果。
+- 不晋 `main`。下一步（待用户定）：深网需**一个 CE 能达到非平凡天花板的任务**（当前深网两者 <8%，信号在噪声里）+ ≥5 seeds，才能判定 split-β 在深 regime 是否真 non-redundant；否则接受冗余（Pivot 3）。
+
+### 可复现信息
+
+- 命令：`python -m experiments.ccpa.val_fix3_ablation --synthetic --seeds 0 1 2`、`val_split_ce`、`val_split_ce_deep --depth 4 --T 64`。
+- 测试：`pytest tests/test_ccpa_diag.py tests/test_ccpa_fixes.py`（10 过）。
+- split-β 实现于 `vpsc/recurrent.py:RecurrentMeanFieldLayer.forward`（`split_beta`/`beta_grad` 标志，STE `m_lin+(m_dyn−m_lin).detach()`）。
+
+---
+
 ## 2026-07-24：CCPA 退火修复实验 — 诊断 + 四 Fix + SHD 验证（NEGATIVE on Higher，机制修复成立）
 
 ### 背景
