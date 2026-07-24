@@ -1,0 +1,54 @@
+{
+  "rows": [
+    {
+      "seed": 0,
+      "chance": 0.05,
+      "plain_CE": 0.17499999701976776,
+      "B_ce_phi_barrier": 0.11500000208616257
+    },
+    {
+      "seed": 1,
+      "chance": 0.05,
+      "plain_CE": 0.19750000536441803,
+      "B_ce_phi_barrier": 0.11999999731779099
+    },
+    {
+      "seed": 2,
+      "chance": 0.05,
+      "plain_CE": 0.20999999344348907,
+      "B_ce_phi_barrier": 0.125
+    },
+    {
+      "seed": 3,
+      "chance": 0.05,
+      "plain_CE": 0.2224999964237213,
+      "B_ce_phi_barrier": 0.11500000208616257
+    },
+    {
+      "seed": 4,
+      "chance": 0.05,
+      "plain_CE": 0.25,
+      "B_ce_phi_barrier": 0.10249999910593033
+    }
+  ],
+  "summary": {
+    "plain_CE": {
+      "mean": 0.21099999845027922,
+      "std": 0.02502998202394931
+    },
+    "B_ce_phi_barrier": {
+      "mean": 0.11550000011920929,
+      "std": 0.007483314705845556
+    },
+    "p_B_vs_plainCE": 0.0031753948177208613,
+    "B_gt_2x_chance": true,
+    "B_significantly_gt_plainCE": false
+  },
+  "chance": 0.05,
+  "command": "python -m experiments.ccpa.val_ce_vs_pure_ce",
+  "env": {
+    "python": "3.9.6",
+    "torch": "2.8.0"
+  },
+  "sha256": "2d689fb1de4a73b4d95ad7330cfb14b4485c3f195757336dd126fcbeb177726b"
+}
