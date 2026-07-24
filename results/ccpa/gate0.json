@@ -1,0 +1,20 @@
+{
+  "seed": 0,
+  "verdict": {
+    "RC1": {
+      "confirmed": true
+    },
+    "RC2": {
+      "confirmed": true
+    },
+    "RC3": {
+      "confirmed": true
+    },
+    "RC4": {
+      "confirmed": true
+    },
+    "gate0": "PASS"
+  },
+  "n_confirmed": 4,
+  "rule": ">=3 of 4 RCs confirmed => PASS"
+}
