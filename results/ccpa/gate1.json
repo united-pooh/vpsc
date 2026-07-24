@@ -1,0 +1,6 @@
+{
+  "fix1_monotone": true,
+  "fix2_bounded": true,
+  "beta_c_structurally_preserved": true,
+  "gate1": "PASS"
+}
