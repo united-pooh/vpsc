@@ -178,6 +178,25 @@ class RecurrentMeanFieldLayer(nn.Module):
         spec_pen = self.lam_spec * torch.clamp(rho - self.rho_max, min=0.0) ** 2
         return quad + interaction + entropy + reg + spec_pen
 
+    def free_energy_phi(self, x_l: torch.Tensor, mu_l: torch.Tensor) -> torch.Tensor:
+        """Dimensionless free energy Phi = beta*E - S (Fix1, RC1).
+        E = quad + interaction + wd; S = sum H_bin (NOT (1/beta)*S). All energy
+        terms beta-scaled => coherent homotopy under beta-annealing. Barrier B(W)
+        and Tikhonov are no-ops by default (Fix2/Fix4 enable them via flags)."""
+        Ws = _sym(self.W_rec)
+        err = x_l - mu_l
+        quad = 0.5 * (1.0 / self.sigma ** 2) * (err ** 2).sum(dim=-1)
+        interaction = -0.5 * (x_l * (x_l @ Ws)).sum(dim=-1)
+        wd = 0.5 * self.wd * (self.W_rec ** 2).sum()
+        energy = quad + interaction + wd
+        entropy = _binary_entropy(x_l).sum(dim=-1)
+        phi = self.beta * energy - entropy
+        if getattr(self, "use_log_det_barrier", False):
+            phi = phi + self.log_det_barrier(getattr(self, "gamma", 1.0))
+        if getattr(self, "tikhonov_eps", 0.0) > 0:
+            phi = phi + 0.5 * self.tikhonov_eps * (x_l ** 2).sum()
+        return phi
+
     def critical_beta(self) -> float:
         rho = spectral_radius_square(_sym(self.W_rec.data))
         return 1.0 / rho if rho > 0 else float("inf")
@@ -288,6 +307,24 @@ class RecurrentVPSCNet(nn.Module):
                         mu_l = torch.zeros_like(x_l)
                 F = F + self.layers[l].free_energy(x_l, mu_l).mean()
         return F
+
+    def total_free_energy_phi(self, traj: List[List[torch.Tensor]],
+                              labels: Optional[torch.Tensor] = None) -> torch.Tensor:
+        """Sum of per-layer Phi (Fix1). Same top-layer prior convention as F."""
+        Phi = torch.zeros((), device=traj[0][0].device)
+        L = len(self.layers); T = len(traj)
+        for t_idx, states_t in enumerate(traj):
+            for l in range(L):
+                x_l = states_t[l]
+                if l < L - 1:
+                    mu_l = self.layers[l].predict(states_t[l + 1])
+                else:
+                    if labels is not None and t_idx == T - 1:
+                        mu_l = self.class_prior[labels]
+                    else:
+                        mu_l = torch.zeros_like(x_l)
+                Phi = Phi + self.layers[l].free_energy_phi(x_l, mu_l).mean()
+        return Phi
 
     # ---- Theorem 3 diagnostics ----
 
