@@ -295,35 +295,45 @@ class RecurrentVPSCNet(nn.Module):
             logits = self.readout(states_t[-1])
         return {"traj": traj, "x_top": x_top, "logits": logits}
 
-    def pc_inference(self, x_seq: torch.Tensor, K: int = 8, tol: float = 1e-4) -> dict:
+    def pc_inference(self, x_seq: torch.Tensor, K: int = 8, tol: float = 1e-4,
+                     eta: float = 0.3, labels: Optional[torch.Tensor] = None) -> dict:
         """Predictive-coding inference loop (Fix3, RC2). Bottom-up init, then K
-        rounds of per-layer relaxation. The top layer is NOT clamped to the hard
-        class_prior during inference — its state relaxes freely, so the saturated
-        state is self-consistent rather than forced to a continuous target. The
-        class_prior only enters as the readout metric (classify), not as a hard
-        top-down target."""
+        gradient-descent steps on sum_l Phi_l w.r.t. the states (true PC: minimize
+        free energy over states given top-down predictions). The top mu is the
+        class_prior[label] when labels are given (training: reconcile bottom-up
+        state with top-down prior instead of forcing a single feedforward pass),
+        else zeros (eval). This breaks the RC2 mismatch — the saturated state is
+        pulled toward a self-consistent prediction rather than left to saturate."""
         T, B, _ = x_seq.shape
         self.reset_state(B, x_seq.device)
         traj = []
+        L = len(self.layers)
         for t in range(T):
             x = x_seq[t]
-            states = [None] * len(self.layers)
+            states = [None] * L
             cur = x
             for li, layer in enumerate(self.layers):
-                cur = layer(cur); states[li] = cur
+                cur = layer(cur).clone().detach().requires_grad_(True)
+                states[li] = cur
             for _ in range(K):
-                max_delta = 0.0
+                loss = torch.zeros((), device=x.device)
                 for li, layer in enumerate(self.layers):
-                    x_lower = x if li == 0 else states[li - 1]
-                    I = x_lower @ layer.W_up
-                    Ws = _sym(layer.W_rec)
-                    m_new = torch.tanh(layer.beta * (states[li] @ Ws + I - layer.threshold))
-                    d = (m_new - states[li]).abs().max().item()
-                    max_delta = max(max_delta, d)
-                    states[li] = m_new
+                    if li < L - 1:
+                        mu = layer.predict(states[li + 1].detach())
+                    else:
+                        mu = self.class_prior[labels] if (labels is not None) else torch.zeros_like(states[li])
+                    loss = loss + layer.free_energy_phi(states[li], mu).sum()
+                grads = torch.autograd.grad(loss, states, allow_unused=True)
+                max_delta = 0.0
+                for li in range(L):
+                    g = grads[li]
+                    if g is not None:
+                        new = states[li] - eta * g
+                        max_delta = max(max_delta, (new - states[li]).abs().max().item())
+                        states[li] = new.detach().requires_grad_(True)
                 if max_delta < tol:
                     break
-            traj.append(states)
+            traj.append([s.detach() for s in states])
         x_top = traj[-1][-1]
         return {"traj": traj, "x_top": x_top, "logits": self.readout(x_top)}
 
