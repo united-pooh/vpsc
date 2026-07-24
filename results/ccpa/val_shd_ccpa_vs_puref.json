@@ -1,0 +1,45 @@
+{
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "chance": 0.05,
+      "pure_f_acc": 0.05249999836087227,
+      "ccpa_acc": 0.02500000037252903,
+      "rho_max_ccpa": 0.023131616413593292
+    },
+    {
+      "seed": 1,
+      "chance": 0.05,
+      "pure_f_acc": 0.04749999940395355,
+      "ccpa_acc": 0.03999999910593033,
+      "rho_max_ccpa": 0.022575967013835907
+    },
+    {
+      "seed": 2,
+      "chance": 0.05,
+      "pure_f_acc": 0.03999999910593033,
+      "ccpa_acc": 0.03500000014901161,
+      "rho_max_ccpa": 0.023261744529008865
+    }
+  ],
+  "verdict": {
+    "higher_pass": false,
+    "ccpa_mean": 0.03333333320915699,
+    "pure_f_mean": 0.04666666562358538,
+    "chance": 0.05,
+    "p_value": 0.20199253055926544,
+    "rho_bounded_no_cap": true
+  },
+  "synthetic": true,
+  "command": "python -m experiments.ccpa.val_shd_ccpa_vs_puref",
+  "env": {
+    "python": "3.9.6",
+    "torch": "2.8.0"
+  },
+  "sha256": "da526783d00dc8ae8e4bc4017720b4ee72e6fa0baef8b838bcdd14f47766e315"
+}
