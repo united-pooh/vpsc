@@ -18,3 +18,15 @@ def test_beta_sweep_decomposes_F():
     assert len(rows) == 3
     for r in rows:
         assert abs(r["F"] - (r["quad"] + r["interaction"] + r["entropy"])) < 1e-4
+
+
+def test_orthogonal_floor_grows_with_beta():
+    """RC2: continuous (orthogonal) prior floor grows as m saturates toward ±1."""
+    from experiments.ccpa import d_rc2_errorfloor
+    layer = diag_common.build_layer(n=16, rho=0.7, seed=0)
+    g = torch.Generator().manual_seed(0)
+    prior = torch.randn(4, 16, generator=g)
+    q, _ = torch.linalg.qr(prior.t()); ortho = q.t()
+    x = torch.randn(64, 16)
+    fo = d_rc2_errorfloor.error_floor(layer, ortho, x, betas=[0.1, 1.0, 1.1])
+    assert fo[-1] > 1.5 * fo[0]  # saturation pushes m away from continuous prior
