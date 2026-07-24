@@ -30,3 +30,13 @@ def test_orthogonal_floor_grows_with_beta():
     x = torch.randn(64, 16)
     fo = d_rc2_errorfloor.error_floor(layer, ortho, x, betas=[0.1, 1.0, 1.1])
     assert fo[-1] > 1.5 * fo[0]  # saturation pushes m away from continuous prior
+
+
+def test_rho_grows_without_cap():
+    from experiments.ccpa import d_rc3_rho_degeneracy
+    from vpsc.recurrent import RecurrentVPSCNet
+    torch.manual_seed(0)
+    net = RecurrentVPSCNet([8, 8], n_classes=4, beta=0.5, rec_rho0=0.5, lam_spec=0.0)
+    rhos = d_rc3_rho_degeneracy.train_no_cap(net, epochs=20, lr=0.05, T=8, n_in=8, seed=0)
+    assert rhos[-1] > rhos[0]
+    assert rhos[-1] > 0.9
