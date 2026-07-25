@@ -4,6 +4,356 @@
 
 ---
 
+## 2026-07-24：重定位测试 — VPSC 正则器反伤 CE-SNN（决定性负，整弧收口）
+
+紧接 Pivot1（split-β 未证实）。测重定位核心问题：B（CE+Φ+barrier+延拓）vs **纯 CE**（CE only, 固定低 β=0.5, project_spectral）。产物 `val_ce_vs_pure_ce` `2d689fb1de4a`。
+
+| | 纯 CE | B(CE+Φ+barrier+延拓) |
+|---|---:|---:|
+| acc (5 seeds) | **0.211** | 0.116 |
+| >2×chance(0.10) | ✓ | ✓ |
+| vs B (p) | — | **0.003** |
+
+**纯 CE 显著胜 B，p=0.003。** VPSC 正则器（Φ + log-det 屏障 + 延拓到临界）**不仅不加值，反而把 CE-SNN 从 21% 拖到 11.6%**。
+
+### 原因（与整弧一致）
+
+B 的 β 退火到 β_c−δ（近饱和），CE 梯度过饱和动力学变差；纯 CE 用固定低 β（梯度活）→ 21%。**整弧的核心下注——退火到临界/饱和——正是 CE-SNN 训练的反方向**：饱和抹 CE 梯度，低 β 才有梯度。最可能的元凶是 β 退火到临界（VPSC 论点的核心）；Φ/barrier 单独在固定低 β 下是否有用未测，但"按设计"的整包反伤。
+
+### 决定性判定（整弧收口）
+
+- **VPSC "退火到临界"机制在判别 SNN 训练中是有害的**——不是 inert，是反伤。纯低 β CE-SNN 显著更好（21% vs 11.6%, p=0.003）。
+- **整条弧收口**：CCPA 纯生成 chance → Fix3 四变体只有 CE(B) 判别 → split-β 与 CE 同解冗余 → VPSC 正则器反伤 CE。**退火到临界的整套路径在判别任务上被数据决定性否定。**
+- 机制层（Fix1 Φ 单调、Fix2 log-det 屏障 ρ 有界、Fix4 β_c 保持）作为**理论修复**仍成立，但作为**实用训练方法**价值归零（反伤）。
+
+### 可复现
+
+命令 `python -m experiments.ccpa.val_ce_vs_pure_ce --synthetic --seeds 0 1 2 3 4`。
+
+---
+
+## 2026-07-24：CCPA Fix3 Pivot1 续测 — split-β 非冗余未证实（深网两轮均不显著）
+
+紧接上一条 Fix3 消融。Pivot 1：在 dynamics 当瓶颈的深网复测 1+6 vs B，验证 split-β 是否 non-redundant。两轮均未证实。
+
+- **深网 v1**（C=20, depth=4, T=64, 3 seeds, 60ep）：B=0.066, 1+6=0.075, **p=0.21**（方向性 +1pp，不显著；两者 <2×chance）。产物 `val_split_ce_deep` `e63a4b216e1a`。
+- **深网 v2**（C=4 可学习任务, depth=4, T=48, 5 seeds, 100ep）：B=0.249, 1+6=0.248, pure-F=0.266，**三者皆 ≈chance(0.25)**，p(1+6 vs B)=0.93。此设置下 CE 根本没学会（β 退火 + barrier + 深网疑似训练不稳，结果受混淆）。产物 `val_split_ce_deepv2` `c71717acbdb7`。
+
+### 判定
+
+split-β 的 non-redundancy **未证实**：浅网冗余（p=0.71）、深网 v1 方向性但不显著（p=0.21）、深网 v2 受混淆三者 chance。**无任何一轮显著胜 B。** 冗余洞见（浅网）成立且更稳。
+
+### 收尾（接受冗余，option 2）
+
+接受冗余作结论：**1 与 6 同解**——CE 的 readout 线性旁路已覆盖 split-β 要修的"饱和抹梯度"场景，组合不叠加。重定位贡献为"**退火自由能 + log-det 屏障作 CE-SNN 正则器**"（Fix1/2/4 存活、判别靠 CE），不再追 split-β 增益。split-β 仅在纯生成（无 CE）才理论上有用，但纯生成已被 chance 证伪，故其适用场景不成立。
+
+### 可复现信息
+
+- 命令：`python -m experiments.ccpa.val_split_ce_deep --depth 4 --T 64`、`val_split_ce_deepv2 --depth 4 --T 48 --seeds 0 1 2 3 4`。
+- 测试：`pytest tests/test_ccpa_diag.py tests/test_ccpa_fixes.py`（10 过）。
+
+---
+
+## 2026-07-24：CCPA Fix3 判别攻关 — 四变体消融 + 1+6 双温度/CE（深浅两轮，新贡献未证实）
+
+### 背景
+
+紧接上一条（CCPA 退火修复：机制 Fix1/2/4 成立、判别 NEGATIVE）。纯生成退火前向无法自组织判别（饱和 tanh 抹梯度，类信号过不去；临界性与可学习性在 β_c 反相关）。本条记录 Fix3 四变体消融 + 1+6（方向 1 split-β + 方向 6 临界正则/CE）在浅网与深网两轮的结果。仍不晋 `main`。
+
+### Fix3 四变体消融（SHD synthetic, 3 seeds, 60 ep）
+
+| 变体 | mean acc | >2×chance? | p vs pure-F | 判定 |
+|---|---:|---|---|---|
+| pure-F | 0.047 | ✗ | — | ≈chance |
+| A 双极 prior | 0.038 | ✗ | 0.44 | FAIL |
+| **B CE+Φ** | **0.120** | **✓** | **0.008** | **PASS** |
+| C 软 prior 场 | 0.052 | ✗ | 0.71 | FAIL |
+| D 能量分类 | 0.054 | ✗ | 0.19 | FAIL（≈classify） |
+
+产物 `val_fix3_ablation` `2d6abded307d`。**只有 B（CE+Φ）判别**（12%, p=0.008）；A/C/D 全 chance。纯生成框架（保定理 2）下，无论 prior 是连续/双极/软场/能量，类信号都过不去饱和 m。
+
+### 1+6（split-β + CE + 临界正则）浅网消融
+
+方向 1（split-β：前向 β_dyn→β_c 临界、后向 β_grad 线性 STE）+ 方向 6（CE + Φ/log-det 屏障正则）。复跑 `val_split_ce` `59c3ed7ed9aa`：
+
+| | pure-F | B(CE+Φ) | 1+6 |
+|---|---:|---:|---:|
+| acc | 0.047 | 0.120 | 0.117 |
+| vs B (p) | 0.008 | — | **0.71** |
+
+**1+6 ≈ B，p=0.71 不显著**。split-β + 临界正则**未在 CE 之上加值**。
+
+### 冗余洞见（核心发现）
+
+1 与 6 是**同一瓶颈的两条冗余解**：split-β 修"生成梯度过饱和 m 被抹"；CE 经 readout 线性旁路修"判别梯度过饱和 m 被抹"。**一旦 CE 上场，readout 旁路已把 split-β 要修的问题解决** → split-β 线性化旁路变冗余 → 1+6 ≈ 6 单独。两方向同解、非叠加。这也解释了纯生成（无 CE）时 split-β 理论该有用——但纯生成已被 chance 证伪，split-β 修的场景本身不成立。
+
+### 1+6 深网复跑（Pivot 1：dynamics 当瓶颈的 regime）
+
+深网 depth=4、T=64、C=20、3 seeds。产物 `val_split_ce_deep` `e63a4b216e1a`：
+
+| | pure-F | B(CE+Φ) | 1+6 |
+|---|---:|---:|---:|
+| acc | 0.050 | 0.066 | 0.075 |
+| vs B (p) | 0.15 | — | **0.21** |
+
+- B 从浅网 12% 掉到深网 6.6%——**CE 在深网吃力**，dynamics 真成瓶颈（如预测）。
+- 1+6 在深网**方向性高于 B（+1pp）但 p=0.21 不显著**；两者都 <2×chance（任务太难）。
+- **冗余在深网有松动迹象（1+6>B，浅网则平），但未证实**——n=3、+1pp 在噪声内。
+
+### 判定与 claim 边界
+
+- **1+6 新贡献（split-β/临界胜过 CE）未证实**：浅网被 B 追平（p=0.71），深网方向性但不显著（p=0.21，且 <2×chance）。
+- **判别本身成立**（靠 CE，B=12% / 深网 6.6%），但增益归于 CE，不归于 split-β/临界。
+- **冗余洞见成立**（浅网）且在深网部分松动——是本条可发表的负面/边界结果。
+- 不晋 `main`。下一步（待用户定）：深网需**一个 CE 能达到非平凡天花板的任务**（当前深网两者 <8%，信号在噪声里）+ ≥5 seeds，才能判定 split-β 在深 regime 是否真 non-redundant；否则接受冗余（Pivot 3）。
+
+### 可复现信息
+
+- 命令：`python -m experiments.ccpa.val_fix3_ablation --synthetic --seeds 0 1 2`、`val_split_ce`、`val_split_ce_deep --depth 4 --T 64`。
+- 测试：`pytest tests/test_ccpa_diag.py tests/test_ccpa_fixes.py`（10 过）。
+- split-β 实现于 `vpsc/recurrent.py:RecurrentMeanFieldLayer.forward`（`split_beta`/`beta_grad` 标志，STE `m_lin+(m_dyn−m_lin).detach()`）。
+
+---
+
+## 2026-07-24：CCPA 退火修复实验 — 诊断 + 四 Fix + SHD 验证（NEGATIVE on Higher，机制修复成立）
+
+### 背景
+
+紧接 07-23 根因推导与 spec（`docs/superpowers/specs/2026-07-24-ccpa-annealing-design.md`）、plan（`docs/superpowers/plans/2026-07-24-ccpa-annealing.md`）。在 `codex/research-ccpa-annealing` 分支一次性跑完 Phase 0 诊断 + Fix1–4 + SHD 验证，按预注册门判定。本条记录命令、产物 SHA、各门判定与 claim 边界。
+
+### 假设（四根因）
+
+- RC1 非相干同伦：熵按 1/β 标度，跨 β 无 Lyapunov。
+- RC2 饱和抬高预测误差：连续 prior vs ±1 饱和态 → 非判别。
+- RC3 饱和处熵消失 → ρ→∞ 退化。
+- RC4 β_c 处 Hessian/Jacobian 奇异。
+
+### 冻结配置
+
+- 分支 `codex/research-ccpa-annealing`；CPU；γ=1.0、δ≤0.1·β_c、K=8、tol=1e-4、ε=1e-3、ρ_max=0.9、seeds=0/1/2、epochs=60。
+
+### gate0（Phase 0 诊断）— PASS（4/4 RC 确认）
+
+| RC | 判据 | 结果 |
+|---|---|---|
+| RC1 | F 跨 β 非单调 | confirmed |
+| RC2 | 连续 prior 误差地板随 β 上升（0.52→2.47） | confirmed |
+| RC3 | 关 `project_spectral` 后 ρ>0.9（退化） | confirmed |
+| RC4 | ρ(DG)=β·ρ(W_s)→1 于 β_c=1.429（Curie） | confirmed |
+
+产物 SHA：d_rc1 `9770c78775e3`、d_rc2 `7ff842d5de79`、d_rc3 `3f7751b76a5a`、d_rc4 `080207c71fb9`、gate0 `2817d17cb76c`。
+
+### gate1（Fix1+Fix2）— PASS
+
+- Fix1（无量纲 Φ=βE−S）：固定 β 下 Φ 单调非增（Theorem 2 在 Φ 上成立）。`fix1_phi_monotone` `bdb27729a5d0`。
+- Fix2（log-det 谱屏障 `B=−(γ/2)Σ log(1−β²λ²)`）：不靠 `project_spectral`，ρ 全程 ≤0.95 有界。`fix2_rho_bounded` `096b8bfba4eb`。
+- β_c=1/ρ(W) 结构保持（屏障不改不动点映射与 critical_beta 公式）。
+- gate1 `9d74d7ba52a0`。
+
+### Phase 2（Fix3+Fix4）
+
+- Fix3（梯度式 PC 推理回路，`pc_inference`）：对状态做 K 步 Φ 梯度下降，顶层 μ 训练时取 class_prior、评估时取 0。`fix4_continuation` `821bdcefe2e8`。
+- Fix4（`ContinuationAnnealer`）：退火到 β_c−δ，不超 β_c；Tikhonov `(ε/2)‖m‖²` 保 H 正定。
+
+### Phase 3 验证（SHD synthetic，CCPA vs 纯 F，3 seeds）— NEGATIVE on Higher
+
+| 指标 | 值 | 门 | 判定 |
+|---|---|---|---|
+| CCPA acc | 0.033 | >2×chance(>0.10) | FAIL |
+| 纯 F acc | 0.047 | — | ≈chance |
+| chance | 0.05 | — | — |
+| p (CCPA vs 纯 F) | 0.20 | <0.05 | FAIL |
+| ρ 无硬盖有界 | True | ≤0.95 | PASS |
+| higher_pass | **False** | — | — |
+
+产物 `val_shd_ccpa_vs_puref` `910d2a4eb82c`。
+
+### 判定与 claim 边界
+
+- **机制修复成立**：Fix1（相干同伦，Φ 单调）+ Fix2（log-det 屏障，ρ 不靠硬盖有界）+ Fix4（延拓到 β_c−δ，β_c 保持）三项根因（RC1/RC3/RC4）被实证修好。
+- **判别未解决（RC2 未被 Fix3 攻克）**：CCPA 3.3% < 纯 F 4.7% < chance 5%。梯度式 PC（评估时顶层 μ=0，把状态拉向 0）反而塌缩表示、劣于硬前向。RC2 的"连续 prior vs 饱和态"错配未被该 PC 形式解决。
+- **记 NEGATIVE**：按预注册门不为晋级改判据。研究代码留 `codex/research-ccpa-annealing`，**不 cherry-pick 进 `main`**（仅 Fix1/Fix2 的相干自由能 + log-det 屏障是干净的机制修复，可单独评估晋级；Fix3 因负结果不晋级）。
+- **下一步（待用户定，不在本轮范围）**：Fix3 需换形式——候选 (a) 训练时联合判别 readout+CE（但 README 警告 CE 破坏定理 2 单调性，需评估）；(b) 评估时用 readout 而非 μ=0 的 PC；(c) 非梯度的迭代 PC（固定点式，带软 top-down prior）。本轮不实施。
+
+### 可复现信息
+
+- 命令：`python -m experiments.ccpa.gate0`、`gate1`、`fix4_continuation`、`val_shd_ccpa_vs_puref --synthetic --seeds 0 1 2 --epochs 60`。
+- 测试：`pytest tests/test_ccpa_diag.py tests/test_ccpa_fixes.py`（全过）。
+- 本结果仅"退火本身修好没"：机制层是（Fix1/2/4），判别层否（Fix3）。不含等参 LSTM/Transformer 对比（YAGNI，属另一轮）。
+
+---
+
+## 2026-07-23：三线索 deep-research + idea-evaluator 收敛 — 退火 / 加速 / 主线去向与下一步动作
+
+### 背景与动机
+
+紧接上一条（07-23 方向审计，已冻结五个候选方向并采纳 Dir 1/2/3）。本条对用户提出的三条线索——SNN 学习加速、退火、打败 Transformer 主线——补一轮 `supervisor-deep-research` 文献核实 + `idea-evaluator` 复核，目的是回答"三条线索各走到哪了"，并把下一步收敛到可预注册的动作。本条不运行新实验，不晋级 `main`；只固化文献证据边界与判定。
+
+### 文献核实结果（三 subagent 并行 + 补充 Crossref 检索，逐条核实）
+
+| 线索 | 最近邻（已核实） | 空白 / 差异轴 |
+|---|---|---|
+| 学习加速（exact sparse-event + prefix-scan + surrogate gradient） | SparseProp（Engelken 2023, NeurIPS, DOI 10.52202/075280-0161）：exact 事件化稀疏反向，但顺序推进、无 scan；SLAYER（Shrestha-Orchard 2018, NeurIPS, arXiv 1810.08646）；e-prop（Bellec 2020, Nature Comm, DOI 10.1038/s41467-020-17236-y）；FPE（Yin 2023, Nature MI, DOI 10.1038/s42256-023-00650-4）；memory-efficient BPTT 线（Meng ICCV 2023 DOI 10.1109/ICCV51070.2023.00567；ST-BPTT BioCAS 2024 DOI 10.1109/BioCAS61083.2024.10798378；truncated local BP Guo 2023 DOI 10.3389/fnins.2023.1047008） | "exact sparse-event + associative prefix-scan" 组合：Crossref 无重叠（仅命中 associative memory/learning，不同语义）；arXiv API 本轮不可达（HTTP 000），故标"无直接重叠工作检出"，**非新颖性证明** |
+| 退火（mean-field β-annealed surrogate-free forward + 自由能 + Curie 临界） | StochEP（Lin/Jiang/Sengupta 2025, arXiv 2511.11320）：最近邻，mean-field 仅作 stochastic-EP 近似，无 β-schedule、无 Curie β_c；EqSpike（Martin 2020, arXiv 2010.07859）；Equilibrium Propagation（Scellier-Bengio 2017, DOI 10.3389/fncom.2017.00024）；Saponati-Vinck 2023（Nature Comm, DOI 10.1038/s41467-023-40651-w）；Ororbia 2023（Neurocomputing, DOI 10.1016/j.neucom.2023.126292） | **确认空白**：arXiv `"spiking + magnetization + tanh"` / `"beta annealing" + neural` / `"spiking" + "temperature annealing"` 均零结果；无工作组合 mean-field 磁化前向 + β 退火 + 自由能 + Curie 临界 |
+| SNN vs Transformer | Spikformer（Zhou 2022, arXiv 2209.15425）；Spikformer V2（Zhou 2024, arXiv 2401.02020）；Spiking Transformer（CVPR 2025, DOI 10.1109/cvpr52734.2025.02272）；Spikeformer（Li 2024, Neurocomputing, DOI 10.1016/j.neucom.2024.127279）；小规模 SNN scaling（arXiv 2601.14961，作者已撤回） | 无任何"同规模、公平协议、SNN 在质量上击败 Transformer"的已测声称；Spikformer 胜果均为 SNN 类内 SOTA、视觉任务；语言/BPC 区稀疏；Hala Point/Loihi 2 硬件声称无法核实（Nature/Intel/IEEE 均封锁） |
+
+### 三线索去向（对"主线去哪了"的直接回答）
+
+- **学习加速**：最健康。prefix-scan 内核已工作（SG27B fused，推理 1.15× 于 Transformer）。LDAA"4× 内存压缩"已被数据证伪（raw unique storage `50.45% BPTT`，未过 `≤25%` 门）——收窄为 "latency-aware exact sparse backward runtime"，停止通用 4× 主张。scan + sparse-event 组合新颖性可辩护，但须谨慎标注（见诚实边界）。
+- **退火**：作为理论新颖（组合空白已确认），但被**边缘化**——它未产生打败 Transformer 的胜果（d4 用的是 surrogate gradient + prefix-scan，非退火前向）；纯 F 非判别（chance）；STDP-Hebbian 子声称被 anti-Hebbian 直接证伪（审计 Direction 5 已 CRITICAL 关闭）。
+- **打败 Transformer 主线**：**弱胜**（SG29, d4 `5.641±0.004` < Transformer `5.845±0.023` BPC，3 seeds），但参数不匹配（`2.1×` LSTM）且 LSTM 仍胜（`5.592`）。审计已将其降级为非独立方向——它没有丢，落在 SG29，但尚未诚实赢得。
+
+### 判定（idea-evaluator 五维）
+
+| 维度 | 分 | 证据 | 提升条件 |
+|---|---:|---|---|
+| Higher | 5 | SG29 BPC 胜 Transformer 但输 LSTM、参数不匹配；纯 F chance | 匹配参数 + 胜 LSTM 后再主张 |
+| Faster | 7 | SG27B fused 推理 `1.15×` 于 Transformer（已测）；训练吞吐仍 `6–26%` 于 LSTM | 收窄训练吞吐差距，对标 LSTM |
+| Stronger | 5 | 无鲁棒/噪声/泛化证据；LSTM 仍更强 | 加 drift/noise 消融 |
+| Cheaper | 6 | LDAA 内存主张证伪（`50.45%`）；Dir 3 Sigma-Delta write-budget 机制分 8 但未测 | write-budget 实验（≥5 seeds, 4 基线）通过后再主张 |
+| Broader | 6 | 退火 + 自由能 + 势博弈可跨域移植，但无移植证据 | 一个跨域 demo |
+
+范式探针：First Principles 部分 Yes（spike 重定义为零温磁化后验，非 surrogate）；Hamming 部分 Yes（若退火前向变判别将改变 SNN 训练范式，但未达成）；Elephant / Technology Cycle 均为 No。颠覆性：possible，以"解决判别性"为前提。
+
+### 决定与下一步
+
+**判定：Accept with Revisions**（机制分高分 Faster/Cheaper 待 write-budget 验证实验；无维度在数据上稳达 8+，故非 Strong Accept）。
+
+三条可预注册动作，按优先级：
+
+1. **退火线索要么接回要么切割**——目前处于"理论新颖但非判别、且未参与胜果"的悬置。选 (a) 在 mean-field β 前向上加判别读出 / PC inference loop，并在主线内验证，使退火核心真正贡献一次胜基线结果；或 (b) 诚实重新定位为纯理论，不再作为打败 Transformer 的路径。**禁止继续半声称。**
+2. **收紧打败 Transformer 声称**——以匹配参数对 LSTM 与 Transformer 重跑 d4。只有 d4 在等参下胜 **LSTM**，headline 才成立；此前一律写"以参数税胜较弱基线"。
+3. **用 Sigma-Delta write-budget 实验重挣 Cheaper/Faster**（共享初始化, 4 基线, ≥5 seeds, 先小模型）——这是机制分 `Faster=7 / Cheaper=8` 的命名验证实验；通过前不得扩到 35M / 0.8B。
+
+与 07-23 审计的关系：本条不推翻审计已采纳的 Dir 1/2/3；动作 1–3 是对"三线索如何不被审计遗漏地收尾"的补丁——动作 1（退火）与审计 Dir 3（Sigma-Delta 双时间尺度）共享同一 write-budget 实验，可合并预注册；动作 2 是审计"参数匹配 SNN scaling 仍须补齐"一句的具体化；动作 3 与 Dir 3 同源。
+
+### 诚实边界 / 风险
+
+1. scan + sparse-event 组合的"无重叠"受 arXiv API 不可达削弱——正式立项前须在 arXiv 可达时复检，排除仅存于 arXiv 的并行-scan-SNN 论文。
+2. Hala Point / Loihi 2 硬件声称未核实；不引用其数字。
+3. 退火组合空白是"检出空白"非"新颖证明"；F1 仍为 MAJOR。
+4. 生命周期 / 能力匹配为 Yellow：每周可投入时间、团队人数、长期算力尚未冻结，本条判定不含正式 capability match。
+
+### 可复现信息
+
+- 文献核实：三 subagent（RQ1 agentId `af635beeed57463b8` / RQ2 `ae38ec87950af8dbd` / RQ3 `aabe691c9cb9d58c2`），输出存于会话 task 目录；补充 Crossref 检索 inline（`associative scan spiking neural network` 等三查询）。
+- 关键文献：SparseProp DOI 10.52202/075280-0161；SLAYER arXiv 1810.08646；e-prop DOI 10.1038/s41467-020-17236-y；FPE DOI 10.1038/s42256-023-00650-4；StochEP arXiv 2511.11320；EP DOI 10.3389/fncom.2017.00024；Saponati-Vinck DOI 10.1038/s41467-023-40651-w；Spikformer V2 arXiv 2401.02020。
+- 本条无新实验、无 `main` 晋级；仅 LOG 固化。
+
+---
+
+## 2026-07-23：下一阶段研究方向审计 — 方向筛选（待预注册）
+
+### 背景与证据边界
+
+三条 2026-07-22 独立研究分支已经给出足够的正反证，可以停止从旧标题继续调参，转而审计下一阶段课题。本条使用 Idea Evaluator 的五维框架（Higher / Faster / Stronger / Cheaper / Broader）做方向筛选；分数为 `1..10` 的立项优先级证据，不是实验结果。
+
+本条只汇总已有日志、分支产物与最近邻文献，没有运行新实验，也没有把研究实现晋级 `main`：
+
+| 已有方向 | 分支与审计 commit | 当前证据边界 |
+|---|---|---|
+| Temporal-Basis Crossover | `codex/research-temporal-basis-crossover@67d3a97` | TBC-1 为 `NO_MECHANISM_SIGNAL`：grand temporal-homogeneous accuracy 仅 `+0.1803pp`，NLL 反向；short/long semantics 均失败 |
+| Loss-Density Adaptive Adjoint | `codex/research-loss-density-adjoint@ae291f6` | LDAA-2A exactness、速度、模型轨迹通过，但 raw unique storage=`50.454% BPTT`，未过预注册 `<=25%` 门；机器 verdict=`NARROW_OR_NO_GO_SECOND_CORE` |
+| Causal Residual World Model | `codex/research-causal-residual-world-model@4348cec` | CRWM-1 的两步无 oracle candidate generation 通过；CRWM-2A 因跨平台 `.z8` SHA 不一致为 `STOP_DATA_IDENTITY_FAILURE`，且 public objective 可能直接暴露完整解路径 |
+
+主分支中的补充边界继续保留：SG29 的 d4 在一个 15M-token、d=128 协议上以 `5.641±0.004` BPC 优于该 Transformer 的 `5.845±0.023`，但 LSTM 为 `5.592±0.002`，且参数量不匹配；E1 只在冻结 MI 代理协议上 `ADOPT`，尚未通过真实任务；STDP window shape 已出现，但符号为 anti-Hebbian。
+
+### 第一印象与排序
+
+最有价值的新问题来自失败边界，而不是继续扩大旧模型：SG26 暴露“token CE 与任务状态变化错位”，CRWM 暴露“目标可能让世界模型价值不可识别”，LDAA 暴露“延迟收益可迁移但通用四倍内存主张不成立”。综合新颖性、可证伪性、当前实现基础与最近邻拥挤度，优先级如下：
+
+| 优先级 | 候选方向 | Higher | Faster | Stronger | Cheaper | Broader | 生命周期 / 初步判定 |
+|---:|---|---:|---:|---:|---:|---:|---|
+| 1 | **事件原生的状态变化—表面生成因子化世界模型** | 7 | 8 | 8 | 7 | 7 | 前沿探索，约 4–8 月；**Accept with Revisions** |
+| 2 | **世界模型任务可识别性 / objective-to-solution 泄漏基准** | 7 | 5 | 9 | 7 | 8 | 基准构建，约 6–12 月；**Provisional Accept** |
+| 3 | **VPSC × Sigma-Delta 双时间尺度低比特可塑性** | 6 | 8 | 8 | 8 | 7 | 创新技术，约 9–15 月；**Accept with Revisions** |
+| 4 | **E/I 分段鲁棒控制器的真实任务验证** | 6 | 5 | 8 | 6 | 5 | 应用验证，约 3–6 月；**Accept with Revisions** |
+| 5 | **STDP 符号相图：Hebbian / anti-Hebbian 的条件边界** | 5 | 4 | 7 | 5 | 7 | 理论探索，约 6–12 月；只接受重定义后的新课题 |
+
+生命周期只是按当前仓库的代码、实验与日志基础估计；每周可投入时间、团队人数和长期算力尚未冻结，因此不把它当正式 capability match。
+
+### 方向 1：事件原生的状态变化—表面生成因子化世界模型
+
+核心对象不是再造一个一般语言模型，而是把可预测状态变化设为主损失，把随机语言表面设为条件辅助头：
+
+`(state_t, action_t) -> (delta_state, next_room, exits, features)`
+
+`(state_t, action_t, delta_state) -> text_surface`
+
+- **机制依据**：SG26C 中 SNN update 很快，但 self-rollin 与任务成功失败；这与“全部 token 等价地进入 CE，结构化转移只间接学习”的失配一致。
+- **新颖性风险**：MuZero（Schrittwieser et al., 2020）、Goyal et al. 的 declarative/procedural factorization（2021）以及 Neuro-Symbolic Synergy（Zhao et al., 2026）已经覆盖规划相关表示、结构因子化与神经—符号分工。仅声称“factorized world model”会触发 **F1：核心思想已有近邻**。
+- **可保留差异轴**：状态变化事件是第一训练目标；surface reconstruction 只作条件辅助；使用稀疏事件的 exact backward；在 objective 不泄漏解路径的隐藏动力学环境验证。
+- **首轮反证**：固定参数、数据与 seeds，对比 `token CE / structured delta / dual-head / constraint-only`。若 dual-head 在 task success、transition exact 上均不优于 token CE，或优势完全由 constraint-only 取得，则停止模型扩张。
+- **最小报告集**：task success、transition exact、surface NLL、invalid transition、update latency、吞吐、参数量和 peak memory。
+
+### 方向 2：任务可识别性与 objective-to-solution 泄漏基准
+
+CRWM-2A 暴露的根问题是：如果 public objective 可以零参数编译成完整 action tape，那么“世界模型是否改善 task success”不存在可测剩余空间。这个问题应先于模型排行榜。
+
+- **最近邻**：TextWorld（Côté et al., 2018）、ScienceWorld（Wang et al., 2022）、WorldCloner（Balloch et al., 2023）和 Neuro-Symbolic Synergy（Zhao et al., 2026）。本轮关键词检索没有找到直接以“objective 本身可编译到 exact solution path”为主要审计目标的工作；这不是 novelty 证明，正式立项仍需系统检索。
+- **基准对象**：`objective-only policy ceiling`、`constraint-only ceiling`、无 oracle candidate coverage、隐藏动力学恢复需求、solution leakage rate。
+- **Fatal-flaw gate**：只做 SG19/SG22R 一个 TextWorld 模板会触发 **F6：证据范围不足**；同时提出新基准和新模型会触发 **F8：一篇论文承担过多问题**。
+- **最低立项条件**：至少两个独立环境族；公开 objective 不包含解路径；生成器、规则、目标模板与资产 SHA 全部版本化；benchmark 与新方法分开判断。
+- **范式探针**：约 `6/8`。它可能把问题从“哪个模型分数更高”改成“任务是否有资格检验世界建模”，但在第二环境复现前只记为 strong potential。
+
+### 方向 3：VPSC × Sigma-Delta 双时间尺度低比特可塑性
+
+候选机制把 VPSC 连续事件状态作为快变量，把有限位宽的误差反馈权重残差作为慢变量；只有累计残差越过阈值才进行物理权重写入。
+
+- **最近邻**：Sigma Delta Quantized Networks（O'Connor & Welling, 2016）使用 activation delta；Error Feedback Fixes SignSGD（Karimireddy et al., 2019）研究压缩梯度；e-prop（Bellec et al., 2020）研究局部 eligibility / learning signal。三者均构成强先验。
+- **主要风险**：如果只是把现有 VPSC 与 Sigma-Delta 拼接，会触发 **F1**；如果不与 BF16、标准 error-feedback、当前 ECO 和 event-gated Sigma 同预算比较，会触发 **F3：更强基线缺失**。
+- **必须证明的差异**：减少物理权重写入，同时不恶化量化 regret、遗忘/重学习、free-energy proxy、criticality、STDP 指标和 action latency。
+- **首轮协议边界**：共享初始化，四个基线，至少 5 seeds；先在小模型做 write-budget / continual-learning 决定性实验，不直接扩到 35M 或 0.8B。
+- **范式探针**：约 `4/8`，属于高风险的硬件—学习接口种子，不是当前最短路径。
+
+### 方向 4：E/I 分段鲁棒控制器
+
+E1 的冻结 MI 协议给出 `60/60` 信息案例与较少坍塌，足以进入真实任务验证，但不足以声称任务级鲁棒性。
+
+- **最近邻风险**：Vogels & Abbott（2009）的 E/I gating、Sadeh & Clopath（2021）的 inhibitory stabilization，以及 Srinivasan et al.（2025）的 adaptive E/I reservoir control 已覆盖相近机制，因此独立方法新颖性偏弱。
+- **可检验剩余问题**：带预注册例外区间的分段拓扑控制器，能否在分布漂移下稳定真实 task success，而不仅提高 MI。
+- **停机门**：若在至少两个 drift 强度、3 seeds 上不能同时降低 collapse/forgetting 且保持 task metric，则保留 E1 代理结论，不升级论文主线。
+- **定位**：这是最快获得结论的配套验证，优先级低于前两个独立课题。
+
+### 方向 5：STDP 符号相图
+
+原命题“当前自由能训练自然产生 Hebbian STDP 符号”已被 anti-Hebbian 结果直接反驳，按 fatal-flaw gate 判 **CRITICAL Reject**，不得继续沿用原标题。
+
+仅允许重新开题为条件相图：STDP 符号是否由目标函数符号约定、E/I 身份、pre/post timing、自由相/钳制相次序共同决定。最近邻包括 Equilibrium Propagation（Scellier & Bengio, 2017）与 predictive-learning STDP（Saponati & Vinck, 2023）。该方向理论风险高；若不能先推出可区分的符号预测，不进入参数扫描。
+
+### 已有三分支的合并边界
+
+| 分支 | 决定 |
+|---|---|
+| TBC | **关闭当前机制**。不通过增加 width、epoch 或修改阈值重开“短/中/长专家导致 d4 收益”的主张；显式 pole basis + supervised mechanism 必须作为全新课题预注册。 |
+| LDAA | **保留窄方向**。可重述为 latency-aware exact sparse backward runtime；不得继续宣传通用 `4x` memory compression。研究实现继续留在实验分支。 |
+| CRWM | **换环境后再判**。普通“已知符号 + 未知神经残差”过于拥挤；只保留 versioned/retractable facts、contradiction recovery、calibrated uncertainty 的差异轴。旧 `.z8` identity 未恢复前不运行不可比 live 结果。 |
+
+### 决定与下一步
+
+- **采用为下一阶段候选主线**：方向 1、方向 2、方向 3；三者必须分别预注册、分别建研究分支，禁止正结果互相补贴。
+- **方向 1 先行**：它最直接利用现有 world-model runner 与 SG26 负结果，并能用一个小型四组对照快速证伪。
+- **方向 2 独立成 benchmark 课题**：先冻结 task identifiability spec，再决定数据生成；不与方向 1 合写为一次实验。
+- **方向 3 作为长期高风险路线**：只有完成共享初始化、四基线、5 seeds 的 write-budget 实验后才讨论扩模。
+- **方向 4 为配套任务验证**，不单独包装为核心方法；**方向 5 原主张关闭**，只有获得符号相图的理论预测才可重新立项。
+- 参数匹配 SNN scaling、长上下文和现代强基线仍是必须补齐的证据工程，但不单独视为新方法方向。
+
+### 最近邻检索记录
+
+- Schrittwieser et al., 2020, *Mastering Atari, Go, chess and shogi by planning with a learned model*：<https://www.nature.com/articles/s41586-020-03051-4>
+- Goyal et al., 2021, *Factorizing Declarative and Procedural Knowledge in Structured, Dynamical Environments*：<https://openreview.net/forum?id=VVdmjgu7pKM>
+- Zhao et al., 2026, *Neuro-Symbolic Synergy for Interactive World Modeling*：<https://arxiv.org/abs/2602.10480>
+- Côté et al., 2018, *TextWorld*：<https://arxiv.org/abs/1806.11532>
+- Wang et al., 2022, *ScienceWorld*：<https://arxiv.org/abs/2203.07540>
+- Balloch et al., 2023, *Neuro-Symbolic World Models for Adapting to Open World Novelty*：<https://arxiv.org/abs/2301.06294>
+- O'Connor & Welling, 2016, *Sigma Delta Quantized Networks*：<https://arxiv.org/abs/1611.02024>
+- Karimireddy et al., 2019, *Error Feedback Fixes SignSGD and other Gradient Compression Schemes*：<https://proceedings.mlr.press/v97/karimireddy19a.html>
+- Bellec et al., 2020, *A solution to the learning dilemma for recurrent networks of spiking neurons*：<https://www.nature.com/articles/s41467-020-17236-y>
+- Vogels & Abbott, 2009, *Gating multiple signals through detailed balance of excitation and inhibition in spiking networks*：<https://www.nature.com/articles/nn.2276>
+- Sadeh & Clopath, 2021, *Inhibitory stabilization and cortical computation*：<https://www.nature.com/articles/s41583-020-00390-z>
+- Srinivasan et al., 2025, *Boosting reservoir computing with brain-inspired adaptive control of E-I balance*：<https://www.nature.com/articles/s41467-025-64978-8>
+- Scellier & Bengio, 2017, *Equilibrium Propagation*：<https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2017.00024/full>
+- Saponati & Vinck, 2023, *Sequence anticipation and spike-timing-dependent plasticity emerge from a predictive learning rule*：<https://www.nature.com/articles/s41467-023-40651-w>
 
 ## 2026-07-21：FE-2H 根因 Replay 与 Constrained Soft-k 反证（COMPLETE；路线 5+6 失败）
 
