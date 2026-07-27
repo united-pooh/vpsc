@@ -44,10 +44,12 @@ def load_catgirl_texts(cache_dir: Path, max_convs: Optional[int] = None,
         return texts, meta
     os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
     from datasets import load_dataset
-    ds = load_dataset("cyberlangke/Nana-catgirl-dataset-110k", split="train")
-    texts = [_conv_to_text(r["messages"]) for r in ds if r.get("messages")]
+    from itertools import islice
+    # streaming avoids the struct-column cast error in datasets>=4.x for this dataset
+    ds = load_dataset("cyberlangke/Nana-catgirl-dataset-110k", split="train", streaming=True)
     if max_convs is not None:
-        texts = texts[:max_convs]
+        ds = islice(ds, max_convs)
+    texts = [_conv_to_text(r["messages"]) for r in ds if r.get("messages")]
     texts_path.write_text("\n\n".join(texts), encoding="utf-8")
     import json
     meta = {"n_convs": len(texts), "source": "cyberlangke/Nana-catgirl-dataset-110k",

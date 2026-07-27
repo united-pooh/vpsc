@@ -1,0 +1,81 @@
+{
+  "experiment": "SG30 d4 matched-params pilot",
+  "device": "mps",
+  "target_params": 2504585,
+  "matched": {
+    "lstm": {
+      "d_model": 240,
+      "params": 2437472
+    },
+    "transformer": {
+      "d_model": 240,
+      "params": 2438672
+    }
+  },
+  "config": {
+    "device": "mps",
+    "d_model": 128,
+    "state_dim": 128,
+    "n_experts": 3,
+    "epochs": 1,
+    "batch_size": 64,
+    "seq_len": 128,
+    "seeds": [
+      0
+    ],
+    "vocab_size": 8192,
+    "max_convs": 2000,
+    "archs": [
+      "d4",
+      "lstm",
+      "transformer"
+    ],
+    "fused": false,
+    "cache_dir": "results/e3_sg30_pilot_cache",
+    "out": "/Users/united_pooh/PyProjects/vpsc/results/e3_scan/e3_sg30_d4_matched.json",
+    "lr": 0.001
+  },
+  "summary": {
+    "d4": {
+      "bpc_mean": 10.553772152146406,
+      "params": 2504585
+    },
+    "lstm": {
+      "bpc_mean": 10.159619308144661,
+      "params": 2437472
+    },
+    "transformer": {
+      "bpc_mean": 10.982843333544302,
+      "params": 2438672
+    }
+  },
+  "raw": {
+    "d4": [
+      {
+        "params": 2504585,
+        "valid_bpc": 10.553772152146406,
+        "train_tokens_per_s": 38954.6689102028,
+        "seed": 0,
+        "wall_s": 6.2209221249999995
+      }
+    ],
+    "lstm": [
+      {
+        "params": 2437472,
+        "valid_bpc": 10.159619308144661,
+        "train_tokens_per_s": 100388.13043638163,
+        "seed": 0,
+        "wall_s": 2.28988175
+      }
+    ],
+    "transformer": [
+      {
+        "params": 2438672,
+        "valid_bpc": 10.982843333544302,
+        "train_tokens_per_s": 81512.4900959997,
+        "seed": 0,
+        "wall_s": 2.716127334000001
+      }
+    ]
+  }
+}
